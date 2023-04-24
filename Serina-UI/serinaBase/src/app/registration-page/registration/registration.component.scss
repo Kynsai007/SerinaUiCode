@@ -1,0 +1,125 @@
+.registrationDiv{
+    display: flex;
+    width: fit-content;
+    justify-content: center;
+    padding: 20px 30px;
+    border-radius: 10px;
+    height: max-content;
+    box-shadow: 1px 1px 5px rgb(0 0 0 / 50%);
+    overflow: hidden;
+    background: white;
+    flex-direction: column;
+    align-items: center;
+
+}
+h1::first-letter{
+    color: orangered;
+}
+.reginstration_fullpage{
+    display: flex;
+    justify-content: center;
+    background-image: url("/assets/Frame\ 16.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    align-items: center;
+}
+.inputForm{
+    width: 360px;
+    height: 35px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.w-260{
+    width: 260px;
+}
+label{
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #6c757d;
+}
+.title{
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.btns{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+.nameHead{
+    position: absolute;
+    top: 2%;
+    right: 3%;
+    color: #F2BE42;
+    font-weight: 600;
+    font-size: 25px;
+}
+.error-text{
+    font-size: 12px;
+    max-width: 270px;
+    font-weight: 600;
+    color: #ef5656;
+}
+.eye-show{
+    position: relative;
+    top: -30px;
+    left: 270px;
+}
+.expireText{
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+.btnbg{
+    margin-top: 10px;
+    background: #f2be42;
+}
+.resend-div {
+    padding: 10px;
+    text-align: center;
+    color: #6c757d;
+}
+:host ::ng-deep {
+    .otp-input {
+        font-size: 22px !important;
+    }
+    .wrapper {
+        display: flex;
+        justify-content: space-evenly;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .inputForm {
+        width: 100%;
+    }
+    .registrationDiv {
+        padding: 10px;
+    }
+}
+
+.slide {
+    animation: slider .7s ease-in;
+}
+
+@keyframes slider {
+    0% {
+        transform: skewX(10deg) translate(-500px);
+        opacity: 0;
+    }
+    60%{
+        transform: skewX(0deg) translate(30px);
+        opacity: 1;
+    }
+    100% {
+        transform: skew(0deg);
+    }
+}

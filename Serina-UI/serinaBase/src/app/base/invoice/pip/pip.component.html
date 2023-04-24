@@ -1,0 +1,56 @@
+<h6 class="headh6">Payment Status</h6>
+
+<div class="container-fluid" style="overflow: hidden; max-height: 100vh">
+  <div>
+    <div>
+      <ul class="nav nav-tabs" id="tabs-tab" role="tablist">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="tabs-all-tab"
+            data-toggle="pill"
+            href="#tabs-all"
+            role="tab"
+            aria-controls="tabs-all"
+            aria-selected="true"
+            >Invoices({{ paymentDataLength }})</a
+          >
+        </li>
+      </ul>
+
+      <div class="positionCreateUpload">
+        <button class="btnUpload mr-2" (click)="exportExcel()">
+          <i class="fa fa-download" aria-hidden="true"></i>
+        </button>
+        <!-- <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button> -->
+      </div>
+      <!-- <div class="filter_input">
+        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [showIcon]="true" placeholder="Select dates to Filter" [readonlyInput]="true" inputId="range"></p-calendar>
+        <button class="btnUpload filter_btn_m "> Filter</button>
+      </div> -->
+    </div>
+
+    <div class="tab-content" id="tabs-tabContent">
+      <!-- All Tab -->
+      <div
+        class="tab-pane fade show active"
+        id="tabs-all"
+        role="tabpanel"
+        aria-labelledby="tabs-all-tab"
+      >
+        <div class="tableDataDiv bg-design-all pt-1">
+          <app-all-invoices
+            [tableData]="paymentData"
+            [invoiceColumns]="columnsToDisplay"
+            [columnsToDisplay]="columnsFields"
+            [showPaginatorAllInvoice]="showPaginator"
+            (sideBarBoolean)="showSidebar($event)"
+            (paginationEvent)="paginate($event)"
+            [columnLength]="columnLength"
+            (searchInvoiceData)="searchInvoiceDataV($event)"
+          ></app-all-invoices>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

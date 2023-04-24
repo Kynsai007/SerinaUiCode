@@ -1,0 +1,14 @@
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  padding: 10px;
+  // width: 100%;
+}
+
+
+  @media screen and (max-width: 800px) {
+    .searchBar {
+        top: 45px;
+        left: 74%;
+    }
+
+  }

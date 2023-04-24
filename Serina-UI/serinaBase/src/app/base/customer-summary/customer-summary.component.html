@@ -1,0 +1,184 @@
+<h6 class="headh6">Document Summary</h6>
+
+<div class="container-fluid" style="height: 90vh;overflow:hidden;">
+  <div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item mr-1">
+        <a
+          class="nav-link"
+          [ngClass]="vendorInvoiceAccess ? 'active':''"
+          id="vendor-tab"
+          data-toggle="tab"
+          href="#vendor"
+          role="tab"
+          aria-controls="vendor"
+          aria-selected="true"
+          *ngIf="vendorInvoiceAccess"
+          >Vendor Based</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [ngClass]="!vendorInvoiceAccess ? 'active':''"
+          id="vendor-tab"
+          data-toggle="tab"
+          href="#service"
+          role="tab"
+          aria-controls="service"
+          aria-selected="true"
+          *ngIf="serviceInvoiceAccess"
+          >Service Based</a>
+      </li>
+    </ul>
+  </div>
+  <div class="down_filter">
+    <div>
+      <button class="btnUpload dwnload_btn " (click)="downloadReport()">
+        Download Report
+      </button>
+    </div>
+    <div class="selectFilter mr-2">
+      <select
+        class="f-12 form-control font_weight"
+        (change)="selectEntityFilter($event.target.value)"
+      >
+        <option value="">Select Entity</option>
+        <option value="ALL" selected>ALL</option>
+        <option *ngFor="let entity of entity" [value]="entity.idEntity">
+          {{ entity.EntityName }}
+        </option>
+      </select>
+    </div>
+    <div>
+      <p-calendar
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        showButtonBar="true"
+        (onClearClick)="clearDates()"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        inputId="range"
+      ></p-calendar>
+      <button class="btnUpload filter_btn_m" (click)="filterData(rangeDates)">
+        Filter
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="tab-content tabDiv bg-design-all max_data_scroll pt-2 pb-2"
+    id="myTabContent"
+  >
+    <div
+      class="tab-pane fade"
+      [ngClass]="vendorInvoiceAccess ? 'show active':''"
+      id="vendor"
+      role="tabpanel"
+      aria-labelledby="vendor-tab"
+    >
+      <div class="d-flex">
+        <div class="card-div card1-bg d-flex mr-3 ml-2">
+          <div class="img-wrapper bg-1">
+            <mat-icon svgIcon="total_page"></mat-icon>
+          </div>
+          <div>
+            <div class="text_color">Total Pages Count</div>
+            <div class="f-15">{{ totalSuccessPages }}</div>
+          </div>
+        </div>
+
+        <div class="card-div card2-bg d-flex">
+          <div class="img-wrapper bg-2">
+            <mat-icon svgIcon="total_inv"></mat-icon>
+          </div>
+          <div>
+            <div class="text_color">Total Invoices</div>
+            <div class="f-15">{{ totalInvoices }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table_scroll">
+        <div class="tableDataDiv table_top">
+          <app-table
+            [tableData]="customerSummary"
+            [invoiceColumns]="summaryColumn"
+            [showPaginator]="showPaginatorSummary"
+            [columnsToFilter]="summaryColumnField"
+            [columnLength]="ColumnLengthVendor"
+          >
+          </app-table>
+        </div>
+
+        <ngx-spinner
+          bdColor="rgba(251, 251, 251, 0.8)"
+          size="medium"
+          color="#070900"
+          [fullScreen]="false"
+          type="ball-spin-clockwise"
+        >
+          <p style="color: rgb(0, 0, 0)"></p>
+        </ngx-spinner>
+      </div>
+    </div>
+
+    <div
+      class="tab-pane fade"
+      id="service"
+      role="tabpanel"
+      aria-labelledby="service-tab"
+      [ngClass]="!vendorInvoiceAccess ? 'show active':''"
+    >
+      <div class="d-flex">
+        <div class="card-div card1-bg d-flex mr-3 ml-2">
+          <div class="img-wrapper bg-1">
+            <mat-icon svgIcon="total_page"></mat-icon>
+          </div>
+          <div>
+            <div class="text_color">Total Pages Count</div>
+            <div class="f-15">{{ totalSuccessPagesSP }}</div>
+          </div>
+        </div>
+
+        <div class="card-div card2-bg d-flex">
+          <div class="img-wrapper bg-2">
+            <mat-icon svgIcon="total_inv"></mat-icon>
+          </div>
+          <div>
+            <div class="text_color">Total Invoices</div>
+            <div class="f-15">{{ totalInvoicesSP }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table_scroll">
+        <div class="tableDataDiv table_top">
+          <app-table
+            [tableData]="customerSummarySP"
+            [invoiceColumns]="summaryColumnSP"
+            [showPaginator]="showPaginatorSummarySP"
+            [columnsToFilter]="summaryColumnFieldSP"
+            [columnLength]="ColumnLengthSP"
+          >
+          </app-table>
+        </div>
+
+        <ngx-spinner
+          bdColor="rgba(251, 251, 251, 0.8)"
+          size="medium"
+          color="#070900"
+          [fullScreen]="false"
+          type="ball-spin-clockwise"
+        >
+          <p style="color: rgb(0, 0, 0)"></p>
+        </ngx-spinner>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

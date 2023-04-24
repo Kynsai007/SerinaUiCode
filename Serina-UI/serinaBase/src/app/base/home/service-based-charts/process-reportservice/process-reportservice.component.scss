@@ -1,0 +1,31 @@
+.card-div {
+  min-width: 16vw !important;
+  max-width: fit-content !important;
+}
+
+.selectFilter {
+  height: 35px;
+  width: 170px;
+}
+
+.filters_div {
+  position: absolute;
+  top: 53px !important;
+  right: 275px !important;
+  display: flex;
+}
+@media screen and (max-width:1300px) {
+  .filter_inputDash {
+    top: 50px;
+      right: 0;
+  }
+  .filters_div {
+    top: 82px;
+    right: 0;
+  }
+  .tableDatDiv {
+    position: relative;
+    top: 27px;
+  }
+
+}
