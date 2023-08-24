@@ -89,6 +89,7 @@
           </th>
           <th>Description</th>
           <th>Quantity</th>
+          <th>Return Quantity</th>
         </tr>
         <tr *ngFor="let line of POLineData">
           <td>
@@ -100,6 +101,7 @@
             />
           </td>
           <td>{{ line.Description }}</td>
+          <td>{{ line.Quantity }}</td>
           <td>
             <input
               [id]="line.itemCode"
