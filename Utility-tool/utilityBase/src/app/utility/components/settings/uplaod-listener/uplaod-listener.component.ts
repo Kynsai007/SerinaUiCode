@@ -66,6 +66,10 @@ export class UplaodListenerComponent implements OnInit {
       }
     })
   }
+  changeDocType(e:any){
+    this.getmailConfig(e.target.value);
+    this.selecteddoctype = e.target.value;
+  }
   getAllMailListeners(){
     this.EmailListeners = [];
     this.sharedService.getAllMailListeners().subscribe(data => {
