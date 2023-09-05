@@ -79,22 +79,14 @@ export class AuthenticationService {
         this.currentUserSubject.next(user);
         environment1.password = user.token;
     }
-    async logout(reason) {
+    async logout() {
         let userid = JSON.parse(sessionStorage.getItem('currentLoginUser')).userdetails?.idUser;
-        let resp = await this.http.post(`${this.apiUrl}/${this.apiVersion}/logout/${userid}`,null).toPromise();
-        this.router.navigate(['/login']);
+        await this.http.post(`${this.apiUrl}/${this.apiVersion}/logout/${userid}`,null).toPromise();
+        this.router.navigate(['/']);
         sessionStorage.removeItem('currentLoginUser');
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('messageBox');
         sessionStorage.clear();
-        setTimeout(() => {
-        if(this.router.url.includes('login')){
-            window.location.reload();
-        }
-        }, 500);
         this.currentUserSubject.next(null);
-        if(reason== 'expired' && !this.router.url.includes("/login")){
-            alert("Session Expired! Please re-login!");
-        }
     }
 }
