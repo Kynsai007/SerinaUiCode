@@ -43,6 +43,7 @@
     "ng-click-outside": "^7.0.1",
     "ng-otp-input": "^1.7.1",
     "ng2-file-upload": "^1.4.0",
+    "ngx-infinite-scroll": "^10.0.1",
     "ng2-pdf-viewer": "^6.4.0",
     "ngx-mqtt": "^9.0.5",
     "ngx-pagination": "^5.0.0",
