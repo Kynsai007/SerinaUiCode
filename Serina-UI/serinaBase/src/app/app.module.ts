@@ -15,7 +15,7 @@ import {FormsModule,ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { ErrorInterceptor } from './interceptor/errorInterceptor';
 import { JwtInterceptor } from './interceptor/Jwt.interceptor';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { PathLocationStrategy, LocationStrategy } from '@angular/common';
 import {MSAL_INSTANCE, MsalModule, MsalService} from '@azure/msal-angular';
 import { IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
 // import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
@@ -35,7 +35,7 @@ export function MSALInstanceFactory(): IPublicClientApplication{
   return new PublicClientApplication({
     auth: {
       clientId : "44e503fe-f768-46f8-99bf-803d4a2cf62d",
-      redirectUri: location.href.split("#")[0]
+      redirectUri: location.href
 
     }
   })
@@ -65,7 +65,7 @@ export function MSALInstanceFactory(): IPublicClientApplication{
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: LocationStrategy,
-      useClass: HashLocationStrategy
+      useClass: PathLocationStrategy
     },],
   bootstrap: [AppComponent]
 })
