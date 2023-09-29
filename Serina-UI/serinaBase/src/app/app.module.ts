@@ -22,6 +22,7 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
+
 // import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 // export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
 
