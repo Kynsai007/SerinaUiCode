@@ -118,10 +118,11 @@
         <div
           class="navLink"
           routerLinkActive="active"
+          [ngClass]="router.url.includes('invoice')?'active':''"
           data-text="Document Status"
-          [routerLink]="'invoice'"
+          (click)="doc_status_route()"
         >
-          <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+          <span class="material-icons f-18 ml-r-12" [ngClass]="router.url.includes('invoice')?'ml-9':''">
             receipt
           </span>
           Document Status
@@ -645,7 +646,7 @@
   </div>
 </mat-drawer-container>
 
-<!-- Cnfirmation Dialog -->
+<!-- Confirmation Dialog -->
 <p-dialog
   header=" "
   [(visible)]="displayResponsivepopup"

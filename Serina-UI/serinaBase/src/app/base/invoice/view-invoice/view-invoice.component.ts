@@ -32,6 +32,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../../popup/popup.component';
 import { MultiPOComponent } from 'src/app/main-content/multi-po/multi-po.component';
 import { MatAccordion } from '@angular/material/expansion';
+import { SupportpdfViewerComponent } from '../../exception-management/supportpdf-viewer/supportpdf-viewer.component';
 
 
 export interface getApproverData {
@@ -402,7 +403,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // if (this.flipEnabled && this.subStatusId == 34){
     //   this.currentTab = "poline";
     // }
-    console.log(this.subStatusId,this.flipEnabled)
   }
 
   routeOptions() {
@@ -1256,7 +1256,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   captureComments(reason, val) {
     this.displayrejectDialog = true;
-    console.log(reason)
     // this.preApproveBoolean = false;
     this.isRejectCommentBoolean = false;
     this.isApproveCommentBoolean = false;
@@ -1583,14 +1582,24 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       .toPromise();
   }
 
-  downloadDoc(doc_name) {
+  downloadDoc(doc_name,type) {
     let encodeString = encodeURIComponent(doc_name);
     this.SharedService.downloadSupportDoc(encodeString).subscribe(
       (response: any) => {
         let blob: any = new Blob([response]);
         const url = window.URL.createObjectURL(blob);
-        fileSaver.saveAs(blob, doc_name);
-        this.successAlert("Document downloaded successfully.");
+        if(type == 'view'){
+          const dailogRef:MatDialogRef<SupportpdfViewerComponent> = this.mat_dlg.open(SupportpdfViewerComponent,{
+            width: '90vw',
+            height:'95svh',
+            hasBackdrop:true,
+            data:{ file: url}
+          })
+        } else{
+          fileSaver.saveAs(blob, doc_name);
+          this.successAlert("Document downloaded successfully.");
+        }
+
       },
       (err) => {
         this.errorTriger("Server error");
@@ -1600,7 +1609,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   getEntity() {
     this.dataService.getEntity().subscribe((data: any) => {
       this.entityList = data;
-      console.log(this.entityList,this.dataService.entityID );
       this.SharedService.selectedEntityId = this.dataService.entityID;
       this.entityList.forEach(val => {
         if (this.dataService.entityID == val.idEntity) {

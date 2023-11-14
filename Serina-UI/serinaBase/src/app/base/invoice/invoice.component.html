@@ -116,16 +116,7 @@
                 >Rejected({{ rejectedLength }})</a
               >
             </li>
-            <li class="nav-item mr-1" *ngIf="GRNCreateBool && vendorInvoiceAccess && invoceDoctype">
-              <a
-                [ngClass]="
-                  route.url == GRNExceptionTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('GRNException')"
-                >GRN exceptions({{ GRNExcpLength }})</a
-              >
-            </li>
+            
 
             <li class="nav-item service" *ngIf="usertypeBoolean && serviceInvoiceAccess "
             [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
@@ -220,6 +211,7 @@
                   (paginationEvent) = "paginate($event)"
                   [columnLength]="allInColumnLength"
                   (filterDataEmit) = "filterEmit($event)"
+                  (systemCheckEmit)="refreshInvoice($event)"
                   *ngIf="route.url == invoiceTab"
                 >
                 </app-all-invoices>
@@ -289,20 +281,6 @@
                   [columnLength]="rejectedColumnLength"
                   *ngIf="route.url == rejectedTab"
                 ></app-all-invoices>
-                
-                <app-all-invoices
-                  [tableData]="GRNExcpDispalyData"
-                  [invoiceColumns]="GRNExcpColumns"
-                  [showPaginatorAllInvoice]="showPaginatorGRNExcp"
-                  [columnsToDisplay]="columnstodisplayGRNExcp"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="GRNExcpColumnLength"
-                  *ngIf="route.url == GRNExceptionTab"
-                >
-                </app-all-invoices>
   
                 <app-all-invoices
                   [tableData]="serviceinvoiceDispalyData"
