@@ -272,7 +272,7 @@
           *ngIf="!isDesktop"
           class="navLink"
           data-text="Logout"
-          (click)="displayResponsivepopup = true"
+          (click)="logout_confirmation()"
         >
           <i
             class="fa fa-sign-out f-18 ml-r-12"
@@ -344,7 +344,7 @@
               </span></a>
               <a (click)="openDialog()">Change Password</a>
               <a routerLink="profile">Profile</a>
-              <a (click)="displayResponsivepopup = true">Logout</a>
+              <a (click)="logout_confirmation()">Logout</a>
             </div>
           </span>
         </div>
@@ -629,7 +629,7 @@
             <div
               class="navLink"
               data-text="Logout"
-              (click)="displayResponsivepopup = true"
+              (click)="logout_confirmation()"
             >
               <i
                 class="fa fa-sign-out f-18 ml-r-12"
@@ -645,41 +645,5 @@
     </div>
   </div>
 </mat-drawer-container>
-
-<!-- Confirmation Dialog -->
-<p-dialog
-  header=" "
-  [(visible)]="displayResponsivepopup"
-  [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '30vw' }"
-  [baseZIndex]="10000"
-  [draggable]="false"
-  [resizable]="false"
->
-  <div class="text-center">
-    <div>
-      <i
-        class="pi pi-exclamation-triangle"
-        style="font-size: 4rem; color: red"
-      ></i>
-    </div>
-    <div class="deleteDivText">
-      {{ BtnText }}
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" (click)="logout()">
-        Yes
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
-        (click)="displayResponsivepopup = false"
-      >
-        Cancel
-      </button>
-    </div>
-  </ng-template>
-</p-dialog>
 
 <p-toast></p-toast>

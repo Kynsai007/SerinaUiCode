@@ -717,6 +717,7 @@ export class UploadSectionComponent implements OnInit {
   selectedPO(event) {
     if(this.viewType == 'ideal'){
       this.displaySelectPdfBoolean = true;
+      this.readPOLines(event.PODocumentID);
     } else {
       if (this.selectedCategory == 'credit') {
         this.readPOLines(event.PODocumentID);

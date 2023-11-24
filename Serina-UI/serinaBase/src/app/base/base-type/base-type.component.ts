@@ -15,6 +15,7 @@ import { environment1 } from 'src/environments/environment.prod';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { FeatureComponent } from '../feature/feature.component';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-base-type',
@@ -35,8 +36,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   openBoolean: boolean;
   last_login1: any;
   openBooleanException: boolean;
-  displayResponsivepopup: boolean;
-  BtnText = 'Are you sure you want to Logout?';
   messageBox: any;
   financeapproveDisplayBoolean: boolean;
   uploadPermissionBoolean: boolean;
@@ -475,6 +474,20 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     } else{
       this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
     }
+  }
+  logout_confirmation(){
+    const dialogRef:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{
+      width: '30svw',
+      height: '40svh',
+      hasBackdrop: false,
+      data:{  body: "Are you sure you want to Logout?"}
+    })
+
+    dialogRef.afterClosed().subscribe((response:any)=>{
+      if(response){
+        this.logout();
+      }
+    })
   }
   ngOnDestroy(): void {
     if (this.subscription) {

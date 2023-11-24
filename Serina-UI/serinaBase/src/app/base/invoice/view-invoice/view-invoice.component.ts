@@ -956,7 +956,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               this.serviceSubmit();
             }
           } else {
-            /* Error reponse starts*/
+            /* Error response starts*/
             if (errorTypeHead == 'AmountHeader') {
               this.currentTab = 'head';
               setTimeout(() => {
@@ -965,17 +965,17 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             }
             if (errorType == 'emptyHeader') {
               this.currentTab = 'head';
-              this.errorTriger('Please Check PO Number, Invoice Date, InvoiceId fileds in header details');
+              this.errorTriger('Please Check PO Number, Invoice Date, InvoiceId fields in header details');
             }
             if (errorTypeLine == 'AmountLine') {
               setTimeout(() => {
                 this.currentTab = 'line';
-                this.errorTriger('Please verify Amount, Quntity, unitprice and AmountExcTax in Line details');
+                this.errorTriger('Please verify Amount, Quantity, unitprice and AmountExcTax in Line details');
               }, 10);
             } else if (errorTypeLine == 'quntity') {
               setTimeout(() => {
                 this.currentTab = 'line';
-                this.errorTriger('Please check the Quntity in the Line details');
+                this.errorTriger('Please check the Quantity in the Line details');
               }, 10);
             } else if (errorTypeLine == 'description') {
               this.currentTab = 'line';

@@ -112,6 +112,10 @@ export class InvoiceComponent implements OnInit {
   isDesktop: boolean;
   tableImportData: any;
   refreshBool: boolean;
+  invTabAllColumns: any;
+  poTabAllColumns: any;
+  arcTabAllColumns: any;
+  invsTabAllColumns: any;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -427,8 +431,7 @@ export class InvoiceComponent implements OnInit {
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     ), err => {
@@ -467,8 +470,7 @@ export class InvoiceComponent implements OnInit {
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     );
@@ -675,8 +677,7 @@ export class InvoiceComponent implements OnInit {
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     );
@@ -741,25 +742,28 @@ export class InvoiceComponent implements OnInit {
           this.invoiceColumns = columnArray;
           this.columnstodisplayInvoice = columns_to_display;
           this.allInColumnLength = columnLength;
+          this.invTabAllColumns = this.allColumns;
         } else if(tabType == 'PO'){
           this.poColumns = columnArray;
           this.columnstodisplayPO = columns_to_display;
           this.allPOColumnLength = columnLength;
+          this.poTabAllColumns = this.allColumns;
         } else if(tabType == 'ARC'){
           this.archivedColumns = columnArray;
           this.columnstodisplayArchived = columns_to_display;
           this.allARCColumnLength = columnLength;
+          this.arcTabAllColumns = this.allColumns;
         } else if(tabType == 'INVS'){
           this.serviceColumns = columnArray;
           this.columnstodisplayService = columns_to_display;
           this.allSRVColumnLength = columnLength;
+          this.invsTabAllColumns = this.allColumns;
         }
         this.SpinnerService.hide();
       },
       (error) => {
         this.SpinnerService.hide();
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
       }
     );
   }
@@ -835,15 +839,15 @@ export class InvoiceComponent implements OnInit {
     // this.visibleSidebar2 = value;
     this.sidenav.toggle();
     if (this.route.url == this.invoiceTab) {
-      this.getInvoiceColumns();
+      this.allColumns = this.invTabAllColumns;
     } else if (this.route.url == this.POTab) {
-      this.getPOColumns();
+      this.allColumns = this.poTabAllColumns;
     } else if (this.route.url == this.archivedTab) {
-      this.getArchivedColumns();
+      this.allColumns = this.arcTabAllColumns;
     } else if (this.route.url == this.rejectedTab) {
-      this.getArchivedColumns();
+      this.allColumns = this.arcTabAllColumns;
     } else if (this.route.url == this.serviceInvoiceTab) {
-      this.getServiceColumns();
+      this.allColumns = this.invsTabAllColumns;
     }
   }
 
@@ -918,8 +922,7 @@ export class InvoiceComponent implements OnInit {
         this.messageService.add(this.AlertService.updateObject);
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
       }
     );
     this.sidenav.close();
@@ -1256,5 +1259,10 @@ export class InvoiceComponent implements OnInit {
       arrayOfColumnId.push(e.dbColumnname);
     });
     return arrayOfColumnId;
+  }
+
+  errorTrigger(error) {
+    this.AlertService.errorObject.detail = error;
+    this.messageService.add(this.AlertService.errorObject);
   }
 }

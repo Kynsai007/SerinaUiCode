@@ -93,9 +93,6 @@
                 >GRN({{ GRNArrayLength }})</a
               >
             </li>
-            <!-- <li><a [ngClass]="route.url == '/customer/invoice/paymentInprogress'?'activeType':'navLink'"
-                    (click)="menuChange('pip')">Payment In
-                    progress({{receiptArrayLength}})</a></li> -->
             <li class="nav-item mr-1">
               <a
                 [ngClass]="
@@ -138,7 +135,6 @@
             class="mr-2"
             *ngIf="route.url == invoiceTab"
           >
-            <!-- <label for="range" class="f-12">Select dates to Filter</label> <br> -->
             <p-calendar
               [(ngModel)]="rangeDates"
               selectionMode="range"
@@ -197,10 +193,9 @@
         </div>
 
         <div style="position: relative;">
-          
-
-  
+          <!-- tabs display starts here -->
           <div class="tableDataDiv bg-design-all">
+                <!-- Invoice tab -->
                 <app-all-invoices
                   [tableData]="invoiceDispalyData"
                   [invoiceColumns]="invoiceColumns"
@@ -215,7 +210,8 @@
                   *ngIf="route.url == invoiceTab"
                 >
                 </app-all-invoices>
-  
+
+                <!-- PO tab -->
                 <app-all-invoices
                   [tableData]="poDispalyData"
                   [invoiceColumns]="poColumns"
@@ -228,7 +224,8 @@
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   *ngIf="route.url == POTab"
                 ></app-all-invoices>
-  
+
+                <!-- SO tab -->
                 <app-all-invoices
                   [tableData]="soDisplayData"
                   [invoiceColumns]="poColumns"
@@ -242,6 +239,7 @@
                   *ngIf="route.url == SOTab"
                 ></app-all-invoices>
   
+                <!-- GRN tab -->
                 <app-all-invoices
                   [tableData]="GRNDispalyData"
                   [invoiceColumns]="GRNColumns"
@@ -255,7 +253,7 @@
                   *ngIf="route.url == GRNTab"
                 ></app-all-invoices>
   
-                
+                <!-- Posted tab -->
                 <app-all-invoices
                   [tableData]="archivedDisplayData"
                   [invoiceColumns]="archivedColumns"
@@ -269,6 +267,7 @@
                   *ngIf="route.url == archivedTab"
                 ></app-all-invoices>
   
+                <!-- Rejected tab -->
                 <app-all-invoices
                   [tableData]="rejectedDisplayData"
                   [invoiceColumns]="rejectedColumns"
@@ -282,6 +281,7 @@
                   *ngIf="route.url == rejectedTab"
                 ></app-all-invoices>
   
+                <!-- service invoice tab -->
                 <app-all-invoices
                   [tableData]="serviceinvoiceDispalyData"
                   [invoiceColumns]="serviceColumns"
