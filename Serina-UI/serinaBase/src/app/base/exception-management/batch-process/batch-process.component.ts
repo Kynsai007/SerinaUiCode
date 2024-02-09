@@ -6,11 +6,12 @@ import { AlertService } from './../../../services/alert/alert.service';
 import { ExceptionsService } from './../../../services/exceptions/exceptions.service';
 import { ImportExcelService } from './../../../services/importExcel/import-excel.service';
 import { TaggingService } from './../../../services/tagging.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DatePipe, Location } from '@angular/common';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
+import { Calendar } from 'primeng/calendar';
 
 @Component({
   selector: 'app-batch-process',
@@ -90,6 +91,16 @@ export class BatchProcessComponent implements OnInit {
   portalName:string;
 
   isDesktop: boolean;
+  refreshBool:boolean;
+
+  filteredVendor = [];
+  statusData:any = [];
+  vendorNameList:any = [];
+  filteredStatusList = [];
+  searchText:string;
+  selected_status_obj;
+  search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
+  @ViewChild('datePicker') datePicker: Calendar;
 
   constructor(
     private tagService: TaggingService,
@@ -235,16 +246,13 @@ export class BatchProcessComponent implements OnInit {
   }
 
   getBatchInvoiceData() {
-    let param = ''
-    if(this.ds.ap_boolean){
-      param= `?doctype=3`;
-    } else {
-      param= `?doctype=1`;
-    }
     this.ngxSpinner.show();
-    this.exceptionService.readBatchInvoicesData(param).subscribe(
+    this.refreshBool = true;
+    this.exceptionService.readBatchInvoicesData().subscribe(
       (data: any) => {
         const batchData = [];
+        let mergedStatus = [{ id:0, name:'All'}];
+        let vendorNameList = [];
         data.forEach((element) => {
           let mergeData = {
             ...element.Document,
@@ -255,36 +263,42 @@ export class BatchProcessComponent implements OnInit {
           };
           mergeData['substatus'] = element.substatus
           batchData.push(mergeData);
+          // this.vendorNameList.forEach(el=>{
+
+          // })
+          let status = element.DocumentSubStatus.status
+          // vendorNameList.push(element.Vendor.VendorName)
+          if(element.Document.documentsubstatusID == 40 || element.Document.documentsubstatusID == 32){
+            status = element.substatus;
+          }
+          mergedStatus.push({id: element.Document.documentsubstatusID, name:status})
         });
+        let statusData = mergedStatus.filter((obj,index)=>{
+          return index == mergedStatus.findIndex(o=> obj.name === o.name )
+        })
+        // this.vendorNameList = new Set(vendorNameList);
+        this.statusData = statusData;
         this.columnsData = batchData.sort((a,b)=>{
           let c = new Date(a.CreatedOn).getTime();
           let d = new Date(b.CreatedOn).getTime();
           return d-c });
-        this.filterData = this.columnsData;
-        // batchData.forEach(ele=>{
-        //   if(ele.idDocumentType == 3){
-        //     this.columnsData.push(ele);
-        //     this.filterData = this.columnsData;
-        //   } else if (ele.idDocumentType == 1){
-        //     this.columnsDataPO.push(ele);
-        //     this.filterData = this.columnsDataPO;
-        //   }
-        // })
+          this.filterData = this.columnsData;
+          
+          setTimeout(() => {
+            this.selected_status_obj = this.ds.vendor_exc_status;
+            this.searchText = this.ds.vendor_exc_uniSearch;
+            this.onSelectStatus(this.ds.vendor_exc_status);
+          }, 1000);
         this.dataLength = this.columnsData.length;
-        // if (this.dataLength > 10) {
-        //   this.showPaginatorAllInvoice = true;
-        // }
-
-        this.datalengthPO = this.columnsDataPO.length;
-        // if (this.datalengthPO > 10) {
-        //   this.showPaginatorAllPO = true;
-        // }
+        if (this.dataLength > 10) {
+          this.showPaginatorAllInvoice = true;
+        }
         this.ngxSpinner.hide();
+        this.refreshBool = false;
       },
       (error) => {
         this.ngxSpinner.hide();
-        this.alertService.errorObject.detail = error.statusText;
-        this.MessageService.add(this.alertService.errorObject);
+        this.error("Server error");
       }
     );
   }
@@ -312,8 +326,9 @@ export class BatchProcessComponent implements OnInit {
       },
       (error) => {
         this.ngxSpinner.hide();
-        this.alertService.errorObject.detail = error.statusText;
-        this.MessageService.add(this.alertService.errorObject);
+        // this.alertService.errorObject.detail = error.statusText;
+        // this.MessageService.add(this.alertService.errorObject);
+        this.error("Server error");
       }
     );
   }
@@ -321,32 +336,52 @@ export class BatchProcessComponent implements OnInit {
     this.ngxSpinner.show();
     this.sharedService.readEditedServiceInvoiceData().subscribe(
       (data: any) => {
+        let mergedStatus = [{ id:0, name:'All'}];
         let invoiceArray = [];
         data.exception_service_invoices.forEach((element) => {
-          let invoices = {
+          let mergeData = {
             ...element.Document,
             ...element.DocumentSubStatus,
             ...element.Entity,
             ...element.ServiceProvider,
             ...element.ServiceAccount,
           };
-          invoiceArray.push(invoices);
+          mergeData['substatus'] = element.substatus
+          invoiceArray.push(mergeData);
+          // this.vendorNameList.forEach(el=>{
+
+          // })
+          let status = element.DocumentSubStatus.status
+          // vendorNameList.push(element.Vendor.VendorName)
+          if(element.Document.documentsubstatusID == 40 || element.Document.documentsubstatusID == 32){
+            status = element.substatus;
+          }
+          mergedStatus.push({id: element.Document.documentsubstatusID, name:status})
         });
+        let statusData = mergedStatus.filter((obj,index)=>{
+          return index == mergedStatus.findIndex(o=> obj.name === o.name )
+        })
+        // this.vendorNameList = new Set(vendorNameList);
+        this.statusData = statusData;
         this.columnsData = invoiceArray.sort((a,b)=>{
           let c = new Date(a.CreatedOn).getTime();
           let d = new Date(b.CreatedOn).getTime();
           return d-c });
         this.filterData = this.columnsData;
+        setTimeout(() => {
+          this.selected_status_obj = this.ds.service_exc_status;
+          this.searchText = this.ds.service_exc_uniSearch;
+          this.onSelectStatus(this.ds.service_exc_status);
+        }, 1000);
         this.dataLength = this.columnsData.length;
-        // if (this.dataLength > 10) {
-        //   this.showPaginatorAllInvoice = true;
-        // }
+        if (this.dataLength > 10) {
+          this.showPaginatorAllInvoice = true;
+        }
         this.ngxSpinner.hide();
       },
       (error) => {
         this.ngxSpinner.hide();
-        this.alertService.errorObject.detail = error.statusText;
-        this.MessageService.add(this.alertService.errorObject);
+        this.error("Server error");
       }
     );
   }
@@ -369,13 +404,20 @@ export class BatchProcessComponent implements OnInit {
     if (date != '') {
       const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-        this.columnsData = this.filterData;
-        this.columnsData = this.columnsData.filter((element) => {
-          const dateF = this.datePipe.transform(element.CreatedOn, 'yyyy-MM-dd')
-          return dateF >= frmDate && dateF <= toDate;
-        });
-        this.dataLength = this.columnsData.length;
+      this.search_placeholder = `From "${frmDate}" to "${toDate}"`;
+        if(frmDate && toDate){
+          if (this.datePicker.overlayVisible) {
+            this.datePicker.hideOverlay();
+          }
+            this.columnsData = this.filterData;
+            this.columnsData = this.columnsData.filter((element) => {
+              const dateF = this.datePipe.transform(element.CreatedOn, 'yyyy-MM-dd')
+              return dateF >= frmDate && dateF <= toDate;
+            });
+            this.dataLength = this.columnsData.length;
+        }
     } else {
+      this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon'
       this.columnsData = this.filterData;
       this.dataLength = this.columnsData.length;
     }
@@ -384,4 +426,68 @@ export class BatchProcessComponent implements OnInit {
     this.filterByDate('');
   }
 
+  removeDuplicates(array, property) {
+    return array.filter((obj, index, self) =>
+      index === self.findIndex((o) => o[property] === obj[property])
+    );
+  }
+
+  onSelectVendor(event){
+
+  }
+
+  filterByVendorName(event) {
+
+  }
+
+  onSelectStatus(event) {
+    this.ngxSpinner.show();
+    if(event.id != 0) {
+      this.columnsData = this.filterData;
+      this.columnsData = this.columnsData.filter(ele=>{
+        return event.name.toLowerCase() == ele.status.toLowerCase();
+      })
+    } else {
+      this.columnsData = this.filterData;
+      this.dataLength = this.columnsData?.length;
+    }
+    this.ds.vendor_exc_status = event;
+    this.ngxSpinner.hide();
+  }
+  filterByStatus(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.statusData.length; i++) {
+      let status = this.statusData[i];
+      if (
+        status.name.toLowerCase().includes(query.toLowerCase())
+      ) {
+        filtered.push(status);
+      }
+    }
+    this.filteredStatusList = filtered;
+  }
+
+  universalSearch(value){
+    this.ds.vendor_exc_uniSearch = value;
+    // this.ngxSpinner.show();
+    //   this.columnsData = this.filterData;
+    //   this.columnsData = this.columnsData.filter(ele=>{
+    //     return (ele.status.toLowerCase() || 
+    //     ele.EntityName.toLowerCase() ||  
+    //     ele.PODocumentID.toLowerCase() || 
+    //     ele.VendorName.toLowerCase() || 
+    //     ele.docheaderID.toLowerCase() || 
+    //     ele.sender.toLowerCase()).includes(value.toLowerCase());
+    //   })
+    
+    // console.log(this.columnsData);
+    // this.ngxSpinner.hide();
+  }
+  success(msg) {
+    this.alertService.success_alert(msg);
+  }
+  error(msg) {
+   this.alertService.error_alert(msg);
+  }
 }

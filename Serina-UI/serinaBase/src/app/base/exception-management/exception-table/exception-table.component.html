@@ -1,261 +1,131 @@
-<div>
-  <div>
-    <div *ngIf="!dashboardViewBoolean" class="searchBar">
-      <input
-        class="searchInput"
-        pInputText
-        type="text"
-        placeholder="Search + Enter"
-        [(ngModel)]="globalSearch"
-        (keyup)="searchInvoice($event.target.value)"
-        (input)="allInvoice.filterGlobal($event.target.value, 'contains')"
-      />
-      <span class="material-icons searchIcon"> search </span>
-    </div>
-    <p-table
-      #allInvoice
-      [value]="columnsData"
-      [rows]="rows"
-      [first]="first"
-      [globalFilterFields]="columnsToDisplay"
-      (onPage)="paginate($event)"
-      [columns]="invoiceColumns"
-      [paginator]="showPaginatorAllInvoice"
-      [showFirstLastIcon]="true"
-      [showCurrentPageReport]="true"
-      selectionMode="single" 
-      [(selection)]="selectedFields1" 
-      dataKey="id"
-      stateStorage="session"
-      [stateKey]="stateTable"
-      styleClass="p-datatable-striped"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-      [rowsPerPageOptions]="[10, 25, 50]"
-    >
-      <ng-template pTemplate="header" let-columns>
-        <tr *ngIf="batchBoolean">
-          <th
-            *ngFor="let col of columns"
-            [pTooltip]="col.columnDescription"
-            tooltipPosition="top"
-            [ngStyle]="{
-              width:
-                col.header === 'Status' && router.url.includes('home')
-                  ? '42%'
-                  : '',backgroundColor : ap_boolean ? '#313971' : '#a72845'
-            }"
-            [pSortableColumn]="col.field"
-          >
-            {{ col.header }}
-          </th>
-          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-            [ngStyle]="{'width': isDesktop? 'auto':'56px'}">
-            Actions
-          </th>
-        </tr>
-        <tr *ngIf="!batchBoolean">
-          <th
-            *ngFor="let col of columns"
-            [pTooltip]="col.columnDescription"
-            tooltipPosition="top"
-            [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-            [ngStyle]="{ width: col.header === 'Rule' ? '40%' : '' }"
-            [pSortableColumn]="col.field"
-          >
-            {{ col.header }}
-          </th>
-          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-            [ngStyle]="{'width': isDesktop? 'auto':'56px'}">
-            Actions
-          </th>
-        </tr>
-        <tr>
-          <td *ngFor="let col of columns" class="sticky_top">
-            <!-- <input
-              pInputText
-              type="text"
-              (input)="
-                allInvoice.filter(
-                  $event.target.value || ' ',
-                  col.field,
-                  'contains'
-                )
-              "
-              [value]="allInvoice.filters[col.field]?.value"
-              [placeholder]="'Search by ' + col.header"
-              class="tableSearchInput"
-            /> -->
-            <div [ngSwitch]="col.field">
-              <div *ngSwitchCase="'status'" class="f-12">
-                <p-columnFilter
-                  [field]="col.field"
-                  matchMode="contains"
-                  [showMenu]="false"
-                >
-                  <ng-template pTemplate="filter">
-                    <p-dropdown
-                      [options]="statusData"
-                      [(ngModel)]="selectedStatus"
-                      (onChange)="filter($event.value,col.field)"
-                      placeholder="Select Status"
-                      [showClear]="false"
-                      styleClass="w-100 text-center f-11"
-                    ></p-dropdown>
-                  </ng-template>
-                </p-columnFilter>
-              </div>
-              <div *ngSwitchDefault>
-                <input
-                  pInputText
-                  type="text"
-                  (input)="
-                    allInvoice.filter(
-                      $event.target.value || ' ',
-                      col.field,
-                      'contains'
-                    )
-                  "
-                  [value]="allInvoice.filters[col.field]?.value"
-                  [placeholder]="'Search by ' + col.header"
-                  class="tableSearchInput"
-                />
-
-                <!-- <p-columnFilter placeholder="Search by ID" type="text"  [field]="col.field"></p-columnFilter> -->
-              </div>
-            </div>
-
-            <!-- <p-columnFilter placeholder="Search by ID" type="text"  [field]="col.field"></p-columnFilter> -->
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-invoiceData let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns">
-            <div [ngSwitch]="col.field">
-              <div *ngSwitchCase="'All_Status'">
-                <div class="container">
-                  <span
-                    *ngFor="let item of invoiceData[col.field]; let i = index"
-                  >
-                    <span
-                      class="circle-desc"
-                      [class.circle-desc-active]="
-                        item.documentStatus == 'Passed'
-                      "
-                      [ngStyle]="{
-                        top:
-                          i == 1 || i == 3 || i == 5 || i == 7
-                            ? '-12px'
-                            : '13px'
-                      }"
-                      >{{ item.DocumentSubStatus.status }}</span
-                    >
-                    <span
-                      class="circles"
-                      [class.active]="item.documentStatus == 'Passed'"
-                      [class.current]="item.documentStatus == 'In progress'"
-                    ></span>
-                    <span
-                      class="bar"
-                      *ngIf="i != invoiceData['All_Status'].length - 1"
-                    ></span>
-                  </span>
-                </div>
-              </div>
-              <div
-                *ngSwitchCase="'Approvaltype'"
-                [title]="invoiceData['Approvaltype']"
-              >
-                <div
-                  class="approvalDiv"
-                  [ngStyle]="{
-                    'background-color':
-                      invoiceData[col.field] == 'Batch Approval'
-                        ? '#95dce4'
-                        : '#ffc3c7'
-                  }"
-                >
-                  {{ invoiceData[col.field] }}
-                </div>
-              </div>
-              <div
-                class="elipse"
-                [title]="invoiceData[col.field]"
-                *ngSwitchDefault
-              >
-              <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
-                <span *ngIf="invoiceData[col?.field]"  [ngClass]="invoiceData[col?.field] < exceptionAlertdate ? 'blinking-element': ''">{{ invoiceData[col?.field] + "Z" | date:'yyyy-MM-dd, h:mm a' }}</span>  
-              </span>
-              <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">
-                <span *ngIf="col.field == 'status' && (invoiceData.documentsubstatusID == 40 || invoiceData.documentsubstatusID == 32)" [pTooltip] = "invoiceData.documentdescription"> <i class="fa fa-info-circle"></i> </span> {{ invoiceData[col.field] }}
-              </span>
-                <span
-                  *ngIf="invoiceData?.oldrule && col.header == 'Rule'"
-                  class="prev_value float-right"
-                  >prev rule : {{ invoiceData.oldrule }}</span
-                >
-              </div>
-            </div>
-          </td>
-          <td *ngIf="isDesktop">
-            <i
-              *ngIf="
-                !router.url.includes('ExceptionManagement') &&
-                router.url != '/customer/Create_GRN_inv_list'
-              "
-              class="pi pi-eye f-16 showEye mr-2"
-              (click)="viewInvoice(invoiceData)"
-            ></i>
-            <i
-              *ngIf="
-                router.url.includes('ExceptionManagement') ||
-                router.url == '/customer/Create_GRN_inv_list'
-              "
-              class="fa fa-pencil-square-o actionsBtn"
-              aria-hidden="true"
-              (click)="editInvoice(invoiceData)"
-            ></i>
-
-            <!-- <i *ngIf="router.url == '/customer/invoice/allInvoices'" pTooltip="Click here to view Full Status details" tooltipPosition="left" class="fa fa-info-circle actionsBtn" (click)="viewStatusPage(invoiceData)"></i> -->
-          </td>
-          <td *ngIf="!isDesktop">
-            <i
-              class="fa fa-pencil-square-o f-13 mr-2 font_weight_500"
-              (click)="editInvoice(invoiceData)"
-            ></i>
-            <i *ngIf="router.url.includes('ExceptionManagement')" class="fa fa-chevron-down pointer" aria-hidden="true" (click)="clickDrildown(invoiceData)"></i>
-          </td>
-        </tr>
-        <tr *ngIf="drillBool && invoiceData.idDocument == docId" class="drill_tr mob_tr">
-          <div *ngFor="let data of drilldownarray" class="drill_div">
-            <div class="f-12">{{data.header}}</div>
-            <div class="f-11">{{data.field}}</div>
+<div class="card_container d-flex flex-wrap" 
+ [ngClass]="{
+  'exc_height': router.url.includes('ExceptionManagement'),
+  'grn_height': router.url.includes('Create_GRN_inv_list'),
+  'doc_height': router.url.includes('invoice') || router.url.includes('documentSummary')
+}"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [scrollWindow]="false"
+        (scrolled)="onScroll()">
+  <ng-container *ngFor="let e_data of columnsData | filter : searchText">
+    <div class="card" (click)="!router.url.includes('documentSummary') ?editInvoice(e_data):''">
+      <div *ngIf="!router.url.includes('documentSummary')" class="d-flex justify-content-between">
+        <div
+          class="f-12 status_btn"
+          [title]="e_data?.docheaderID"
+          [ngStyle]="{
+            backgroundColor: router.url.includes('ExceptionManagement')
+              ? '#FEDFE2'
+              : '#358dc01a'
+          }"
+        >
+          {{
+            router.url.includes("ExceptionManagement")
+              ? e_data?.status
+              : e_data?.docheaderID
+          }}
+        </div>
+        <div class="f-12 po_number" [title]="e_data?.PODocumentID">
+          {{ e_data?.PODocumentID }}
+        </div>
+        <div *ngIf="router.url.includes('PO')" class="refresh" (click)="refreshPO($event,e_data.idDocument)">
+          <img src="assets/Serina Assets/new_theme/refresh-ccw.svg" alt="refresh" >
+        </div>
+      </div>
+      <div class="headings" [ngStyle]="{'height':router.url.includes('rejected')?'auto':'60px'}">
+        <div class="f-14 capitalized_text">{{ e_data?.VendorName?.toLowerCase() }} {{e_data?.ServiceProviderName?.toLowerCase()}}</div>
+        <div class="f-14 shade_color">{{ e_data?.EntityName }}</div>
+      </div>
+      <div class="d-flex justify-content-between" *ngIf="router.url.includes('invoice')" style="position: relative;">
+        <div class="d-flex" >
+          <ng-container *ngFor="let icon of source_icons">
+            <div class="src mr-2" *ngIf="icon?.name == e_data?.sourcetype &&(router.url.includes('allInvoices') ||router.url.includes('ServiceInvoices')||router.url.includes('archived'))"><img  [src]="icon?.src" [alt]="icon?.name"></div>
+          </ng-container>
+          <div class="f-12 status_text">
+            <span *ngIf="router.url.includes('allInvoices') ||router.url.includes('ServiceInvoices') || router.url.includes('PO') ">
+              <ng-container *ngFor="let color of bgColorCode">
+                <span *ngIf="e_data.documentStatusID == color.sub_id && e_data.documentsubstatusID != 39"
+                [ngStyle]="{
+                  color:
+                    e_data.documentStatusID == color.id
+                      ? color.textColor
+                      : ''
+                }">{{ e_data?.docstatus }}</span>
+              </ng-container>
+            </span>
+            <span class="text_color" *ngIf="router.url.includes('GRN') || router.url.includes('archived')">
+              GRN: {{ e_data?.docheaderID }}
+            </span>
+            <span class="text_color" *ngIf="router.url.includes('rejected')">
+              {{ e_data?.documentdescription }}
+            </span>
           </div>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td [attr.colspan]="ColumnLength" class="p-t-30">
-            <img src="assets/Group 2691.png" width="260" alt="imageUrl" />
-            <br />
-            No invoices found.
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="paginatorleft"> </ng-template>
-      <ng-template pTemplate="paginatorright"> </ng-template>
-    </p-table>
-  </div>
-  <ngx-spinner
-    bdColor="rgba(251, 251, 251, 0.8)"
-    size="medium"
-    color="#070900"
-    [fullScreen]="false"
-    type="ball-spin-clockwise"
-  >
-    <p style="color: rgb(0, 0, 0)"></p>
-  </ngx-spinner>
+        </div>
+        <div *ngIf="router.url.includes('allInvoices')" class="src w-16" (click)="!isOpen ? more_opt($event, e_data?.idDocument) : close_more($event,e_data?.idDocument)">
+          <i *ngIf="!isOpen || invoiceID != e_data?.idDocument" class="fa fa-ellipsis-v f-14" ></i>
+          <span *ngIf="isOpen && invoiceID == e_data?.idDocument" class="material-icons f-14"> close </span>
+
+        </div>
+        <div id="more_dp{{e_data?.idDocument}}" class="f-12 dropdown">
+          
+          <div (click)="checkStatus($event,e_data)">ERP Status</div>
+          <div (click)="viewStatusPage($event,e_data)">Invoice Status History</div>
+          <div *ngIf="e_data.documentStatusID == 1 && isAdmin" (click)="triggerBatch($event,e_data.idDocument)"
+          [disabled]="
+            triggerBoolean && invoiceID == e_data.idDocument
+          ">Re-trigger the batch</div>
+          <div *ngIf="e_data.documentStatusID == 1 && isAdmin" (click)="changeStatus($event,e_data.idDocument)">Status rollback</div>
+        </div>
+        <div *ngIf="router.url.includes('GRN')" class="grn_src f-12" [ngStyle]="{ backgroundColor:e_data?.grn_type == 'Serina' ? '#358DC0':'#14BB12'}">
+          {{e_data?.grn_type}}
+        </div>
+      </div>
+      
+
+      <div
+      *ngIf="!router.url.includes('documentSummary')"
+        class="card_footer d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <!-- <img
+            class="d-inline mr-3"
+            src="assets/Serina Assets/new_theme/calender.svg"
+            alt="calender"
+          /> -->
+          <i class="pi pi-calendar p_icon mr-3"></i>
+          <div class="d-inline f-12" *ngIf="e_data?.CreatedOn">
+            {{ e_data?.CreatedOn + "Z" | date : "yyyy-MM-dd, h:mm a" }}
+          </div>
+        </div>
+
+        <div class="f-12 text_color"> AED:{{ e_data?.totalAmount }}</div>
+      </div>
+
+      <div class="d-flex total_div justify-content-between p-2" *ngIf="router.url.includes('documentSummary')">
+        <div class="pages_div f-12">
+          Total Pages 
+          <div class="count_holder">{{ e_data?.TotalPages}}</div>
+        </div>
+        <div class="f-12">
+          Total Invoices 
+          <div class="count_holder">{{ e_data?.TotalInvoices}}</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div *ngIf="!(columnsData?.length > 0)" class="f-12">No data found.</div>
 </div>
+
+<ngx-spinner
+  bdColor="rgba(251, 251, 251, 0.8)"
+  size="medium"
+  color="#070900"
+  [fullScreen]="false"
+  type="ball-spin-clockwise"
+>
+  <p style="color: rgb(0, 0, 0)"></p>
+</ngx-spinner>
 <!-- Cnfirmation Dialog -->
 <p-dialog
   header=" "
@@ -292,5 +162,42 @@
         Cancel
       </button> -->
     </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Cnfirmation Dialog -->
+<p-dialog
+  header=" "
+  [(visible)]="checkstatusPopupBoolean"
+  [breakpoints]="{ '960px': '75vw' }"
+  [style]="{ width: '30vw' }"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="text-center">
+    <div>
+      <!-- <i
+        class="pi pi-exclamation-triangle"
+        style="font-size: 4rem; color: red"
+      ></i> -->
+    </div>
+    <div class="deleteDivText">
+      {{ statusText }} <br />
+      <div class="f-12">{{ statusText1 }}</div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <!-- <div class="d-flex justify-content-center mb-3">
+      <button class="btn btnVender bg-btn-success mr-3" (click)="logout()">
+        Yes
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        (click)="displayResponsivepopup = false"
+      >
+        Cancel
+      </button>
+    </div> -->
   </ng-template>
 </p-dialog>

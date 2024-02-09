@@ -36,6 +36,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   openBoolean: boolean;
   last_login1: any;
   openBooleanException: boolean;
+  displayResponsivepopup: boolean;
+  BtnText = 'Are you sure you want to Logout?';
   messageBox: any;
   financeapproveDisplayBoolean: boolean;
   uploadPermissionBoolean: boolean;
@@ -64,6 +66,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   sidebarMode = 'side';
   isnotTablet = true;
   portalName:string;
+  more_icon = 'expand_more';
+  more_text = 'More';
+  name_short: string;
+  GRNApprovalAccess: boolean;
+  supplier_names = "Vendors & Service Providers";
+  supplier_route = "vendor/vendorDetails";
 
   constructor(
     public router: Router,
@@ -100,9 +108,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.show2ndMenu();
     this.servicesData();
     this.getPermissions();
-    this.subscribeNewTopic();
-    this.notification_logic();
+    // this.subscribeNewTopic();
+    // this.notification_logic();
     this.getEntitySummary();
+    this.getMoreText();
     // this.readVendors();
     // this.readVendorNames();
   }
@@ -112,6 +121,17 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       // Clear the session storage item when the page is reloaded
       sessionStorage.removeItem('editException');
     };
+  }
+  getMoreText(){
+    if(this.router.url.includes('documentSummary')){
+      this.more_text = 'Summary';
+    } else if(this.router.url.includes('vendor')){
+      this.more_text = this.supplier_names;
+    } else if(this.router.url.includes('vendor')){
+      this.more_text = 'Roles';
+    } else {
+      this.more_text = 'More';
+    }
   }
   appendScript (){
     if(window.screen.width <= 767){
@@ -129,12 +149,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.isDesktop = true;
       this.dataStoreService.isDesktop = true;
     }
-    const script = this.renderer.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
+    // const script = this.renderer.createElement('script');
+    // script.type = 'text/javascript';
+    // script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
 
     // append the script element to the body of the document
-    this.renderer.appendChild(document.body, script);
+    // this.renderer.appendChild(document.body, script);
   }
   removeSession(){
     sessionStorage.clear();
@@ -183,6 +203,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    if(this.vendorInvoiceAccess && this.serviceInvoiceAccess) this.supplier_names = 'Vendors & Service Providers';
+    if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess) this.supplier_names = 'Vendors';
+    if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess){
+      this.supplier_names = 'Service Providers';
+      this.supplier_route = "vendor/ServiceDetails";
+    } 
     
     if(this.dataStoreService.configData.documentTypes.length >1){
       this.bothDocBoolean  = true;
@@ -243,6 +269,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       if(this.userDetails.userdetails.show_updates){
         this.releaseDocs();
       }
+      this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0]
 
   }
 
@@ -277,32 +304,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
 
       const accessPermissionTypeId = permissionInfo.AccessPermissionTypeId;
 
-      switch (accessPermissionTypeId) {
-        case 1:
-          permissionService.viewBoolean = true;
-          permissionService.editBoolean = false;
-          permissionService.changeApproveBoolean = false;
-          permissionService.financeApproveBoolean = false;
-          break;
-        case 2:
-          permissionService.viewBoolean = true;
-          permissionService.editBoolean = true;
-          permissionService.changeApproveBoolean = false;
-          permissionService.financeApproveBoolean = false;
-          break;
-        case 3:
-          permissionService.viewBoolean = true;
-          permissionService.editBoolean = true;
-          permissionService.changeApproveBoolean = true;
-          permissionService.financeApproveBoolean = false;
-          break;
-        case 4:
-          permissionService.viewBoolean = true;
-          permissionService.editBoolean = true;
-          permissionService.changeApproveBoolean = true;
-          permissionService.financeApproveBoolean = true;
-          break;
-      }
+      this.permissionService.viewBoolean = accessPermissionTypeId >= 1;
+      this.permissionService.editBoolean = accessPermissionTypeId >= 2;
+      this.permissionService.changeApproveBoolean = accessPermissionTypeId >= 3;
+      this.permissionService.financeApproveBoolean = accessPermissionTypeId === 4;
 
     }
   }
@@ -363,8 +368,14 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   }
 
   // close logout dropdown if click outside
-  onClickedOutside(e: Event) {
-    this.showLogout = false;
+  onClickedOutside(e: Event,str) {
+    if(str == 'logout') {
+      this.showLogout = false;
+    } else if(str == 'more') {
+      this.more_icon = 'expand_more';
+      document.getElementById('body_content').style.opacity = '1';
+      // this.more_text = 'More';
+    }
   }
 
   // logout
@@ -475,19 +486,32 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
     }
   }
-  logout_confirmation(){
-    const dialogRef:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{
-      width: '30svw',
-      height: '40svh',
+  more_routes(){
+    if(this.more_icon == 'expand_more'){
+      this.more_icon = 'expand_less';
+      document.getElementById('body_content').style.opacity = '0.2';
+    } else {
+      this.more_icon = 'expand_more';
+      document.getElementById('body_content').style.opacity = '1';
+    }
+  }
+  onMenuChange(str){
+    document.getElementById('body_content').style.opacity = '1';
+    this.more_icon = 'expand_more';
+    this.more_text = str;
+  }
+  confirm_pop(){
+    const drf:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{ 
+      width : '400px',
+      height: '300px',
       hasBackdrop: false,
-      data:{  body: "Are you sure you want to Logout?"}
-    })
+      data : { body: this.BtnText, type: 'confirmation',heading:'Confirmation',icon:'assets/Serina Assets/new_theme/Group 1336.svg'}})
 
-    dialogRef.afterClosed().subscribe((response:any)=>{
-      if(response){
-        this.logout();
-      }
-    })
+      drf.afterClosed().subscribe((bool)=>{
+        if(bool){
+          this.logout();
+        } 
+      })
   }
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -18,7 +18,8 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { PermissionService } from 'src/app/services/permission.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
-import { MessageService } from 'primeng/api';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-exception-table',
@@ -29,11 +30,15 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   @Input() columnsData;
   @Input() invoiceColumns;
   @Input() columnsToDisplay;
-  showPaginatorAllInvoice:boolean;
+  @Input() showPaginatorAllInvoice;
   @Input() ColumnLength;
+  @Input() searchText:string;
   @Output() public searchInvoiceData: EventEmitter<any> =
     new EventEmitter<any>();
-
+  // @Output() public paginateEmit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() public paginationEvent: EventEmitter<any> =
+    new EventEmitter<boolean>();
+  @Output() public systemCheckEmit: EventEmitter<any> = new EventEmitter<any>();
   showPaginator: boolean;
   // columnsToDisplay =[];
   _selectedColumns: any[];
@@ -71,6 +76,24 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   drillBool: boolean;
   docId: any;
   user_name: string;
+  // offCount_grn = 1;
+  // offSetArr = [];
+  source_icons = [
+    { src: 'assets/Serina Assets/new_theme/email.png',name:'Mail'},
+    { src: 'assets/Serina Assets/new_theme/whatsapp.png',name:'WhatsApp'},
+    { src: 'assets/Serina Assets/new_theme/sharepoint-logotype.png',name:'SharePoint'},
+    { src: 'assets/Serina Assets/new_theme/internet.png',name:'Web'},
+    { src: 'assets/Serina Assets/new_theme/email.png',name:'API'},
+    { src: 'assets/Serina Assets/new_theme/email.png',name:'RPA'}
+  ]
+  fst: number = 0;
+  isAdmin: boolean;
+  triggerBoolean: boolean;
+  invoiceID: any;
+  checkstatusPopupBoolean: boolean;
+  statusText: any;
+  statusText1: string;
+  isOpen: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -81,14 +104,20 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     private ds: DataService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private alertService: AlertService,
-    private MessageService: MessageService
-  ) { }
+    private alertService : AlertService,
+    private md: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
+    let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    if (userRole == 'customer super admin' || userRole == 'ds it admin') {
+      this.isAdmin = true;
+    } else {
+      this.isAdmin = false;
+    }
     if(this.columnsData.length>10){
       this.showPaginatorAllInvoice = true;
     }
@@ -251,21 +280,55 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   // edit invoice details if something wrong
   editInvoice(e) {
-    this.ds.editableInvoiceData = e;
-    this.ds.subStatusId = e?.documentsubstatusID;
-    this.ExceptionsService.invoiceID = e.idDocument;
-    this.tagService.editable = true;
-    this.sharedService.invoiceID = e.idDocument;
+    if(this.router.url.includes('invoice')){
+      this.tagService.submitBtnBoolean = false;
+      let route: string;
+      if (this.router.url.includes('PO')) {
+        route = 'PODetails';
+        delete this.ds.editableInvoiceData;
+      } else if (this.router.url.includes('GRN')) {
+        route = 'GRNDetails';
+        delete this.ds.editableInvoiceData;
+      } else if (this.router.url.includes('ServiceInvoices')) {
+        route = 'serviceDetails';
+        this.ds.editableInvoiceData = e;
+      } else {
+        route = 'InvoiceDetails';
+        this.ds.editableInvoiceData = e;
+      }
+      if (this.userType == 'vendor_portal') {
+        this.router.navigate([
+          `/vendorPortal/invoice/${route}/${e.idDocument}`,
+        ]);
+      } else if (this.userType == 'customer_portal') {
+        if (e.documentsubstatusID != 30) {
+          this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
+        } else {
+          this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
+        }
+      }
+      this.tagService.createInvoice = true;
+      this.tagService.displayInvoicePage = false;
+      this.tagService.editable = false;
+      this.sharedService.invoiceID = e.idDocument;
+    } else {
+      this.ds.editableInvoiceData = e;
+      this.ExceptionsService.invoiceID = e.idDocument;
+      this.ds.subStatusId = e.idDocumentSubstatus;
+      this.tagService.editable = true;
+      this.sharedService.invoiceID = e.idDocument;
     this.tagService.documentType = e.UploadDocType;
     this.ds.idDocumentType = e.idDocumentType;
     this.ds.entityID = e.idEntity;
     this.sharedService.selectedEntityId = e.idEntity;
-    if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
-      this.ds.grnWithPOBoolean = false;
-      // this.router.navigate([
-      //   `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
-      // ]);
+    if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`  || this.router.url.includes('GRN_approvals')) {
       this.updatePO(e);
+      this.ds.grnWithPOBoolean = false;
+    } else if(this.router.url.includes('Service_ExceptionManagement')){
+      this.tagService.submitBtnBoolean = true;
+      this.router.navigate([
+        `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
+      ]);
     } else {
       this.SpinnerService.show();
       let session = {
@@ -275,23 +338,18 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();
         if (data.result?.lock_info?.lock_status == 0) {
+          this.SpinnerService.show();
           this.ExceptionsService.checkInvStatus().subscribe((resp:any)=>{
+            this.SpinnerService.hide();
             if(resp.result.status == e.documentStatusID && resp.result.substatus == e.documentsubstatusID ) {
           if (this.tagService.batchProcessTab == 'normal' || this.tagService.batchProcessTab == 'PODoc') {
             if (this.permissionService.editBoolean == true) {
-              if (e.documentsubstatusID == 8 ||
-                e.documentsubstatusID == 16 ||
-                e.documentsubstatusID == 17 ||
-                e.documentsubstatusID == 33 ||
-                e.documentsubstatusID == 21 ||
-                e.documentsubstatusID == 27 ||
-                e.documentsubstatusID == 35 ||
-                e.documentsubstatusID == 75) {
-                  if(this.tagService.batchProcessTab == 'PODoc'){
-                    this.router.navigate([
-                      `${this.portalName}/ExceptionManagement/batchProcess/SO_generate/${e.idDocument}`,
-                    ]);
-                  } else {
+              if (e.documentStatusID == 24) {
+                this.tagService.approval_selection_boolean = true;
+              } else if (e.documentStatusID == 49 || e.documentsubstatusID == 51) {
+                this.tagService.LCM_boolean = true;
+                this.tagService.approval_selection_boolean = true;
+              }
                     if(e.documentsubstatusID == 35){
                       this.getPOLines(e);
                     } else {
@@ -299,24 +357,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                         `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
                       ]);
                     }
-                  }
-                
-              } else {
-                this.ExceptionsService.selectedRuleId = e.ruleID;
-                this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
-                ]);
 
-                if (e.documentsubstatusID == 29) {
-
-                } else if (e.documentStatusID == 24) {
-                  this.tagService.approval_selection_boolean = true;
-                } else if (e.documentStatusID == 49 || e.documentsubstatusID == 51) {
-                  this.tagService.LCM_boolean = true;
-                  this.tagService.approval_selection_boolean = true;
-                }
-              }
-              // this.invoiceListBoolean = false;
               let sessionData = {
                 session_status: true,
               };
@@ -356,13 +397,15 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             this.tagService.approval_selection_boolean = true;
             // this.ExceptionsService.selectedRuleId = e?.ruleID;
             this.router.navigate([
-              'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,
+              `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`
             ]);
           }
         } else {
-          this.alertService.errorObject.detail = "Hey someone already made changes on this document, can you refresh and try again?"
-          this.MessageService.add(this.alertService.errorObject);
+          this.error("Hey someone already made changes on this document, can you refresh and try again?")
         }
+      }, err=>{
+        this.SpinnerService.hide();
+        this.error("Server error");
       })
         } else {
           this.displayResponsivepopup = true;
@@ -370,9 +413,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         }
       }, err => {
         this.SpinnerService.hide();
-        this.alertService.errorObject.detail = "Please try after sometime"
-        this.MessageService.add(this.alertService.errorObject);
+        this.error("Please try after sometime");
       });
+    }
     }
   }
 
@@ -388,8 +431,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       ]);
     }, err => {
       this.SpinnerService.hide();
-      this.alertService.errorObject.detail = "Server error";
-      this.MessageService.add(this.alertService.errorObject);
+      this.error("Server error")
     })
   }
 
@@ -415,30 +457,216 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
 
   updatePO(e) {
-    this.SpinnerService.show();
-    this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {
-      this.sharedService.updatePO(data.result).subscribe((data: any) => {
-        if(data?.po_status.toLowerCase() == 'open' && data?.po_confirmation_status.toLowerCase() == 'confirmed'){
-          this.router.navigate([
-            `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
-          ]);
-        } else if(data.po_status.toLowerCase() != 'open') {
-          this.displayResponsivepopup = true;
-          this.confirmText = `Hey ${this.user_name}, PO(${e.PODocumentID}) is closed. Please check if entered PO value is correct, if still issue persist, please contact support`;
-        } else if(data.po_status.toLowerCase() != 'confirmed') {
-          this.displayResponsivepopup = true;
-          this.confirmText = `Hey ${this.user_name}, PO(${e.PODocumentID}) is not confirmed. please confirm it in the ERP and try again.`;
-        }
-        
+    this.invoiceID = e.idDocument;
+      this.SpinnerService.show();
+      this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {
+        let bool:boolean;
+        let icon;
+        let header:string;
+        this.sharedService.updatePO(data.result).subscribe((data: any) => {
+          if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
+            this.permissionService.enable_create_grn = true;
+            if(this.router.url.includes('GRN_approvals')){
+            this.router.navigate([
+              `${this.portalName}/GRN_approvals/approval_id/${e.idDocument}`,
+            ]);
+           } else {
+            this.router.navigate([
+              `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+            ]);
+           }
+          } else if(data.po_status?.toLowerCase() != 'open') {
+            bool = true;
+            icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
+            header = 'Closed';
+            this.confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
+          } else if(data.po_status?.toLowerCase() != 'confirmed') {
+            bool = true;
+            header = 'Amended';
+            icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
+            
+            this.confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
+          }
+
+          if(bool){
+            const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
+              width: '400px',
+              height: '300px',
+              hasBackdrop: false,
+              data: { body: this.confirmText, type: 'poStatus', icon:icon, heading: header}
+            })
+            drf.afterClosed().subscribe((bool) => {
+              if (bool) {
+                this.view_GRn();
+              }
+            })
+          }
+          
+          this.SpinnerService.hide();
+        }, err => {
+          this.SpinnerService.hide();
+          this.error("Server error");
+        })
+      },err => {
+        this.error("Server error");
         this.SpinnerService.hide();
-      }, err => {
-        this.SpinnerService.hide();
-        this.alertService.errorObject.detail = 'Server error';
-        this.MessageService.add(this.alertService.errorObject);
       })
-    },err => {
-      this.SpinnerService.hide();
-    })
-    
   }
+  view_GRn(){
+    this.permissionService.enable_create_grn = false;
+    if(this.router.url.includes('GRN_approvals')){
+      this.router.navigate([
+        `${this.portalName}/GRN_approvals/approval_id/${this.invoiceID}`,
+      ]);
+    } else {
+      this.router.navigate([
+        `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${this.invoiceID}`,
+      ]);
+    }
+  }
+
+  more_opt(event: Event,id) {
+    this.invoiceID = id;
+    this.isOpen = true;
+    let el_id = `more_dp${id}`
+    event.stopPropagation();
+    document.getElementById(el_id).style.display = 'block';
+  }
+  close_more(event: Event,id){
+    this.isOpen = false;
+    this.invoiceID = id;
+    let el_id = `more_dp${id}`;
+    event.stopPropagation();
+    document.getElementById(el_id).style.display = 'none';
+  }
+
+  onScroll(){
+    this.fst+10;
+    let evnt = {
+      first: this.fst,
+      rows : 50
+    }
+    if(this.router.url.includes('invoice')){
+       this.paginate_doc(evnt);
+       console.log('scrolled, Mobile mode');
+    } else {
+      console.log('Desktop mode');
+    }
+  }
+  paginate_doc(event) {
+    this.paginationEvent.emit(event);
+  }
+
+  changeStatus(event: Event,id) {
+    event.stopPropagation();
+    this.SpinnerService.show();
+    this.invoiceID = id;
+    this.sharedService.invoiceID = id;
+    let obj = {
+      "documentStatusID": 4,
+      "documentsubstatusID": 29
+    }
+    this.sharedService.changeStatus(obj).subscribe((data: any) => {
+      this.success(data.result);
+      this.systemCheckEmit.emit("inv");
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      this.error("Server error");
+    })
+  }
+
+  triggerBatch(event: Event,id) {
+    event.stopPropagation();
+    const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
+      width: '30%',
+      height: '35vh',
+      hasBackdrop: false,
+      data: { body: 'Are you sure you want to re-trigger the batch for the Invoice?', type: 'confirmation' }
+    })
+
+    drf.afterClosed().subscribe((bool) => {
+      if (bool) {
+        this.triggerBoolean = true;
+        let query = `?re_upload=false`;
+        this.invoiceID = id;
+        this.sharedService.invoiceID = id;
+        this.sharedService.syncBatchTrigger(query).subscribe((data: any) => {
+          let sub_status = null;
+
+          if (data) {
+            this.triggerBoolean = false;
+            for (const el of data[this.invoiceID]?.complete_status) {
+              if (el.status == 0) {
+                sub_status = el.sub_status;
+              }
+            };
+          }
+          if (sub_status != 1) {
+            // window.location.reload();
+            this.systemCheckEmit.emit("inv");
+          } else {
+            this.error("Hey, we are facing some issue so, our technical team will handle this Document")
+          }
+        }, (error => {
+          this.triggerBoolean = false;
+        }))
+      }
+    })
+
+  }
+  viewStatusPage(event: Event,e) {
+    event.stopPropagation();
+    this.sharedService.invoiceID = e.idDocument;
+    this.router.navigate([`${this.portalName}/invoice/InvoiceStatus/${e.idDocument}`]);
+  }
+  checkStatus(event: Event,e) {
+    event.stopPropagation();
+    this.SpinnerService.show();
+    let urlStr = ''
+    if (this.router.url.includes('payment-details-vendor')) {
+      urlStr = 'InvoicePaymentStatus';
+    } else {
+      urlStr = 'InvoiceStatus';
+    }
+    this.sharedService.checkInvStatus(e.idDocument, urlStr).subscribe((data: any) => {
+
+      if (urlStr == 'InvoiceStatus') {
+        this.statusText = data.Message;
+        if (data.IsPosted == 'Yes') {
+          this.statusText1 = 'Posted to ERP'
+        } else {
+          this.statusText1 = 'Not Posted to ERP'
+        }
+      } else {
+        this.statusText = data['Payment Status'];
+        this.statusText1 = `Payment date : ${data['Payment Date']}`;
+      }
+      this.checkstatusPopupBoolean = true;
+      this.SpinnerService.hide();
+    }, (err) => {
+      this.SpinnerService.hide();
+      this.error("Server error")
+    })
+  }
+  refreshPO(e: Event,id) {
+    e.stopPropagation();
+    this.SpinnerService.show();
+    this.sharedService.updatePO(id).subscribe((data: any) => {
+      this.SpinnerService.hide();
+      this.success("PO data updated.")
+      this.systemCheckEmit.emit("PO");
+    }, err => {
+      this.SpinnerService.hide();
+      this.error("Server error");
+    })
+  }
+
+  success(msg) {
+    this.alertService.success_alert(msg);
+  }
+  error(msg) {
+   this.alertService.error_alert(msg);
+  }
+
 }
