@@ -20,13 +20,13 @@ import { Calendar } from 'primeng/calendar';
 })
 export class CreateGRNComponent implements OnInit {
   ColumnsForGRN = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    // { field: 'Name', header: 'Rule' },
-    { field: 'CreatedOn', header: 'Uploaded Date' },
-    { field: 'PODocumentID', header: 'PO number' },
-    // { field: 'status', header: 'Status' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    // { dbColumnname: 'Name', columnName: 'Rule' },
+    { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
+    { dbColumnname: 'PODocumentID', columnName: 'PO number' },
+    // { dbColumnname: 'DocumentState', columnName: 'PO Status' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   columnsData = [];
   columnsDataPO = [];
@@ -35,13 +35,13 @@ export class CreateGRNComponent implements OnInit {
   columnsToDisplay = [];
 
   ColumnsForGRNApproval = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'Name', header: 'Rule' },
-    // { field: 'documentdescription', header: 'Description' },
-    // { field: 'All_Status', header: 'Status' },
-    { field: 'Approvaltype', header: 'Approval Type' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'Name', columnName: 'Rule' },
+    // { dbColumnname: 'documentdescription', columnName: 'Description' },
+    // { dbColumnname: 'All_Status', columnName: 'Status' },
+    { dbColumnname: 'Approvaltype', columnName: 'Approval Type' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   columnsToDisplayGRNApproval = [];
   viewType: any;
@@ -78,6 +78,9 @@ export class CreateGRNComponent implements OnInit {
   vendorName:string;
   PONumber:any;
   @ViewChild('datePicker') datePicker: Calendar;
+  pageNumber: any;
+  entityFormatList = [
+  ]
   
   constructor(
     private tagService: TaggingService,
@@ -96,6 +99,7 @@ export class CreateGRNComponent implements OnInit {
   ngOnInit(): void {
     if(this.permissionService.GRNPageAccess == true){
       if(this.router.url.includes('Create_GRN_inv_list')){
+        this.pageNumber = this.ds.crGRNTabPageNumber;
         this.api_route = 'readGRNReadyInvoiceList';
         this.viewType = this.tagService.GRNTab;
         this.isDesktop = this.ds.isDesktop;
@@ -106,6 +110,7 @@ export class CreateGRNComponent implements OnInit {
         this.readTableData('');
         this.readEntity();
       } else {
+        this.pageNumber = this.ds.aprTabPageNumber;
         this.api_route = 'GRNToBeApproved';
         this.readTableData_apr('');
       }
@@ -118,13 +123,13 @@ export class CreateGRNComponent implements OnInit {
 
   mob_columns() {
     this.ColumnsForGRN = [
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'VendorName', header: 'Vendor Name' },
-      // { field: 'Name', header: 'Rule' },
-      // { field: 'CreatedOn', header: 'Uploaded Date' },
-      { field: 'PODocumentID', header: 'PO number' },
-      // { field: 'status', header: 'Status' },
-      // { field: 'totalAmount', header: 'Amount' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      // { dbColumnname: 'Name', columnName: 'Rule' },
+      // { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO number' },
+      // { dbColumnname: 'status', columnName: 'Status' },
+      // { dbColumnname: 'totalAmount', columnName: 'Amount' },
     ];
   }
 
@@ -132,11 +137,11 @@ export class CreateGRNComponent implements OnInit {
   // to prepare display columns array
   prepareColumnsArray() {
     this.ColumnsForGRN.filter((element) => {
-      this.columnsToDisplay.push(element.field);
-      // this.invoiceColumnField.push(element.field)
+      this.columnsToDisplay.push(element.dbColumnname);
+      // this.invoiceColumnField.push(element.dbColumnname)
     });
     this.ColumnsForGRNApproval.filter((ele) => {
-      this.columnsToDisplayGRNApproval.push(ele.field);
+      this.columnsToDisplayGRNApproval.push(ele.dbColumnname);
     });
 
     this.GRNTableColumnLength = this.ColumnsForGRN.length + 1;
@@ -182,6 +187,7 @@ export class CreateGRNComponent implements OnInit {
       this.filterData = this.columnsData;
       setTimeout(() => {
           this.searchText = this.ds.grn_exc_uniSearch;
+          this.universalSearch(this.searchText);
       }, 1000);
       this.dataLength = this.columnsData.length;
       if(this.dataLength >10){
@@ -206,6 +212,7 @@ export class CreateGRNComponent implements OnInit {
       this.filterData = this.columnsData;
       setTimeout(() => {
           this.searchText = this.ds.grn_aprve_uniSearch;
+          this.universalSearch(this.searchText);
       }, 1000);
       this.dataLength = this.columnsData.length;
       if(this.dataLength >10){
@@ -324,13 +331,20 @@ export class CreateGRNComponent implements OnInit {
     this.checkPOData(id)
   }
   readPOLines(po_num) {
+    this.ngxSpinner.show();
     this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
+      this.ngxSpinner.hide();
       this.poLineData = data.result;
       this.PO_GRN_Number_line = this.poLineData;
       this.permissionService.enable_create_grn = true;
       // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
+      if(this.poLineData?.length <= 0){
+        this.alertService.errorObject.detail = "Oops, sorry no lines are available";
+        this.MessageService.add(this.alertService.errorObject);
+      }
 
     }, err => {
+      this.ngxSpinner.hide();
       this.error("Server error");
     })
   }
@@ -431,12 +445,15 @@ export class CreateGRNComponent implements OnInit {
       `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${this.sharedService.po_doc_id}`,
     ]);
   }
-  universalSearch(value){
-    if(this.api_route == 'readGRNReadyInvoiceList'){
-      this.ds.grn_exc_uniSearch = value;
-    } else {
-      this.ds.grn_aprve_uniSearch = value;
-    }
+
+  universalSearch(txt){
+      if(this.api_route == 'readGRNReadyInvoiceList'){
+        this.ds.grn_exc_uniSearch = txt;
+      } else {
+        this.ds.grn_aprve_uniSearch = txt;
+      }
+      this.columnsData = this.filterData;
+      this.columnsData = this.ds.searchFilter(txt,this.filterData);
   }
   filterByDate(date) {
     if (date != '') {
@@ -519,6 +536,14 @@ export class CreateGRNComponent implements OnInit {
   }
   error(msg) {
    this.alertService.error_alert(msg);
+  }
+  paginate(event){
+    console.log(event)
+    if(this.router.url.includes('Create_GRN_inv_list')){
+    this.ds.crGRNTabPageNumber = event.pageNumber;
+    } else {
+      this.ds.aprTabPageNumber = event.pageNumber;
+    }
   }
   ngOnDestroy(){
     this.md.closeAll();

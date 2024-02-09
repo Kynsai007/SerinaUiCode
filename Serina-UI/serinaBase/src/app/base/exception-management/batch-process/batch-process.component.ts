@@ -20,36 +20,24 @@ import { Calendar } from 'primeng/calendar';
 })
 export class BatchProcessComponent implements OnInit {
   ColumnsForBatch = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-   
-    { field: 'CreatedOn', header: 'Uploaded Date' },
-    { field: 'PODocumentID', header: 'PO number' },
-    { field: 'sender', header: 'Sender' },
-    { field: 'status', header: 'Status' },
-    { field: 'totalAmount', header: 'Amount' },
-  ];
-  ColumnsForBatchPO = [
-    // { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Customer Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-   
-    { field: 'CreatedOn', header: 'Uploaded Date' },
-    { field: 'PODocumentID', header: 'PO number' },
-    { field: 'sender', header: 'Sender' },
-    { field: 'status', header: 'Status' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
+    { dbColumnname: 'PODocumentID', columnName: 'PO number' },
+    { dbColumnname: 'sender', columnName: 'Sender' },
+    { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   serviceColumns = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'ServiceProviderName', header: 'Serviceprovider Name' },
-    { field: 'Account', header: 'Serviceprovider A/C' },
-    { field: 'EntityName', header: 'Entity Name' },
-    { field: 'status', header: 'Status' },
-    { field: 'sourcetype', header: 'Source' },
-    { field: 'CreatedOn', header: 'Uploaded Date' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'ServiceProviderName', columnName: 'Serviceprovider Name' },
+    { dbColumnname: 'Account', columnName: 'Serviceprovider A/C' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'sourcetype', columnName: 'Source' },
+    { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   columnsData = [];
   columnsDataPO = [];
@@ -58,13 +46,13 @@ export class BatchProcessComponent implements OnInit {
   columnsToDisplayPO = [];
 
   ColumnsForBatchApproval = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'Name', header: 'Rule' },
-    // { field: 'documentdescription', header: 'Description' },
-    // { field: 'All_Status', header: 'Status' },
-    { field: 'Approvaltype', header: 'Approval Type' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'Name', columnName: 'Rule' },
+    // { dbColumnname: 'documentdescription', columnName: 'Description' },
+    // { dbColumnname: 'All_Status', columnName: 'Status' },
+    { dbColumnname: 'Approvaltype', columnName: 'Approval Type' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   columnsToDisplayBatchApproval = [];
   viewType: any;
@@ -101,6 +89,7 @@ export class BatchProcessComponent implements OnInit {
   selected_status_obj;
   search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
   @ViewChild('datePicker') datePicker: Calendar;
+  pageNumber: any;
 
   constructor(
     private tagService: TaggingService,
@@ -164,22 +153,16 @@ export class BatchProcessComponent implements OnInit {
 
   mob_columns() {
     this.ColumnsForBatch = [
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'EntityName', header: 'Entity Name' },
-      { field: 'status', header: 'Status' },
-    ];
-    this.ColumnsForBatchPO = [
-      { field: 'VendorName', header: 'Customer Name' },
-      { field: 'EntityName', header: 'Entity Name' },
-      { field: 'PODocumentID', header: 'PO number' },
-      { field: 'status', header: 'Status' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+      { dbColumnname: 'status', columnName: 'Status' },
     ];
     this.serviceColumns = [
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'ServiceProviderName', header: 'Serviceprovider Name' },
-      { field: 'Account', header: 'Serviceprovider A/C' },
-      { field: 'status', header: 'Status' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'ServiceProviderName', columnName: 'Serviceprovider Name' },
+      { dbColumnname: 'Account', columnName: 'Serviceprovider A/C' },
+      { dbColumnname: 'status', columnName: 'Status' },
     ];
   }
 
@@ -196,7 +179,7 @@ export class BatchProcessComponent implements OnInit {
       this.getServiceInvoiceData();
     } else {
       this.heading = `${this.partytype} based Exception`;
-      this.isVendorBoolean = true;
+      this.pageNumber = this.ds.excTabPageNumber;this.isVendorBoolean = true;
       this.getBatchInvoiceData();
       if(this.apprveBool && this.portalName == 'customer'){
         this.getApprovalBatchData();
@@ -214,24 +197,19 @@ export class BatchProcessComponent implements OnInit {
   prepareColumnsArray() {
     if (this.dashboardViewBoolean == true) {
       this.ColumnsForBatch = this.ColumnsForBatch.filter((ele) => {
-        return ele.header != 'Status';
+        return ele.columnName != 'Status';
       });
     } 
     this.ColumnsForBatch.filter((element) => {
-      this.columnsToDisplay.push(element.field);
-      // this.invoiceColumnField.push(element.field)
-    });
-    this.ColumnsForBatchPO.filter((element) => {
-      this.columnsToDisplayPO.push(element.field);
-      // this.invoiceColumnField.push(element.field)
+      this.columnsToDisplay.push(element.dbColumnname);
+      // this.invoiceColumnField.push(element.dbColumnname)
     });
     this.ColumnsForBatchApproval.filter((ele) => {
-      this.columnsToDisplayBatchApproval.push(ele.field);
+      this.columnsToDisplayBatchApproval.push(ele.dbColumnname);
     });
 
     this.batchProcessColumnLength = this.ColumnsForBatch.length + 1;
     this.approvalPageColumnLength = this.ColumnsForBatchApproval.length + 1;
-    this.batchProcessPOColumnLength = this.ColumnsForBatchPO.length + 1;
   }
 
   chooseEditedpageTab(value) {
@@ -288,6 +266,7 @@ export class BatchProcessComponent implements OnInit {
             this.selected_status_obj = this.ds.vendor_exc_status;
             this.searchText = this.ds.vendor_exc_uniSearch;
             this.onSelectStatus(this.ds.vendor_exc_status);
+            this.universalSearch(this.searchText);
           }, 1000);
         this.dataLength = this.columnsData.length;
         if (this.dataLength > 10) {
@@ -372,6 +351,7 @@ export class BatchProcessComponent implements OnInit {
           this.selected_status_obj = this.ds.service_exc_status;
           this.searchText = this.ds.service_exc_uniSearch;
           this.onSelectStatus(this.ds.service_exc_status);
+          this.universalSearch(this.searchText);
         }, 1000);
         this.dataLength = this.columnsData.length;
         if (this.dataLength > 10) {
@@ -467,27 +447,38 @@ export class BatchProcessComponent implements OnInit {
     }
     this.filteredStatusList = filtered;
   }
-
-  universalSearch(value){
-    this.ds.vendor_exc_uniSearch = value;
-    // this.ngxSpinner.show();
-    //   this.columnsData = this.filterData;
-    //   this.columnsData = this.columnsData.filter(ele=>{
-    //     return (ele.status.toLowerCase() || 
-    //     ele.EntityName.toLowerCase() ||  
-    //     ele.PODocumentID.toLowerCase() || 
-    //     ele.VendorName.toLowerCase() || 
-    //     ele.docheaderID.toLowerCase() || 
-    //     ele.sender.toLowerCase()).includes(value.toLowerCase());
-    //   })
-    
-    // console.log(this.columnsData);
-    // this.ngxSpinner.hide();
+  universalSearch(txt){
+      if(this.router.url.includes('ExceptionManagement/Service_ExceptionManagement')){
+        this.ds.service_exc_uniSearch = txt;
+      } else {
+        this.ds.vendor_exc_uniSearch = txt;
+      }
+      this.columnsData = this.filterData;
+      this.columnsData = this.ds.searchFilter(txt,this.filterData);
   }
+  // universalSearch(value){
+
+  //   // this.ngxSpinner.show();
+  //   //   this.columnsData = this.filterData;
+  //   //   this.columnsData = this.columnsData.filter(ele=>{
+  //   //     return (ele.status.toLowerCase() || 
+  //   //     ele.EntityName.toLowerCase() ||  
+  //   //     ele.PODocumentID.toLowerCase() || 
+  //   //     ele.VendorName.toLowerCase() || 
+  //   //     ele.docheaderID.toLowerCase() || 
+  //   //     ele.sender.toLowerCase()).includes(value.toLowerCase());
+  //   //   })
+    
+  //   // console.log(this.columnsData);
+  //   // this.ngxSpinner.hide();
+  // }
   success(msg) {
     this.alertService.success_alert(msg);
   }
   error(msg) {
    this.alertService.error_alert(msg);
+  }
+  paginate(event){
+    this.ds.excTabPageNumber = event.pageNumber;
   }
 }

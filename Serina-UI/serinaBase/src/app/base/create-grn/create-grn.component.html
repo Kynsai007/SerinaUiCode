@@ -84,6 +84,9 @@
       (searchInvoiceData)="searchInvoiceDataV($event)"
       [columnsData]="columnsData"
       [searchText]="searchText"
+      [pageId]="'exc_v'"
+      [pageNumber]="pageNumber"
+      (paginationEvent) = "paginate($event)"
     >
     </app-exception-table>
 
@@ -127,32 +130,35 @@
     style="gap: 15px"
   >
   <!-- select PO Number -->
-    <div class="box mr-2">
-      <label class="f-13 mb-0">Enter PO Number</label><br />
-      <p-autoComplete
-        placeholder="Ex: XXX-PO-XX and press Enter"
-        (onSelect)="selectedPO($event)"
-        [group]="false"
-        [suggestions]="filteredPO"
-        (completeMethod)="filterPOnumber($event)"
-        (onKeyUp)="getPODetails($event.target.value,$event)"
-        (onClick)="getPODetails($event.target.value,$event)"
-        field="PODocumentID"
-        [dropdown]="true"
-        name="PONumber"
-        [(ngModel)]="PONumber"
-        required
-      >
-        <ng-template let-group pTemplate="group">
-          <div class="flex align-items-center">
-            <span class="f-12">{{ group.PODocumentID }}</span>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-      <!-- <input type="text" class="form-control f-12" (keyup)="getPODetails($event.target.value,$event)" placeholder="Ex: RTC-PO-123456 and press Enter" name="PONumber" ngModel required> -->
-      
+    <div>
+      <div class="box mr-2">
+        <label class="f-13 mb-0">Enter PO Number</label><br />
+        <p-autoComplete
+          placeholder="Ex: XXX-PO-XX and press Enter"
+          (onSelect)="selectedPO($event)"
+          [group]="false"
+          [suggestions]="filteredPO"
+          (completeMethod)="filterPOnumber($event)"
+          (onKeyUp)="getPODetails($event.target.value,$event)"
+          (onClick)="getPODetails($event.target.value,$event)"
+          field="PODocumentID"
+          [dropdown]="true"
+          name="PONumber"
+          [(ngModel)]="PONumber"
+          required
+        >
+          <ng-template let-group pTemplate="group">
+            <div class="flex align-items-center">
+              <span class="f-12">{{ group.PODocumentID }}</span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        <!-- <input type="text" class="form-control f-12" (keyup)="getPODetails($event.target.value,$event)" placeholder="Ex: RTC-PO-123456 and press Enter" name="PONumber" ngModel required> -->
+        
+      </div>
+      <small class="f-12">Note: Please press "Enter"</small>
+
     </div>
-    <!-- <small class="f-12">Note: Please press "Enter"</small> -->
     <div class="box mr-2">
       <label class="f-12 mb-0 z_index">Entity Name</label><br />
       <input type="text" class="form-control f-12" [(ngModel)]="EntityName" name="EntityName" required readonly>

@@ -115,6 +115,9 @@ export class InvoiceComponent implements OnInit {
   showFactsComponent: boolean;
   userEmailID: string;
   grnTabDownloadOpt = 'All';
+  cardCount: number;
+  searchText: string;
+  
   close(reason: string) {
     this.sidenav.close();
   }
@@ -133,6 +136,8 @@ export class InvoiceComponent implements OnInit {
   "Automation in accounts payable has become more prevalent, with AI and OCR technology used to streamline invoice processing and reduce errors"];
   search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
   @ViewChild('datePicker') datePicker: Calendar;
+  pageNumber:number = 1;
+  pageId:string = 'Inv';
 
   constructor(
     public route: Router,
@@ -199,7 +204,7 @@ export class InvoiceComponent implements OnInit {
     // this.getDisplayPOData();
     // this.getDisplayGRNdata();
     // this.getDisplayReceiptdata();
-
+    this.deviceColumns();
   }
   
 
@@ -248,7 +253,7 @@ export class InvoiceComponent implements OnInit {
   restoreData() {
     this.invoiceDispalyData = this.ds.invoiceLoadedData;
     this.serviceinvoiceDispalyData = this.ds.serviceinvoiceLoadedData;
-
+    this.filterDataService = this.serviceinvoiceDispalyData;
     this.filterData = this.invoiceDispalyData;
     this.allInvoiceLength = this.ds.invoiceLoadedData.length;
     if (this.allInvoiceLength > 10) {
@@ -321,6 +326,7 @@ export class InvoiceComponent implements OnInit {
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
       { dbColumnname: 'InvoiceNumber', columnName: 'Invoice Number' },
+      { dbColumnname: 'grn_status', columnName: 'GRN Status' },
       { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
       { dbColumnname: 'firstName', columnName: 'Created By' },
       { dbColumnname: 'grn_type', columnName: 'Source' }
@@ -358,39 +364,51 @@ export class InvoiceComponent implements OnInit {
 
   findActiveRoute() {
     if (this.route.url == this.invoiceTab) {
+      this.pageNumber = this.ds.invTabPageNumber;
+      this.searchText = this.ds.invoiceGlobe;
       this.routeName = 'allInvoices';
       if (this.ds.invoiceLoadedData.length == 0) {
         this.getInvoiceData();
       }
     } else if (this.route.url == this.POTab) {
+      this.pageNumber = this.ds.poTabPageNumber;
       if (this.ds.poLoadedData.length == 0) {
         this.getDisplayPOData(this.APIParams);
       }
       this.routeName = 'PO';
       this.searchStr = this.ds.searchPOStr;
     } else if (this.route.url == this.archivedTab) {
+      this.pageNumber = this.ds.arcTabPageNumber;
       if (this.ds.archivedDisplayData.length == 0) {
         this.getDisplayARCData(this.APIParams);
       }
       this.routeName = 'archived';
       this.searchStr = this.ds.searchArcStr;
     } else if( this.route.url == this.rejectedTab){
+      this.pageNumber = this.ds.rejTabPageNumber;
       this.routeName = 'rejected';
       if (this.ds.rejectedDisplayData.length == 0) {
         this.getDisplayRejectedData(this.APIParams);
       }
       this.searchStr = this.ds.searchRejStr;
     } else if( this.route.url == this.GRNTab){
+      this.pageNumber = this.ds.grnTabPageNumber;
       if (this.ds.GRNLoadedData.length == 0) {
         this.getDisplayGRNdata(this.APIParams);
       }
       this.routeName = 'GRN';
       this.searchStr = this.ds.searchGRNStr;
     } else if(this.route.url == this.serviceInvoiceTab){
+      this.routeName = 'services';
+      this.pageNumber = this.ds.serviceTabPageNumber;
+      this.searchText = this.ds.serviceGlobe;
       if (this.ds.serviceinvoiceLoadedData.length == 0) {
         this.getDisplayServiceInvoicedata();
       }
     }
+    setTimeout(() => {
+      this.universalSearch(this.searchText);
+    }, 1000);
   }
   getInvoiceData() {
     this.SpinnerService.show();
@@ -426,6 +444,9 @@ export class InvoiceComponent implements OnInit {
           this.invoiceDispalyData = invoicePushedArray;
           this.filterData = this.invoiceDispalyData;
           // this.filterForArchived();
+          setTimeout(()=> {
+            this.universalSearch(this.searchText);
+          },1000)
           this.allInvoiceLength = this.invoiceDispalyData.length;
           if (this.allInvoiceLength> 10 && this.isDesktop) {
             this.showPaginatorAllInvoice = true;
@@ -492,6 +513,7 @@ export class InvoiceComponent implements OnInit {
         merge.grn_type = ele.grn_type;
         merge.firstName = ele.firstName;
         merge.InvoiceNumber = ele.InvoiceNumber;
+        merge.grn_status = ele.grn_status;
         grnD.push(merge)
       })
 
@@ -671,8 +693,10 @@ export class InvoiceComponent implements OnInit {
           });
           setTimeout(() => {
             this.serviceinvoiceDispalyData = allInvoicesService;
+            this.filterDataService = this.serviceinvoiceDispalyData;
             this.filterds = this.serviceinvoiceDispalyData;
             this.ds.serviceinvoiceLoadedData = allInvoicesService;
+            this.universalSearch(this.searchText);
             this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
             if (this.serviceinvoiceDispalyData.length > 10 && this.isDesktop) {
               this.showPaginatorServiceInvoice = true;
@@ -792,13 +816,13 @@ export class InvoiceComponent implements OnInit {
       this.route.navigate([this.invoiceTab]);
       this.ds.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
-      // if (!this.invoiceColumns) {
-      //   this.getInvoiceColumns();
-      // }
+      if (!this.invoiceColumns) {
+        this.getInvoiceColumns();
+      }
     } else if (value == 'po') {
-      // if (!this.poColumns) {
-      //   this.getPOColumns();
-      // }
+      if (!this.poColumns) {
+        this.getPOColumns();
+      }
       this.route.navigate([this.POTab]);
       this.ds.doc_status_tab = this.POTab;
       this.allSearchInvoiceString = [];
@@ -817,9 +841,9 @@ export class InvoiceComponent implements OnInit {
       this.allSearchInvoiceString = [];
       this.searchStr = this.ds.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
-      // if (!this.serviceColumns) {
-      //   this.getServiceColumns();
-      // }
+      if (!this.serviceColumns) {
+        this.getServiceColumns();
+      }
       this.route.navigate([this.serviceInvoiceTab]);
       this.ds.doc_status_tab = this.serviceInvoiceTab;
       this.allSearchInvoiceString = [];
@@ -846,8 +870,8 @@ export class InvoiceComponent implements OnInit {
     this.allSearchInvoiceString = value.filteredValue;
   }
   showSidebar(value) {
-    // this.visibleSidebar2 = value;
-    this.sidenav.toggle();
+    this.visibleSidebar2 = value;
+    // this.sidenav.toggle();
     if (this.route.url == this.invoiceTab) {
       this.allColumns = this.invTabAllColumns;
     } else if (this.route.url == this.POTab) {
@@ -942,7 +966,8 @@ export class InvoiceComponent implements OnInit {
         this.error(error.statusText);
       }
     );
-    this.sidenav.close();
+    // this.sidenav.close();
+    this.visibleSidebar2 = false;
   }
 
   filterByDate(date) {
@@ -1294,7 +1319,16 @@ export class InvoiceComponent implements OnInit {
 
   
   universalSearch(txt){
-
+    console.log(txt)
+      if(this.route.url == this.serviceInvoiceTab){
+        this.ds.serviceGlobe = txt;
+        this.serviceinvoiceDispalyData = this.filterDataService;
+        this.serviceinvoiceDispalyData = this.ds.searchFilter(txt,this.filterDataService);
+      } else if(this.route.url == this.invoiceTab){
+        this.ds.invoiceGlobe = txt;
+        this.invoiceDispalyData = this.filterData;
+        this.invoiceDispalyData = this.ds.searchFilter(txt,this.filterData);
+      }
   }
   closeDialog(){
     const dialog = document.querySelector('dialog');
@@ -1331,4 +1365,7 @@ export class InvoiceComponent implements OnInit {
   error(msg) {
    this.AlertService.error_alert(msg);
   }
+  onPageChange(number: number) {
+    this.pageNumber = number;
+}
 }

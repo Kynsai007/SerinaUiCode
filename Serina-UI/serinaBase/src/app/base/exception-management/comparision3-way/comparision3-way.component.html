@@ -213,6 +213,24 @@
           ><span class="fa fa-columns f-16 font_weight100"></span>GRN Data</a
         >
       </li>
+      <li
+        class="nav-item ml-2"
+        pTooltip="Supporting documents"
+        tooltipPosition="top"
+        *ngIf="grnCreateBoolean && Itype == 'Invoice'"
+        (click)="changeTab('support')"
+      >
+        <a
+          class="nav-link"
+          id="support-tab"
+          data-toggle="tab"
+          href="#support"
+          role="tab"
+          aria-controls="support"
+          aria-selected="false"
+          ><span class="fa fa-columns f-16 font_weight100"></span>Supporting Docs</a
+        >
+      </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
             aria-hidden="true"></i></button> -->
     </ul>
@@ -1008,6 +1026,7 @@
                 <td class="w-st hide" *ngIf="!GRN_PO_Bool">Total</td>
                 <td class="w-st f-12"
                 [ngClass]="GRN_PO_Bool?'text-center':''"
+                [ngStyle]="{ paddingLeft : GRN_PO_Bool ? '40px' : '' }"
                 >
                   {{ GRN_line_total.toFixed(2) }}
                 </td>
@@ -1312,10 +1331,116 @@
           </div>
         </ng-template>
 
-        <div class="btnFooter">
-          <div class="m_r_80" *ngIf="editable && !grnCreateBoolean">
+        <ng-template #support>
+          <div
+            class="tab-pane fade show"
+            id="support"
+            role="tabpanel"
+            aria-labelledby="support-tab"
+          >
+          <div
+            *ngIf="
+              support_doc_list?.length > 0
+            "
+          >
+          
+            <table class="table">
+              <tr class="f-12 lineName">
+                <th>S.No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              <tr
+                *ngFor="let file of support_doc_list; let i = index"
+                class="f-11"
+              >
+                <td>{{ i + 1 }}</td>
+                <td class="break_word pointer" (click)="downloadDoc(file,'view')">{{ file }}</td>
+                <td>
+                  <i
+                    class="fa fa-download pointer"
+                    aria-hidden="true"
+                    (click)="downloadDoc(file,'down')"
+                  ></i>
+                </td>
+              </tr>
+            </table>
+          <p class="f-11">*Supporting document is not being read by Serina, please check and review manually.</p>
+
+          </div>
+          <div
+            *ngIf="
+              !(support_doc_list?.length > 0)
+            "
+          >
+            <div class="no_doc_div f-14">
+              No Supporting Documents are available, please upload if you have any.
+            </div>
+          </div>
+          <div class="file_table" *ngIf="uploadFileList.length > 0">
+            <table class="table">
+              <tr class="f-12">
+                <th>S.No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              <tr
+                *ngFor="let file of uploadFileList; let i = index"
+                class="f-11"
+              >
+                <td>{{ i + 1 }}</td>
+                <td>{{ file.name }}</td>
+                <td>
+                  <i
+                    class="fa fa-trash-o"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="removeUploadQueue(i)"
+                  ></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div
+            *ngIf="editable"
+          >
+            <label
+              for="img"
+              class="img-browse"
+              [ngClass]="uploadFileList.length > 0 ? 'disable_clas' : ''"
+            >
+              Attach Document
+            </label>
+            <input
+              (change)="onSelectFile($event)"
+              #fileInput
+              type="file"
+              id="img"
+              name="img"
+              accept=".pdf,.doc, .docx"
+              multiple
+              [disabled]="uploadFileList.length > 0"
+              hidden
+            />
+            <!-- <input type="file" multiple (change)="uploadSupport($event)"> -->
+
             <button
-              *ngIf="submitBtn_boolean"
+              class="img-browse h-35 b-0 ml-2"
+              (click)="uploadSupport()"
+              [disabled]="!(uploadFileList.length > 0)"
+              [ngClass]="!(uploadFileList.length > 0) ? 'disable_clas' : ''"
+            >
+              Upload
+            </button>
+          </div>
+          </div>
+          
+        </ng-template>
+
+        <div class="btnFooter">
+          <div class="m_r_80" *ngIf="!grnCreateBoolean">
+            <button
+              *ngIf="submitBtn_boolean && editable"
               class="level_3_btn f-12 mr-3"
               (click)="open_dialog('reject')"
             >
@@ -1330,7 +1455,7 @@
             </button>
 
             <button
-              *ngIf="submitBtn_boolean"
+              *ngIf="submitBtn_boolean && editable"
               class="primary_btn f-12"
               (click)="approveChangesBatch()"
             >
@@ -1657,13 +1782,14 @@
       </h6>
       <table class="table f-12 " *ngIf="PO_GRN_Number_line?.length>0 && headerpop == 'Confirm PO number'">
         <tr>
-          <th style="width: 60px;">S.No</th> <th>Description</th> <th>Quantity</th> <th>UnitPrice</th>
+          <th style="width: 60px;">S.No</th> <th>Description</th> <th>Quantity</th> <th>UnitPrice</th><th>Net Total</th>
         </tr>
         <tr *ngFor="let item of PO_GRN_Number_line; let i = index;">
           <td>{{ i+1 }}</td>
           <td>{{ item.Name }}</td>
           <td> {{ item.PurchQty }} </td>
           <td>{{ item.UnitPrice }}</td>
+          <td>{{ (item.PurchQty * item.UnitPrice).toFixed(2) }}</td>
         </tr>
       </table>
       <ng-container  *ngIf="headerpop == 'Select GRN'">

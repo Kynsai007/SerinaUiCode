@@ -72,6 +72,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   GRNApprovalAccess: boolean;
   supplier_names = "Vendors & Service Providers";
   supplier_route = "vendor/vendorDetails";
+  // switchtext = "Table";
+  isTableView:boolean;
 
   constructor(
     public router: Router,
@@ -94,6 +96,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
         this.numberOfNotify = message.Arraylength;
       }
     );
+      this.dataStoreService.displayMode().subscribe(bool=> this.isTableView = bool);
   }
 
   ngOnInit(): void {
@@ -134,12 +137,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     }
   }
   appendScript (){
-    if(window.screen.width <= 767){
+    if(window.screen.width <= 768){
       this.sidebarMode = 'over';
       this.isDesktop = false;
       this.isnotTablet = false;
       this.dataStoreService.isDesktop = false;
-    } else if(window.screen.width >= 768 && window.screen.width < 1024) {
+    } else if(window.screen.width >= 769 && window.screen.width < 1024) {
       this.sidebarMode = 'over';
       this.isnotTablet = false;
       this.isDesktop = true;
@@ -512,6 +515,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
           this.logout();
         } 
       })
+  }
+  onChangeUI(val){
+    this.isTableView = val;
+    this.dataStoreService.isTableView.next(this.isTableView);
   }
   ngOnDestroy(): void {
     if (this.subscription) {

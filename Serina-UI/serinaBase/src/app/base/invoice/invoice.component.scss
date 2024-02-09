@@ -178,7 +178,7 @@
   // background-color: white;
   padding-top: 12px;
   // margin: 0px 53px;
-  column-gap: 20px;
+  column-gap: 10px;
 }
 .nav_sub {
   background-color: #FFFFFF;
@@ -328,5 +328,14 @@ dialog .footer {
   }
   .p-datepicker .p-datepicker-header {
     padding: 0;
+  }
+  .p-dialog {
+    background-color: white;
+    max-height: 100%;
+    margin: 0 !important;
+  }
+  .p-dialog .p-dialog-header {
+    padding: 10px 21px !important;
+    border-bottom: 1px solid #00000033;
   }
 }

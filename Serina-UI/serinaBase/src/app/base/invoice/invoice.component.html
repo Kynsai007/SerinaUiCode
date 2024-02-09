@@ -208,6 +208,10 @@
         [columnsData]="invoiceDispalyData"
         [searchText]="searchText"
         (systemCheckEmit)="refreshInvoice($event)"
+        (paginationEvent) = "paginate($event)"
+        [pageNumber]="pageNumber"
+        [pageId]="'inv'"
+        (sideBarBoolean)="showSidebar($event)"
         *ngIf="route.url == invoiceTab"
       >
       </app-exception-table>
@@ -234,6 +238,9 @@
         [searchText]="searchText"
         (paginationEvent) = "paginate($event)"
         (systemCheckEmit)="refreshInvoice($event)"
+        [pageId]="'PO'"
+        [pageNumber]="pageNumber"
+        (sideBarBoolean)="showSidebar($event)"
         *ngIf="route.url == POTab"
       >
       </app-exception-table>
@@ -260,6 +267,9 @@
         [columnsData]="GRNDispalyData"
         [searchText]="searchText"
         (paginationEvent) = "paginate($event)"
+        [pageId]="'GRN'"
+        [pageNumber]="pageNumber"
+        (sideBarBoolean)="showSidebar($event)"
         *ngIf="route.url == GRNTab"
       >
       </app-exception-table>
@@ -286,6 +296,9 @@
       [columnsData]="archivedDisplayData"
       [searchText]="searchText"
       (paginationEvent) = "paginate($event)"
+      [pageId]="'arc'"
+      [pageNumber]="pageNumber"
+      (sideBarBoolean)="showSidebar($event)"
       *ngIf="route.url == archivedTab"
     >
     </app-exception-table>
@@ -312,6 +325,9 @@
       [columnsData]="rejectedDisplayData"
       [searchText]="searchText"
       (paginationEvent) = "paginate($event)"
+      [pageId]="'reject'"
+      [pageNumber]="pageNumber"
+      (sideBarBoolean)="showSidebar($event)"
       *ngIf="route.url == rejectedTab"
     >
     </app-exception-table>
@@ -338,6 +354,9 @@
       [columnsData]="serviceinvoiceDispalyData"
       [searchText]="searchText"
       (paginationEvent) = "paginate($event)"
+      [pageId]="'service'"
+      (sideBarBoolean)="showSidebar($event)"
+      [pageNumber]="pageNumber"
       *ngIf="route.url == serviceInvoiceTab"
     >
     </app-exception-table>
@@ -370,6 +389,8 @@
       </div>
     </div>
   </ngx-spinner>
+
+  <!-- GRN data download -->
   <dialog #dialog>
     <div class="d-flex justify-content-between mb-2">
       <h6 class="f-14">Fill the details</h6>
@@ -420,5 +441,49 @@
       </ngx-spinner>
   </dialog>
 </div>
+
+<p-dialog header="Select Columns" [(visible)]="visibleSidebar2" position="right" [modal]="true" [style]="{width: '300px',height:'100vh',margin:'0px'}" [baseZIndex]="10000"
+[draggable]="false" [resizable]="false">
+  <ul
+    class="pl-3 sidebar_height"
+    cdkDropList
+    (cdkDropListDropped)="onOptionDrop($event)"
+  >
+    <li
+      class="allCols"
+      *ngFor="let displayColumn of allColumns; let i = index"
+      cdkDrag
+    >
+      <label class="container" [for]="i" cdkDragHandle
+        >{{ displayColumn.columnName }}
+        <input
+          type="checkbox"
+          [id]="i"
+          (change)="activeColumn($event, displayColumn)"
+          [checked]="displayColumn.isActive == 1"
+        />
+        <span class="checkmark"></span>
+      </label>
+      <i class="fa fa-bars dragCols" aria-hidden="true" cdkDragHandle></i>
+    </li>
+  </ul>
+
+  <div class="btnFooterSave" mat-dialog-actions>
+    <button
+      class="secondary_btn f-12 mr-2"
+      type="button"
+      (click)="visibleSidebar2 = false"
+    >
+      Cancel
+    </button>
+    <button
+      class="primary_btn f-12"
+      (click)="updateColumnPosition()"
+      cdkFocusInitial
+    >
+      Save
+    </button>
+  </div>
+</p-dialog>
 
 <p-toast></p-toast>

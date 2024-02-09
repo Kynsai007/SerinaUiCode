@@ -2,10 +2,9 @@ import { AlertService } from './../../../services/alert/alert.service';
 import { ExceptionsService } from './../../../services/exceptions/exceptions.service';
 import { AuthenticationService } from './../../../services/auth/auth-service.service';
 import { DataService } from './../../../services/dataStore/data.service';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 import { PermissionService } from './../../../services/permission.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from './../../../services/tagging.service';
@@ -29,11 +28,12 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CanUploadComponentDeactivate } from '../UnsavedChanges.guard';
 import { Calendar } from 'primeng/calendar';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-comparision3-way',
@@ -236,6 +236,9 @@ export class Comparision3WayComponent
   filterGRNlist: any[];
   linedata_mobile: any;
   @ViewChild('datePicker') datePicker: Calendar;
+  progress: number;
+  uploadFileList = [];
+  support_doc_list = [];
 
   constructor(
     fb: FormBuilder,
@@ -1930,6 +1933,12 @@ export class Comparision3WayComponent
         const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
         return { ...record, linedata: newLinedata };
       });
+      this.GRN_line_total = 0;
+      this.lineDisplayData.forEach(ele=>{
+        if(ele.TagName == "AmountExcTax"){
+          ele.linedata.forEach(v=> this.GRN_line_total = this.GRN_line_total + Number(v.Value))
+        }
+      })
       this.GRNObject = this.GRNObject.filter(val => {
         return val?.idDocumentLineItems != id
       })
@@ -2022,7 +2031,11 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            this.grnDuplicateCheck()
+            if(this.invoiceNumber){
+              this.grnDuplicateCheck();
+            } else {
+              this.error("Dear user, please add the invoice number.");
+            }
           } else {
             setTimeout(() => {
               this.CreateGRNAPI(boolean, txt);
@@ -2546,6 +2559,74 @@ export class Comparision3WayComponent
       );
     }
     return true;
+  }
+  onSelectFile(event) {
+    for (let i = 0; i < event.target.files.length; i++) {
+      this.uploadFileList.push(event.target.files[i]);
+
+    }
+  }
+  removeUploadQueue(index) {
+    this.uploadFileList.splice(index, 1);
+  }
+
+  uploadSupport() {
+    this.progress = 1;
+    const formData: any = new FormData();
+    for (const file of this.uploadFileList) {
+      formData.append('files', file, file.name);
+    }
+    this.SpinnerService.show()
+    this.SharedService.uploadSupportDoc(formData)
+      .pipe(
+        map((event: any) => {
+          if (event.type == HttpEventType.UploadProgress) {
+            this.progress = Math.round((100 / event.total) * event.loaded);
+          } else if (event.type == HttpEventType.Response) {
+            this.progress = null;
+            this.success("Supporting Documents uploaded Successfully");
+            this.uploadFileList = [];
+            event.body?.result?.forEach(ele => {
+              this.support_doc_list.push(ele);
+            })
+            //  setTimeout(() => {
+            //  this.getInvoiceFulldata();
+            this.SpinnerService.hide()
+          }
+        }),
+        catchError((err: any) => {
+          this.progress = null;
+          this.error("Server error");
+          this.SpinnerService.hide()
+          return throwError(err.message);
+        })
+      )
+      .toPromise();
+  }
+
+  downloadDoc(doc_name,type) {
+    let encodeString = encodeURIComponent(doc_name);
+    this.SharedService.downloadSupportDoc(encodeString).subscribe(
+      (response: any) => {
+        let blob: any = new Blob([response]);
+        const url = window.URL.createObjectURL(blob);
+        if(type == 'view'){
+          // const dailogRef:MatDialogRef<SupportpdfViewerComponent> = this.mat_dlg.open(SupportpdfViewerComponent,{
+          //   width: '90vw',
+          //   height:'95svh',
+          //   hasBackdrop:true,
+          //   data:{ file: url}
+          // })
+        } else{
+          fileSaver.saveAs(blob, doc_name);
+          this.success("Document downloaded successfully.");
+        }
+
+      },
+      (err) => {
+        this.error("Server error");
+      }
+    );
   }
   success(msg) {
     this.AlertService.success_alert(msg);

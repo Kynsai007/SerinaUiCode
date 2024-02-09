@@ -272,7 +272,7 @@ $secondary_color: var(--secondary1-color);
 .p-datatable .p-datatable-tbody > tr > td {
     font-size: 12px !important;
     font-weight: 600 !important;
-    color: #0f3f62;
+    color: #140101;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -280,17 +280,23 @@ $secondary_color: var(--secondary1-color);
     // border-right: 1px solid rgba(49, 57, 113, 0.2) !important;
     text-align: center;
     padding: 10px;
+    border: 0 !important;
+    height: 34px;
 }
-.p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
-    background: #F3FBF4 !important;
+.p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+  background: #EAF3F9 !important;
+}
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: #ffffff !important;
 }
 .p-datatable .p-datatable-thead > tr > th {
     font-size: 12px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    background: #313971;
+    background: #358DC0 !important;
     // width: 100%;
-    padding: 10px !important;
+    padding: 0px !important;
+    height: 34px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -529,13 +535,15 @@ $secondary_color: var(--secondary1-color);
 }
 // paginator
 .p-paginator {
-    display: flex;
     position: fixed;
-    bottom: -7px;
+    bottom: 0;
     z-index: 123;
-    padding: 1px 50px;
-    left: 50%;
-    transform: translate(-42%, 0px);
+    left: 0;
+    height: 45px;
+    padding: 0 !important;
+    width: 100%;
+    box-shadow: 0px 0px 4px #00000029;
+    border: 0 !important;
 }
 .p-paginator .p-paginator-pages .p-paginator-page {
     border: 1px solid #27272721 !important;
@@ -785,7 +793,7 @@ option:hover {
 .showEye {
     cursor: pointer;
     position: relative;
-    top: 4px;
+    top: 0px;
     background: #fff;
     padding: 3px;
     border-radius: 5px;
@@ -1183,6 +1191,20 @@ option:hover {
   .break_word {
     word-break: break-all;
   }
+  .paginator_div {
+    position: fixed;
+    bottom: 0;
+    z-index: 123;
+    width: 100%;
+    left: 0;
+    height: 45px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 4px #00000029;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
   .floating-label {
     position: absolute;
     top: 15px;
@@ -1213,6 +1235,12 @@ option:hover {
     border: 2px solid #2980b9; // Your desired border color
     color: #fff; // Your desired text color
   }
+
+  .user_d {
+    margin: 13px 0px;
+    padding-right: 20px;
+    border-right: 1px solid lightgray;
+}
   /* Define the animation keyframes */
 @keyframes blink {
     0% { background-color: #ff2f00; }

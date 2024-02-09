@@ -5,6 +5,7 @@ import { TaggingService } from './../../../services/tagging.service';
 import {
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -31,8 +32,11 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   @Input() invoiceColumns;
   @Input() columnsToDisplay;
   @Input() showPaginatorAllInvoice;
+  @Input() pageNumber: number;
+  cardCount: number;
+  @Input() pageId: string;
   @Input() ColumnLength;
-  @Input() searchText:string;
+  @Input() searchText: string;
   @Output() public searchInvoiceData: EventEmitter<any> =
     new EventEmitter<any>();
   // @Output() public paginateEmit: EventEmitter<any> = new EventEmitter<any>();
@@ -40,6 +44,10 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     new EventEmitter<boolean>();
   @Output() public systemCheckEmit: EventEmitter<any> = new EventEmitter<any>();
   showPaginator: boolean;
+  @Output() public sideBarBoolean: EventEmitter<boolean> =
+  new EventEmitter<boolean>();
+  @Output() public filterDataEmit: EventEmitter<any> =
+  new EventEmitter<any>();
   // columnsToDisplay =[];
   _selectedColumns: any[];
   visibleSidebar2;
@@ -53,7 +61,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   userType: string;
   first = 0;
   last: number;
-  rows;
+  rows = 10;
   bgColorCode;
 
   public counts = [];
@@ -94,6 +102,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   statusText: any;
   statusText1: string;
   isOpen: boolean;
+  maxSize = 7;
+  isTableView:boolean;
+  FilterData: any;
 
   constructor(
     private tagService: TaggingService,
@@ -106,9 +117,15 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     private SpinnerService: NgxSpinnerService,
     private alertService : AlertService,
     private md: MatDialog
-  ) {}
+  ) {
+    this.ds.displayMode().subscribe(bool=> {
+      this.isTableView = bool;
+      this.ngOnInit();
+    });
+  }
 
   ngOnInit(): void {
+    this.calculateCardCountPerPage();
     this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
@@ -118,9 +135,32 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
-    if(this.columnsData.length>10){
-      this.showPaginatorAllInvoice = true;
-    }
+    // if(this.columnsData?.length>10){
+    //   this.showPaginatorAllInvoice = true;
+    // }
+    this.getRowsData();
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.calculateCardCountPerPage();
+  }
+
+  calculateCardCountPerPage() {
+    let cardWidth: number = 300;
+    let cardHeight: number = 200;
+
+    // Get the viewport dimensions
+    const screenWidth: number = window.innerWidth;
+    const screenHeight: number = window.innerHeight;
+
+    // Calculate card count per row
+    const cardsPerRow = Math.floor(screenWidth / cardWidth);
+
+    // Calculate card count per column
+    const cardsPerColumn = Math.floor(screenHeight / cardHeight);
+
+    // Calculate total card count per page
+    this.cardCount = cardsPerRow * cardsPerColumn;
   }
   dateFunc(){
     let currentDate = new Date();
@@ -139,21 +179,47 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
-
-      let mergedStatus = [ 'All'];
-      this.columnsData.forEach(ele=>{
-        if(ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32){
-          ele.status = ele.substatus;
+      this.FilterData = this.columnsData;
+      let mergedStatus = ['All'];
+      this.columnsData.forEach(ele => {
+        if(this.router.url.includes('invoice')){
+            mergedStatus.push(ele.docstatus);
+        } else {
+          if (ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32) {
+            ele.status = ele.substatus;
+          }
+          mergedStatus.push(ele.status)
         }
-        mergedStatus.push(ele.status)
+        
       })
       this.statusData = new Set(mergedStatus);
-      if(this.columnsData.length>10){
+      if (!this.isDesktop || this.columnsData?.length <= this.cardCount) {
+        this.showPaginatorAllInvoice = false;
+      } else {
         this.showPaginatorAllInvoice = true;
       }
-      if(!this.isDesktop){
-        this.showPaginatorAllInvoice = false;
-      }
+    }
+    this.findActiveRoute();
+  }
+  findActiveRoute() {
+    if (this.router.url.includes('allInvoices')) {
+      this.pageNumber = this.ds.invTabPageNumber;
+    } else if (this.router.url.includes('PO')) {
+      this.pageNumber = this.ds.poTabPageNumber;
+    } else if (this.router.url == `/${this.portalName}/invoice/GRN`) {
+      this.pageNumber = this.ds.grnTabPageNumber;
+    } else if (this.router.url.includes('archived')) {
+      this.pageNumber = this.ds.arcTabPageNumber;
+    } else if (this.router.url.includes('rejected')) {
+      this.pageNumber = this.ds.rejTabPageNumber;
+    } else if (this.router.url.includes('ServiceInvoices')) {
+      this.pageNumber = this.ds.serviceTabPageNumber;
+    } else if (this.router.url.includes('ExceptionManagement')) {
+      this.pageNumber = this.ds.excTabPageNumber;
+    } else if (this.router.url.includes('Create_GRN_inv_list')) {
+      this.pageNumber = this.ds.crGRNTabPageNumber;
+    } else if (this.router.url.includes('GRN_Approvals')) {
+      this.pageNumber = this.ds.aprTabPageNumber;
     }
   }
   initialData() {
@@ -235,6 +301,38 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.tagService.type = 'Invoice';
     this.ExceptionsService.invoiceID = e.idDocument;
   }
+  viewInvoiceDetails(e) {
+    this.tagService.submitBtnBoolean = false;
+    let route: string;
+    if (this.router.url.includes('PO')) {
+      route = 'PODetails';
+      delete this.ds.editableInvoiceData;
+    } else if (this.router.url.includes('GRN')) {
+      route = 'GRNDetails';
+      delete this.ds.editableInvoiceData;
+    } else if (this.router.url.includes('ServiceInvoices')) {
+      route = 'serviceDetails';
+      this.ds.editableInvoiceData = e;
+    } else {
+      route = 'InvoiceDetails';
+      this.ds.editableInvoiceData = e;
+    }
+    if (this.userType == 'vendor_portal') {
+      this.router.navigate([
+        `/vendorPortal/invoice/${route}/${e.idDocument}`,
+      ]);
+    } else if (this.userType == 'customer_portal') {
+      if (e.documentsubstatusID != 30) {
+        this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
+      } else {
+        this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
+      }
+    }
+    this.tagService.createInvoice = true;
+    this.tagService.displayInvoicePage = false;
+    this.tagService.editable = false;
+    this.sharedService.invoiceID = e.idDocument;
+  }
 
   paginate(event) {
     this.first = event.first;
@@ -257,11 +355,16 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   searchInvoice(value) {
     this.searchInvoiceData.emit(this.allInvoice);
     if (this.router.url.includes('ExceptionManagement')) {
-      if (this.tagService.batchProcessTab == 'normal') {
-        this.ds.exception_G_S = value;
+      if (this.router.url.includes('Service_ExceptionManagement')) {
+        this.ds.exceptionService_G_S = value;
       } else {
-        this.ds.exception_A_G_S = value;
+        if (this.tagService.batchProcessTab == 'normal') {
+          this.ds.exception_G_S = value;
+        } else {
+          this.ds.exception_A_G_S = value;
+        }
       }
+
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.ds.createGrn_G_S = value;
     }
@@ -269,12 +372,25 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   filter(value, dbCl) {
     this.selectedStatus = value;
     // this.ds.allSelected
-    if (value != 'All') {
-      this.allInvoice.filter(value || ' ', dbCl, 'contains')
-
-      this.first = 0
+    if(!this.router.url.includes('invoice')){
+      if (value != 'All') {
+        this.allInvoice.filter(value || ' ', dbCl, 'equals')
+        this.first = 0
+      } else {
+        this.allInvoice.filter(value || ' ', dbCl, 'notContains')
+      }
     } else {
-      this.allInvoice.filter(value || ' ', dbCl, 'notContains')
+      this.filterDoc(value);
+    }
+  }
+  filterDoc(value) {
+    this.columnsData = this.FilterData;
+    if (value != 'All') {
+      this.columnsData = this.columnsData.filter(
+        (val) => value == val.docstatus
+      );
+      this.first = 0
+      this.filterDataEmit.emit(this.columnsData);
     }
   }
 
@@ -455,7 +571,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
     
   }
-
+  showSidebar() {
+    this.sideBarBoolean.emit(true);
+  }
   updatePO(e) {
     this.invoiceID = e.idDocument;
       this.SpinnerService.show();
@@ -546,9 +664,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       first: this.fst,
       rows : 50
     }
-    if(this.router.url.includes('invoice')){
-       this.paginate_doc(evnt);
-       console.log('scrolled, Mobile mode');
+    if (this.router.url.includes('invoice') && !this.isDesktop) {
+      this.paginate_doc(evnt);
+      console.log('scrolled, Mobile mode');
     } else {
       console.log('Desktop mode');
     }
@@ -667,6 +785,86 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   error(msg) {
    this.alertService.error_alert(msg);
+  }
+  onPageChange(number: number) {
+    this.pageNumber = number;
+    this.fst + 10;
+    let evt = {
+      first: this.fst,
+      rows: 50,
+      pageNumber: number
+    }
+    this.paginationEvent.emit(evt);
+  }
+  getRowsData() {
+
+    if (this.router.url.includes('allInvoices')) {
+      this.first = this.ds.allPaginationFirst;
+      this.rows = this.ds.allPaginationRowLength;
+      this.stateTable = 'allInvoices';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('allInvoices'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      } else {
+        this.globalSearch = this.ds.invoiceGlobe;
+      }
+    }
+    else if (this.router.url.includes('PO')) {
+      this.first = this.ds.poPaginationFirst;
+      this.rows = this.ds.poPaginationRowLength;
+      this.stateTable = 'PO';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('PO'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')) {
+      this.first = this.ds.GRNPaginationFirst;
+      this.rows = this.ds.GRNPaginationRowLength;
+      this.stateTable = 'GRN';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('GRN'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('GRN') && this.router.url.includes('GRNExceptions')) {
+      this.first = this.ds.GRNExceptionPaginationFisrt;
+      this.rows = this.ds.GRNExceptionPaginationRowLength;
+      this.stateTable = 'GRNE';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('GRNE'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('archived')) {
+      this.first = this.ds.archivedPaginationFirst;
+      this.rows = this.ds.archivedPaginationRowLength;
+      this.stateTable = 'Archived';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('Archived'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('rejected')) {
+      this.first = this.ds.rejectedPaginationFirst;
+      this.rows = this.ds.rejectedPaginationRowLength;
+      this.stateTable = 'rejected';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('rejected'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('ServiceInvoices')) {
+      this.first = this.ds.servicePaginationFirst;
+      this.rows = this.ds.servicePaginationRowLength;
+      this.stateTable = 'Service';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('Service'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      } else {
+        this.globalSearch = this.ds.serviceGlobe;
+      }
+    }
   }
 
 }

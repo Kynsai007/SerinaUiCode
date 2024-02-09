@@ -148,6 +148,9 @@
       (searchInvoiceData)="searchInvoiceDataV($event)"
       [columnsData]="columnsData"
       [searchText]="searchText"
+      [pageId]="'exc_v'"
+      [pageNumber]="pageNumber"
+      (paginationEvent) = "paginate($event)"
     >
     </app-exception-table>
   </div>

@@ -480,9 +480,9 @@ input[type="checkbox"] {
   .flex_col {
     flex-direction: column;
   }
-  .accountSelect {
-    width: 87vw !important;
-  }
+  // .accountSelect {
+  //   width: 87vw !important;
+  // }
   .dashed-border {
     width: 85vw !important;
   }
@@ -599,7 +599,7 @@ input[type="checkbox"] {
   background: inherit;
   border: 0;
   position: relative;
-  top: -14px;
+  top: -11px;
   z-index: 1;
   left: -13px;
 }

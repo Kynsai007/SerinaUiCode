@@ -22,18 +22,18 @@ export class CustomerSummaryComponent implements OnInit {
   @ViewChild('approve') approve: Table;
   rangeDates: Date[];
   summaryColumn = [
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-    // { field: 'status', header: 'Status' },
-    { field: 'TotalPages', header: 'Total Pages' },
-    { field: 'TotalInvoices', header: 'Total Invoices' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    // { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'TotalPages', columnName: 'Total Pages' },
+    { dbColumnname: 'TotalInvoices', columnName: 'Total Invoices' },
   ];
   summaryColumnSP = [
-    { field: 'ServiceProviderName', header: 'Service Provider Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-    // { field: 'status', header: 'Status' },
-    { field: 'TotalPages', header: 'Total Pages' },
-    { field: 'TotalInvoices', header: 'Total Invoices' },
+    { dbColumnname: 'ServiceProviderName', columnName: 'Service Provider Name' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    // { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'TotalPages', columnName: 'Total Pages' },
+    { dbColumnname: 'TotalInvoices', columnName: 'Total Invoices' },
   ];
   minDate: Date;
   maxDate: Date;
@@ -92,15 +92,15 @@ export class CustomerSummaryComponent implements OnInit {
   // display columns
   findColumns() {
     this.summaryColumn.forEach((e) => {
-      if(!this.dataService.ap_boolean && e.header == 'Vendor Name'){
-        e.header = 'Customer Name'
+      if(!this.dataService.ap_boolean && e.columnName == 'Vendor Name'){
+        e.columnName = 'Customer Name'
       }
-      this.summaryColumnHeader.push(e.header);
-      this.summaryColumnField.push(e.field);
+      this.summaryColumnHeader.push(e.columnName);
+      this.summaryColumnField.push(e.dbColumnname);
     });
     this.summaryColumnSP.forEach((e) => {
-      this.summaryColumnHeaderSP.push(e.header);
-      this.summaryColumnFieldSP.push(e.field);
+      this.summaryColumnHeaderSP.push(e.columnName);
+      this.summaryColumnFieldSP.push(e.dbColumnname);
     });
 
     this.ColumnLengthVendor = this.summaryColumn.length;

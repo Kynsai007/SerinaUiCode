@@ -32,6 +32,16 @@ export class DataService {
   servicePaginationFirst = 0;
   servicePaginationRowLength = 10;
 
+  invTabPageNumber:number = 1;
+  poTabPageNumber:number = 1;
+  arcTabPageNumber:number = 1;
+  rejTabPageNumber:number = 1;  
+  grnTabPageNumber:number = 1;
+  serviceTabPageNumber:number = 1;
+  excTabPageNumber:number = 1;
+  crGRNTabPageNumber:number = 1;
+  aprTabPageNumber:number = 1;
+
   // Edited page pagination variables
   editInvoicesPaginationFisrt = 0;
   editInvoicesPaginationRowLength = 10;
@@ -60,14 +70,14 @@ export class DataService {
   bgColorCode = [
     { id:0, sub_id:0, name :'All', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
     { id:1, sub_id:1, name :'System Check In - Progress', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
-    { id:2, sub_id:2, name :'Processing Document', bgcolor: '#F3F4FF', textColor :'#747BC8'},
+    { id:2, sub_id:2, name :'Processing Document', bgcolor: '#d2d5f4', textColor :'#000000'},
     { id:3, sub_id:3, name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
-    { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEFFD6', textColor :'#FEDD58'},
+    { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEDD58', textColor :'#000000'},
     { id:4, sub_id:35, name :'Waiting for GRN creation', bgcolor: '#FEFFD6', textColor :'#CDD160'},
     { id:4, sub_id:39, name :'GRN Created in serina', bgcolor: '#8F00FF', textColor :'#000000'},
     { id:5, sub_id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
     { id:6, sub_id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
-    { id:7, sub_id:7, name :'Sent to ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:7, sub_id:7, name :'Sent to ERP', bgcolor: '#14BB12', textColor :'#ffffff'},
     { id:8, sub_id:8, name :'Payment Cleared', bgcolor: '#ECF9ED', textColor :'#3EB948'},
     { id:9, sub_id:9, name :'Payment Partially Paid', bgcolor: '#F1EBFF', textColor :'#6A5894'},
     { id:10, sub_id:10, name :'Invoice Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
@@ -193,14 +203,15 @@ export class DataService {
   
   exceptionService_G_S: string;
   vendor_exc_status = {id: 0, name:'All'};
+  service_exc_status = {id: 0, name:'All'};
   vendor_exc_uniSearch:string = '';
-  grn_exc_uniSearch: string;
+  service_exc_uniSearch:string = '';
+  grn_exc_uniSearch: string = '';
   masterTabName:string;
   masterSubTabName = 'invoice';
-  grn_aprve_uniSearch: string;
+  grn_aprve_uniSearch: string = '';
   snackBarRef: any;
-  service_exc_status = {id: 0, name:'All'};
-  service_exc_uniSearch:string = '';
+  isTableView = new BehaviorSubject<boolean>(false);
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
@@ -215,6 +226,10 @@ export class DataService {
     return this.VendorsReadData.asObservable();
   }
 
+  displayMode(){
+    return this.isTableView.asObservable();
+  }
+
   getVendorNamesData():Observable<any>{
     return this.vendorNameList.asObservable();
   }
@@ -222,5 +237,21 @@ export class DataService {
     if (this.snackBarRef) {
       this.snackBarRef.dismiss();
     }
+  }
+
+  searchFilter(searchTxt,filter_data){
+    return filter_data?.filter(item => {
+      // Iterate over object keys
+      for (const key in item) {
+        if (Object?.prototype?.hasOwnProperty?.call(item, key)) {
+          const value = item[key];
+          // Check if the field value contains the search term
+          if (value && typeof value === 'string' && value?.toLowerCase()?.includes(searchTxt?.toLowerCase())) {
+            return true;
+          }
+        }
+      }
+      return false;
+    });
   }
 }
