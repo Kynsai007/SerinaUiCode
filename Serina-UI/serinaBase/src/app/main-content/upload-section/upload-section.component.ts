@@ -1112,7 +1112,6 @@ export class UploadSectionComponent implements OnInit {
           this.attachedBoolean = true;
         };
       }
-
       this.fileDataProcess(event);
       for (var i = 0; i < event.target.files.length; i++) {
         this.name = event.target.files[i].name;
@@ -1173,7 +1172,14 @@ export class UploadSectionComponent implements OnInit {
 
   //file data processing on file selection
   fileDataProcess(event) {
-    this.uploadInvoice();
+    if(this.selectedOption == "Vendor"){
+      this.uploadInvoice();
+    } else {
+      setTimeout(()=>{
+        this.uploadService();
+      },300)
+    }
+
   }
 
   // identify drop file area
@@ -1765,6 +1771,10 @@ export class UploadSectionComponent implements OnInit {
               this.sharedService.invoiceID = doc_id;
               this.tagService.headerName = 'Review Invoice';
               this.dataService.idDocumentType = 3;
+            } else {
+              this.isError = true;
+              this.processStage = 'Invoice uploading failed';
+              this.error(lastreason);
             }
             this.webSocketService.close();
           }

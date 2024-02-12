@@ -409,7 +409,7 @@ export class LoginPageComponent implements OnInit {
           this.router.navigate(['/vendorPortal']);
         }
         environment1.username = this.loginForm.controls["username"].value;
-        window.location.reload();
+        // window.location.reload();
       } else {
         alert('The instance is inactive. Please contact Service Admin.');
         sessionStorage.clear();

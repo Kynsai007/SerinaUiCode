@@ -430,7 +430,7 @@
           <!-- <div> -->
           <div
             class="d-flex justify-content-between mr-2 flex-wrap"
-            *ngIf="progress || OcrProgress"
+            *ngIf="progress || OcrProgress || returnmessage"
           >
             <div class="img-name">{{ name }}</div>
             <!-- <div class="img-type">
@@ -538,18 +538,36 @@
             </p>
           </div> -->
 
-          <div class="f-12" *ngIf="returnmessage">Upload progressbar</div>
-          <div class="f-12" *ngIf="returnmessage" id="percText">
-            {{ progressText }}
+          <!-- <div class="f-12" *ngIf="returnmessage">Upload progressbar</div> -->
+          <div class="f-12 mb-1" *ngIf="returnmessage && !isError" id="percText">
+            Uploading      {{ progressbar }}%
+          </div>
+          <div
+            class="f-12 mb-1 percText d-flex justify-content-between mr-2"
+            *ngIf="returnmessage"
+            id="percText"
+            [ngClass]="isError ? 'duplicate' : 'normal'"
+          >
+            <div *ngIf="isError">Upload Failed</div>
           </div>
           <div class="progress mb-2" *ngIf="returnmessage">
             <div
-              class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+              class="progress-bar progress-bar-striped progress-bar-animated"
               id="precWidth"
+              [ngClass]="isError ? 'bg-red' : 'bg-success'"
               [style.width]="progressbar + '%'"
             >
-              {{ progressbar }}%
+              
             </div>
+          </div>
+          <div
+            class="f-12 d-flex justify-content-between mr-2"
+            *ngIf="returnmessage"
+          >
+            {{ progressText }}
+            <a class="f-12 pointer" *ngIf="isError" (click)="cancelQueue()">
+              Retry Upload
+            </a>
           </div>
 
           <!--buttons-->
