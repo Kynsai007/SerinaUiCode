@@ -603,6 +603,17 @@ export class SharedService {
   getsavedLCMLineData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readLcmData/${this.userId}?inv_id=${this.invoiceID}`)
   }
+  uploadPercentageAndAmountDetails(data,invtype,tab){
+    if(tab === 'percentage'){
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_perc=${data}`,data)
+    }
+    else{
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_amt=${data}`,data)
+    }
+  }
+  getAmountofPercentage(data){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?u_id=${this.userId}&inv_id=${this.invoiceID}&adv_perc=${data}`,data)
+  }
 
   // help document download
   downloadHelpDoc(file) {

@@ -778,3 +778,183 @@ a {
     background-color: inherit;
   }
 }
+.boxopen{
+  cursor: pointer;
+}
+.headamtbox{
+  font-weight: 700;
+  padding-left: 15px;
+  color: #140101;
+  font-size: 14px;
+  opacity: 100%;
+}
+.advSettingsButton{
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 130px;
+  height: 34px;
+  background-color: #358DC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.amount-box {
+  position: absolute;
+  top: 10%; /* Adjust as needed */
+  left: 8%; /* Adjust as needed */
+  z-index: 1000; /* Ensure the box appears over other contents */
+  // border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  opacity: 100%;
+  border-radius: 5px;
+  width: 255px;
+  height: 210px;
+  display: flex;
+  flex-direction: column;
+}
+
+.amount-box label {
+  display: block;
+  margin-bottom: 5px;
+  padding-left: 20px;
+  color: #140101;
+  opacity: 60%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.boxHead{
+  padding-top: 8px;
+}
+.amount-box input {
+  width: 100%;
+  height: 30px;
+  padding: 0px;
+  margin-bottom: 10px;
+  // box-sizing: border-box;
+  border: none;
+  outline: none;
+  padding-left: 20px;
+  color: #140101;
+  border-radius: 5px;
+}
+
+.amount-box button {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 34px;
+  padding-right: 33px;
+  width: 117px;
+  height: 34px;
+  background-color: #358DC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5; /* You can adjust the opacity as needed */
+}
+
+.amount-box button.cancel {
+  background-color: #ccc;
+}
+
+.tabs {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  display: flex;
+  // border-bottom: 2px solid grey;
+}
+
+.tabs span {
+  cursor: pointer;
+  // margin-right: 10px; /* Set the gap between tabs */
+  border-bottom: 1px solid #00000080;
+  padding-bottom: 5px;
+}
+
+.tabs span:last-child {
+  margin-right: 0; /* Remove margin for the last tab to avoid extra space */
+}
+
+.tabs span.active {
+  border-bottom: 2px solid #358DC0;
+  color: #358DC0;
+}
+.close-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+}
+.subButton{
+  margin-left: 100px; /* Push the button to the right side */
+  margin-top: auto; /* Align with the bottom */
+  padding-top: 0px; /* Optional: Add some top padding */
+  padding-right: 5px;
+}
+// .submitButton{
+//   background-color: #358DC0;
+//   padding: 10px;
+// }
+.percentage{
+  padding-left: 10px;
+  padding-right: 40px;
+  text-align: left;
+  font: normal normal normal 14px/21px;
+  font-size: 14px;
+}
+.amount{
+  padding-left: 40px;
+  padding-right: 20px;
+  text-align: left;
+  font: normal normal normal 14px/21px;
+  font-size: 14px;
+}
+.tabContent{
+  padding-top: 5px;
+  padding-left: 10px;
+
+  .tabBg {
+    background-color: #f0f0f0; /* Set your desired background color */
+    padding: 0px; /* Adjust padding as needed */
+    margin-bottom: 10px; /* Optional: Add margin between tabs */
+    display: inline-block;
+    border-radius: 5px;
+    width: 220px;
+    height: 54px;
+  }
+
+  .tabBg label {
+    display: block; /* Make the label a block element to occupy full width */
+    margin-bottom: 5px; /* Optional: Add margin between label and input */
+  }
+  .tabBg input{
+    background-color: #f0f0f0;;
+  }
+  
+}
+.button-container{
+  display: flex;
+  gap: 10px;
+}
+.accountSelect {
+  width: 15vw !important;
+  height: 35px;
+  font-size: 13px;
+}
+.cibutton{
+  padding-top: 10px;
+}

@@ -1139,6 +1139,7 @@ export class UploadSectionComponent implements OnInit {
       this.invoiceUploadDetails = event[0];
       this.isuploadable = false;
       this.dragfile = true;
+      this.selectPageRange = true;
 
       if (event && event[0]) {
         var reader = new FileReader();
