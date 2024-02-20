@@ -971,7 +971,6 @@ export class InvoiceComponent implements OnInit {
   }
 
   filterByDate(date) {
-    console.log(date,this.invoiceDispalyData)
     if (date != '') {
       const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
@@ -1319,7 +1318,6 @@ export class InvoiceComponent implements OnInit {
 
   
   universalSearch(txt){
-    console.log(txt)
       if(this.route.url == this.serviceInvoiceTab){
         this.ds.serviceGlobe = txt;
         this.serviceinvoiceDispalyData = this.filterDataService;

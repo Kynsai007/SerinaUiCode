@@ -226,9 +226,9 @@ export class DataService {
     return this.VendorsReadData.asObservable();
   }
 
-  displayMode(){
-    return this.isTableView.asObservable();
-  }
+  // displayMode(){
+  //   return this.isTableView.asObservable();
+  // }
 
   getVendorNamesData():Observable<any>{
     return this.vendorNameList.asObservable();

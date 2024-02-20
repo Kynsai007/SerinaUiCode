@@ -443,6 +443,15 @@
     z-index: 2;
     top: -5px;
   }
+  .selection_Div .input_box label{
+    top: 0;
+  }
+  .selection_Div .input_box select{
+    width: 230px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 5px;
+  }
   select option {
     display: inline-block;
     padding: 5px;
@@ -532,7 +541,16 @@
   // left: -80px;
   z-index: 300;
 }
-
+.img-browse {
+  background-color: #358DC0;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+}
 @media screen and (width > 1500px) {
   // .total_count {
   //   width: 10vw !important;

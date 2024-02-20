@@ -61,6 +61,8 @@ export class VendorBaseComponent implements OnInit {
         //   this.userDetails = JSON.parse(sessionStorage.getItem('logInUser'));
         // }
       });
+      this.DS.isTableView.subscribe(bool=> this.isTableView = bool);
+
    
   }
 

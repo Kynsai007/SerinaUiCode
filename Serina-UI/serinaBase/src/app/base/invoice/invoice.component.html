@@ -353,6 +353,7 @@
       (searchInvoiceData)="searchInvoiceDataV($event)"
       [columnsData]="serviceinvoiceDispalyData"
       [searchText]="searchText"
+      (systemCheckEmit)="refreshInvoice($event)"
       (paginationEvent) = "paginate($event)"
       [pageId]="'service'"
       (sideBarBoolean)="showSidebar($event)"

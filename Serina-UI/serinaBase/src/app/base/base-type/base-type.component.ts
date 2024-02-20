@@ -74,6 +74,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   supplier_route = "vendor/vendorDetails";
   // switchtext = "Table";
   isTableView:boolean;
+  DisplayMode : Subscription
 
   constructor(
     public router: Router,
@@ -96,7 +97,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
         this.numberOfNotify = message.Arraylength;
       }
     );
-      this.dataStoreService.displayMode().subscribe(bool=> this.isTableView = bool);
+      this.DisplayMode = this.dataStoreService.isTableView.subscribe(bool=> this.isTableView = bool);
   }
 
   ngOnInit(): void {
@@ -524,6 +525,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.DisplayMode.unsubscribe();
     this.dialog.closeAll();
   }
 }

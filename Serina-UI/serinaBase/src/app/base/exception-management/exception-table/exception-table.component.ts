@@ -118,7 +118,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     private alertService : AlertService,
     private md: MatDialog
   ) {
-    this.ds.displayMode().subscribe(bool=> {
+    this.ds.isTableView.subscribe(bool=> {
       this.isTableView = bool;
       this.ngOnInit();
     });
@@ -396,6 +396,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   // edit invoice details if something wrong
   editInvoice(e) {
+    this.tagService.approval_selection_boolean = false;
     if(this.router.url.includes('invoice')){
       this.tagService.submitBtnBoolean = false;
       let route: string;
@@ -452,6 +453,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         "client_address": JSON.parse(sessionStorage.getItem('userIp'))
       }
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
+
         this.SpinnerService.hide();
         if (data.result?.lock_info?.lock_status == 0) {
           this.SpinnerService.show();
@@ -697,10 +699,10 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   triggerBatch(event: Event,id) {
     event.stopPropagation();
     const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
-      width: '30%',
-      height: '35vh',
+      width: '400px',
+      height: '300px',
       hasBackdrop: false,
-      data: { body: 'Are you sure you want to re-trigger the batch for the Invoice?', type: 'confirmation' }
+      data: { body: 'Are you sure you want to re-trigger the batch for the Invoice?', type: 'confirmation',heading:'Confirmation',icon:'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
 
     drf.afterClosed().subscribe((bool) => {
@@ -709,30 +711,46 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         let query = `?re_upload=false`;
         this.invoiceID = id;
         this.sharedService.invoiceID = id;
-        this.sharedService.syncBatchTrigger(query).subscribe((data: any) => {
-          let sub_status = null;
-
-          if (data) {
-            this.triggerBoolean = false;
-            for (const el of data[this.invoiceID]?.complete_status) {
-              if (el.status == 0) {
-                sub_status = el.sub_status;
-              }
-            };
-          }
-          if (sub_status != 1) {
-            // window.location.reload();
-            this.systemCheckEmit.emit("inv");
-          } else {
-            this.error("Hey, we are facing some issue so, our technical team will handle this Document")
-          }
-        }, (error => {
-          this.triggerBoolean = false;
-        }))
+        if(this.router.url.includes('ServiceInvoices')){
+          this.serviceBatch();
+        } else {
+          this.vendorInvoiceBatch(query);
+        }
       }
     })
-
   }
+  vendorInvoiceBatch(query){
+    this.sharedService.syncBatchTrigger(query).subscribe((data: any) => {
+      let sub_status = null;
+
+      if (data) {
+        this.triggerBoolean = false;
+        for (const el of data[this.invoiceID]?.complete_status) {
+          if (el.status == 0) {
+            sub_status = el.sub_status;
+          }
+        };
+      }
+      if (sub_status != 1) {
+        // window.location.reload();
+        this.systemCheckEmit.emit("inv");
+      } else {
+        this.error("Hey, we are facing some issue so, our technical team will handle this Document")
+      }
+    }, (error => {
+      this.triggerBoolean = false;
+    }))
+  }
+  serviceBatch(){
+    this.sharedService.serviceSubmit().subscribe((data: any) => {
+      this.triggerBoolean = false;
+      this.systemCheckEmit.emit("ser");
+    }, err => {
+      this.error("Server error");
+      this.triggerBoolean = false;
+    })
+  }
+
   viewStatusPage(event: Event,e) {
     event.stopPropagation();
     this.sharedService.invoiceID = e.idDocument;

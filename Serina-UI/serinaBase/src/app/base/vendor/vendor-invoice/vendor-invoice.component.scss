@@ -58,9 +58,9 @@
     display: flex;
     justify-content: flex-end;
     padding: 7px;
-    width: 106%;
-    position: relative;
-    left: -28px;
+    width: 100%;
+    position: fixed;
+    left: 0;
 }
 .acc_body {
     height: calc(100vh - 100px);
