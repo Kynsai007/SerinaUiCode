@@ -32,6 +32,7 @@ import { ErrorPageComponent } from '../error-page/error-page.component';
 import { BusinessChartsComponent } from './home/business-charts/business-charts.component';
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
 import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
+import { ExceptionTableComponent } from './exception-management/exception-table/exception-table.component';
 
 const routes: Routes = [
   { 
@@ -70,14 +71,14 @@ const routes: Routes = [
             path: 'invoice',
             component: InvoiceComponent,
             children:[
-              { path:'allInvoices', component:AllInvoicesComponent },
-              { path:'PO', component:AllInvoicesComponent },
-              { path:'SO', component:AllInvoicesComponent },
-              { path: 'GRN', component:AllInvoicesComponent },
-              { path: 'archived' , component:AllInvoicesComponent },
-              { path: 'rejected' , component:AllInvoicesComponent },
-              { path: 'GRNExceptions' , component:AllInvoicesComponent },
-              { path: 'ServiceInvoices' , component:AllInvoicesComponent },
+              { path:'allInvoices', component:ExceptionTableComponent },
+              { path:'PO', component:ExceptionTableComponent },
+              { path:'SO', component:ExceptionTableComponent },
+              { path: 'GRN', component:ExceptionTableComponent },
+              { path: 'archived' , component:ExceptionTableComponent },
+              { path: 'rejected' , component:ExceptionTableComponent },
+              { path: 'GRNExceptions' , component:ExceptionTableComponent },
+              { path: 'ServiceInvoices' , component:ExceptionTableComponent },
               { path: '' , redirectTo:'allInvoices', pathMatch:'full'}
             ]
           },

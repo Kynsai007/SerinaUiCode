@@ -438,7 +438,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       //   this.isAGIUser = true;
       //  }
       // })
-      this.dataStoreService.entityData.next(data.result);
+      this.dataStoreService.entityData.next(data?.result|| null);
     });
   }
 

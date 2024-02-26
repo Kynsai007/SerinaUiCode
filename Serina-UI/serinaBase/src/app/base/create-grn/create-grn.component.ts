@@ -19,30 +19,12 @@ import { Calendar } from 'primeng/calendar';
   styleUrls: ['./create-grn.component.scss']
 })
 export class CreateGRNComponent implements OnInit {
-  ColumnsForGRN = [
-    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
-    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
-    // { dbColumnname: 'Name', columnName: 'Rule' },
-    { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
-    { dbColumnname: 'PODocumentID', columnName: 'PO number' },
-    // { dbColumnname: 'DocumentState', columnName: 'PO Status' },
-    { dbColumnname: 'totalAmount', columnName: 'Amount' },
-  ];
+  ColumnsForGRN = [];
   columnsData = [];
   columnsDataPO = [];
   showPaginator: boolean;
   showPaginatorAllInvoice: boolean;
   columnsToDisplay = [];
-
-  ColumnsForGRNApproval = [
-    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
-    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
-    { dbColumnname: 'Name', columnName: 'Rule' },
-    // { dbColumnname: 'documentdescription', columnName: 'Description' },
-    // { dbColumnname: 'All_Status', columnName: 'Status' },
-    { dbColumnname: 'Approvaltype', columnName: 'Approval Type' },
-    { dbColumnname: 'totalAmount', columnName: 'Amount' },
-  ];
   columnsToDisplayGRNApproval = [];
   viewType: any;
   allSearchInvoiceString: any[];
@@ -106,7 +88,7 @@ export class CreateGRNComponent implements OnInit {
         if(!this.isDesktop){
           this.mob_columns()
         }
-        this.prepareColumnsArray();
+        
         this.readTableData('');
         this.readEntity();
       } else {
@@ -114,6 +96,7 @@ export class CreateGRNComponent implements OnInit {
         this.api_route = 'GRNToBeApproved';
         this.readTableData_apr('');
       }
+      this.prepareColumnsArray();
     } else{
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
@@ -136,16 +119,27 @@ export class CreateGRNComponent implements OnInit {
   
   // to prepare display columns array
   prepareColumnsArray() {
+    this.ColumnsForGRN = [
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      // { field: 'Name', header: 'Rule' },
+      { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO number' },
+      // { field: 'DocumentState', header: 'PO Status' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+    ];
     this.ColumnsForGRN.filter((element) => {
+      if(this.router.url.includes('GRN_approvals') && element.dbColumnname == 'docheaderID'){
+        element.header = "GRN Number"
+      }
       this.columnsToDisplay.push(element.dbColumnname);
-      // this.invoiceColumnField.push(element.dbColumnname)
+      // this.invoiceColumnField.push(element.field)
     });
-    this.ColumnsForGRNApproval.filter((ele) => {
-      this.columnsToDisplayGRNApproval.push(ele.dbColumnname);
-    });
-
+    // this.ColumnsForGRNApproval.filter((ele) => {
+    //   this.columnsToDisplayGRNApproval.push(ele.field);
+    // });
     this.GRNTableColumnLength = this.ColumnsForGRN.length + 1;
-    this.approvalPageColumnLength = this.ColumnsForGRN.length + 1;
+    console.log(this.ColumnsForGRN)
   }
 
   chooseEditedpageTab(value) {
@@ -433,7 +427,7 @@ export class CreateGRNComponent implements OnInit {
     })
   }
   resetForm(){
-    this.PO_GRNForm?.controls['PONumber'].reset();
+    // this.PO_GRNForm?.controls['PONumber'].reset();
     this.PO_GRNForm?.controls['EntityName'].reset();
     this.PO_GRNForm?.controls['vendor'].reset();
   }

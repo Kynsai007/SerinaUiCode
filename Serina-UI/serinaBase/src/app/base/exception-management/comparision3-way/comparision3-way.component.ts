@@ -331,6 +331,7 @@ export class Comparision3WayComponent
   entityList: any;
   entityName: any;
   commentsBool: boolean = true;
+  selected_GRN_total: number;
 
   constructor(
     fb: FormBuilder,
@@ -2294,7 +2295,11 @@ export class Comparision3WayComponent
       })
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
-      this.SharedService.duplicateGRNCheck(JSON.stringify(arr)).subscribe((data: any) => {
+      let extra_param = '';
+      if(this.router.url.includes('GRN_approvals')){
+        extra_param = `&grn_id=${this.invoiceID}`
+      } 
+      this.SharedService.duplicateGRNCheck(JSON.stringify(arr),extra_param).subscribe((data: any) => {
         duplicateAPI_response = data?.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
@@ -2565,6 +2570,13 @@ export class Comparision3WayComponent
           this.selectedGRNLines = this.selectedGRNLines.filter(grn => grn.grnNumber != grn_num);
         }
       }
+      let total_arr = []
+      this.selectedGRNLines.forEach(el=>{
+        total_arr.push(el.linesData)
+      })
+      this.selected_GRN_total = total_arr.reduce((acc, arr) => {
+        return acc + arr.reduce((subAcc, obj) => subAcc + parseFloat(obj.AmountExcTax), 0);
+      }, 0);
     }, err => {
       this.error("Server error");
       this.SpinnerService.hide();

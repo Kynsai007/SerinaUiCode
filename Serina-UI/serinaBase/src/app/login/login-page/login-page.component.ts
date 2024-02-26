@@ -242,7 +242,6 @@ export class LoginPageComponent implements OnInit {
       "password": this.f.password.value,
       "type":type
     }
-    
     sessionStorage.setItem('username',JSON.stringify(data1.username));
     this.authenticationService.login(JSON.stringify(data1))
       .subscribe(

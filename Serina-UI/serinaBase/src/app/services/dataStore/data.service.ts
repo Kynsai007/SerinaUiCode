@@ -73,7 +73,7 @@ export class DataService {
     { id:2, sub_id:2, name :'Processing Document', bgcolor: '#d2d5f4', textColor :'#000000'},
     { id:3, sub_id:3, name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
     { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEDD58', textColor :'#000000'},
-    { id:4, sub_id:35, name :'Waiting for GRN creation', bgcolor: '#FEFFD6', textColor :'#CDD160'},
+    { id:4, sub_id:35, name :'Waiting for GRN creation ', bgcolor: '#FEFFD6', textColor :'#CDD160'},
     { id:4, sub_id:39, name :'GRN Created in serina', bgcolor: '#8F00FF', textColor :'#000000'},
     { id:5, sub_id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
     { id:6, sub_id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
@@ -87,6 +87,9 @@ export class DataService {
     { id:16, sub_id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
     { id:15, sub_id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
     { id:14, sub_id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:24, sub_id:70, name :'Set Approval', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:2, sub_id:37, name :'GRN successfully created in ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:3, sub_id:70, name :'Approval Pending', bgcolor: '#d0fbdd', textColor :'#14bb12'},
   ]
 
   // bgColorCode = [

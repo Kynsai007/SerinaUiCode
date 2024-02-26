@@ -102,8 +102,7 @@
                 <span
                   class="statusType status_color"
                   *ngIf="
-                    e_data.documentStatusID == color.sub_id &&
-                    e_data.documentsubstatusID != 39
+                    e_data.documentStatusID == color.sub_id 
                   "
                   [ngStyle]="{
                     'background-color':
@@ -216,12 +215,6 @@
   <div *ngIf="!(columnsData?.length > 0)" class="f-12">No data found.</div>
 </div>
 <div class="paginator_div" *ngIf="showPaginatorAllInvoice && !isTableView">
-  <!-- <pagination-controls 
-    [id]="pageId"
-    [maxSize]="maxSize" 
-    [previousLabel]="labels.previousLabel"
-    [nextLabel]="labels.nextLabel" 
-    (pageChange)="onPageChange($event)"></pagination-controls> -->
 
   <pagination-template
     #p="paginationApi"
@@ -412,8 +405,7 @@
                 <div
                   class="statusType"
                   *ngIf="
-                    invoiceData.documentStatusID == color.sub_id &&
-                    invoiceData.documentsubstatusID != 39
+                    invoiceData.documentStatusID == color.sub_id
                   "
                   [ngStyle]="{
                     'background-color':
