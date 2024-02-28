@@ -14,6 +14,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { DocumentService } from 'src/app/services/vendorPortal/document.service';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/services/ws/websocket.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
@@ -414,12 +415,14 @@ export class UploadSectionComponent implements OnInit {
   }
 
   runEventSource(eventSourceObj) {
-    this.evtSource = new EventSource(
-      `${environment.apiUrl}/${this.apiVersion
+    let headers = {headers:{'Authorization':`Bearer ${this.authenticationService.currentUserValue.token}`},https: {rejectUnauthorized: false}}
+    this.evtSource = new EventSourcePolyfill(
+      `${environment.apiUrl}/${
+        this.apiVersion
       }/ocr/status/stream?eventSourceObj=${encodeURIComponent(
         JSON.stringify(eventSourceObj)
       )}`
-    );
+    ,headers);
   }
 
   getEntitySummary() {
