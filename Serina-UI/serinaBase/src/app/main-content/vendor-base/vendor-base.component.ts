@@ -39,7 +39,8 @@ export class VendorBaseComponent implements OnInit {
   timezone: string;
   name_short: string;
   isTableView: boolean;
-
+  isNewVendorForERP:boolean = true;
+  
   constructor(private router:Router,
     private settingService : SettingsService,
     private SharedService:SharedService,

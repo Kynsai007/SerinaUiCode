@@ -131,9 +131,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   getMoreText(){
     if(this.router.url.includes('documentSummary')){
       this.more_text = 'Summary';
-    } else if(this.router.url.includes('vendor')){
+    } else if(this.router.url.includes('/customer/vendor/')){
       this.more_text = this.supplier_names;
-    } else if(this.router.url.includes('vendor')){
+    } else if(this.router.url.includes('roles')){
       this.more_text = 'Roles';
     } else {
       this.more_text = 'More';
@@ -166,7 +166,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     sessionStorage.clear();
   }
   openDialog() {
-    this.dialog.open(ChangePasswordComponent);
+    const drf:MatDialogRef<ChangePasswordComponent> = this.dialog.open(ChangePasswordComponent,{ 
+      width : '450px',
+      hasBackdrop: false})
   }
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{

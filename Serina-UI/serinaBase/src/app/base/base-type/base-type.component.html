@@ -713,7 +713,7 @@
         <div style="position: relative;" (clickOutside)="onClickedOutside($event,'more')">
           <div class="nav_Link f-14" (click)="more_routes()"
           [ngClass]="{
-            'active_cls': router.url.includes('vendor') || router.url.includes('serviceProvider') || router.url.includes('documentSummary') || router.url.includes('roles')
+            'active_cls': router.url.includes('/customer/vendor/') || router.url.includes('serviceProvider') || router.url.includes('documentSummary') || router.url.includes('roles')
           }"
           >
             {{more_text}} <span class="material-icons more_pos" >
