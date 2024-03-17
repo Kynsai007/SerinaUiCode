@@ -142,6 +142,7 @@ import { ServiceSummaryComponent } from './home/service-based-charts/service-sum
     FeatureComponent,
     FunFactsComponent,
     FilterPipe,
+    ExceptionTableComponent
   ],
   providers: [
     DatePipe,
