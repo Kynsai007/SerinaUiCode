@@ -20,6 +20,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   checkselect:boolean=false;
   displayAddTemplateDialog: boolean;
   vendorAccountList = [];
+  currencies = [];
   select_vendorAccount: any;
   templateName: string;
   modaladderr:boolean=false;
@@ -348,6 +349,14 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         console.log(err);
         this.downloading = false;
       })
+  }
+
+  getCurrencies(){
+    this.sharedService.getAllCurrencies().subscribe((data:any) =>{
+      if(data.error == 0){
+        this.currencies = data.currencies;
+      }
+    });
   }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
