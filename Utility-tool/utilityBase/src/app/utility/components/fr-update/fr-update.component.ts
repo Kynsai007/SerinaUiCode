@@ -152,6 +152,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
       }
     }
+    this.getCurrencies();
     this.getModalList(this.selecteddocType);
     this.changeMetaData();
     this.getAccuracyScore();
@@ -353,6 +354,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
   getCurrencies(){
     this.sharedService.getAllCurrencies().subscribe((data:any) =>{
+      console.log(data);
       if(data.error == 0){
         this.currencies = data.currencies;
       }
