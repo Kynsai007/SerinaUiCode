@@ -268,8 +268,7 @@
                                 <td class="tdRight">
                                     <select name="Units" id="Units" ngModel #Units="ngModel" class="form-control max_width f-13"
                                          >
-                                        <option  value="USD" selected disabled>Select Currency</option>
-                                        <option *ngFor="let cur of currencies" [value]="cur.currency">{{cur.currency}}</option>
+                                        <option *ngFor="let cur of currencies" [value]="cur.currency">{{cur.description}}</option>
                                     </select>
                                 </td>
                             </tr>

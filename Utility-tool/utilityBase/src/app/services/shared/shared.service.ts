@@ -259,9 +259,6 @@ export class SharedService {
   getallEntities(): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/fr/get_all_entities/${this.userId}`).pipe(retry(3));
   }
-  getAllCurrencies(): Observable<any>{
-    return this.http.get(`https://www.amdoren.com/api/currency_list.php?api_key=VQHxAbgmFxBKBTrgmzeLTNhSJPWK5E`);
-  }
   updateEntity(ent,obj):Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/fr/update_entity/${ent}`,obj).pipe(retry(3));
   }
