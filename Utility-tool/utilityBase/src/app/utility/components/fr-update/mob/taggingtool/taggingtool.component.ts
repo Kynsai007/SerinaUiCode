@@ -5,6 +5,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import {CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/services/shared/shared.service';
 import $ from 'jquery';
+import { log } from 'console';
 if( pdfjsLib !== undefined ){
   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://npmcdn.com/pdfjs-dist@2.6.347/build/pdf.worker.js";
 }
@@ -16,6 +17,9 @@ if( pdfjsLib !== undefined ){
 export class TaggingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any;
   @Input() modelData:any;
+  jsonData:any;
+  loadingValues: boolean = false;
+  allFileLabels: any[] = [];
   resp:any;
   top:number;
   activatedrw:boolean = false;
@@ -394,6 +398,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
       }
   }
+  // tagging fields start
+  // tagging fields end
   resetTagging(){
     let model_id = this.modelData.idDocumentModel;
     let folderPath = this.modelData.folderPath;
@@ -1231,6 +1237,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     }
   }
+
+ 
   previous(){
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
@@ -1463,4 +1471,74 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     (<HTMLDivElement>document.getElementById("parentcanvas"+this.currentindex)).style.transform = res;
   }
 
+  //Auto tagging function start
+  tagValues(e) {
+      let value = e.target.id;
+      let filename = this.currentfile;
+      if (value === "currentFile") {
+        this.loadingValues = true;
+        let folderName = this.modelData.folderPath.substring(0, this.modelData.folderPath.lastIndexOf("/") + 1);
+        this.sharedService.tagValuesToFields(folderName, filename).subscribe((data: any) => {
+            this.jsonData = data.find(item => item.document.endsWith(filename));
+              // Iterate through the labels array of the item
+              this.jsonData.labels.forEach(labelObj => {
+                  const label = labelObj.label; // Get the label
+                  const valueText = labelObj.value[0].text; // Get the value text
+                  // Update the corresponding field in HTML with the value text
+                  const fieldKey = label; // Assuming label is the field key
+                  const fieldDiv = document.getElementById(`field-${fieldKey}`);
+                  if (fieldDiv) {
+                      fieldDiv.innerHTML = valueText;
+                  }
+              });
+              // persisting the data
+              let frobj = {
+                'documentId':this.modelData.idDocumentModel,
+                'container':this.frConfigData[0].ContainerName,
+                'connstr':this.frConfigData[0].ConnectionString,
+                'filename':this.modelData.folderPath+"/"+this.currentfile,
+                'saveJson':null,
+                'labelJson':this.jsonData
+              }
+              this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+                location.reload()
+              })
+              this.loadingValues = false;
+          });
+      }
+      else if(value === "allFiles"){
+        let folderName = this.modelData.folderPath.substring(0, this.modelData.folderPath.lastIndexOf("/") + 1);
+        this.loadingValues = true;
+        this.sharedService.tagValuesToFields(folderName).subscribe((fileData: any[]) => {
+          fileData.forEach((fileItem: any) => {
+            const fileName = fileItem.document.split('/').pop();
+            this.currentfile = fileName
+              fileItem.labels.forEach(labelObj => {
+                const label = labelObj.label; 
+                const valueText = labelObj.value[0].text; 
+                const fieldKey = label; 
+                const fieldDiv = document.getElementById(`field-${fieldKey}`);
+                if (fieldDiv) {
+                  fieldDiv.innerHTML = valueText;
+                }
+              });
+               // Create frobj for the current file
+                let frobj = {
+                  'documentId': this.modelData.idDocumentModel,
+                  'container': this.frConfigData[0].ContainerName,
+                  'connstr': this.frConfigData[0].ConnectionString,
+                  'filename': this.modelData.folderPath + "/"+this.currentfile,
+                  'saveJson': null,
+                  'labelJson': fileItem
+              };
+              // Call shared service to save labels for the current file
+              this.sharedService.saveLabelsFile(frobj).subscribe((data: any) => {
+                location.reload()
+              });
+          });
+        this.loadingValues = false;
+      });
+    }   
+  }
 }
+//Auto tagging function end
