@@ -1477,8 +1477,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       let filename = this.currentfile;
       if (value === "currentFile") {
         this.loadingValues = true;
-        let folderName = this.modelData.folderPath.substring(0, this.modelData.folderPath.lastIndexOf("/") + 1);
-        this.sharedService.tagValuesToFields(folderName, filename).subscribe((data: any) => {
+        this.sharedService.tagValuesToFields(this.modelData.folderPath, filename).subscribe((data: any) => {
             this.jsonData = data.find(item => item.document.endsWith(filename));
               // Iterate through the labels array of the item
               this.jsonData.labels.forEach(labelObj => {
@@ -1507,9 +1506,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           });
       }
       else if(value === "allFiles"){
-        let folderName = this.modelData.folderPath.substring(0, this.modelData.folderPath.lastIndexOf("/") + 1);
         this.loadingValues = true;
-        this.sharedService.tagValuesToFields(folderName).subscribe((fileData: any[]) => {
+        this.sharedService.tagValuesToFields(this.modelData.folderPath).subscribe((fileData: any[]) => {
           fileData.forEach((fileItem: any) => {
             const fileName = fileItem.document.split('/').pop();
             this.currentfile = fileName
