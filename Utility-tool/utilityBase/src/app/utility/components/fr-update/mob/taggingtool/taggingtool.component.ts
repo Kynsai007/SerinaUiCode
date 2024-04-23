@@ -62,6 +62,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   showtabletags:boolean = false;
   target:any;
   currentSelection:any[]=[];
+  // currentwidth:any;
   currentwidth:number;
   currentheight:number;
   p_name:any;
@@ -254,6 +255,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           for(let ind = 0;ind<=this.tabledetails[v.fieldKey];ind++){
             let index = this.labelsJson["labels"].findIndex(el => el.label == l.label);
             let unsorted = this.labelsJson["labels"][index]["value"];
+            unsorted[0].boundingBoxes[0][0] *= this.currentwidth
+            unsorted[0].boundingBoxes[0][1] *= this.currentheight
+            unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
             for(let o=0;o<unsorted.length;o++){
               let boundingBox;
               if(this.currentfiletype == 'application/pdf'){
@@ -261,10 +265,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
               }
-              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
-                unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
+              if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])))){
+                unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).getAttribute("line"));
               }
             }
             unsorted = unsorted.sort((a:any,b:any) => {
@@ -276,6 +278,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               boundingBoxes : s.boundingBoxes
             }))
             let arr = this.labelsJson["labels"][index]["value"];
+            arr[0].boundingBoxes[0] = arr[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
             for(let i=0;i<arr.length;i++){
               let boundingBox;
               if(this.currentfiletype == 'application/pdf'){
@@ -283,9 +286,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(arr[i].boundingBoxes[0]);
               }
-              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1]));
+              let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])));
               if(div){
                 div.style.backgroundColor = 'transparent';
                 div.setAttribute("selected","false");
@@ -309,6 +310,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       let arr = this.currentSelection;
       for(let i=0;i<arr.length;i++){
         let boundingbox = [arr[i].x,arr[i].y,arr[i].x2,arr[i].y2,arr[i].w,arr[i].h,arr[i].x4,arr[i].y4];
+        boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
         if(this.currentfiletype == 'application/pdf'){
           boundingbox = this.convertPixelToInch(boundingbox);
         }else{
@@ -328,6 +330,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
       }
       let unsorted = this.labelsJson["labels"][tabindex]["value"];
+      unsorted[0].boundingBoxes[0][0] *= this.currentwidth 
+      unsorted[0].boundingBoxes[0][1] *= this.currentheight
+      unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
         for(let o=0;o<unsorted.length;o++){
           let boundingBox;
           if(this.currentfiletype == 'application/pdf'){
@@ -335,9 +340,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
           }
-          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {
           return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
@@ -365,18 +367,16 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
  
   mouseEnter(field){
       let index = this.labelsJson["labels"].findIndex(el => el.label == field);
-      if(index != -1){
+      if(index != -1){        
         for(let v of this.labelsJson["labels"][index]["value"]){
-          let boundingBox;
+          let boundingBox = v.boundingBoxes[0];
           if(this.currentfiletype == 'application/pdf'){
             boundingBox = this.convertInchToPixel(v.boundingBoxes[0]);
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(2)';
+          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))){
+            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).style.transform = 'scale(2)';
           }
         }
       }
@@ -391,10 +391,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(1)';
+          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))){
+            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).style.transform = 'scale(1)';
           }
         }
       }
@@ -1089,7 +1087,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         line++;
       }
-      document.addEventListener('keydown',async function(eve){
+      document.addEventListener('keydown',async (eve) => {
           const key = eve.key;
           if(key === 'Delete'){
             let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
@@ -1118,7 +1116,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                     index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                   }
                   for(let v of _this.labelsJson["labels"][index]["value"]){
-                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
+                    boundingbox[0] *= this.currentwidth
+                    boundingbox[1] *= this.currentheight
+                    boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
+                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0] == boundingbox[0] && v.boundingBoxes[0][1] == boundingbox[1]){
                       _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
                     }
                   }
