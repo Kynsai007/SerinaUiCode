@@ -339,7 +339,7 @@ export class SharedService {
   tagValuesToFields(folderPath: string, fileName?: string): Observable<any> {
     let url = `${this.url}/${this.apiVersion}/ModelOnBoard/autoLabels/${folderPath}`;
     if (fileName) {
-      url += `?filname=${fileName}`;
+      url += `?filename=${fileName}`;
     }
     return this.http.get(url).pipe(retry(3));
   }
