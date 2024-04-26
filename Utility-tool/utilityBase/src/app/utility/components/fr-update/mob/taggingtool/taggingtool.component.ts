@@ -5,7 +5,6 @@ import * as pdfjsLib from 'pdfjs-dist';
 import {CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/services/shared/shared.service';
 import $ from 'jquery';
-import { log } from 'console';
 if( pdfjsLib !== undefined ){
   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://npmcdn.com/pdfjs-dist@2.6.347/build/pdf.worker.js";
 }
@@ -17,7 +16,7 @@ if( pdfjsLib !== undefined ){
 export class TaggingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any;
   @Input() modelData:any;
-  jsonData:any;
+  layouttext:string;
   textValue: string;
   loadingValues: boolean = false;
   allFileLabels: any[] = [];
@@ -801,6 +800,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     }
     this.clearTableTags();
     this.analyzing = true;
+    this.layouttext = "Running Layout"
     this.ready = false;
     (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
     let frobj = {
@@ -1468,137 +1468,40 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     res = res + 'scale('+this.zoomVal+')';
     (<HTMLDivElement>document.getElementById("parentcanvas"+this.currentindex)).style.transform = res;
   }
-
+  findIndexByKey(array, key) {
+    for (let i = 0; i < array.length; i++) {
+        const obj = array[i];
+        if (key in obj) {
+            return i; // Return index if key exists in the object
+        }
+    }
+    return -1; // Return -1 if key doesn't exist in any object
+  }
   //Auto tagging function start
   tagValues(e) {
       let value = e.target.id;
       let filename = this.currentfile;
+      let index = this.findIndexByKey(this.thumbnails, filename);
       if (value === "currentFile") {
-        this.loadingValues = true;
+        this.analyzing = true;
+        this.layouttext = "Getting Labels for Current File"
+        this.ready = false;
         this.sharedService.tagValuesToFields(this.modelData.folderPath, filename).subscribe((data: any) => {
-            this.jsonData = data.find(item => item.document.endsWith(filename));
-              let boundingBoxId
-              let values
-              this.jsonData.labels.forEach(labelObj => {
-                  this.textValue = labelObj.value[0].text; 
-                  values = labelObj.value[0]
-                  const fieldKey = labelObj.label;
-                  const fieldDiv = document.getElementById(`field-${fieldKey}`);
-                  if (fieldDiv) {
-                      fieldDiv.innerHTML = this.textValue;
-                  }
-                  let unsorted = labelObj.value[0].boundingBoxes[0]
-                  unsorted[0] *= this.currentwidth;
-                  unsorted[1] *= this.currentheight;
-                  unsorted = unsorted.map(coord => parseFloat(coord).toFixed(1));
-                  for(let o=0;o<values.length;o++){
-                    let boundingbox
-                    if(this.currentfiletype == 'application/pdf'){
-                      boundingbox = this.convertInchToPixel(unsorted);
-                    }else{
-                      boundingbox = this.convertImagePixelToPixel(unsorted);
-                    }
-                    boundingBoxId = `rect${labelObj.value[0].page}${this.textValue}`+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
-                }
-                let arr = labelObj.value[0].boundingBoxes[0]
-                arr = arr.map(coord => parseFloat(coord).toFixed(1));
-                for(let j=0;j<values.length;j++){
-                  let boundingBox
-                  if(this.currentfiletype == 'application/pdf'){
-                    boundingBox = this.convertInchToPixel(arr);
-                  }else{
-                    boundingBox = this.convertImagePixelToPixel(arr);
-                  }
-                  boundingBoxId = `rect${labelObj.value[0].page}${this.textValue}`+Math.round(boundingBox[0])+Math.round(boundingBox[1]);
-                  let div = (<HTMLDivElement>document.getElementById(boundingBoxId));
-                  if(div){
-                    div.style.backgroundColor = 'transparent';
-                    div.setAttribute("selected","false");
-                    div.setAttribute("fieldid","field-"+fieldKey);
-                    div.style.borderColor = 'rgb(9, 179, 60)';
-                    div.style.borderStyle = 'solid';
-                    div.style.borderWidth = '2px';
-                  }
-              }
-          });
-          let frobj = {
-            'documentId':this.modelData.idDocumentModel,
-            'container':this.frConfigData[0].ContainerName,
-            'connstr':this.frConfigData[0].ConnectionString,
-            'filename':this.modelData.folderPath+"/"+this.currentfile,
-            'saveJson':null,
-            'labelJson':this.jsonData
-          }
-          this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
-            location.reload()
-          });
-          this.loadingValues = false;
+          this.SelectDoc(index);
+          this.analyzing = false;
+          this.ready = true;
         });
       }
       else if(value === "allFiles"){
-        this.loadingValues = true;
-        this.sharedService.tagValuesToFields(this.modelData.folderPath).subscribe((fileData: any[]) => {
-          fileData.forEach((fileItem: any) => {
-            this.currentfile = fileItem.document.split('/').pop();
-              let boundingBoxId
-              let values
-              fileItem.labels.forEach(labelObj => {
-                this.textValue = labelObj.value[0].text
-                values = labelObj.value[0]
-                const fieldKey = labelObj.label; 
-                const fieldDiv = document.getElementById(`field-${fieldKey}`);
-                if (fieldDiv) {
-                  fieldDiv.innerHTML = this.textValue;
-                }
-                let unsorted = labelObj.value[0].boundingBoxes[0]
-                  unsorted[0] *= this.currentwidth;
-                  unsorted[1] *= this.currentheight;
-                  unsorted = unsorted.map(coord => parseFloat(coord).toFixed(1));
-                  for(let o=0;o<values.length;o++){
-                    let boundingbox
-                    if(this.currentfiletype == 'application/pdf'){
-                      boundingbox = this.convertInchToPixel(unsorted);
-                    }else{
-                      boundingbox = this.convertImagePixelToPixel(unsorted);
-                    }
-                    boundingBoxId = `rect${labelObj.value[0].page}${this.textValue}`+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
-                  }
-                  let arr = labelObj.value[0].boundingBoxes[0]
-                  arr = arr.map(coord => parseFloat(coord).toFixed(1));
-                  for(let j=0;j<values.length;j++){
-                    let boundingBox
-                    if(this.currentfiletype == 'application/pdf'){
-                      boundingBox = this.convertInchToPixel(arr);
-                    }else{
-                      boundingBox = this.convertImagePixelToPixel(arr);
-                    }
-                    boundingBoxId = `rect${labelObj.value[0].page}${this.textValue}`+Math.round(boundingBox[0])+Math.round(boundingBox[1]);
-                    let div = (<HTMLDivElement>document.getElementById(boundingBoxId));
-                    if(div){
-                      div.style.backgroundColor = 'transparent';
-                      div.setAttribute("selected","false");
-                      div.setAttribute("fieldid","field-"+fieldKey);
-                      div.style.borderColor = 'rgb(9, 179, 60)';
-                      div.style.borderStyle = 'solid';
-                      div.style.borderWidth = '2px';
-                    }
-                  }
-            });
-            let frobj = {
-              'documentId': this.modelData.idDocumentModel,
-              'container': this.frConfigData[0].ContainerName,
-              'connstr': this.frConfigData[0].ConnectionString,
-              'filename': this.modelData.folderPath + "/"+this.currentfile,
-              'saveJson': null,
-              'labelJson': fileItem
-          };
-          this.sharedService.saveLabelsFile(frobj).subscribe((data: any) => {
-            location.reload()
-          });
-          this.loadingValues = false;
-          });
-      });
-    }   
+        this.analyzing = true;
+        this.ready = false;
+        this.layouttext = "Getting Labels for All Files"
+        this.sharedService.tagValuesToFields(this.modelData.folderPath).subscribe((data: any) => {
+          this.SelectDoc(0);
+          this.ready = true;
+          this.analyzing = false;
+        });
+      }   
   }
 }
 //Auto tagging function end
