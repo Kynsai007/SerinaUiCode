@@ -917,8 +917,14 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }catch(ex){
             console.log(ex);
           }
-          this.readResults = this.jsonresult['analyzeResult']['readResults']
-          let obj = this.readResults.filter(v => v.page == 1);
+          let obj;
+          if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+            this.readResults = this.jsonresult['analyzeResult']['readResults']
+            obj = this.readResults.filter(v => v.page == 1);
+          }else{
+            this.readResults = this.jsonresult['analyzeResult']['pages']
+            obj = this.readResults.filter(v => v.pageNumber == 1);
+          }
           this.currentwidth = obj[0]['width'];
           this.currentheight = obj[0]['height'];
           this.currentangle = obj[0]['angle'];
