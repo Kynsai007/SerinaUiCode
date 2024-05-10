@@ -254,9 +254,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           for(let ind = 0;ind<=this.tabledetails[v.fieldKey];ind++){
             let index = this.labelsJson["labels"].findIndex(el => el.label == l.label);
             let unsorted = this.labelsJson["labels"][index]["value"];
-            unsorted[0].boundingBoxes[0][0] *= this.currentwidth
-            unsorted[0].boundingBoxes[0][1] *= this.currentheight
-            unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
             for(let o=0;o<unsorted.length;o++){
               let boundingBox;
               if(this.currentfiletype == 'application/pdf'){
@@ -264,8 +261,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
               }
-              if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])))){
-                unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).getAttribute("line"));
+              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+              if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
+                unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
               }
             }
             unsorted = unsorted.sort((a:any,b:any) => {
@@ -277,7 +276,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               boundingBoxes : s.boundingBoxes
             }))
             let arr = this.labelsJson["labels"][index]["value"];
-            arr[0].boundingBoxes[0] = arr[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
             for(let i=0;i<arr.length;i++){
               let boundingBox;
               if(this.currentfiletype == 'application/pdf'){
@@ -285,7 +283,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(arr[i].boundingBoxes[0]);
               }
-              let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])));
+              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+              let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1]));
               if(div){
                 div.style.backgroundColor = 'transparent';
                 div.setAttribute("selected","false");
@@ -309,7 +309,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       let arr = this.currentSelection;
       for(let i=0;i<arr.length;i++){
         let boundingbox = [arr[i].x,arr[i].y,arr[i].x2,arr[i].y2,arr[i].w,arr[i].h,arr[i].x4,arr[i].y4];
-        boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
         if(this.currentfiletype == 'application/pdf'){
           boundingbox = this.convertPixelToInch(boundingbox);
         }else{
@@ -329,9 +328,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
       }
       let unsorted = this.labelsJson["labels"][tabindex]["value"];
-      unsorted[0].boundingBoxes[0][0] *= this.currentwidth 
-      unsorted[0].boundingBoxes[0][1] *= this.currentheight
-      unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
         for(let o=0;o<unsorted.length;o++){
           let boundingBox;
           if(this.currentfiletype == 'application/pdf'){
@@ -339,6 +335,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
           }
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {
           return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
@@ -366,16 +365,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
  
   mouseEnter(field){
       let index = this.labelsJson["labels"].findIndex(el => el.label == field);
-      if(index != -1){        
+      if(index != -1){
         for(let v of this.labelsJson["labels"][index]["value"]){
-          let boundingBox = v.boundingBoxes[0];
+          let boundingBox;
           if(this.currentfiletype == 'application/pdf'){
             boundingBox = this.convertInchToPixel(v.boundingBoxes[0]);
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).style.transform = 'scale(2)';
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
+            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(2)';
           }
         }
       }
@@ -390,8 +391,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).style.transform = 'scale(1)';
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
+            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(1)';
           }
         }
       }
@@ -794,53 +797,53 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     this.clearFields();
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
-      //customized labeling start
-      if (ocr_engine_version === "Azure Form Recognizer 2.1") {
-        if (!this.labelsJson["labelingState"]) {
-            this.labelsJson["labelingState"] = 2;
-        }
-        this.labelsJson["labels"].forEach(item => {
-          if (!item.hasOwnProperty('key')) {
-              item.key = null;
-          }
-      });
-        this.labelsJson["labels"].forEach(item => {
-          if (item.hasOwnProperty('labelType')) {
-              delete item.labelType;
-          }
-      });
-    }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
-        if (this.labelsJson["labelingState"]) {
-            delete this.labelsJson["labelingState"];
-        }
-        this.labelsJson["labels"].forEach(item => {
-          if (item.hasOwnProperty('key')) {
-              delete item.key;
-          }
-        });
-        this.labelsJson["labels"].forEach(item => {
-          if (!item.hasOwnProperty('labelType')) {
-              item["labelType"] = "Words";
-          }
-        });
+    //customized labeling start
+    if (ocr_engine_version === "Azure Form Recognizer 2.1") {
+      if (!this.labelsJson["labelingState"]) {
+          this.labelsJson["labelingState"] = 2;
       }
-      //customized labeling end
-    }else{
-      if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-        this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
-        this.labelsJson["document"] = this.currentfile;
-        this.labelsJson["labels"] = [];
-        this.labelsJson["labelingState"] = 2;
-      }else if(ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1"){
-        this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
-        this.labelsJson["document"] = this.currentfile;
-        this.labelsJson["labels"] = [];
+      this.labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('key')) {
+            item.key = null;
+        }
+    });
+      this.labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('labelType')) {
+            delete item.labelType;
+        }
+    });
+  }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
+      if (this.labelsJson["labelingState"]) {
+          delete this.labelsJson["labelingState"];
       }
-     
+      this.labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('key')) {
+            delete item.key;
+        }
+      });
+      this.labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('labelType')) {
+            item["labelType"] = "Words";
+        }
+      });
     }
-    this.clearTableTags();
-    this.analyzing = true;
-    this.layouttext = "Running Layout"
+    //customized labeling end
+  }else{
+    if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+      this.labelsJson["document"] = this.currentfile;
+      this.labelsJson["labels"] = [];
+      this.labelsJson["labelingState"] = 2;
+    }else if(ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1"){
+      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+      this.labelsJson["document"] = this.currentfile;
+      this.labelsJson["labels"] = [];
+    }
+   
+  }
+  this.clearTableTags();
+  this.analyzing = true;
+  this.layouttext = "Running Layout"
     this.ready = false;
     (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
     let frobj = {
@@ -1036,7 +1039,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       for(let l of obj['lines']){
         let i = 0;
         for(let w of l['words']){
-          let boundingbox = w.boundingBox.map(coord => parseFloat(coord).toFixed(1));
+          let boundingbox = w.boundingBox;
           if(this.currentfiletype == 'application/pdf'){
             boundingbox = this.convertInchToPixel(boundingbox);
           }else{
@@ -1146,7 +1149,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         line++;
       }
-      document.addEventListener('keydown',async (eve) => {
+      document.addEventListener('keydown',async function(eve){
           const key = eve.key;
           if(key === 'Delete'){
             let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
@@ -1174,11 +1177,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                   }else{
                     index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                   }
+                 
                   for(let v of _this.labelsJson["labels"][index]["value"]){
-                    boundingbox[0] *= this.currentwidth
-                    boundingbox[1] *= this.currentheight
-                    boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
-                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0] == boundingbox[0] && v.boundingBoxes[0][1] == boundingbox[1]){
+                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
                       _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
                     }
                   }
@@ -1205,7 +1206,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       console.log(ex);
     }
   }
-  
+
   drawCanvasv3(obj){
     try{
       let _this = this;
@@ -1247,7 +1248,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
       for(let l of obj['lines']){
         let i = 0;
-        let boundingbox = l.polygon.map(coord => parseFloat(coord).toFixed(1));
+        let boundingbox = l.polygon;
         if(this.currentfiletype == 'application/pdf'){
           boundingbox = this.convertInchToPixel(boundingbox);
         }else{
@@ -1356,7 +1357,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         });
         line++;
       }
-      document.addEventListener('keydown',async (eve) => {
+      document.addEventListener('keydown',async function(eve){
           const key = eve.key;
           if(key === 'Delete'){
             let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
@@ -1384,11 +1385,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                   }else{
                     index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                   }
+                 
                   for(let v of _this.labelsJson["labels"][index]["value"]){
-                    boundingbox[0] *= this.currentwidth
-                    boundingbox[1] *= this.currentheight
-                    boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
-                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0] == boundingbox[0] && v.boundingBoxes[0][1] == boundingbox[1]){
+                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
                       _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
                     }
                   }
@@ -1415,7 +1414,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       console.log(ex);
     }
   }
-
+  
   updateTableType(event){
     if(event.target.id == 'dynamicsized'){
       this.isFixed = false;
@@ -1506,7 +1505,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     }
   }
 
- 
+
   previous(){
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
@@ -1601,7 +1600,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       let index = this.labelsJson["labels"].findIndex(el => el.label == field.fieldKey);
       if(index != -1){
         let unsorted = this.labelsJson["labels"][index]["value"];
-        unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
         for(let o=0;o<unsorted.length;o++){
           let boundingBox;
           if(this.currentfiletype == 'application/pdf'){
@@ -1609,8 +1607,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
           }
-          if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])))){
-            unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+Math.round(boundingBox[0])+Math.round(boundingBox[1]))).getAttribute("line"));
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
+            unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
           }
         }
         unsorted = unsorted.sort((a:any,b:any) => {
@@ -1629,7 +1629,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(arr[j].boundingBoxes[0]);
           }
-          let div = (<HTMLDivElement>document.getElementById("rect"+arr[j].page+arr[j].text+Math.round(boundingBox[0])+Math.round(boundingBox[1])));
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          let div = (<HTMLDivElement>document.getElementById("rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1]));
           if(div){
             div.style.backgroundColor = 'transparent';
             div.setAttribute("selected","false");
@@ -1658,75 +1660,71 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return false;
   }
   async SetField(i,field){
-    if(field.fieldType == 'string'){
-      let found = this.labelsJson["labels"].some(el => el.label === field.fieldKey);
-      let index =  this.labelsJson["labels"].findIndex(el => el.label === field.fieldKey);
-      if(!found){
-        this.labelsJson["labels"].push({"label":field.fieldKey,"key":null,"value":[]});
-        index = this.labelsJson["labels"].length - 1;
-      }
-      let arr = this.currentSelection;
-      for(let j=0;j<arr.length;j++){
-        let boundingbox = [arr[j].x,arr[j].y,arr[j].x2,arr[j].y2,arr[j].w,arr[j].h,arr[j].x4,arr[j].y4];
-        boundingbox[0] *= this.currentwidth;
-        boundingbox[1] *= this.currentheight;
-        boundingbox = boundingbox.map(coord => parseFloat(coord).toFixed(1));
-        if(this.currentfiletype == 'application/pdf'){
-          boundingbox = this.convertPixelToInch(boundingbox);
-        }else{
-          boundingbox = this.convertPixeltoImagePixel(boundingbox);
+      if(field.fieldType == 'string'){
+        let found = this.labelsJson["labels"].some(el => el.label === field.fieldKey);
+        let index =  this.labelsJson["labels"].findIndex(el => el.label === field.fieldKey);
+        if(!found){
+          this.labelsJson["labels"].push({"label":field.fieldKey,"key":null,"value":[]});
+          index = this.labelsJson["labels"].length - 1;
         }
-        if(!this.checkFieldExists({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})){
-          this.labelsJson["labels"][index]["value"].push({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})
-          let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[j].text+Math.round(arr[j].x)+Math.round(arr[j].y)));
-          if(div){
-            div.style.backgroundColor = 'transparent';
-            div.setAttribute("selected","false");
-            div.setAttribute("fieldid","field-"+field.fieldKey);
-            div.style.borderColor = 'rgb(9, 179, 60)';
-            div.style.borderStyle = 'solid';
-            div.style.borderWidth = '2px';
-            (<HTMLDivElement>document.getElementById("hidden"+this.currentindex)).style.display = 'none';
+        let arr = this.currentSelection;
+        for(let j=0;j<arr.length;j++){
+          let boundingbox = [arr[j].x,arr[j].y,arr[j].x2,arr[j].y2,arr[j].w,arr[j].h,arr[j].x4,arr[j].y4];
+          if(this.currentfiletype == 'application/pdf'){
+            boundingbox = this.convertPixelToInch(boundingbox);
+          }else{
+            boundingbox = this.convertPixeltoImagePixel(boundingbox);
+          }
+          if(!this.checkFieldExists({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})){
+            this.labelsJson["labels"][index]["value"].push({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})
+            let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[j].text+Math.round(arr[j].x)+Math.round(arr[j].y)));
+            if(div){
+              div.style.backgroundColor = 'transparent';
+              div.setAttribute("selected","false");
+              div.setAttribute("fieldid","field-"+field.fieldKey);
+              div.style.borderColor = 'rgb(9, 179, 60)';
+              div.style.borderStyle = 'solid';
+              div.style.borderWidth = '2px';
+              (<HTMLDivElement>document.getElementById("hidden"+this.currentindex)).style.display = 'none';
+            }
           }
         }
-      }
-      let unsorted = this.labelsJson["labels"][index]["value"];
-      unsorted[0].boundingBoxes[0] = unsorted[0].boundingBoxes[0].map(coord => parseFloat(coord).toFixed(1));
-      for(let o=0;o<unsorted.length;o++){
-        let boundingBox;
-        if(this.currentfiletype == 'application/pdf'){
-          boundingBox = this.convertInchToPixel(unsorted[o].boundingBoxes[0]);
-        }else{
-          boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
+        let unsorted = this.labelsJson["labels"][index]["value"];
+        for(let o=0;o<unsorted.length;o++){
+          let boundingBox;
+          if(this.currentfiletype == 'application/pdf'){
+            boundingBox = this.convertInchToPixel(unsorted[o].boundingBoxes[0]);
+          }else{
+            boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
+          }
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
+          unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
-        boundingBox[0] = Math.round(boundingBox[0]);
-        boundingBox[1] = Math.round(boundingBox[1]);
-        unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
-      }
-      unsorted = unsorted.sort((a:any,b:any) => {
-        return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
-      })
-      this.labelsJson["labels"][index]["value"] = unsorted.map(s => ({
-        page : s.page,
-        text : s.text,
-        boundingBoxes : s.boundingBoxes
-      }))
-      this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
-      (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
-      this.currenttext = "";
-      this.currentSelection = [];
-      let frobj = {
-        'documentId':this.modelData.idDocumentModel,
-        'container':this.frConfigData[0].ContainerName,
-        'connstr':this.frConfigData[0].ConnectionString,
-        'filename':this.modelData.folderPath+"/"+this.currentfile,
-        'saveJson':null,
-        'labelJson':this.labelsJson
-      }
-      this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
-      })
+        unsorted = unsorted.sort((a:any,b:any) => {
+          return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
+        })
+        this.labelsJson["labels"][index]["value"] = unsorted.map(s => ({
+          page : s.page,
+          text : s.text,
+          boundingBoxes : s.boundingBoxes
+        }))
+        this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+        (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
+        this.currenttext = "";
+        this.currentSelection = [];
+        let frobj = {
+          'documentId':this.modelData.idDocumentModel,
+          'container':this.frConfigData[0].ContainerName,
+          'connstr':this.frConfigData[0].ConnectionString,
+          'filename':this.modelData.folderPath+"/"+this.currentfile,
+          'saveJson':null,
+          'labelJson':this.labelsJson
+        }
+        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {    
+        })
+    }
   }
-}
   zoomOut(){
     this.zoomVal = this.zoomVal - 0.08;
     if(this.zoomVal <= 0.1){
