@@ -785,18 +785,58 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     });
   }
+
   async analyzeDocument(id:any,filename:string,data:Object){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
     this.showtags = true;
     this.showtabletags = false;
     (<HTMLDivElement>document.getElementById("tagdiv")).style.flex = '19%';
     this.clearFields();
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
+      //customized labeling start
+      if (ocr_engine_version === "Azure Form Recognizer 2.1") {
+        if (!this.labelsJson["labelingState"]) {
+            this.labelsJson["labelingState"] = 2;
+        }
+        this.labelsJson["labels"].forEach(item => {
+          if (!item.hasOwnProperty('key')) {
+              item.key = null;
+          }
+      });
+        this.labelsJson["labels"].forEach(item => {
+          if (item.hasOwnProperty('labelType')) {
+              delete item.labelType;
+          }
+      });
+    }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
+        if (this.labelsJson["labelingState"]) {
+            delete this.labelsJson["labelingState"];
+        }
+        this.labelsJson["labels"].forEach(item => {
+          if (item.hasOwnProperty('key')) {
+              delete item.key;
+          }
+        });
+        this.labelsJson["labels"].forEach(item => {
+          if (!item.hasOwnProperty('labelType')) {
+              item["labelType"] = "Words";
+          }
+        });
+      }
+      //customized labeling end
     }else{
-      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
-      this.labelsJson["document"] = this.currentfile;
-      this.labelsJson["labels"] = [];
-      this.labelsJson["labelingState"] = 2;
+      if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+        this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+        this.labelsJson["document"] = this.currentfile;
+        this.labelsJson["labels"] = [];
+        this.labelsJson["labelingState"] = 2;
+      }else if(ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1"){
+        this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+        this.labelsJson["document"] = this.currentfile;
+        this.labelsJson["labels"] = [];
+      }
+     
     }
     this.clearTableTags();
     this.analyzing = true;
