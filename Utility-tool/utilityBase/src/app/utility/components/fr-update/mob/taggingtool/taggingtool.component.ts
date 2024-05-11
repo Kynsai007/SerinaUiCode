@@ -347,7 +347,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           text : s.text,
           boundingBoxes : s.boundingBoxes
         }))
-      this.labelsJson = this.customMizeLabels(this.labelsJson);
+      this.labelsJson = await this.customMizeLabels(this.labelsJson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
@@ -644,7 +644,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return this.domSanitizer.bypassSecurityTrustUrl(str);
   }
   
-  clearTableTags(){
+ async clearTableTags(){
     let existingfields = [];
     if(this.fieldsfile['definitions']){
       for(let v of this.fieldsfile['definitions'][this.currenttable+'_object']['fields']){
@@ -661,7 +661,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           this.labelsJson["labels"].splice(labelindex,1);
         }
       }
-      this.labelsJson = this.customMizeLabels(this.labelsJson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
@@ -832,7 +831,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
     //customized labeling start
-      this.labelsJson = this.customMizeLabels(this.labelsJson);
+      this.labelsJson = await this.customMizeLabels(this.labelsJson);
     //customized labeling end
   }else{
     if(ocr_engine_version === "Azure Form Recognizer 2.1"){
@@ -1194,7 +1193,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
-            _this.labelsJson = _this.customMizeLabels(_this.labelsJson);
+            _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1403,7 +1402,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
-            _this.labelsJson = _this.customMizeLabels(_this.labelsJson);
+            _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1717,7 +1716,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           text : s.text,
           boundingBoxes : s.boundingBoxes
         }))
-        this.labelsJson = this.customMizeLabels(this.labelsJson);
+        this.labelsJson = await this.customMizeLabels(this.labelsJson);
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
           'container':this.frConfigData[0].ContainerName,
