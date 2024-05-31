@@ -512,8 +512,8 @@ export class FrUpdateSpComponent implements OnInit {
         return modal_id == ele.DocumentModel.idDocumentModel;
       })
       this.modelData = selected[0];
-      this.mobservice.setModelData(this.modelData);
-      sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
+      this.mobservice.setModelData(this.modelData.DocumentModel);
+      sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
       this.FolderPath = this.modelData.folderPath;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
