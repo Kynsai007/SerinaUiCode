@@ -882,7 +882,7 @@
                     </ng-container>
                   </td>
 
-                  <td *ngIf="editable">
+                  <td *ngIf="editable && !fin_boolean">
                     <span class="f-13 p-2 mapping_line hide">Act</span>
                     <div style="margin-top: -5px">
                       <div *ngFor="let data of lineCount">
@@ -1219,7 +1219,7 @@
                             {{ line.value.itemCode }}
                           </div>
                         </div>
-                        <div *ngIf="item.TagName == 'Actions' && editable">
+                        <div *ngIf="item.TagName == 'Actions' && editable && !fin_boolean">
                           <div class="linevalue invert_thtd">
                             <button
                               class="trash_btn"
@@ -1317,7 +1317,7 @@
                       <ng-container>
                         <div class="displayFlex">
                           <div *ngFor="let item of lined">
-                            <div *ngIf="item.TagName == 'Actions' && editable">
+                            <div *ngIf="item.TagName == 'Actions' && editable && !fin_boolean">
                               <div class="linevalue">
                                 <button
                                   class="trash_btn"
@@ -1747,7 +1747,7 @@
                 </tr>
               </table>
             </div>
-            <div *ngIf="supportTabBoolean && !approval_selection_boolean">
+            <div *ngIf="supportTabBoolean && !approval_selection_boolean && (editable || fin_boolean)">
               <label
                 for="img"
                 class="img-browse"
