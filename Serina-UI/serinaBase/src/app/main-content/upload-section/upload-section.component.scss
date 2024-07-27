@@ -716,6 +716,11 @@ label {
   color: rgb(196, 61, 61);
   cursor: pointer;
 }
+.username {
+  text-transform: capitalize;
+  color: $theme_color;
+  margin-left: 5px;
+}
 :host::ng-deep{
   .p-dialog {
     max-height: 100%;
