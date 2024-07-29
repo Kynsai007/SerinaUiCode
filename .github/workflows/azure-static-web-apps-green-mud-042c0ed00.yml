@@ -24,13 +24,13 @@ jobs:
       - uses: Azure/get-keyvault-secrets@v1
         with:
           keyvault: "serinaplus-vault"
-          secrets: 'mhe-customer-app'
+          secrets: 'srgdev-customer-app'
         id: githubsecret
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ steps.githubsecret.outputs.mhe-customer-app }}
+          azure_static_web_apps_api_token: ${{ steps.githubsecret.outputs.srgdev-customer-app }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
