@@ -511,7 +511,6 @@ export class Comparision3WayComponent
     this.documentType = this.dataService.documentType;
     this.documentInvType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
-    this.headerName = this.tagService.headerName;
     this.userDetails = this.authService.currentUserValue;
     // this.approvalType = this.tagService.approvalType;
     this.financeapproveDisplayBoolean =
@@ -581,7 +580,7 @@ export class Comparision3WayComponent
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
-      if(!['advance invoice','non po invoice','credit note'].includes(this.documentType)){
+      if(!['advance invoice'].includes(this.documentType)){
         this.getGRNtabData();
         this.getGrnAttachment();
       }
@@ -602,6 +601,8 @@ export class Comparision3WayComponent
     if(this.fin_boolean){
       this.getRejectionComments();
     }
+    this.headerName = this.tagService.headerName;
+
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
   }
 
