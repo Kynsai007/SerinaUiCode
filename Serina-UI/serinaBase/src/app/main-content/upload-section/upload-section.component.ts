@@ -403,7 +403,7 @@ export class UploadSectionComponent implements OnInit {
   pre_type_value(val,type){
     if(type == 'fixed'){
       this.pre_type_val = val;
-    } else if(type == 'percentage' && val >= 0 && val <= 100){
+    } else if(type == 'percent' && val >= 0 && val <= 100){
       this.pre_type_val = val;
     } else {
       this.error("Please add a valid percentage.")
