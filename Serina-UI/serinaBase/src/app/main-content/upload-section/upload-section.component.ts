@@ -384,7 +384,7 @@ export class UploadSectionComponent implements OnInit {
         { name:'Pre-Payment', value:'advance invoice'}
       ];
       this.sub_type = [
-        { tagName:'Percentage', value:'percentage'},
+        { tagName:'Percentage', value:'percent'},
         { tagName:'Fixed', value:'fixed'}
       ]
     }
