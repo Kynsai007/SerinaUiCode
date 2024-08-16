@@ -38,7 +38,7 @@ export class AlertService {
 }
 
 openCustomSnackbar(img:string,t_head:string,t_foot:string,bg_clr:string) {
-  const position: MatSnackBarHorizontalPosition = 'right';
+  const position: MatSnackBarHorizontalPosition = 'center';
   const verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   const snackBarRef: MatSnackBarRef<any> = this._snackBar.openFromComponent(AppNotificationComponent, {
     duration: 5000,
