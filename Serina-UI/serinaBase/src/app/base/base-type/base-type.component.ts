@@ -16,6 +16,7 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { FeatureComponent } from '../feature/feature.component';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-base-type',
@@ -98,7 +99,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     private authService: AuthenticationService,
     private serviceProviderService : ServiceInvoiceService,
     public dialog: MatDialog,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private titleService: Title
   ) {
     this.subscription1 = this.SharedService.getMessage().subscribe(
       (message) => {
@@ -116,6 +118,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
       this.dataStoreService.changeTheme("#20113E",'#ffffff');
     } else if(this.dataStoreService?.configData?.client_name == 'AGI'){
+      this.titleService.setTitle('Finance Shared Service Invoice Portal');
+      this.setFavicon('assets/Serina Assets/new_theme/AGI/fav_AGI.png');
       this.dataStoreService.changeTheme("#482464",'#ffffff');
       this.logoSrc = 'assets/Serina Assets/new_theme/AGI/agi_home.png';
     } else {
@@ -138,6 +142,21 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     // this.readVendorNames();
   }
 
+  setFavicon(iconUrl: string) {
+    const link: HTMLLinkElement = this.renderer.createElement('link');
+    link.rel = 'icon';
+    link.href = iconUrl;
+
+    const head = document.getElementsByTagName('head')[0];
+    const oldLink = document.querySelector("link[rel*='icon']");
+    
+    if (oldLink) {
+      this.renderer.removeChild(head, oldLink);
+    }
+    
+    this.renderer.appendChild(head, link);
+  }
+  
   ngAfterViewInit(): void {
     window.onbeforeunload = () => {
       // Clear the session storage item when the page is reloaded
