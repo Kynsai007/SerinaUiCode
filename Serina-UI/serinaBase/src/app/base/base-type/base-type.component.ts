@@ -115,6 +115,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     if(this.dataStoreService.configData.client_name == 'Cenomi'){
       this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
       this.dataStoreService.changeTheme("#20113E",'#ffffff');
+    } else if(this.dataStoreService?.configData?.client_name == 'AGI'){
+      this.dataStoreService.changeTheme("#482464",'#ffffff');
+      this.logoSrc = 'assets/Serina Assets/new_theme/AGI/agi_home.png';
     } else {
       this.dataStoreService.changeTheme("#358dc0",'#140101');
       this.logoSrc = 'assets/Serina Assets/new_theme/logo.png';
