@@ -547,13 +547,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   }
   doc_status_route(){
     this.navClick();
-    if(this.vendorInvoiceAccess && this.ap_boolean){
-      this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
-    } else if(this.vendorInvoiceAccess && !this.ap_boolean){
-      this.router.navigate([`${this.portalName}/invoice/PO`]);
-    } else{
-      this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
-    }
   }
   exceptionDrop(){
     this.isOpen_apr = false;

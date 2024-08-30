@@ -751,7 +751,7 @@
         </div>
         <div
           class="nav_Link f-14"
-          [routerLink]="'invoice'"
+          [routerLink]=" vendorInvoiceAccess ? 'invoice/allInvoices':'invoice/ServiceInvoices'"
           (click)="doc_status_route()"
           *ngIf="!isCoordinator"
           [ngClass]="{
