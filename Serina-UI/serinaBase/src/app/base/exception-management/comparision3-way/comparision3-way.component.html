@@ -28,7 +28,7 @@
           changeApproveBoolean ||
           financeApproveBoolean) &&
         submitBtn_boolean &&
-        isDesktop &&
+        isDesktop && !isServiceData &&
         currentTab == 'line'
       "
     >
@@ -627,7 +627,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -982,7 +982,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -1191,7 +1191,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
