@@ -1233,6 +1233,7 @@ export class RolesComponent implements OnInit {
 
   userCheck(name) {
     name = name.trim()
+    this.userName = name;
     if(name.length > 5){
       this.sharedService.userCheck(name).subscribe((data: any) => {
         if (!data.LogName) {
