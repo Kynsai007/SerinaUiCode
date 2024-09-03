@@ -519,9 +519,7 @@ export class Comparision3WayComponent
     // this.fin_boolean = this.permissionService.financeApproveBoolean;
     if(this.router.url.includes('approvals') && this.permissionService.financeApproveBoolean){
       this.fin_boolean = true;
-      console.log(this.fin_boolean)
     }
-    console.log(this.fin_boolean)
 
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
@@ -3905,6 +3903,17 @@ export class Comparision3WayComponent
   onChecked(value){
     console.log(value)
     this.isManpower = value
+  }
+  progressiveAmount(amount,id){
+    this.exceptionService.amountToApply(amount,id).subscribe((data:any)=>{
+      if(data?.status == 'sucess'){
+        this.success(data.msg)
+      } else {
+        this.error(data.msg)
+      }
+    },err=>{
+      this.error("Server error")
+    })
   }
   ngOnDestroy() {
     let sessionData = {

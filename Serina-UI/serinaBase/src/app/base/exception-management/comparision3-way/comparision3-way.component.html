@@ -460,12 +460,12 @@
                     <input
                       *ngIf="!value?.TagLabel?.includes('Project')"
                       #inputv
-                      type="text"
+                      [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
                       [value]="value.Value"
                       [title]="value.Value"
                       [disabled]="!editable || fin_boolean"
                       (change)="
-                        onChangeValue(value.TagLabel, inputv.value, value)
+                      value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
                       "
                       (blur)="saveChanges()"
                       class="form-control inv_inp_cls"
