@@ -799,6 +799,9 @@ export class UploadSectionComponent implements OnInit {
     this.selectedServiceAccount = value.Account;
     this.displaySelectPdfBoolean = true;
     this.selectedServiceAccount = value.Account;
+
+  }
+  webConnection(){
     this.webSocketService.userId = this.sharedService.userId;
     this.webSocketService.service_account = this.selectedServiceAccount;
     this.webSocketService.authToken = this.authenticationService.currentUserValue.token;
@@ -1331,6 +1334,7 @@ export class UploadSectionComponent implements OnInit {
     this.progress = null;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
+
       this.webSocketService.close();
     } else {
       this.evtSource.close();
@@ -1879,6 +1883,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   uploadService() {
+    this.webConnection();
     this.processStage = 'Invoice uploading initiated';
     this.sendFile();
     this.returnmessage = true;
