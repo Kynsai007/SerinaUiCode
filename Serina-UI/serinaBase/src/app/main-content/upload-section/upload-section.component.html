@@ -264,6 +264,8 @@
               [disabled]="!serviceName"
               [pTooltip]="!serviceName ? 'Select Service' : null"
               tooltipPosition="top"
+              name="sAccount"
+              [(ngModel)]="selectedSAccount"
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center">
