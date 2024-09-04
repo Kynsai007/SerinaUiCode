@@ -210,4 +210,7 @@ export class ExceptionsService {
   getAdPercentage(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?inv_id=${this.invoiceID}`,data) 
   }
+  getManPowerData(s_date,e_date){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}?startdate=${s_date}&enddate=${e_date}`) 
+  }
 }

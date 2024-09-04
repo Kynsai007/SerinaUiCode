@@ -5,11 +5,13 @@
     <div *ngIf="!displayTablebool">
       <div class="imgPlaceholder" [ngClass]="dataService.configData.client_name == 'AGI' ?'bg-agi':'bg-default'">
       </div>
-      <div class="welcomtext">
-        <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
-      </div>
-      <div class="f-14 shade_color wlcom_bdy">
-        <fun-facts [factsList]="factsList"></fun-facts>
+      <div [ngClass]="dataService.configData.client_name == 'AGI' ?'agi_div':''">
+        <div class="welcomtext">
+          <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
+        </div>
+        <div class="f-14 shade_color wlcom_bdy">
+          <fun-facts [factsList]="factsList"></fun-facts>
+        </div>
       </div>
     </div>
 

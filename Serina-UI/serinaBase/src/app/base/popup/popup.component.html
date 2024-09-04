@@ -323,7 +323,7 @@
           [(ngModel)]="rangeDates"
           selectionMode="range"
           [minDate]="minDate"
-          [maxDate]="maxDate"
+          [maxDate]="maxiDate"
           placeholder=""
           [readonlyInput]="true"
           [showIcon]="true"
@@ -412,7 +412,7 @@
               *ngFor="let line1 of item.linedata; let i = index"
               [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             >
-              <div *ngIf="['Description','PO Qty'].includes(item.TagName)  && item.TagName != 'Actions'">
+              <div *ngIf="item.TagName != 'Actions'">
                 <input
                   #inputval
                   type="text"
@@ -422,9 +422,10 @@
                   class="form-control inputHeight w-sm"
                   [(ngModel)]="line1.Value"
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
+                  [disabled]="['Description','PO Qty'].includes(item.TagName)"
                 />
               </div>
-              <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
+              <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
                 <input
                   #inputval
                   type="text"
@@ -436,8 +437,8 @@
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
                   
                 />
-              </div>
-              <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
+              </div> -->
+              <!-- <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
                   <button
                     class="trash_btn"
                     (click)="addNewShift(line1.Value,i)"
@@ -446,11 +447,11 @@
                   </button>
                   <button
                     class="trash_btn"
-                    (click)="addNewShift(line1.Value,i)"
+                    (click)="removeShift(line1.Value,i)"
                   >
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                   </button>
-              </div>
+              </div> -->
             </td>
           </tr>
         </ng-container>

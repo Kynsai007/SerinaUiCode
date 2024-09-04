@@ -558,6 +558,7 @@ input[type="checkbox"] {
   gap: 20px;
   .column1 {
     width: 35%;
+    position: relative;
   }
   .column2 {
     width: 63%;
@@ -734,6 +735,11 @@ label {
   text-transform: capitalize;
   color: $theme_color;
   margin-left: 5px;
+}
+.agi_div {
+  position: absolute;
+  bottom: 75px;
+  width: 100%;
 }
 :host::ng-deep{
   .p-dialog {
