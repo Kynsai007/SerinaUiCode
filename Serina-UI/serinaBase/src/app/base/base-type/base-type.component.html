@@ -695,6 +695,7 @@
               cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
             (click)="exceptionDrop()"
+            [routerLink]="vendorInvoiceAccess && !serviceInvoiceAccess ? 'ExceptionManagement' : ((!vendorInvoiceAccess && serviceInvoiceAccess) ? 'ExceptionManagement/Service_ExceptionManagement':null)"
             *ngIf="excpetionPageAccess"
           >
             Exceptions
@@ -1046,6 +1047,7 @@
         cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       (click)="exceptionDrop()"
+      [routerLink]="vendorInvoiceAccess && !serviceInvoiceAccess ? 'ExceptionManagement' : ((!vendorInvoiceAccess && serviceInvoiceAccess) ? 'ExceptionManagement/Service_ExceptionManagement':null)"
       *ngIf="excpetionPageAccess"
     >
       <details *ngIf="vendorInvoiceAccess && serviceInvoiceAccess">
@@ -1091,7 +1093,7 @@
     </div>
     <div
       class="nav_Link f-14"
-      [routerLink]="'invoice'"
+      [routerLink]=" vendorInvoiceAccess ? 'invoice/allInvoices':'invoice/ServiceInvoices'"
       (click)="doc_status_route()"
       [ngClass]="{
         active_cls: router.url.includes('invoice'),

@@ -557,11 +557,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       } else {
         document.getElementById('body_content').style.opacity = '1';
       }
-    } else if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess ) {
-      this.router.navigate([`${this.portalName}/ExceptionManagement`])
-    } else if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess ) {
-      this.router.navigate([`${this.portalName}/ExceptionManagement/Service_ExceptionManagement`])
-    }
+    } 
   }
   approvalDropdown(){
     this.isOpen = false;
