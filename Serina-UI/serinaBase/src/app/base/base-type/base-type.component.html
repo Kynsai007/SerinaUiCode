@@ -731,6 +731,7 @@
             <a
               [routerLink]="'ExceptionManagement/approvalPending'"
               routerLinkActive="active_sub_cls"
+              *ngIf="financeapproveDisplayBoolean"
               (click)="exceptionMenu('service', 'exc')"
               >Approval Pending</a
             >

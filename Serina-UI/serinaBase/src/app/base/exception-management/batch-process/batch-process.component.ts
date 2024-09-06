@@ -471,6 +471,7 @@ export class BatchProcessComponent implements OnInit {
     }
     this.ds.vendor_exc_status = event;
     this.ngxSpinner.hide();
+    this.search_placeholder = `Ex : By ${this.page_supplier},By Entity, Select Date range from the Calendar icon`;
   }
   filterByStatus(event) {
     let filtered: any[] = [];
