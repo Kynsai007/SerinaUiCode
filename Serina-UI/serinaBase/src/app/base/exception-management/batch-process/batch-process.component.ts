@@ -254,6 +254,9 @@ export class BatchProcessComponent implements OnInit {
             ...element.DocumentHistoryLogs,
           };
           mergeData['substatus'] = element.substatus;
+          if (element.Document?.documentsubstatusID == 70 && !this.ds.isAdmin) {
+            return;  // Skip this iteration
+          }
           if(element.Document?.UploadDocTypeCategory == 'credit'){
             mergeData['UploadDocTypeCategory'] = 'invoice'
           }
