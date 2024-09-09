@@ -1332,6 +1332,7 @@ export class UploadSectionComponent implements OnInit {
     this.seconds = "00";
     this.minutes = "00";
     this.progress = null;
+    this.progressbar = null;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
       this.selectedSAccount = [];
