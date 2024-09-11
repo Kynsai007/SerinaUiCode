@@ -45,6 +45,8 @@ export class FrUpdateSpComponent implements OnInit {
   amountRulesData:any;
   currentTemplate: any;
   FolderPath:string="";
+  selected_extraction_type:string;
+  selected_page_selection:string;
   showCheckboxHeaderDiv: boolean ;
   showCheckboxLineDiv: boolean ;
   headerTags = [];
@@ -92,6 +94,7 @@ export class FrUpdateSpComponent implements OnInit {
   save_unidentified_accounts:boolean=false;
   auto_template_classification:boolean=false;
   showCheckboxServiceDiv:boolean;
+  selected_dateFormat:string;
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -522,6 +525,8 @@ export class FrUpdateSpComponent implements OnInit {
       this.mobservice.setModelData(this.modelData.DocumentModel);
       sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
       this.FolderPath = this.modelData.DocumentModel.folderPath;
+      this.selected_page_selection = this.modelData.DocumentModel.page_selection;
+      this.selected_extraction_type = this.modelData.DocumentModel.extraction_type;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
   }
@@ -600,6 +605,7 @@ export class FrUpdateSpComponent implements OnInit {
       this.FRMetaData = data;
       this.headerArray = [];
       this.LineArray = [];
+      this.selected_dateFormat = this.FRMetaData?.DateFormat;
       if (this.FRMetaData?.auto_template_classification) {
         this.auto_template_classification = this.FRMetaData?.auto_template_classification;
       } 

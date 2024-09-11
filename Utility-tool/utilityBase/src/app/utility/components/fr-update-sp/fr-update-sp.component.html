@@ -232,11 +232,12 @@
                             <tr class="trHeight">
                                 <td class="tdLeft f-13">Date Format <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <select name="DateFormat" id="DateFormat" class="form-control max_width f-13"
+                                    <!-- <select name="DateFormat" id="DateFormat" class="form-control max_width f-13"
                                         [(ngModel)]="selected_template"  ngModel #DateFormat="ngModel" >
                                         <option value="" selected disabled>Select Date format</option>
                                         <option [value]="format" *ngFor="let format of dateFormats">{{format}}</option>
-                                    </select>
+                                    </select> -->
+                                    <input type="text" class="form-control max_width f-13" name="DateFormat" [(ngModel)]="selected_dateFormat" id="DateFormat" ngModel #DateFormat="ngModel" placeholder="Date Format">
                                 </td>
                             </tr>
                             <tr class="trHeight">
@@ -286,14 +287,14 @@
                             <tr class="trHeight">
                                 <td class="tdLeft f-13">Page Selection <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <input type="text" name="page_selection" id="pageSelection" class="form-control max_width f-13" ngModel #pageSelection="ngModel" placeholder="eg:1-2,1-4">
+                                    <input type="text" name="page_selection" id="pageSelection" class="form-control max_width f-13" [(ngModel)]="selected_page_selection" ngModel #pageSelection="ngModel" placeholder="eg:1-2,1-4">
     
                                 </td>
                             </tr>
                             <tr class="trHeight">
                                 <td class="tdLeft f-13">Processing Type <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <select name="extraction_type" class="form-control max_width f-13" ngModel #pageSelection="ngModel">
+                                    <select name="extraction_type" class="form-control max_width f-13" [(ngModel)]="selected_extraction_type" ngModel #pageSelection="ngModel">
                                         <option value="document">Document</option>
                                         <option value="page">Page</option>
                                     </select>
