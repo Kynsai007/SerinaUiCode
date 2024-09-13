@@ -388,41 +388,33 @@
         >
           <tr
             class="invert_tr"
-            [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             *ngIf="
-              item.TagName != 'Inv - AmountExcTax'
+              !['AmountExcTax','UnitPrice','Duration in months','Is Timesheets','Actions','Number of Shifts'].includes(item.TagName)
             "
           >
             <td
               class="lineName invert_th_td"
-              *ngIf="
-                item.TagName != 'Inv - AmountExcTax'
-              "
-              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             >
-              <div *ngIf="item.TagName != 'GRN - AmountExcTax'" class="d-flex justify-content-between">
+              <div  class="d-flex justify-content-between">
                 <div>{{ item.TagName }}</div>
               </div>
-              <span *ngIf="item.TagName == 'GRN - AmountExcTax'"
-                >AmountExcTax</span
-              >
             </td>
             <td
               class="linevalue invert_th_td"
               *ngFor="let line1 of item.linedata; let i = index"
-              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             >
               <div *ngIf="item.TagName != 'Actions'">
                 <input
                   #inputval
-                  type="text"
+                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)?'text':'number'"
                   [name]="line1.idDocumentLineItems"
                   [value]="line1.Value"
                   [title]="line1.Value"
                   class="form-control inputHeight w-sm"
                   [(ngModel)]="line1.Value"
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
-                  [disabled]="['Description','PO Qty'].includes(item.TagName)"
+                  required
+                  [readonly]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)"
                 />
               </div>
               <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
@@ -470,12 +462,48 @@
       <button
         class="primary_btn f-12"
         type="submit"
-        [disabled]="!updateSOObj"
-        (click)="updateMapping()"
+        (click)="onSubmitManpower()"
       >
         Save
       </button>
 
+    </div>
+  </div>
+
+  <div *ngIf="type == 'manpower_metadata'">
+    <!-- {{manPowerMetadata | json}} -->
+    <table *ngIf="manPowerMetadata.length > 0"           
+      style="border-collapse: collapse"
+      class="table table-bordered f-11">
+      <thead >
+        <tr class="f-12 tb_head">
+          <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of manPowerMetadata; let i = index">
+          <td>{{row.description}}</td>
+          <td>
+            <input type="number" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event)">
+          </td>
+          <td>
+            <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event)">
+          </td>
+          <td>
+            <input type="number" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event)">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="mt-4 d-flex justify-content-end mb-2">
+      <button
+        class="primary_btn f-12"
+        type="button"
+        (click)="saveManpowerMetadata()"
+      >
+        Save
+      </button>
     </div>
   </div>
 </section>

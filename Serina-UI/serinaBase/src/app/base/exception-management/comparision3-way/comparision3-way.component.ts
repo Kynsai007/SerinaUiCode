@@ -416,6 +416,9 @@ export class Comparision3WayComponent
   mappingForCredit = false;
   rectData: any;
   isManpower:boolean;
+  manpower_metadata = [];
+  manpowerTableHeaders: { header: string; field: string; }[];
+  isManpowerTags: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -536,6 +539,14 @@ export class Comparision3WayComponent
     this.subStatusId = this.dataService.subStatusId;
     this.statusId = this.dataService.statusId;
 
+    this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
+    if(this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')){    
+      if(this.manpower_metadata?.length < 1){
+        this.manpowerMetadataFunction();
+      } else {
+        this.createTimeSheetDisplayData('old');
+      }
+    } 
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
       this.router.url.includes('invoice/InvoiceDetails/CustomerUpload')
@@ -617,6 +628,14 @@ export class Comparision3WayComponent
     this.headerName = this.tagService.headerName;
 
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
+  }
+  manpowerMetadataFunction(){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun("Please confirm whether you want to add manpower data in GRN?","confirmation","Confirmation")
+    drf.afterClosed().subscribe((bool) => {
+      if(bool){
+        this.open_dialog_comp("manpower_metadata")
+      }
+    })
   }
 
   routeOptions() {
@@ -758,32 +777,52 @@ export class Comparision3WayComponent
   get_PO_GRN_Lines() {
     this.descrptonBool = true;
     this.dataService.GRN_PO_Data.forEach((ele, i) => {
-      this.GRN_PO_tags.forEach(tag => {
-        if (tag.TagName == 'Description') {
-          tag.linedata.push({ Value: ele.Name, old_value: ele.Name, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Description' })
-        } else if (tag.TagName == 'PO Qty') {
-          tag.linedata.push({ Value: ele.PurchQty, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Qty' })
-        } else if (tag.TagName == 'PO Balance Qty') {
-          tag.linedata.push({ Value: ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Balance Qty' })
-        } else if (tag.TagName == 'GRN - Quantity') {
-          tag.linedata.push({ Value: ele.PurchQty, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
-        } else if (tag.TagName == 'UnitPrice') {
-          tag.linedata.push({ Value: ele.UnitPrice, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: 'Price', tagName: 'UnitPrice' })
-        } else if (tag.TagName == 'AmountExcTax') {
-          let y = ele.UnitPrice.replace(/,/g, '');
-          y = parseFloat(y);
-          let amount = (y * ele.PurchQty).toFixed(2);
-          this.GRN_line_total = this.GRN_line_total + Number(amount)
-          tag.linedata.push({ Value: amount, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'AmountExcTax' })
-        }
-        // else if (tag.TagName == 'PurchUnit') {
-        //   tag.linedata.push({ Value: ele.PurchUnit, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PurchUnit' })
-        // }
-        else if (tag.TagName == 'Actions') {
-          tag.linedata.push({ Value: '', ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Actions' })
-        }
+      const tagMappings = {
+        'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
+        'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
+        'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
+        'GRN - Quantity': { value: 'PurchQty', isMapped: '', tagName: 'Quantity' },
+        'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
+        'AmountExcTax': { 
+          value: (ele) => {
+            const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+            const amount = (unitPrice * ele.PurchQty).toFixed(2);
+            this.GRN_line_total += Number(amount);
+            return amount;
+          },
+          isMapped: '',
+          tagName: 'AmountExcTax'
+        },
+        'Actions': { value: '', isMapped: '', tagName: 'Actions' }
+      };
 
-      })
+      if(this.client_name == 'Cenomi'&& this.isManpowerTags){
+        tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
+        tagMappings['Monthly quantity'] = { value: (ele) => {
+          let monthlyQuantity = 0;
+          if(ele.durationMonth){
+            monthlyQuantity = ele.PurchQty / ele.durationMonth;
+          }
+          return monthlyQuantity.toFixed(2);
+        }, isMapped: '', tagName: 'Monthly quantity' }
+        tagMappings['Is Timesheets'] = { value: 'isTimesheets', isMapped: '', tagName: 'Is Timesheets' }
+        tagMappings['Number of Shifts'] = { value: 'shifts', isMapped: '', tagName: 'Number of Shifts' }
+      }
+
+      this.GRN_PO_tags.forEach(tag => {
+        if (tagMappings[tag.TagName]) {
+          const mapping = tagMappings[tag.TagName];
+          const value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
+          tag.linedata.push({
+            Value: value,
+            old_value: mapping.oldValue ? ele[mapping.oldValue] : undefined,
+            ErrorDesc: '',
+            idDocumentLineItems: ele.LineNumber,
+            is_mapped: mapping.isMapped,
+            tagName: mapping.tagName
+          });
+        }
+      });
     })
     this.lineDisplayData = this.GRN_PO_tags;
     let arr = this.GRN_PO_tags;
@@ -2641,6 +2680,10 @@ export class Comparision3WayComponent
       w = '80%';
       h = '72vh';
       response = { "grnData_po" : this.lineDisplayData}
+    } else if (str == 'manpower_metadata') {
+      w = '60%';
+      h = '65vh';
+      response = { "manpower_metadata" : this.manpower_metadata}
     }
     this.SpinnerService.show();
     const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
@@ -2657,10 +2700,36 @@ export class Comparision3WayComponent
           this.Reject();
         }
       })
+    } else if(str == 'manpower_metadata') {
+      this.SpinnerService.show();
+      matdrf.afterClosed().subscribe((resp: any) => {
+        this.manpower_metadata = resp;
+        this.createTimeSheetDisplayData("new");
+
+      })
     }
-
   }
-
+  createTimeSheetDisplayData(str){
+    this.dataService.GRN_PO_Data.forEach(ele => {
+      this.manpower_metadata.forEach(meta => {
+        if (ele.LineNumber == meta.itemCode) {
+          ele.durationMonth = meta.durationMonth || "NA";
+          ele.isTimesheets = str == "new" ? meta.isTimesheets : true;
+          ele.shifts = meta.shifts || "NA";
+        }
+      })
+    })
+    this.isManpowerTags = true;
+    this.create_GRN_PO_tags();
+    if(str == 'new'){
+      this.get_PO_GRN_Lines();
+    }
+    this.SpinnerService.hide();
+  }
+  create_GRN_PO_tags(){
+    this.GRN_PO_tags = this.GRN_PO_tags.filter((tag)=> tag.linedata = []);
+    this.GRN_PO_tags.splice(5, 0, {TagName: 'Duration in months', linedata: []},{TagName: 'Monthly quantity', linedata: []},{TagName: 'Is Timesheets', linedata: []},{TagName: 'Number of Shifts', linedata: []}) 
+  }
   open_dialog(str) {
     if (str == 'reject') {
       this.rejectModalHeader = 'ADD Rejection Comments';

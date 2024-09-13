@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Calendar } from 'primeng/calendar';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-popup',
@@ -50,9 +51,11 @@ export class PopupComponent implements OnInit {
   rangeDates: Date[];
   @ViewChild('datePicker') datePicker: Calendar;
   manPowerData = [];
+  manPowerMetadata = [];
   grnLineCount:any
   timeSheet: any[];
   replicaSheetData = [];
+  manpowerTableHeaders: { header: string; field: string; }[];
 
 
   constructor(
@@ -64,6 +67,7 @@ export class PopupComponent implements OnInit {
     private mat_dlg: MatDialog,
     private datePipe: DatePipe,
     private dateFilterService :DateFilterService,
+    private sharedService: SharedService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -72,6 +76,8 @@ export class PopupComponent implements OnInit {
     this.rejectionComments = this.data.rejectTxt
     this.po_num = this.data?.po_num
     let grn = this.data?.grnLine;
+    this.POLineData = this.data?.resp?.podata;
+    this.inv_total = this.data?.resp?.sub_total;
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -89,28 +95,38 @@ export class PopupComponent implements OnInit {
       this.flipApproverlist();
     } else if(this.type == 'manpower'){
       this.dateRange()
+      this.manpowerCreateFunction();
+
+    } else if(this.type == 'manpower_metadata'){
+      // this.manPowerMetadata = JSON.parse(JSON.stringify(this.data?.resp?.manpower_metadata));
+      this.manPowerMetadata = this.ds.GRN_PO_Data.map(ele => {
+        return {
+          description: ele.Name,
+          itemCode: ele.LineNumber,
+          durationMonth: '', // Initialize empty, to be filled by user
+          isTimesheets: false, // Initialize as false, can be toggled by user
+          shifts: '' // Initialize empty, to be filled by user
+        };
+      });
+      // Create table headers
+      this.manpowerTableHeaders = [
+        { header: 'Description', field: 'description' },
+        { header: 'Duration in months', field: 'duration' },
+        { header: 'Is Timesheets', field: 'isTimesheets' },
+        { header: 'Number of Shifts', field: 'shifts' }
+      ];
     }
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
     }
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
-    this.manPowerData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
-    this.manPowerData = this.manPowerData.filter(el=>{
-    return el.TagName == 'Description' || el.TagName == 'PO Qty' 
-    })
-    this.replicaSheetData = JSON.parse(JSON.stringify(this.manPowerData));
-    this.grnLineCount = this.manPowerData[0].linedata;
-    this.POLineData?.forEach(val => {
-      val.isSelected = false;
-      val.Quantity = val.PurchQty;
-    })
   }
 
   flipPOFun(){
-    this.POLineData = this.data?.resp?.podata;
     this.POLineData.forEach(val => {
       val.isSelected = false;
+      val.Quantity = val.PurchQty;
     })
   }
   onSubmit(value) {
@@ -369,18 +385,25 @@ export class PopupComponent implements OnInit {
           this.datePicker.hideOverlay();
 
         }
+        this.ES.getManpowerPrefill(this.sharedService.po_num,s_Date,e_Date).subscribe((data:any)=>{
+          console.log(data)
+        })
         let month = frmDate?.split(',')[0]?.split(' ')[0];
         let date:any = frmDate?.split(',')[0]?.split(' ')[1];
         let date1:any = toDate?.split(',')[0]?.split(' ')[1];
-        let sampleData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po))
+        let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
         this.timeSheet = []
         if(this.manPowerData.length > 4){
           this.manPowerData = [];
           sampleData = sampleData.filter(el=>{
-            return el.TagName == 'Description' || el.TagName == 'PO Qty'
+         return ['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(el.TagName) 
           })
           this.manPowerData = sampleData;
+          let shiftIndex = this.manPowerData.findIndex(el=>el.TagName == 'Number of Shifts');
+          let shiftLineData = this.manPowerData[shiftIndex].linedata
+          this.manPowerData.splice(shiftIndex,0,{ TagName:`Shift`,linedata: shiftLineData})
         }
+        this.timeSheet = [];
         this.grnLineCount.forEach((el,index)=>{
           this.timeSheet.push({
                       Value : '',
@@ -391,7 +414,6 @@ export class PopupComponent implements OnInit {
                       old_value:'',
           })
         })
-        this.manPowerData.splice(2,0,{ TagName:`Shift`,linedata: JSON.parse(JSON.stringify(this.timeSheet))})
         let index = 3
         for(let i = Number(date); i<= Number(date1); i++){
           let data =  []
@@ -411,7 +433,6 @@ export class PopupComponent implements OnInit {
     this.filterByDate('');
     this.dateRange();
   }
-
 
   addNewShift(str,index){
     this.manPowerData.forEach(el=>{
@@ -446,5 +467,62 @@ export class PopupComponent implements OnInit {
     this.ES.getManPowerData(s_date,e_date).subscribe((data:any)=>{
       console.log(data)
     })
+  }
+  updateManpowerMetadata(index: number, field: string, value: any) {
+    this.manPowerMetadata[index][field] = value;
+  }
+  saveManpowerMetadata(){
+    console.log(this.manPowerMetadata)
+    this.dialogRef.close(this.manPowerMetadata);
+  }
+  onSubmitManpower(){
+  }
+
+  manpowerCreateFunction(){
+    this.replicaSheetData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
+
+    // Step 1: Filter out the entries where "isTimesheet" value is false
+    const isTimesheetsTag = this.replicaSheetData.find(item => item.TagName === 'Is Timesheets');
+      // Get ids of "Is Timesheets" lines where value is false
+    const excludedLineItemIds = isTimesheetsTag.linedata
+    .filter(data => data.Value != true)  // Adjust as needed based on the value's type
+    .map(data => data.idDocumentLineItems);  // Collect IDs of entries to exclude
+
+  // Step 2: Filter out the lines with matching IDs in all tags
+  const grnData_po_filtered = this.replicaSheetData.map((item) => {
+    return {
+      ...item,
+      linedata: item.linedata.filter(data => !excludedLineItemIds.includes(data.idDocumentLineItems))
+    };
+  });
+
+// Step 3: Find the "Number of Shifts" tag to get shift counts
+const numberOfShiftsTag = grnData_po_filtered.find(item => item.TagName === 'Number of Shifts');
+let replicatedData = [];
+if (!numberOfShiftsTag) {
+  console.error('Number of Shifts tag not found!');
+} else {
+  // Step 4: Replicate lines based on shift count and add shift info to each line
+  replicatedData = grnData_po_filtered.map((item) => {
+    return {
+      ...item,
+      linedata: item.linedata.flatMap((line) => {
+        // Find the corresponding shift count from the Number of Shifts tag using the same idDocumentLineItems
+        const shiftCountLine = numberOfShiftsTag.linedata.find(shiftLine => shiftLine.idDocumentLineItems === line.idDocumentLineItems);
+        const shiftCount = shiftCountLine ? parseInt(shiftCountLine.Value, 10) : 1;  // Default to 1 if not found
+
+        // Replicate the line based on the shift count
+        return Array.from({ length: shiftCount }, (_, index) => ({
+          ...line,
+          idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,  // Add unique ID per shift
+          Value: item.TagName == 'Number of Shifts' ? `Shift${index + 1}` : line.Value  // Add Shift information per replication
+        }));
+      })
+    };
+  });
+}
+
+    this.manPowerData = replicatedData;
+    this.grnLineCount = this.manPowerData[0].linedata;
   }
 }
