@@ -892,6 +892,7 @@ export class FrUpdateSpComponent implements OnInit {
     });
   }else{
     _this.saving = false;
+    _this.router.navigate(['IT_Utility/training']);
   }
    } else {
      alert('Please add required fields.');
