@@ -511,9 +511,10 @@ export class FrUpdateSpComponent implements OnInit {
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
     this.getAllTags();
+    this.getServiceRules();
+
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
-    this.getServiceRules();
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
     if(modal_id){
@@ -525,8 +526,7 @@ export class FrUpdateSpComponent implements OnInit {
       this.mobservice.setModelData(this.modelData.DocumentModel);
       sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
       this.FolderPath = this.modelData.DocumentModel.folderPath;
-      this.selected_page_selection = this.modelData.DocumentModel.page_selection;
-      this.selected_extraction_type = this.modelData.DocumentModel.extraction_type;
+
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
   }
@@ -602,7 +602,7 @@ export class FrUpdateSpComponent implements OnInit {
   }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
-      this.FRMetaData = data;
+      this.FRMetaData = data.FRMetaData;
       this.headerArray = [];
       this.LineArray = [];
       this.selected_dateFormat = this.FRMetaData?.DateFormat;
@@ -611,6 +611,20 @@ export class FrUpdateSpComponent implements OnInit {
       } 
       if(this.FRMetaData?.save_unidentified_accounts){
         this.save_unidentified_accounts = this.FRMetaData?.save_unidentified_accounts;
+      }
+      if(data?.extractiontype){
+        this.selected_extraction_type =data?.extractiontype;
+      }
+      if(data?.pagepreference){
+        this.selected_page_selection = data?.pagepreference;
+      }
+      if(this.FRMetaData?.service_rules_function){
+        this.serviceRules?.forEach(el=>{
+          if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
+            el.isSelected = true;
+            this.mandatoryServiceRules.push(el);
+          }
+        })
       }
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
@@ -890,7 +904,8 @@ export class FrUpdateSpComponent implements OnInit {
       }, 3000);
       this.msg = 'FR metadata updated successfully';
     });
-  }else{
+  }
+  else{
     _this.saving = false;
     _this.router.navigate(['IT_Utility/training']);
   }
