@@ -512,7 +512,6 @@ export class FrUpdateSpComponent implements OnInit {
     this.currentTemplate = modal_id;
     this.getAllTags();
     this.getServiceRules();
-
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
@@ -622,7 +621,7 @@ export class FrUpdateSpComponent implements OnInit {
         this.serviceRules?.forEach(el=>{
           if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
             el.isSelected = true;
-            this.mandatoryServiceRules.push(el);
+            this.mandatoryServiceRules.unshift(el);
           }
         })
       }
@@ -1138,14 +1137,17 @@ export class FrUpdateSpComponent implements OnInit {
     this.LineOptTags.splice(index,1);
   }
   getServiceRules(){
+    this.mandatoryServiceRules = [];
     this.sharedService.readServiceRules().subscribe((data:any)=>{
       console.log(data);
       this.serviceRules = data?.result;
-      this.serviceRules.forEach(el=>{
-        if(el.mandatory == 1) {
-          this.mandatoryServiceRules.push(el)
-        }
-      })
+      // this.serviceRules.forEach(el=>{
+      //   if(el.mandatory == 1) {
+      //     el.isSelected = true;
+      //     this.mandatoryServiceRules.push(el)
+      //   }
+      // })
+      // this.mandatoryServiceRules = [...new Set(this.mandatoryServiceRules)];
     })
   }
   selectServiceRules(bool,val1){
