@@ -1060,7 +1060,10 @@
                          <div>
                           <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
                           [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                          [value]="line1.Value" [title]="line1.Value" class="form-control inputHeight" disabled>
+                          [value]="line1.Value ? line1.Value : 'NA'" [title]="line1.Value ? line1.Value : ''"
+                          class="form-control inputHeight" 
+                          (click)="!line1.Value? open_dialog_comp('manpower_metadata'): null"
+                          [disabled]="line1.Value">
                          </div>
                         </ng-container>
                       </ng-container>
