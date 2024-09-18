@@ -1031,16 +1031,20 @@
                     <td *ngFor="let line1 of item.linedata" class="linevalue invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
                       <ng-container [ngSwitch]="item.TagName">
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
-                          <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                          <div>
+                            <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                                  [name]="line1.idDocumentLineItems" [(ngModel)]="line1.Value" 
-                                 (change)="onChangeGrn(line1, inputval.value)"
+                                 (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
                                  class="form-control inputHeight w-sm" [title]="line1.Value">
+                          </div>
                         </ng-container>
                         <ng-container *ngSwitchCase="'Comments'" [ngSwitch]="GRN_PO_Bool">
                           <ng-container *ngSwitchCase="false">
-                            <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
+                            <div>
+                              <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
                                    [(ngModel)]="line1.ErrorDesc" class="form-control inputHeight" [title]="line1.ErrorDesc">
+                            </div>
                           </ng-container>
                         </ng-container>
                         <ng-container *ngSwitchCase="'Actions'" [ngSwitch]="GRN_PO_Bool">
@@ -1053,9 +1057,11 @@
                           </ng-container>
                         </ng-container>
                         <ng-container *ngSwitchDefault>
+                         <div>
                           <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                 [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                                 [value]="line1.Value" [title]="line1.Value" disabled class="form-control inputHeight">
+                          [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
+                          [value]="line1.Value" [title]="line1.Value" class="form-control inputHeight">
+                         </div>
                         </ng-container>
                       </ng-container>
                     </td>
@@ -2079,6 +2085,19 @@
               (click)="backToInvoice()"
             >
               Back
+            </button>
+            <button
+              *ngIf="client_name == 'Cenomi'"
+              class="primary_btn f-12 mr-3"
+              type="submit"
+              [disabled]="!enable_create_grn"
+              (click)="
+                router.url.includes('GRN_approvals')
+                  ? Approve_grn()
+                  : confirm_pop(form.value, true, 'GRN saved successfully')
+              "
+            >
+              Save
             </button>
             <button
               class="primary_btn f-12 mr-3"

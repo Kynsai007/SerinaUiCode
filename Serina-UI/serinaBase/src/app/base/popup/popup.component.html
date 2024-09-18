@@ -6,7 +6,8 @@
       >
       <span *ngIf="type == 'Amend'">Please change the template body</span>
       <span *ngIf="type == 'editApprover'">Please add the approvers</span>
-      <span *ngIf="type == 'manpower'">Please add</span>
+      <span *ngIf="type == 'manpower'">Please add timesheet details</span>
+      <span *ngIf="type == 'manpower_metadata'">Please add meta data</span>
     </h6>
 
     <!-- <h6 class="f-14" *ngIf="approveBool">
@@ -330,12 +331,13 @@
           showButtonBar="true"
           (onClearClick)="clearDates()"
           (onSelect)="filterByDate(rangeDates)"
+          [disabledDates]="disabledDates"
           inputId="range"
         ></p-calendar>
       </div>
     </div>
 
-    <div class="tabDiv">
+    <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
        
       <!-- <table class="table f-12">
         <tr class="tHead">
@@ -407,14 +409,14 @@
                 <input
                   #inputval
                   [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)?'text':'number'"
-                  [name]="line1.idDocumentLineItems"
-                  [value]="line1.Value"
+                  [name]="line1.tagName_u"
                   [title]="line1.Value"
                   class="form-control inputHeight w-sm"
                   [(ngModel)]="line1.Value"
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
                   required
-                  [readonly]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)"
+                  (change)="onChange(line1, line1.Value)"
+                  [readonly]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
                 />
               </div>
               <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
@@ -448,26 +450,28 @@
           </tr>
         </ng-container>
       </table>
-    </div>
-    <div
-      class="mt-4 d-flex justify-content-end mb-2"
-    >
-      <button
-        class="secondary_btn f-12 mr-3"
-        type="button"
-        mat-dialog-close
+      <div class="f-12">Note: Please add the shift data for the selected dates</div>
+      <div
+        class="mt-4 d-flex justify-content-end mb-2"
       >
-        Cancel
-      </button>
-      <button
-        class="primary_btn f-12"
-        type="submit"
-        (click)="onSubmitManpower()"
-      >
-        Save
-      </button>
+        <button
+          class="secondary_btn f-12 mr-3"
+          type="button"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+        <button
+          class="primary_btn f-12"
+          type="submit"
+          [disabled]="manpowerForm.invalid"
+        >
+          Save
+        </button>
 
-    </div>
+      </div>
+    </form>
+
   </div>
 
   <div *ngIf="type == 'manpower_metadata'">

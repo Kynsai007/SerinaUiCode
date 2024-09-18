@@ -11,6 +11,7 @@ export class ExceptionsService {
 
 
 
+
   userId: any;
   poNumber: string;
   invoiceID:number;
@@ -218,5 +219,8 @@ export class ExceptionsService {
   }
   getManPowerData(s_date,e_date){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}?startdate=${s_date}&enddate=${e_date}`) 
+  }
+  createTimesheet(manPowerAPI_request: any,context:any) {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${this.invoiceID}/${context}/${this.userId}`,manPowerAPI_request) 
   }
 }
