@@ -13,7 +13,7 @@ if(location.href.includes("agifsscinvoiceportal")){
 } else if(!location.href.includes("localhost")) {
   apiUrlString = `${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
 }
-console.log(location.hostname);
+
 export const environment = {
   production: false,
   // apiUrl:"https://cenomidev.centralindia.cloudapp.azure.com",
