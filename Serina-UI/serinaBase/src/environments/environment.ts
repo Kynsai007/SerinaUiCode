@@ -19,7 +19,7 @@ export const environment = {
   // apiUrl:"https://cenomidev.centralindia.cloudapp.azure.com",
   // apiUrl:"http://127.0.0.1:8000",
   
-  apiUrl: `${apiUrlString}.centralindia.cloudapp.azure.com`,
+  apiUrl: `https://${apiUrlString}.centralindia.cloudapp.azure.com`,
 
   apiVersion: "apiv1.1",
   userData: JSON.parse(localStorage.getItem('currentLoginUser')),
