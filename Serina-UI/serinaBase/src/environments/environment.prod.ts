@@ -9,14 +9,14 @@ if(location.href.includes("agifsscinvoiceportal")){
     apiUrlString = "agiv2";
   }
 } else if(!location.href.includes("localhost")) {
-  apiUrlString = `https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
+  apiUrlString = `${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
 }
 console.log(location.hostname);
 export const environment = {
   production: true,
   // apiUrl: `https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
   // apiUrl:"https://cenomidev.centralindia.cloudapp.azure.com",
-  apiUrl: `${apiUrlString}.centralindia.cloudapp.azure.com`,
+  apiUrl: `https://${apiUrlString}.centralindia.cloudapp.azure.com`,
   // apiUrl:"http://127.0.0.1:8000",
   apiVersion: "apiv1.1",
   userData: JSON.parse(localStorage.getItem('currentLoginUser')),

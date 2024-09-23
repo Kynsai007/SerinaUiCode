@@ -11,7 +11,7 @@ if(location.href.includes("agifsscinvoiceportal")){
     apiUrlString = "agiv2";
   }
 } else if(!location.href.includes("localhost")) {
-  apiUrlString = `https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
+  apiUrlString = `${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
 }
 console.log(location.hostname);
 export const environment = {
