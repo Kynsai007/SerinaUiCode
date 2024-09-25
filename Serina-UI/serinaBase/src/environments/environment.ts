@@ -7,8 +7,8 @@ if(location.href.includes("agifsscinvoiceportal")){
     apiUrlString = "agiv2";
   } else if(location.href.includes("uat")){
     apiUrlString = "agiv2uat";
-  } else if(location.href.includes("prod")){
-    apiUrlString = "agiv2";
+  } else {
+    apiUrlString = "agiv2prod";
   }
 } else if(!location.href.includes("localhost")) {
   apiUrlString = `${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
