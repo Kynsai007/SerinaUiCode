@@ -299,7 +299,7 @@ export class FrUpdateSpComponent implements OnInit {
         this.selected_extraction_type =data?.extractiontype;
       }
       if(data?.pagepreference){
-        this.selected_page_selection = data?.pagepreference;
+        this.selected_page_selection = JSON.stringify(data?.pagepreference);
       }
       if(this.FRMetaData?.service_rules_function){
         this.serviceRules?.forEach(el=>{
