@@ -1366,11 +1366,11 @@ export class Comparision3WayComponent
         let tag = ele.TagLabel.toLowerCase();
         if (tag == 'company name') {
           ele.order = 1
-        } else if (tag == 'customer po box number') {
+        } else if (tag.includes('customer po box')) {
           ele.order = 2
         } else if (tag == 'bill number') {
           ele.order = 3
-        } else if (tag == 'customer trn') {
+        } else if (tag.includes('customer trn')) {
           ele.order = 4
         } else if (tag == 'bill issue date') {
           ele.order = 5
