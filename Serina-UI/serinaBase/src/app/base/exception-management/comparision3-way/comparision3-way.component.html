@@ -100,53 +100,7 @@
       {{ btnText }}
     </button>
   </div>
-  <!-- <div
-    class="viewPdf"
-    style="right: 100px"
-    *ngIf="!isPdfAvailable && isDesktop"
-  >
-    <button class="btnUpload" (click)="DownloadPDF()">
-      <i class="fa fa-download" aria-hidden="true"></i>
-    </button>
-  </div> -->
 
-  <!-- <div *ngIf="submitBtn_boolean || approveBtn_boolean && isDesktop" class="position_rule">
-    <div class="placement-ruleChange f-12 bg-div-rule">
-      Current Selected rule : {{ selectedRule }}
-    </div>
-    <button
-      class="placement-ruleChange btnUpload bg-grn-btn"
-      (click)="open_modal()"
-    >
-      Change
-    </button>
-  </div> -->
-  <!-- <div *ngIf="approveBtn_boolean">
-    <div
-      class="placement-ruleChange f-12 bg-div-rule"
-      style="left: inherit; right: 145px; position: absolute"
-    >
-      Current Selected Approval Type : {{ approvalType }}
-    </div>
-  </div> -->
-
-  <!-- <div *ngIf="submitBtn_boolean && isDesktop && !GRN_PO_Bool && router.url.includes('comparision-docs')" class="changePOInput">
-    <p-autoComplete
-      [(ngModel)]="selectedPONumber"
-      (onSelect)="onSelectPO($event)"
-      placeholder="Select PO Number"
-      [suggestions]="filteredPO"
-      (completeMethod)="filterPO($event)"
-      field="PODocumentID"
-      [dropdown]="true"
-    >
-      <ng-template let-country pTemplate="item">
-        <div class="country-item">
-          <div class="f-12">{{ country.PODocumentID }}</div>
-        </div>
-      </ng-template>
-    </p-autoComplete>
-  </div> -->
   <div
     class="col-md-12 p-0"
     [ngClass]="showPdf && !isPdfAvailable ? 'col-lg-5' : 'col-lg-12'"
