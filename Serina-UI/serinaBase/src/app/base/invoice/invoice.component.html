@@ -274,19 +274,6 @@
     >
     </app-exception-table>
 
-      <!-- <app-all-invoices
-        [tableData]="archivedDisplayData"
-        [invoiceColumns]="archivedColumns"
-        [columnsToDisplay]="columnstodisplayArchived"
-        [showPaginatorAllInvoice]="showPaginatorArchived"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        (sideBarBoolean)="showSidebar($event)"
-        (paginationEvent)="paginate($event)"
-        (filterDataEmit)="filterEmit($event)"
-        [columnLength]="allARCColumnLength"
-        *ngIf="route.url == archivedTab"
-      ></app-all-invoices> -->
-
       <app-exception-table
       [invoiceColumns]="rejectedColumns"
       [columnsToDisplay]="columnstodisplayrejected"
@@ -303,19 +290,6 @@
       *ngIf="route.url == rejectedTab"
     >
     </app-exception-table>
-
-      <!-- <app-all-invoices
-        [tableData]="rejectedDisplayData"
-        [invoiceColumns]="rejectedColumns"
-        [columnsToDisplay]="columnstodisplayrejected"
-        [showPaginatorAllInvoice]="showPaginatorRejected"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        (sideBarBoolean)="showSidebar($event)"
-        (paginationEvent)="paginate($event)"
-        (filterDataEmit)="filterEmit($event)"
-        [columnLength]="rejectedColumnLength"
-        *ngIf="route.url == rejectedTab"
-      ></app-all-invoices> -->
 
       <app-exception-table
       [invoiceColumns]="serviceColumns"
@@ -335,18 +309,6 @@
     >
     </app-exception-table>
 
-      <!-- <app-all-invoices
-        [tableData]="serviceinvoiceDispalyData"
-        [invoiceColumns]="serviceColumns"
-        [showPaginatorAllInvoice]="showPaginatorServiceInvoice"
-        [columnsToDisplay]="columnstodisplayService"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        (sideBarBoolean)="showSidebar($event)"
-        (paginationEvent)="paginate($event)"
-        (filterDataEmit)="filterEmit($event)"
-        [columnLength]="allSRVColumnLength"
-        *ngIf="route.url == serviceInvoiceTab"
-      ></app-all-invoices> -->
     </div>
   </div>
   <ngx-spinner
