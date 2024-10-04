@@ -100,7 +100,6 @@ export class ProcessReportsComponent implements OnInit {
     this.readInvAgeReport('');
     this.readInvCountByEntity('');
     this.readPOSummary('');
-    // this.readPageCountByEntity('');
 
     setTimeout(() => {
       this.setConatinerForCharts();

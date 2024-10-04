@@ -212,22 +212,7 @@ $theme_color: var(--themeColor);
   top: 2px;
   z-index: 12;
 }
-// @media screen and (max-width:1300px) {
-//   .filter_inputDash {
-//     top: 83px;
-//   }
-//   .filters_div {
-//     top: 82px;
-//   }
-//   .tableDtDiv {
-//     position: relative;
-//     top: 27px;
-//   }
-//   .charts_height {
-//     position: relative;
-//     top: 20px;
-//   }
-// }
+
 .tableD {
   max-height: 190px;
   overflow: auto;
@@ -324,7 +309,7 @@ dialog .inputBox {
   //   height: 180px;
   //  }
 }
-@media screen and(max-width:800px) {
+@media screen and (max-width:800px) {
   .img-wrapper {
     width: 30px;
     height: 30px;
@@ -372,7 +357,7 @@ dialog .inputBox {
   }
 }
 
-@media screen and(max-width:800px) and (min-width: 577px) {
+@media screen and (max-width:800px) and (min-width: 577px) {
   .chart_title {
     position: absolute !important;
   }
