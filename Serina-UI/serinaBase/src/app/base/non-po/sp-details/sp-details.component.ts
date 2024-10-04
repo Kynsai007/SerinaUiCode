@@ -11,9 +11,9 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -98,8 +98,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   citySp;
   countrysp;
 
-  accounts: FormArray;
-  costAllocation: FormArray;
+  accounts: UntypedFormArray;
+  costAllocation: UntypedFormArray;
   submitted = false;
   savedatabooleansp: boolean;
   first = 0;
@@ -111,7 +111,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   mergedData: any;
   finalArray = [];
   spAccountname: any;
-  SpAccountDatails: FormGroup;
+  SpAccountDatails: UntypedFormGroup;
   addSpAccountBoolean: boolean;
   EditSpAccountBoolean: boolean;
 
@@ -206,7 +206,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: Router,
     public routeIn: ActivatedRoute,
     private ImportExcelService: ImportExcelService,
@@ -365,11 +365,11 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.SpAccountDatails.controls;
   }
   // add account
-  acDetails(): FormArray {
-    return this.SpAccountDatails.get('acDetails') as FormArray;
+  acDetails(): UntypedFormArray {
+    return this.SpAccountDatails.get('acDetails') as UntypedFormArray;
   }
 
-  newacDetails(): FormGroup {
+  newacDetails(): UntypedFormGroup {
     return this.fb.group({
       Account: ['', Validators.required],
       MeterNumber: ['', Validators.required],
@@ -393,8 +393,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // add cost details
-  costDetails(): FormArray {
-    return this.SpAccountDatails.get('costDetails') as FormArray;
+  costDetails(): UntypedFormArray {
+    return this.SpAccountDatails.get('costDetails') as UntypedFormArray;
   }
   prepareCostData() {
     this.EBS_costData = {
@@ -433,7 +433,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  newcostDetails(): FormGroup {
+  newcostDetails(): UntypedFormGroup {
     if (this.source == ('EBS' || 'ebs')) {
       return this.fb.group(this.EBS_costData);
     } else {
@@ -700,8 +700,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.createspAccount = false;
             this.DisplayspAccountDetails();
             this.SpAccountDatails = this.initialForm();
-            this.accounts = new FormArray([]);
-            this.costAllocation = new FormArray([]);
+            this.accounts = new UntypedFormArray([]);
+            this.costAllocation = new UntypedFormArray([]);
             this.SpAccountDatails.reset();
           },
           (error) => {
@@ -752,8 +752,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.createspAccount = false;
             this.DisplayspAccountDetails();
             this.SpAccountDatails = this.initialForm();
-            this.accounts = new FormArray([]);
-            this.costAllocation = new FormArray([]);
+            this.accounts = new UntypedFormArray([]);
+            this.costAllocation = new UntypedFormArray([]);
             this.SpAccountDatails.reset();
           },
           (error) => {

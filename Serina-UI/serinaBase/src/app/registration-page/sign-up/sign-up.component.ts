@@ -2,7 +2,7 @@ import { AlertService } from './../../services/alert/alert.service';
 import { RegistrationComponent } from './../registration/registration.component';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -15,7 +15,7 @@ RegistrationComponent
   styleUrls: ['./sign-up.component.scss','./../registration/registration.component.scss']
 })
 export class SignUpComponent implements OnInit {
-  registrationForm:FormGroup;
+  registrationForm:UntypedFormGroup;
   predefinedFormData:any;
   fieldTextType: boolean;
   linkActiveBoolean:boolean = true;
@@ -51,7 +51,7 @@ export class SignUpComponent implements OnInit {
   isEmailVerified: boolean;
   isAccountSuccess: boolean;
 
-  constructor(private fb:FormBuilder,
+  constructor(private fb:UntypedFormBuilder,
     private datePipe: DatePipe,
     private router:Router,
     private sharedService: SharedService,
@@ -61,9 +61,9 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group({
-      userName : new FormControl('',[Validators.required,Validators.minLength(6)]),
+      userName : new UntypedFormControl('',[Validators.required,Validators.minLength(6)]),
       vendorName : [''],
-      emailId :  new FormControl({value: '', disabled: true}, Validators.required),
+      emailId :  new UntypedFormControl({value: '', disabled: true}, Validators.required),
       firstName : ['',Validators.required],
       lastName : ['',Validators.required],
       password : ['',Validators.required],

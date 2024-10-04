@@ -149,7 +149,6 @@
       }
     }
   },
-  "defaultProject": "serinaBase",
   "cli": {
     "analytics": false
   }

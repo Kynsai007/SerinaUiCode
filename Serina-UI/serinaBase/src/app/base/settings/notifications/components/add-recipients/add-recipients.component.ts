@@ -4,7 +4,7 @@ import { SettingsService } from 'src/app/services/settings/settings.service';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -13,7 +13,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./add-recipients.component.scss'],
 })
 export class AddRecipientsComponent implements OnInit {
-  noticationSettingsData: FormGroup;
+  noticationSettingsData: UntypedFormGroup;
   recipitentsList = [];
   subscriptionEntity: Subscription;
   entity: any;
@@ -26,7 +26,7 @@ export class AddRecipientsComponent implements OnInit {
   to_addr = [];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private dataService: DataService,
     private settingsService: SettingsService,

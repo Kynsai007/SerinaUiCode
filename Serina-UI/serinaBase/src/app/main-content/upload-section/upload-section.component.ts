@@ -3,7 +3,7 @@ import { ServiceInvoiceService } from './../../services/serviceBased/service-inv
 import { AlertService } from './../../services/alert/alert.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, NgForm } from '@angular/forms';
+import { UntypedFormControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload';
 import { MessageService } from 'primeng/api';
@@ -90,7 +90,7 @@ export class UploadSectionComponent implements OnInit {
   selectedVendor: any;
 
   tabs = [];
-  selected = new FormControl(0);
+  selected = new UntypedFormControl(0);
   tabtitle: string = '';
   isCustomerPortal: boolean;
   filteredVendors = [];

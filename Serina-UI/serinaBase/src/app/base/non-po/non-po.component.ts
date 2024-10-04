@@ -1,7 +1,7 @@
 
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit} from '@angular/core';
-import { FormArray, FormGroup,} from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup,} from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 import {
@@ -56,9 +56,9 @@ export class NonPoComponent implements OnInit {
   createspAccount: boolean = false;
 
 
-  providerDetailsForm: FormGroup;
-  accounts: FormArray;
-  costAllocation: FormArray;
+  providerDetailsForm: UntypedFormGroup;
+  accounts: UntypedFormArray;
+  costAllocation: UntypedFormArray;
   submitted = false;
   savedatabooleansp: boolean
   first = 0;

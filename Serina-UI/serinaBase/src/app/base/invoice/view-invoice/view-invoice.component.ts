@@ -21,7 +21,7 @@ import {
 } from '@angular/core';
 // import { fabric } from 'fabric';
 import {DatePipe, Location } from '@angular/common';
-import { FormGroup, NgForm } from '@angular/forms';
+import { UntypedFormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
 import IdleTimer from '../../idleTimer/idleTimer';
@@ -78,7 +78,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   rect: any;
   rectCoords: any;
   inputData = [];
-  vendorDetails: FormGroup;
+  vendorDetails: UntypedFormGroup;
   isRect: boolean;
   isTagged: boolean = false;
 

@@ -2,7 +2,7 @@ import { DataService } from './../../../services/dataStore/data.service';
 
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit,  AfterViewInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { NgxSpinnerService } from "ngx-spinner";
@@ -51,7 +51,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   initialViewVendor: boolean;
   vendorList: boolean = true;
 
-  vendorDetailsForm: FormGroup;
+  vendorDetailsForm: UntypedFormGroup;
   submitted = false;
   selectedCities1: string[];
   savedataboolean: boolean;
@@ -95,7 +95,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
     this.sidenav.close();
   }
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
     private route: Router,
     private dataService: DataService,
     private tagService: TaggingService,

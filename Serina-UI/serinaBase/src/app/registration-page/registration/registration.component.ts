@@ -1,7 +1,7 @@
 import { MessageService } from 'primeng/api';
 import { RegistrationService } from './../../services/registration/registration.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import jwt_decode from "jwt-decode";
 import { PasswordStrengthValidator } from '../password-validators';
@@ -13,7 +13,7 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./registration.component.scss']
 })
 export class RegistrationComponent implements OnInit {
-  registrationForm:FormGroup;
+  registrationForm:UntypedFormGroup;
   predefinedFormData:any;
   fieldTextType: boolean;
   linkActiveBoolean:boolean = true;
@@ -23,7 +23,7 @@ export class RegistrationComponent implements OnInit {
   errorDivBoolean: boolean;
   emailId: string;
 
-  constructor(private fb:FormBuilder,
+  constructor(private fb:UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private datePipe: DatePipe,
     private router:Router,

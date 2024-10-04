@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
@@ -27,7 +27,7 @@ export class ServiceInvoicesDisplayComponent implements OnInit {
     rect: any;
     rectCoords: any;
     inputData = [];
-    vendorDetails: FormGroup;
+    vendorDetails: UntypedFormGroup;
   
     page: number = 1;
     totalPages: number;

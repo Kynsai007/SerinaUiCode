@@ -2,7 +2,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 // import { environment } from './../../../../../../Utility-tool/utilityBase/src/environments/environment';
 import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 // import { SocialAuthService } from "angularx-social-login";
 // import { GoogleLoginProvider } from "angularx-social-login";
@@ -23,8 +23,8 @@ interface IPData {
   styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent implements OnInit {
-  loginForm: FormGroup;
-  otpForm: FormGroup;
+  loginForm: UntypedFormGroup;
+  otpForm: UntypedFormGroup;
   loading = false;
   emailId: string;
   password: any;
@@ -91,7 +91,7 @@ export class LoginPageComponent implements OnInit {
   client_name: string;
 
   constructor(private router: Router,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public sharedService: SharedService,
     private route: ActivatedRoute,
     private settingService: SettingsService,

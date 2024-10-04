@@ -4,7 +4,7 @@ import { AlertService } from './../../../../services/alert/alert.service';
 import { SettingsService } from './../../../../services/settings/settings.service';
 import { Router } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 // import { CronGenComponent, CronOptions } from 'ngx-cron-editor';
 
@@ -43,7 +43,7 @@ export class SpTriggerSettingsComponent implements OnInit {
   @ViewChild('cronEditorDemo')
   // cronEditorDemo: CronGenComponent;
 
-  cronForm: FormControl;
+  cronForm: UntypedFormControl;
   scheduleTrigger = [
     { id: 1, type : "Hourly" },
     { id: 1, type : "Daily" },
@@ -66,7 +66,7 @@ export class SpTriggerSettingsComponent implements OnInit {
     private location : Location,
     private MessageService : MessageService) { }
   ngOnInit(): void {
-    this.cronForm = new FormControl(this.cronExpression);
+    this.cronForm = new UntypedFormControl(this.cronExpression);
     
     if(this.router.url.includes('ServiceInvoicesBatchTriggerSettings')){
       this.heading = "Service";

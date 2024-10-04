@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
@@ -24,7 +24,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   submitted: boolean;
   addSpAccountBoolean: boolean = true;
   spAccount_name: any;
-  SpAccountDetails: FormGroup;
+  SpAccountDetails: UntypedFormGroup;
   spDetails: any;
   source: string;
   EBS_costData: {};
@@ -40,8 +40,8 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   approverList: any;
   OPUnits: any;
   readOnlyForm: boolean;
-  accounts: FormArray;
-  costAllocation: FormArray;
+  accounts: UntypedFormArray;
+  costAllocation: UntypedFormArray;
   header_Ac = 'Add Service Provider Account';
   offsetCount = 1;
   accountsArray = [];
@@ -52,7 +52,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   constructor(private sharedService: SharedService,
     public dataService : DataService,
     private SpinnerService : NgxSpinnerService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private datePipe : DatePipe,
     private alertService : AlertService,
     public router : Router) { }
@@ -270,11 +270,11 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
     return this.SpAccountDetails?.controls;
   }
   // add account
-  acDetails(): FormArray {
-    return this.SpAccountDetails?.get('acDetails') as FormArray;
+  acDetails(): UntypedFormArray {
+    return this.SpAccountDetails?.get('acDetails') as UntypedFormArray;
   }
 
-  newacDetails(): FormGroup {
+  newacDetails(): UntypedFormGroup {
     return this.fb.group({
       Account: ['', Validators.required],
       MeterNumber: ['', Validators.required],
@@ -298,8 +298,8 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   }
 
   // add cost details
-  costDetails(): FormArray {
-    return this.SpAccountDetails.get('costDetails') as FormArray;
+  costDetails(): UntypedFormArray {
+    return this.SpAccountDetails.get('costDetails') as UntypedFormArray;
   }
   prepareCostData() {
     this.EBS_costData = {
@@ -338,7 +338,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
     };
   }
 
-  newcostDetails(): FormGroup {
+  newcostDetails(): UntypedFormGroup {
     if (this.source == ('EBS' || 'ebs')) {
       return this.fb.group(this.EBS_costData);
     } else {
@@ -411,8 +411,8 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
             this.offsetCount = 1;
             this.SPAccountDetails('&offset=1&limit=50');
             this.SpAccountDetails = this.initialForm();
-            this.accounts = new FormArray([]);
-            this.costAllocation = new FormArray([]);
+            this.accounts = new UntypedFormArray([]);
+            this.costAllocation = new UntypedFormArray([]);
             this.SpAccountDetails.reset();
           },
           (error) => {
@@ -465,8 +465,8 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
             this.offsetCount = 1;
             this.SPAccountDetails('&offset=1&limit=50');
             this.SpAccountDetails = this.initialForm();
-            this.accounts = new FormArray([]);
-            this.costAllocation = new FormArray([]);
+            this.accounts = new UntypedFormArray([]);
+            this.costAllocation = new UntypedFormArray([]);
             this.SpAccountDetails.reset();
             this.accountsSidebar = false;
           },

@@ -3,7 +3,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit,  AfterViewInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {  Location } from '@angular/common';
 import { NgxSpinnerService } from "ngx-spinner";
@@ -30,7 +30,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
   initialViewVendor: boolean;
   vendorList: boolean = true;
 
-  vendorDetailsForm: FormGroup;
+  vendorDetailsForm: UntypedFormGroup;
   submitted = false;
   selectedCities1: string[];
   visibleSidebar2;

@@ -19,7 +19,7 @@ import {
 } from '@angular/core';
 // import { fabric } from 'fabric';
 import { DatePipe, Location } from '@angular/common';
-import { FormBuilder, Validators, FormGroup, NgForm } from '@angular/forms';
+import { UntypedFormBuilder, Validators, FormGroup, NgForm } from '@angular/forms';
 import * as $ from 'jquery';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { FormCanDeactivate } from '../../can-deactivate/form-can-deactivate';
@@ -421,7 +421,7 @@ export class Comparision3WayComponent
   grnTooltip: string;
 
   constructor(
-    fb: FormBuilder,
+    fb: UntypedFormBuilder,
     public tagService: TaggingService,
     public router: Router,
     private authService: AuthenticationService,
