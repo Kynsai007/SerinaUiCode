@@ -2484,7 +2484,7 @@ export class Comparision3WayComponent
     drf.afterClosed().subscribe((bool) => {
       const dialog = document.querySelector('dialog');
       if (dialog) {
-        dialog.showModal();
+        (dialog as any).showModal();
         this.bulk_bool = bool;
         if (bool) {
           document.getElementById("cmt").style.display = "block";
@@ -2499,7 +2499,7 @@ export class Comparision3WayComponent
   closeDialog() {
     const dialog = document.querySelector('dialog');
     if (dialog) {
-      dialog.close();
+      (dialog as any).close();
     }
   }
   delete_confirmation(id) {

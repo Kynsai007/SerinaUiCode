@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 import { environment1 } from 'src/environments/environment.prod';
 import jwt_decode from "jwt-decode";
 import { MsalService } from '@azure/msal-angular';
-import { SocialAuthService } from "angularx-social-login";
+// import { SocialAuthService } from "angularx-social-login";
 export interface User{
     id?: number;
     username: string;
@@ -33,7 +33,9 @@ export class AuthenticationService {
         private router:Router,
         private docService : DocumentService,
         private chartService : ChartsService,
-        private sharedService: SharedService,private msalService:MsalService,private googleService: SocialAuthService) {
+        private sharedService: SharedService,private msalService:MsalService,
+        // private googleService: SocialAuthService
+    ) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentLoginUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -90,7 +92,7 @@ export class AuthenticationService {
         }
         if(localStorage.getItem("ga.account.keys")){
             localStorage.removeItem("ga.account.keys");
-            this.googleService.signOut();
+            // this.googleService.signOut();
         }
         let userid = JSON.parse(sessionStorage.getItem('currentLoginUser'))?.userdetails?.idUser;
         await this.http.post(`${this.apiUrl}/${this.apiVersion}/logout/${userid}`,null).toPromise();

@@ -943,7 +943,7 @@ isMobile:boolean;
       this.dialogHeader = "GRN Reports";
       const dialog = document.querySelector('dialog');
       if (dialog) {
-        dialog.showModal();
+        (dialog as any).showModal();
       }
     }
   }
@@ -959,7 +959,9 @@ isMobile:boolean;
 
     const dialog = document.querySelector('dialog');
     if (dialog) {
-      dialog.showModal();
+      if (dialog) {
+          (dialog as any).showModal();
+        }
     }
   }
   onOptionDrop(event: CdkDragDrop<any[]>) {
@@ -1378,7 +1380,8 @@ isMobile:boolean;
   closeDialog(){
     const dialog = document.querySelector('dialog');
     if(dialog){
-      dialog.close();
+       (dialog as any).close();
+
     }
   }
 

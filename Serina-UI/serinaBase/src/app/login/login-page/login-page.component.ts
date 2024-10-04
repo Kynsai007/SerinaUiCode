@@ -4,8 +4,8 @@ import { SettingsService } from 'src/app/services/settings/settings.service';
 import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SocialAuthService } from "angularx-social-login";
-import { GoogleLoginProvider } from "angularx-social-login";
+// import { SocialAuthService } from "angularx-social-login";
+// import { GoogleLoginProvider } from "angularx-social-login";
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { environment, environment1 } from 'src/environments/environment.prod';
@@ -100,7 +100,7 @@ export class LoginPageComponent implements OnInit {
     private titleService: Title,
     private authenticationService: AuthenticationService,
     private msalService: MsalService,
-    private googleService: SocialAuthService,
+    // private googleService: SocialAuthService,
     private renderer: Renderer2) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -249,12 +249,12 @@ export class LoginPageComponent implements OnInit {
       this.login('ms');
     });
   }
-  signInWithGoogle(): void {
-    this.googleService.signIn(GoogleLoginProvider.PROVIDER_ID).then((response:any) =>{
-      localStorage.setItem("ga.account.keys", response["email"]);
-      this.login('ga');
-    });
-  }
+  // signInWithGoogle(): void {
+  //   this.googleService.signIn(GoogleLoginProvider.PROVIDER_ID).then((response:any) =>{
+  //     localStorage.setItem("ga.account.keys", response["email"]);
+  //     this.login('ga');
+  //   });
+  // }
   isLoggedInMs(): boolean {
     return this.msalService.instance.getActiveAccount() != null;
   }

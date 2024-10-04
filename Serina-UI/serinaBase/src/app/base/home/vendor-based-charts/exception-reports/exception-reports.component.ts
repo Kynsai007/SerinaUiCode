@@ -389,14 +389,15 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     dialog.style.top = top;
     dialog.style.left = left;
     if(dialog){
-      dialog.showModal();
+      (dialog as any).showModal();
     }
   }
 
   closeDialog(){
     const dialog = document.querySelector('dialog');
     if(dialog){
-      dialog.close();
+       (dialog as any).close();
+
     }
   }
 }
