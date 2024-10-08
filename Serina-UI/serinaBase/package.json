@@ -4,14 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4700",
-    "build": "ng build --prod",
+    "build": "ng build --configuration production",
     "build-prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
-  },
-  "engines": {
-    "node": "16.x"
   },
   "private": true,
   "dependencies": {
