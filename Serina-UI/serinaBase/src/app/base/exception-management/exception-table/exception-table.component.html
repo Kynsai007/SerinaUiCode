@@ -840,6 +840,7 @@
   [breakpoints]="{ '960px': '75vw' }"
   [style]="{ width: '30vw' }"
   [baseZIndex]="10000"
+  [modal]="true"
   [draggable]="false"
   [resizable]="false"
 >
@@ -857,7 +858,7 @@
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-end mb-3">
       <button
-        class="btn btnVender bg-btn-cancel mr-3"
+        class="primary_btn f-12"
         (click)="displayResponsivepopup = false"
       >
         Ok

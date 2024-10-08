@@ -10,6 +10,7 @@ import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Calendar } from 'primeng/calendar';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { SharedService } from 'src/app/services/shared.service';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-popup',
@@ -64,7 +65,7 @@ export class PopupComponent implements OnInit {
   createdDates = [];
 
   constructor(
-    public dialogRef: MatDialogRef<PopupComponent>,
+    private dialogRef : DynamicDialogRef,
     private ES: ExceptionsService,
     private alert: AlertService,
     private spin: NgxSpinnerService,
@@ -73,16 +74,16 @@ export class PopupComponent implements OnInit {
     private datePipe: DatePipe,
     private dateFilterService: DateFilterService,
     private sharedService: SharedService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    public config: DynamicDialogConfig
   ) { }
 
   ngOnInit(): void {
-    this.type = this.data.type;
-    this.rejectionComments = this.data.rejectTxt
-    this.po_num = this.data?.po_num
-    let grn = this.data?.grnLine;
-    this.POLineData = this.data?.resp?.podata;
-    this.inv_total = this.data?.resp?.sub_total;
+    this.type = this.config?.data?.type;
+    this.rejectionComments = this.config?.data?.rejectTxt
+    this.po_num = this.config?.data?.po_num
+    let grn = this.config?.data?.grnLine;
+    this.POLineData = this.config?.data?.resp?.podata;
+    this.inv_total = this.config?.data?.resp?.sub_total;
     this.isEditGRN = this.ds?.isEditGRN;
     if (grn) {
       grn?.forEach(el => {
@@ -131,11 +132,11 @@ export class PopupComponent implements OnInit {
         { header: 'Number of Shifts', field: 'shifts' }
       ];
     }
-    if (this.data.comp == 'upload') {
+    if (this.config?.data?.comp == 'upload') {
       this.uploadBool = true;
     }
-    this.POLineData = this.data?.resp?.podata;
-    this.inv_total = this.data?.resp?.sub_total;
+    this.POLineData = this.config?.data?.resp?.podata;
+    this.inv_total = this.config?.data?.resp?.sub_total;
   }
 
   flipPOFun() {
@@ -621,7 +622,7 @@ export class PopupComponent implements OnInit {
   }
 
   manpowerCreateFunction() {
-    this.replicaSheetData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
+    this.replicaSheetData = JSON.parse(JSON.stringify(this.config?.data?.resp?.grnData_po));
 
     // Step 1: Filter out the entries where "isTimesheet" value is false
     const isTimesheetsTag = this.replicaSheetData.find(item => item.TagName === 'Is Timesheets');
@@ -735,5 +736,8 @@ export class PopupComponent implements OnInit {
       hasBackdrop: false,
       data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
+  }
+  onClose(){
+    this.dialogRef.close();
   }
 }

@@ -35,6 +35,8 @@ import { CanUploadComponentDeactivate } from '../UnsavedChanges.guard';
 import { Calendar } from 'primeng/calendar';
 import { HttpEventType } from '@angular/common/http';
 import { SupportpdfViewerComponent } from '../supportpdf-viewer/supportpdf-viewer.component';
+import { DialogService } from 'primeng/dynamicdialog';
+import {DynamicDialogRef} from 'primeng/dynamicdialog';
 export interface getApproverData {
   EntityID: number,
   EntityBodyID?: number,
@@ -435,6 +437,7 @@ export class Comparision3WayComponent
     private settingService: SettingsService,
     private SharedService: SharedService,
     private mat_dlg: MatDialog,
+    private dialogService : DialogService,
     private datePipe: DatePipe
   ) {
     super();
@@ -2800,12 +2803,16 @@ export class Comparision3WayComponent
     // }
     let w = '70%';
     let h = '92vh';
+    let header:string;
+    let isClosable = true;
     let response;
     if (str == 'Amend') {
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
+      header = 'Please change the template body';
     } else if (str == 'flip line') {
+      header = "Please select the lines";
       try {
         // let query = `/${this.invoiceID}`;
         const data: any = await this.exceptionService.getPOLines('').toPromise();
@@ -2817,22 +2824,29 @@ export class Comparision3WayComponent
     } else if (str == 'manpower') {
       w = '80%';
       h = '82vh';
+      header = "Please add timesheet details";
+      isClosable = false;
       response = { "grnData_po": this.lineDisplayData }
     } else if (str == 'manpower_metadata') {
+      header = "Please add meta data";
       w = '60%';
       h = '65vh';
       response = { "manpower_metadata": this.manpower_metadata }
     }
     this.SpinnerService.show();
-    const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+    const ref: DynamicDialogRef = this.dialogService.open(PopupComponent, {
       width: w,
       height: h,
-      hasBackdrop: false,
+      baseZIndex: 10000,
+      maximizable: false,
+      header: header,
+      closable: isClosable,
+      draggable: true,
       data: { type: str, resp: response, rejectTxt: this.rejectionComments }
     });
     this.SpinnerService.hide();
     if (str == 'Amend') {
-      matdrf.afterClosed().subscribe((resp: any) => {
+      ref.onClose.subscribe((resp: any) => {
         this.rejectionComments = resp;
         if (resp) {
           this.Reject();
@@ -2840,7 +2854,7 @@ export class Comparision3WayComponent
       })
     } else if (str == 'manpower_metadata') {
       this.SpinnerService.show();
-      matdrf.afterClosed().subscribe((resp: any) => {
+      ref.onClose.subscribe((resp: any) => {
         if(resp) {
           this.manpower_metadata = resp;
           this.createTimeSheetDisplayData("new");
@@ -2849,7 +2863,7 @@ export class Comparision3WayComponent
       })
     } else if (str == 'manpower') {
       this.SpinnerService.show();
-      matdrf.afterClosed().subscribe((resp: any) => {
+      ref.onClose.subscribe((resp: any) => {
         console.log(resp)
         if (resp) {
           this.manPowerAPI_request = {
@@ -3258,6 +3272,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
       this.SpinnerService.hide();
+      this.PO_GRN_Number_line = data?.result;
       return data?.result;
     }, err => {
       this.error("Server error");

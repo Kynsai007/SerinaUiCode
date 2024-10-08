@@ -24,7 +24,8 @@ import {PaginatorModule} from 'primeng/paginator';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {CalendarModule} from 'primeng/calendar';
 import {ChipsModule} from 'primeng/chips';
-import { NgxSpinnerModule } from "ngx-spinner"; 
+import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner"; 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { TextMaskModule } from 'angular2-text-mask';
@@ -59,7 +60,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
         TextMaskModule,
         InfiniteScrollModule,
         PdfViewerModule,
-        NgxPaginationModule
+        NgxPaginationModule,
+        DynamicDialogModule
       ],
       exports:[
         CommonModule,
@@ -84,8 +86,9 @@ import {NgxPaginationModule} from 'ngx-pagination';
         TextMaskModule,
         InfiniteScrollModule,
         PdfViewerModule,
-        NgxPaginationModule
+        NgxPaginationModule,
+        DynamicDialogModule
       ],
-      providers:[DatePipe, MessageService ]
+      providers:[DatePipe, MessageService,DialogService,NgxSpinnerService ]
 })
 export class importFilesModule { }

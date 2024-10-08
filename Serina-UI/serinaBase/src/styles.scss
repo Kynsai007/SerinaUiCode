@@ -127,7 +127,7 @@ $hover_color: var(--textWColor);
   font-size: 14px !important;
 }
 .p-dialog .p-dialog-header {
-  padding: 0.5rem !important;
+  padding: 0.5rem 0.5rem 0.5rem 20px !important;
   // background: #313971 !important;
   // color: white !important;
   // border-top-right-radius: 10px !important;
@@ -145,6 +145,7 @@ $hover_color: var(--textWColor);
 }
 .form-control:focus {
   box-shadow: none !important;
+  outline: 0 !important;
 }
 // custom toggle
 .switch {
@@ -594,6 +595,11 @@ input:checked + .slider:before {
   border: 1px solid lightgray;
   box-shadow: 1px 1px 8px rgb(0 0 0 / 20%);
   background: white;
+  width: 100%;
+}
+.p-dropdown:focus {
+  outline: 0 !important;
+  box-shadow: none !important;
 }
 .p-dropdown-item {
   cursor: pointer;
@@ -1251,8 +1257,8 @@ option:hover {
   padding-top: 10px;
 }
 dialog::backdrop {
-  background-color: rgb(247 247 255 / 80%);
-  opacity: 0.9;
+  background-color: rgb(247 247 255 / 80%) !important;
+  opacity: 0.8 !important;
 }
 .mat-dialog-container {
   padding: 0px 0px 20px 0px !important;

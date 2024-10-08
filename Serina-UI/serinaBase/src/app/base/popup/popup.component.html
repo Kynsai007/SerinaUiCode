@@ -1,5 +1,5 @@
-<section class="p-4" cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="position: relative;">
-  <div class="d-flex justify-content-between">
+<section class="p-0" style="position: relative;">
+  <!-- <div class="d-flex justify-content-between">
     <h6 class="f-14">
       <span *ngIf="type.includes('flip')"
         >Please select the lines</span
@@ -9,14 +9,10 @@
       <span *ngIf="type == 'manpower'">Please add timesheet details</span>
       <span *ngIf="type == 'manpower_metadata'">Please add meta data</span>
     </h6>
-
-    <!-- <h6 class="f-14" *ngIf="approveBool">
-      <span></span>
-    </h6> -->
     <div *ngIf="type != 'manpower'">
       <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
     </div>
-  </div>
+  </div> -->
 
   <div *ngIf="type.includes('flip')">
     <form
@@ -142,8 +138,15 @@
         *ngIf="POLineData[0]?.Name"
       >
         <button
+          class="secondary_btn f-12 mr-3"
+          type="button"
+          (click)="onClose()"
+        >
+          Cancel
+        </button>
+        <button
           *ngIf="!uploadBool"
-          class="primary_btn f-12 mr-3"
+          class="primary_btn f-12"
           type="submit"
           [disabled]="selectedPOLines.length == 0"
         >
@@ -151,20 +154,14 @@
         </button>
         <button
           *ngIf="uploadBool"
-          class="primary_btn f-12 mr-3"
+          class="primary_btn f-12"
           type="button"
           [disabled]="selectedPOLines.length == 0"
           (click)="validateFlip()"
         >
           Validate
         </button>
-        <button
-          class="secondary_btn f-12"
-          type="button"
-          mat-dialog-close
-        >
-          Cancel
-        </button>
+        
       </div>
 
       <div
