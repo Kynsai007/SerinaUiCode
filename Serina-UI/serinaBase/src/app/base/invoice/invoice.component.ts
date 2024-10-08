@@ -6,8 +6,6 @@ import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
-
-import { MessageService } from 'primeng/api';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
@@ -129,10 +127,6 @@ export class InvoiceComponent implements OnInit {
   ERPName: any;
   servicesList: any[];
   filteredService: any[];
-  
-  close(reason: string) {
-    this.sidenav.close();
-  }
   APIParams: string;
 
   rejectedColumns: any = [];
@@ -224,7 +218,6 @@ isMobile:boolean;
 
   deviceColumns() {
     if (this.ds.isDesktop) {
-      // if (this.route.url == this.invoiceTab) {
         if (this.ds.invTabColumns) {
           this.invoiceColumns = this.ds.invTabColumns;
           this.invTabAllColumns = this.ds.invTabColumns;
@@ -233,7 +226,6 @@ isMobile:boolean;
         } else {
           this.getInvoiceColumns();
         }
-      // } else if (this.route.url == this.POTab) {
         if (this.ds.poTabColumns) {
           this.poColumns = this.ds.poTabColumns;
           this.poTabAllColumns = this.ds.poTabColumns;
@@ -242,7 +234,6 @@ isMobile:boolean;
         } else {
           this.getPOColumns();
         }
-      // } else if (this.route.url == this.archivedTab) {
         if (this.ds.arcTabColumns) {
           this.archivedColumns = this.ds.arcTabColumns;
           this.arcTabAllColumns = this.ds.arcTabColumns
@@ -251,7 +242,6 @@ isMobile:boolean;
         } else {
           this.getArchivedColumns();
         }
-      // } else if (this.route.url == this.serviceInvoiceTab) {
         if (this.ds.serTabColumns) {
           this.serviceColumns = this.ds.serTabColumns;
           this.invsTabAllColumns = this.ds.serTabColumns;
@@ -260,7 +250,6 @@ isMobile:boolean;
         } else {
           this.getServiceColumns();
         }
-      // }
       this.prepareColumns();
     } else {
       this.mob_columns();
@@ -289,11 +278,7 @@ isMobile:boolean;
     if (this.poDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorPOTable = true;
     }
-    // this.soDisplayData = this.ds.SODisplayData;
-    // this.soArrayLength = this.ds.soArrayLength;
-    // if (this.soDisplayData.length > 10 && this.isDesktop) {
-    //   this.showPaginatorSOTable = true;
-    // }
+
     this.GRNDispalyData = this.ds.GRNLoadedData;
     this.GRNArrayLength = this.ds.GRNTableLength;
     if (this.GRNDispalyData.length > 10 && this.isDesktop) {
@@ -321,7 +306,6 @@ isMobile:boolean;
   routeForTabs() {
     this.invoiceTab = `/${this.portal_name}/invoice/allInvoices`;
     this.POTab = `/${this.portal_name}/invoice/PO`;
-    // this.SOTab = `/${this.portal_name}/invoice/SO`;
     this.GRNTab = `/${this.portal_name}/invoice/GRN`;
     this.archivedTab = `/${this.portal_name}/invoice/archived`;
     this.rejectedTab = `/${this.portal_name}/invoice/rejected`;
@@ -440,7 +424,7 @@ isMobile:boolean;
           this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
-              ...element.Document,
+              ...element.DocumentInv,
               ...element.Entity,
               ...element.DocumentSubStatus,
               ...element.EntityBody,
@@ -662,34 +646,6 @@ isMobile:boolean;
     });
   }
 
-  // getDisplaySOData(data) {
-  //   this.SpinnerService.show();
-  //   this.sharedService.getSOdata(data).subscribe((data: any) => {
-  //     const invoicePushedArray = [];
-  //     data?.ok?.podata?.forEach((element) => {
-  //       let invoiceData = {
-  //         ...element.Document,
-  //         ...element.Entity,
-  //         ...element.EntityBody,
-  //         ...element.VendorAccount,
-  //         ...element.Vendor,
-  //       };
-  //       invoiceData['docstatus'] = element.docstatus;
-  //       invoicePushedArray.push(invoiceData);
-  //     });
-
-  //     this.soDisplayData =
-  //       this.ds.SODisplayData.concat(invoicePushedArray);
-  //     this.ds.SODisplayData = this.soDisplayData;
-  //     this.ds.soArrayLength = data?.ok?.total_po;
-  //     this.soArrayLength = data?.ok?.total_po;
-  //     if (this.soDisplayData.length > 10 && this.isDesktop) {
-  //       this.showPaginatorSOTable = true;
-  //     }
-  //     this.SpinnerService.hide();
-  //   });
-  // }
-
   getDisplayServiceInvoicedata() {
     this.SpinnerService.show();
     this.sharedService.getServiceInvoices().subscribe(
@@ -855,13 +811,6 @@ isMobile:boolean;
       this.allSearchInvoiceString = [];
       this.searchStr = this.ds.searchPOStr;
     } 
-    // else if (value == 'so') {
-    //   // this.getPOColums();
-    //   this.route.navigate([this.SOTab]);
-    //   this.ds.doc_status_tab = this.SOTab;
-    //   this.allSearchInvoiceString = [];
-    //   this.searchStr = this.ds.searchSOStr;
-    // } 
     else if (value == 'grn') {
       this.route.navigate([this.GRNTab]);
       this.ds.doc_status_tab = this.GRNTab;
@@ -898,7 +847,6 @@ isMobile:boolean;
   }
   showSidebar(value) {
     this.visibleSidebar2 = value;
-    // this.sidenav.toggle();
     if (this.route.url == this.invoiceTab) {
       this.allColumns = this.invTabAllColumns;
     } else if (this.route.url == this.POTab) {
@@ -966,7 +914,6 @@ isMobile:boolean;
   }
   onOptionDrop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.allColumns, event.previousIndex, event.currentIndex);
-    // if (this.route.url == '/customer/invoice/allInvoices') {
     this.allColumns.forEach((e, index) => {
       this.updateColumns.forEach((val) => {
         if (val.idtabColumn === e.idDocumentColumn) {
@@ -976,7 +923,6 @@ isMobile:boolean;
     });
   }
   activeColumn(e, value) {
-    // if (this.route.url == '/customer/invoice/allInvoices') {
     this.updateColumns.forEach((val) => {
       if (val.idtabColumn == value.idDocumentColumn) {
         val.isActive = e.target.checked;
@@ -1009,7 +955,6 @@ isMobile:boolean;
         this.error(error.statusText);
       }
     );
-    // this.sidenav.close();
     this.visibleSidebar2 = false;
   }
 
@@ -1140,22 +1085,6 @@ isMobile:boolean;
         }
       }
     } 
-    // else if (this.route.url == this.SOTab) {
-    //   this.ds.SOPaginationFirst = this.first;
-    //   this.ds.SOPaginationRowLength = event.rows;
-    //   if (this.first >= this.ds.pageCountVariableSO) {
-    //     this.ds.pageCountVariableSO = event.first;
-    //     if (this.ds.searchSOStr == '') {
-    //       this.ds.offsetCountSO++;
-    //       this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50`;
-    //       this.getDisplaySOData(this.APIParams);
-    //     } else {
-    //       this.ds.offsetCountSO++;
-    //       this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50&uni_search=${this.ds.searchSOStr}`;
-    //       this.getDisplaySOData(this.APIParams);
-    //     }
-    //   }
-    // } 
     else if (this.route.url == this.serviceInvoiceTab) {
       this.ds.servicePaginationFirst = this.first;
       this.ds.servicePaginationRowLength = event.rows;
@@ -1178,12 +1107,7 @@ isMobile:boolean;
       } else if (this.route.url == this.rejectedTab) {
         this.ds.rejectedDisplayData = [];
         this.getDisplayRejectedData(this.APIParams);
-      } 
-      // else if (this.route.url == this.SOTab) {
-      //   this.ds.SODisplayData = [];
-      //   this.getDisplaySOData(this.APIParams);
-      // } 
-      else if (this.route.url == this.serviceInvoiceTab) {
+      } else if (this.route.url == this.serviceInvoiceTab) {
       }
     }
     if (event.key === 'Enter') {
@@ -1252,22 +1176,7 @@ isMobile:boolean;
         this.getDisplayRejectedData(this.APIParams);
       }
       // this.ds.rejectedPaginationFisrt = 1;
-    } 
-    // else if (this.route.url == this.SOTab) {
-    //   this.ds.SOPaginationFirst = 0;
-    //   this.ds.offsetCountSO = 1;
-    //   this.ds.SODisplayData = [];
-    //   this.ds.searchSOStr = event;
-    //   if (this.ds.searchSOStr == '') {
-    //     this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50`;
-    //     this.getDisplaySOData(this.APIParams);
-    //   } else {
-    //     this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50&uni_search=${this.ds.searchSOStr}`;
-    //     this.getDisplaySOData(this.APIParams);
-    //   }
-    //   // this.ds.rejectedPaginationFisrt = 1;
-    // } 
-    else if (this.route.url == this.serviceInvoiceTab) {
+    } else if (this.route.url == this.serviceInvoiceTab) {
     }
   }
   selectinvType(val) {
@@ -1381,7 +1290,6 @@ isMobile:boolean;
     const dialog = document.querySelector('dialog');
     if(dialog){
        (dialog as any).close();
-
     }
   }
 
@@ -1555,11 +1463,7 @@ ERPReports(bool) {
      toDate = this.datePipe.transform(this.rangeDates_soa[1], 'yyyy-MM-dd');
      apiParam += `&start_date=${frmDate}&end_date=${toDate}`;
    }
- 
-   // Add unique search key if present
-  //  if (this.soa_uniSearch) {
-  //    apiParam += `&unq_key=${this.soa_uniSearch}`;
-  //  }
+
    this.SpinnerService.show();
    this.sharedService.ERPReportDownload(apiParam).subscribe((data:any)=>{
      this.SpinnerService.hide();
@@ -1570,7 +1474,6 @@ ERPReports(bool) {
       this.sharedService.csvDownload(data);
       this.success("Dear User, The Report downloaded successfully.");
       this.closeDialog();
-      //  this.SOATableData = data;
      }
    },err=>{
      this.SpinnerService.hide();
