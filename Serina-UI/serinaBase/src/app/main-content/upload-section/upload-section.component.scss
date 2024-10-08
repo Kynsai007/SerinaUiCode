@@ -16,10 +16,7 @@ $theme_color: var(--themeColor);
   width: clamp(260px, 23vw, 350px);
   top: -14px;
 }
-// .pdropdown {
-//   width: 70% !important;
-//   margin-bottom: 0px !important;
-// }
+
 :host ::ng-deep .p-button.p-button-icon-only {
   height: 35px;
   color: #140101;
@@ -44,9 +41,7 @@ $theme_color: var(--themeColor);
   box-shadow: none;
   border-color: lightgray;
 }
-// :host ::ng-deep .p-dialog .p-dialog-content {
-//   min-height: 78vh;
-// }
+
 .multipo_pop {
   min-height: 78vh;
 }
@@ -549,9 +544,7 @@ input[type="checkbox"] {
   height: calc(100vh - 123px) !important;
   // background-color: white;
 }
-// .imgPlaceholder img{
-//   height: 40vh;
-// }
+
 .row {
   margin: 0 -53px !important;
   padding: 10px 53px;
