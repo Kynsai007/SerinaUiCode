@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~bootstrap/dist/css/bootstrap.css";
-@import "~font-awesome/css/font-awesome.css";
+// @import "bootstrap/dist/css/bootstrap.css";
+// @import "font-awesome/css/font-awesome.css";
 
 * {
   font-family: "Popins Regular", "Segoe UI", Arial;
@@ -128,10 +128,6 @@ $hover_color: var(--textWColor);
 }
 .p-dialog .p-dialog-header {
   padding: 0.5rem 0.5rem 0.5rem 20px !important;
-  // background: #313971 !important;
-  // color: white !important;
-  // border-top-right-radius: 10px !important;
-  // border-top-left-radius: 10px !important;
 }
 .p-dialog-mask {
   background-color: #00000070;
@@ -1361,4 +1357,4 @@ dialog::backdrop {
 }
 
 /* Importing Bootstrap SCSS file. */
-@import "~bootstrap/scss/bootstrap";
+// @import "~bootstrap/scss/bootstrap";
