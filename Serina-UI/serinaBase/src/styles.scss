@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-// @import "bootstrap/dist/css/bootstrap.css";
-// @import "font-awesome/css/font-awesome.css";
+@import "bootstrap/dist/css/bootstrap.css";
+@import "font-awesome/css/font-awesome.css";
 
 * {
   font-family: "Popins Regular", "Segoe UI", Arial;
@@ -1357,4 +1357,4 @@ dialog::backdrop {
 }
 
 /* Importing Bootstrap SCSS file. */
-// @import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
