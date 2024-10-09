@@ -33,7 +33,6 @@
     "@capacitor/ios": "^5.0.2",
     "aedes": "^0.46.2",
     "angular2-text-mask": "^9.0.0",
-    "bootstrap": "^4.6.0",
     "event-source-polyfill": "^1.0.31",
     "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",

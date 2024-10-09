@@ -1,5 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-@import "bootstrap/dist/css/bootstrap.css";
 @import "font-awesome/css/font-awesome.css";
 
 * {
@@ -1355,6 +1354,3 @@ dialog::backdrop {
     width: 32%;
   }
 }
-
-/* Importing Bootstrap SCSS file. */
-@import "bootstrap/scss/bootstrap";
