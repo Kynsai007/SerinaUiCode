@@ -39,12 +39,6 @@
         <li class="nav-item" *ngIf="bothOptBoolean || !isQuickUploadbool">
           <a
             class="nav-link"
-            id="ideal-tab"
-            data-toggle="tab"
-            href="#ideal"
-            role="tab"
-            aria-controls="ideal"
-            aria-selected="true"
             [ngClass]="viewType == 'ideal' ? 'active' : ''"
             (click)="chooseTab('ideal')"
           >
@@ -67,12 +61,6 @@
         >
           <a
             class="nav-link"
-            id="quick-tab"
-            data-toggle="tab"
-            href="#quick"
-            role="tab"
-            aria-controls="quick"
-            aria-selected="true"
             [ngClass]="viewType == 'quick' ? 'active' : ''"
           >
             <div class="d-flex align-items-center ideal_tab_msg">
@@ -88,11 +76,9 @@
         </li>
       </ul>
     </div>
-    <div class="tab-content mt-2" id="myTabContent">
-      <div
-        class="tab-pane pt-2"
-        [ngClass]="viewType == 'ideal' ? 'show active' : 'fade'"
-        id="ideal"
+    <div class="tab-content mt-2">
+      <div *ngIf="viewType == 'ideal'"
+        class="pt-2"
       >
         <!--Vendor Portal Upload-->
         <form #uploadForm="ngForm" class="d-flex flex-wrap gap">
@@ -742,11 +728,8 @@
       </div>
       <!-- Quick upload Tab -->
       <div
-        class="tab-pane pt-2"
-        id="quick"
-        role="tabpanel"
-        aria-labelledby="quick-tab"
-        [ngClass]="viewType == 'quick' ? 'show active' : 'fade'"
+        class="pt-2"
+        *ngIf="viewType == 'quick'"
       >
         <form
           #quickUploadForm="ngForm"
