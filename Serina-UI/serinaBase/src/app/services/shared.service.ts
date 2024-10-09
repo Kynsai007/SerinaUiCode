@@ -338,11 +338,11 @@ export class SharedService {
   }
 
   /* invoice Related */
-  getAllInvoice() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVList/${this.userId}`).pipe(retry(3))
+  getAllInvoice(bool) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVList/${this.userId}?is_vendor=${bool}`).pipe(retry(3))
   }
   getPOData(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentPOList/${this.userId}${data}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readDocumentPOList/${this.userId}${data}`).pipe(retry(3));
   }
   getServiceInvoices() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVListService/${this.userId}`).pipe(retry(3));
@@ -544,7 +544,7 @@ export class SharedService {
 
   // GRN Related
   getGRNdata(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentGRNList/${this.userId}${data}`).pipe(retry(2));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/readDocumentGRNList/${this.userId}${data}`).pipe(retry(2));
   }
   getARCdata(data) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentARCList/${this.userId}${data}`).pipe(retry(2));

@@ -1,5 +1,3 @@
-
-
 * {
   font-family: "Popins Regular", "Segoe UI", Arial;
   box-sizing: border-box;
@@ -1184,18 +1182,6 @@ option:hover {
   margin: 13px 0px;
   padding-right: 20px;
   border-right: 1px solid lightgray;
-}
-/* Define the animation keyframes */
-@keyframes blink {
-  0% {
-    background-color: #ff2f00;
-  }
-  50% {
-    background-color: rgb(241, 241, 233);
-  }
-  100% {
-    background-color: #ff2f00;
-  }
 }
 
 /* Apply the animation to an element */

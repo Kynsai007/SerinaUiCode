@@ -417,19 +417,16 @@ isMobile:boolean;
   getInvoiceData() {
     this.SpinnerService.show();
     this.showFactsComponent = true;
-    this.sharedService.getAllInvoice().subscribe(
+    this.sharedService.getAllInvoice(true).subscribe(
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
           this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
-              ...element.DocumentInv,
+              ...element.DocumentINV,
               ...element.Entity,
               ...element.DocumentSubStatus,
-              ...element.EntityBody,
-              ...element.ServiceProvider,
-              ...element.ServiceAccount,
               ...element.VendorAccount,
               ...element.Vendor
             };
@@ -648,7 +645,7 @@ isMobile:boolean;
 
   getDisplayServiceInvoicedata() {
     this.SpinnerService.show();
-    this.sharedService.getServiceInvoices().subscribe(
+    this.sharedService.getAllInvoice(false).subscribe(
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
