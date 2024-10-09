@@ -22,7 +22,7 @@ import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-logi
 import {
   GoogleLoginProvider
 } from 'angularx-social-login';
-
+import { DataService } from './services/dataStore/data.service';
 // import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 // export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
 
@@ -39,12 +39,11 @@ const googleLoginOptions = {
   scope: 'profile email',
   plugin_name:'Serina' 
 };
-export function MSALInstanceFactory(): IPublicClientApplication{
+export function MSALInstanceFactory(dataService:DataService): IPublicClientApplication{
   return new PublicClientApplication({
     auth: {
-      clientId : "44e503fe-f768-46f8-99bf-803d4a2cf62d",
+      clientId : dataService?.configData?.sso_client_id || "44e503fe-f768-46f8-99bf-803d4a2cf62d",
       redirectUri: location.href
-
     }
   })
 }
