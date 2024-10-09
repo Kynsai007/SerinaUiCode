@@ -1,6 +1,6 @@
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MessageService } from 'primeng/api';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 import { AlertService } from 'src/app/services/alert/alert.service';

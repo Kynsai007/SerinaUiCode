@@ -8,7 +8,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import * as fileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({

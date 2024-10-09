@@ -1,5 +1,5 @@
 // import { IMqttServiceOptions } from "ngx-mqtt";
-let apiUrlString = "";
+let apiUrlString = "test116";
 if(location.href.includes("agifsscinvoiceportal")){
   if(location.href.includes("dev")){
     apiUrlString = "agiv2";

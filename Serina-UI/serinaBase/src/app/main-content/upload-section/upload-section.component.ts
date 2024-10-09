@@ -25,7 +25,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AutoComplete } from 'primeng/autocomplete';
 import { PopupComponent } from 'src/app/base/popup/popup.component';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 // declare var EventSourcePolyfill: any;
 export interface getApproverData {

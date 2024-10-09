@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+// import { CanDeactivate } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { flatMap, first, tap } from 'rxjs/operators';
+import { mergeMap, first, tap } from 'rxjs/operators';
 
-export type CanLeaveType = boolean|Promise<boolean>|Observable<boolean>;
+export type CanLeaveType = boolean | Promise<boolean> | Observable<boolean>;
 
-@Injectable()
-export class CanLeaveService implements CanDeactivate<any> {
+@Injectable({
+  providedIn: 'root'
+})
+export class CanLeaveService  {
 
   private observer$ = new BehaviorSubject<CanLeaveType>(true);
 
-  /** Pushes a quanding value into the guard observer to resolve when leaving the page */
+  /** Pushes a guarding value into the guard observer to resolve when leaving the page */
   public allowDeactivation(guard: CanLeaveType) {
     this.observer$.next(guard);
   }
@@ -18,15 +20,16 @@ export class CanLeaveService implements CanDeactivate<any> {
   // Implements the CanDeactivate interface to conditionally prevent leaving the page
   canDeactivate(): Observable<boolean> {
     // Debug
-    console.log('canDeactive:');
+    console.log('canDeactivate:');
+    
     // Returns an observable resolving into a suitable guarding value
-    return this.observer$.pipe( 
-      // Flatten the observer to a lower order one
-      flatMap( canLeave => typeof(canLeave) === 'boolean' ? of(canLeave) : canLeave ),
+    return this.observer$.pipe(
+      // Merge the observer to a lower-order observable
+      mergeMap(canLeave => typeof canLeave === 'boolean' ? of(canLeave) : canLeave),
       // Makes sure the observable always resolves
       first(),
       // Debug purposes only
-      tap( allow => console.log(allow ? 'leave' : 'stay') )
+      tap(allow => console.log(allow ? 'leave' : 'stay'))
     );
   }
 }

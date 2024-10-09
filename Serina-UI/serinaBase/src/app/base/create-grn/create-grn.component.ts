@@ -8,7 +8,7 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 import { PermissionService } from 'src/app/services/permission.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { NgForm } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { DatePipe } from '@angular/common';
 import { Calendar } from 'primeng/calendar';

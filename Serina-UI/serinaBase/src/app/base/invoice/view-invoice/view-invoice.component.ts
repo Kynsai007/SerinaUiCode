@@ -28,7 +28,7 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import { catchError, map, take } from 'rxjs/operators';
 import { HttpEventType } from '@angular/common/http';
 import * as fileSaver from 'file-saver';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { PopupComponent } from '../../popup/popup.component';
 import { MultiPOComponent } from 'src/app/main-content/multi-po/multi-po.component';
 import { MatAccordion } from '@angular/material/expansion';

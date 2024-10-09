@@ -9,7 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
 export interface UserData {
   name: string;

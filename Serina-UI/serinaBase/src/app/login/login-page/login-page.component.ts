@@ -11,7 +11,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { environment, environment1 } from 'src/environments/environment.prod';
 import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult } from '@azure/msal-browser';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SignUpComponent } from 'src/app/registration-page/sign-up/sign-up.component';
 import { Title } from '@angular/platform-browser';
 interface IPData {

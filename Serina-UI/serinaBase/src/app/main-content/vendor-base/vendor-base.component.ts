@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { PermissionService } from 'src/app/services/permission.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ChangePasswordComponent } from 'src/app/base/change-password/change-password.component';
 import { environment1 } from 'src/environments/environment.prod';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';

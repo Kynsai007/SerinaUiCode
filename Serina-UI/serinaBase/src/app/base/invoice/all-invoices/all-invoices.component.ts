@@ -18,7 +18,7 @@ import { AuthenticationService } from 'src/app/services/auth/auth-service.servic
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
 import * as fileSaver from 'file-saver';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 
 export interface statusArray {

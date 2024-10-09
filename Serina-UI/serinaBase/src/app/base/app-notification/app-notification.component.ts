@@ -1,6 +1,6 @@
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA } from '@angular/material/legacy-snack-bar';
 import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({

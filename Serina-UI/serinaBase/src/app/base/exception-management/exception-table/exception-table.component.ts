@@ -19,7 +19,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { PermissionService } from 'src/app/services/permission.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 
 @Component({

@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import { environment1 } from 'src/environments/environment.prod';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { FeatureComponent } from '../feature/feature.component';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';

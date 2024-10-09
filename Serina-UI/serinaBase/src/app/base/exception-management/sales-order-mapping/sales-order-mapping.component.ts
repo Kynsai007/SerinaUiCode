@@ -10,7 +10,7 @@ import { MessageService } from 'primeng/api';
 import { AlertService } from './../../../services/alert/alert.service';
 import { Location } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
-import { MatDialog,MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog,MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { PermissionService } from 'src/app/services/permission.service';
 import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';

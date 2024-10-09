@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarRef, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarHorizontalPosition as MatSnackBarHorizontalPosition, MatLegacySnackBarRef as MatSnackBarRef, MatLegacySnackBarVerticalPosition as MatSnackBarVerticalPosition } from '@angular/material/legacy-snack-bar';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AppNotificationComponent } from 'src/app/base/app-notification/app-notification.component';
 import { DataService } from '../dataStore/data.service';

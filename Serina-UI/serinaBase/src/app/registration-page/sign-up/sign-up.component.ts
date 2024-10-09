@@ -3,7 +3,7 @@ import { RegistrationComponent } from './../registration/registration.component'
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { RegistrationService } from 'src/app/services/registration/registration.service';

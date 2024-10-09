@@ -14,7 +14,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe } from '@angular/common';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
 
 @Component({

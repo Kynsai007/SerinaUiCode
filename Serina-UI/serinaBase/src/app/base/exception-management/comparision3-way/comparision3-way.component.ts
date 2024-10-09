@@ -27,7 +27,7 @@ import { SettingsService } from 'src/app/services/settings/settings.service';
 import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { catchError, map, take } from 'rxjs/operators';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
