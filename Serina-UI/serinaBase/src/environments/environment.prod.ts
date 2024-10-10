@@ -1,5 +1,6 @@
 // import { IMqttServiceOptions } from "ngx-mqtt";
 let apiUrlString = "";
+let client_id = '44e503fe-f768-46f8-99bf-803d4a2cf62d'
 if(location.href.includes("agifsscinvoiceportal")){
   if(location.href.includes("dev")){
     apiUrlString = "agiv2";
@@ -11,13 +12,12 @@ if(location.href.includes("agifsscinvoiceportal")){
 } else if(!location.href.includes("localhost")) {
   apiUrlString = `${location.href.split("https://")[1].split(".serinaplus.com")[0]}`;
 }
-console.log(location.hostname);
+if(location.href.toLowerCase().includes('agi')){
+  client_id = "5ef48563-f560-4413-9775-fc6bc5b79b76";
+}
 export const environment = {
   production: true,
-  // apiUrl: `https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
-  // apiUrl:"https://cenomidev.centralindia.cloudapp.azure.com",
   apiUrl: `https://${apiUrlString}.centralindia.cloudapp.azure.com`,
-  // apiUrl:"http://127.0.0.1:8000",
   apiVersion: "apiv1.1",
   userData: JSON.parse(localStorage.getItem('currentLoginUser')),
   userName: JSON.parse(localStorage.getItem('username'))
@@ -25,6 +25,7 @@ export const environment = {
 
 export const environment1  = {
   hostname: `${apiUrlString}.centralindia.cloudapp.azure.com/apiv1.1`,
+  sso_client_id: client_id,
   // hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
   // port: 443,
   // protocol: 'wss',
