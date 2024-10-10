@@ -338,11 +338,11 @@ export class SharedService {
   }
 
   /* invoice Related */
-  getAllInvoice() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVList/${this.userId}`).pipe(retry(3))
+  getAllInvoice(bool) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVList/${this.userId}?is_vendor=${bool}`).pipe(retry(3))
   }
   getPOData(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentPOList/${this.userId}${data}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readDocumentPOList/${this.userId}${data}`).pipe(retry(3));
   }
   getServiceInvoices() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentINVListService/${this.userId}`).pipe(retry(3));
@@ -441,7 +441,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
   readColumnInvoice(value) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readColumnPos/${this.userId}/tabname/${value}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readColumnPos/${this.userId}/tabname/${value}`).pipe(retry(3));
   }
   updateColumnPOs(data: any, value): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateColumnPos/${this.userId}/tabname/${value}`, data).pipe(retry(3));
@@ -544,7 +544,7 @@ export class SharedService {
 
   // GRN Related
   getGRNdata(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentGRNList/${this.userId}${data}`).pipe(retry(2));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/readDocumentGRNList/${this.userId}${data}`).pipe(retry(2));
   }
   getARCdata(data) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentARCList/${this.userId}${data}`).pipe(retry(2));

@@ -433,19 +433,16 @@ isMobile:boolean;
   getInvoiceData() {
     this.SpinnerService.show();
     this.showFactsComponent = true;
-    this.sharedService.getAllInvoice().subscribe(
+    this.sharedService.getAllInvoice(true).subscribe(
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
           this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
-              ...element.Document,
+              ...element.DocumentINV,
               ...element.Entity,
               ...element.DocumentSubStatus,
-              ...element.EntityBody,
-              ...element.ServiceProvider,
-              ...element.ServiceAccount,
               ...element.VendorAccount,
               ...element.Vendor
             };
@@ -499,11 +496,9 @@ isMobile:boolean;
         if (data.ok) {
           data.ok.podata.forEach((element) => {
             let poData = {
-              ...element.Document,
+              ...element.DocumentPO,
               ...element.Entity,
               ...element.EntityBody,
-              ...element.ServiceProvider,
-              ...element.ServiceAccount,
               ...element.VendorAccount,
               ...element.Vendor,
             };
@@ -533,7 +528,7 @@ isMobile:boolean;
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
       let grnD = []
       data.grndata?.forEach(ele => {
-        let merge = { ...ele.Document }
+        let merge = { ...ele.DocumentGRN }
         merge.EntityName = ele.EntityName;
         merge.VendorName = ele.VendorName;
         merge.grn_type = ele.grn_type;
@@ -662,44 +657,16 @@ isMobile:boolean;
     });
   }
 
-  // getDisplaySOData(data) {
-  //   this.SpinnerService.show();
-  //   this.sharedService.getSOdata(data).subscribe((data: any) => {
-  //     const invoicePushedArray = [];
-  //     data?.ok?.podata?.forEach((element) => {
-  //       let invoiceData = {
-  //         ...element.Document,
-  //         ...element.Entity,
-  //         ...element.EntityBody,
-  //         ...element.VendorAccount,
-  //         ...element.Vendor,
-  //       };
-  //       invoiceData['docstatus'] = element.docstatus;
-  //       invoicePushedArray.push(invoiceData);
-  //     });
-
-  //     this.soDisplayData =
-  //       this.ds.SODisplayData.concat(invoicePushedArray);
-  //     this.ds.SODisplayData = this.soDisplayData;
-  //     this.ds.soArrayLength = data?.ok?.total_po;
-  //     this.soArrayLength = data?.ok?.total_po;
-  //     if (this.soDisplayData.length > 10 && this.isDesktop) {
-  //       this.showPaginatorSOTable = true;
-  //     }
-  //     this.SpinnerService.hide();
-  //   });
-  // }
-
   getDisplayServiceInvoicedata() {
     this.SpinnerService.show();
-    this.sharedService.getServiceInvoices().subscribe(
+    this.sharedService.getAllInvoice(false).subscribe(
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
           this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
-              ...element.Document,
+              ...element.DocumentINV,
               ...element.Entity,
               ...element.EntityBody,
               ...element.ServiceProvider,
