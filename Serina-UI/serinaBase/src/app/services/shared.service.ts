@@ -242,8 +242,8 @@ export class SharedService {
   readvendoraccountSite() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorSite/${this.userId}/idVendor/` + this.vendorID).pipe(retry(3));
   }
-  readVendorInvoices() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/vendor/${this.vendorID}`).pipe(retry(3));
+  readVendorInvoices(context) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/${context}/${this.vendorID}`).pipe(retry(3));
   }
   readVendorInvoiceColumns(): Observable<object> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readVendorColumnPos/${this.userId}/tabname/{tabtype}`).pipe(retry(3));
@@ -441,10 +441,10 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
   readColumnInvoice(value) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readColumnPos/${this.userId}/tabname/${value}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/columnpos/readColumnPos/${this.userId}/tabname/${value}`).pipe(retry(3));
   }
   updateColumnPOs(data: any, value): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateColumnPos/${this.userId}/tabname/${value}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/columnpos/updateColumnPos/${this.userId}/tabname/${value}`, data).pipe(retry(3));
   }
   readEditedInvoiceData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/edited`).pipe(retry(3));
@@ -461,8 +461,8 @@ export class SharedService {
   approveInvoiceChanges(data: any) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/approveEditInvoice/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
-  readApprovedInvoiceData() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/approved`).pipe(retry(2));
+  readApprovedInvoiceData(bool) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/approved?is_vendor=${bool}`).pipe(retry(2));
   }
   readApprovedSPInvoiceData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceListService/${this.userId}/approved`).pipe(retry(2))

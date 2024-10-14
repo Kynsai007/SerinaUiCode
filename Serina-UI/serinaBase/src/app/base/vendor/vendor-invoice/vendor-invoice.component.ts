@@ -94,10 +94,10 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
 
   readVendorInvoiceData() {
     this.SpinnerService.show();
-    this.sharedService.readVendorInvoices().subscribe((data: any) => {
+    this.sharedService.readVendorInvoices('vendor').subscribe((data: any) => {
       let pushedVendorInvoices = [];
       data.data.forEach(element => {
-        let arrayVendorInvoices = { ...element.Entity, ...element.EntityBody, ...element.Document, ...element.Vendor, ...element.VendorAccount };
+        let arrayVendorInvoices = { ...element.Entity, ...element.EntityBody, ...element.DocumentINV, ...element.Vendor, ...element.VendorAccount };
         arrayVendorInvoices.docstatus = element.docstatus;
         pushedVendorInvoices.push(arrayVendorInvoices)
       });
@@ -126,11 +126,11 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
 
   DisplaySpInvoice() {
     this.SpinnerService.show();
-    this.sharedService.readServiceInvoice().subscribe((data: any) => {
+    this.sharedService.readVendorInvoices('serviceprovider').subscribe((data: any) => {
       const invoicePushedArray = [];
       data.data.forEach((element) => {
         let invoiceData = {
-          ...element.Document,
+          ...element.DocumentINV,
           ...element.Entity,
           ...element.EntityBody,
           ...element.ServiceProvider,
@@ -339,7 +339,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   }
 
   newcostDetails(): FormGroup {
-    if (this.source == ('EBS' || 'ebs')) {
+    if (this.source.toLowerCase() == 'ebs') {
       return this.fb.group(this.EBS_costData);
     } else {
       return this.fb.group(this.EDP_costData);

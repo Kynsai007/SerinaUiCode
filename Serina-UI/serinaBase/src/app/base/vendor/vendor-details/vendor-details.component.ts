@@ -346,7 +346,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
 
   readVendorInvoiceData() {
-    this.sharedService.readVendorInvoices().subscribe((data: any) => {
+    this.sharedService.readVendorInvoices('vendor').subscribe((data: any) => {
       let pushedVendorInvoices = [];
       data.data.forEach(element => {
         let arrayVendorInvoices = { ...element.Entity, ...element.EntityBody, ...element.Document, ...element.Vendor, ...element.VendorAccount };

@@ -151,7 +151,7 @@ export class ApproveComponent implements OnInit {
 
   readInvoiceApprovedData() {
     this.SpinnerService.show();
-    this.sharedService.readApprovedInvoiceData().subscribe(
+    this.sharedService.readApprovedInvoiceData(true).subscribe(
       (data: any) => {
         let approvedArray = [];
         data?.result?.approved.forEach((element) => {
@@ -188,7 +188,7 @@ export class ApproveComponent implements OnInit {
 
   readServiceInvoiceData() {
     this.SpinnerService.show();
-    this.sharedService.readApprovedSPInvoiceData().subscribe(
+    this.sharedService.readApprovedInvoiceData(false).subscribe(
       (data: any) => {
         let approvedArray = [];
         data?.result?.approved?.forEach((element) => {
