@@ -172,7 +172,7 @@ export class CreateGRNComponent implements OnInit {
     this.sharedService.readReadyGRNData(this.api_route,query).subscribe((data:any)=>{
       let array = [];
       data.result?.forEach(ele=>{
-        let mergedArray = {...ele.Document,...ele.Vendor,...ele.Entity};
+        let mergedArray = {...ele.DocumentINV,...ele.Vendor,...ele.Entity};
         array.push(mergedArray);
       });
       this.columnsData = array;
@@ -195,7 +195,7 @@ export class CreateGRNComponent implements OnInit {
     this.sharedService.readReadyGRNData(this.api_route,query).subscribe((data:any)=>{
       let array = [];
       data?.forEach(ele=>{
-        let mergedArray = {...ele.Document};
+        let mergedArray = {...ele.DocumentINV};
         mergedArray.EntityName = ele.EntityName;
         mergedArray.VendorName = ele.VendorName;
         array.push(mergedArray);

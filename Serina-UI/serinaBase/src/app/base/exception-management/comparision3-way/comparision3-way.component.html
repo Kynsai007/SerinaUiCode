@@ -1,26 +1,5 @@
-<!-- <div *ngIf="!editable && !grnCreateBoolean" class="pos_rel">
-  <span class="goBackIn ml-3" (click)="backToInvoice()">
-    <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
-  </span>
-  <h6 class="headh6 pl-80">View {{ Itype }}</h6>
-</div>
-<div *ngIf="editable || grnCreateBoolean" class="pos_rel">
-  <span class="goBackIn ml-3" (click)="backToInvoice()">
-    <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
-  </span>
-  <h6 class="headh6 pl-80">{{ headerName }}</h6>
-</div> -->
 <div class="row invoice-body">
   <div class="viewPdf d-flex">
-    <!-- <button
-      class="btnUpload  mr-2"
-      (click)="open_dialog_comp('Amend')"
-    >
-      PO Amend request
-    </button> -->
-
-    <!-- [ngClass]="subStatusId == 75 || subStatusId == 17 ? 'bt-hlt' : ''" -->
-
     <div
       class="d-flex"
       *ngIf="
@@ -100,76 +79,14 @@
       {{ btnText }}
     </button>
   </div>
-  <!-- <div
-    class="viewPdf"
-    style="right: 100px"
-    *ngIf="!isPdfAvailable && isDesktop"
-  >
-    <button class="btnUpload" (click)="DownloadPDF()">
-      <i class="fa fa-download" aria-hidden="true"></i>
-    </button>
-  </div> -->
-
-  <!-- <div *ngIf="submitBtn_boolean || approveBtn_boolean && isDesktop" class="position_rule">
-    <div class="placement-ruleChange f-12 bg-div-rule">
-      Current Selected rule : {{ selectedRule }}
-    </div>
-    <button
-      class="placement-ruleChange btnUpload bg-grn-btn"
-      (click)="open_modal()"
-    >
-      Change
-    </button>
-  </div> -->
-  <!-- <div *ngIf="approveBtn_boolean">
-    <div
-      class="placement-ruleChange f-12 bg-div-rule"
-      style="left: inherit; right: 145px; position: absolute"
-    >
-      Current Selected Approval Type : {{ approvalType }}
-    </div>
-  </div> -->
-
-  <!-- <div *ngIf="submitBtn_boolean && isDesktop && !GRN_PO_Bool && router.url.includes('comparision-docs')" class="changePOInput">
-    <p-autoComplete
-      [(ngModel)]="selectedPONumber"
-      (onSelect)="onSelectPO($event)"
-      placeholder="Select PO Number"
-      [suggestions]="filteredPO"
-      (completeMethod)="filterPO($event)"
-      field="PODocumentID"
-      [dropdown]="true"
-    >
-      <ng-template let-country pTemplate="item">
-        <div class="country-item">
-          <div class="f-12">{{ country.PODocumentID }}</div>
-        </div>
-      </ng-template>
-    </p-autoComplete>
-  </div> -->
+  
   <div
     class="col-md-12 p-0"
     [ngClass]="showPdf && !isPdfAvailable ? 'col-lg-5' : 'col-lg-12'"
   >
     <div class="col-12 dummy_div"></div>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <!-- <li
-        class="nav-item mr-2"
-        pTooltip="Vendor details"
-        tooltipPosition="top"
-        (click)="changeTab('vendor')"
-      >
-        <a
-          class="nav-link"
-          id="vendor-tab"
-          data-toggle="tab"
-          href="#vendor"
-          role="tab"
-          aria-controls="vendor"
-          aria-selected="true"
-          >Vendor</a
-        >
-      </li> -->
+      
       <li
         class="nav-item mr-2"
         pTooltip="Header details"
@@ -401,7 +318,7 @@
                 </div>
               </div>
               <div class="displayFlex mt-2">
-                <div *ngFor="let value of inputData">
+                <div *ngFor="let value of headerData ">
                   <!-- [ngStyle]="{ 'width':value?.TagLabel?.includes('Vendor') ? 'calc(100svw - 74svw)':''}" -->
                   <div
                     class="input_container"
@@ -1010,67 +927,71 @@
                     <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
               </div>
-              <table class="invert mt-2 w-100" id="grnTable">
-                <tr class="invert_tr" style="width: 50px">
-                  <th class="lineName invert_th_td text-center" style="min-width: 50px">S.No</th>
-                  <td *ngFor="let item of grnLineCount; let i = index" class="count_line">
-                    <div class="s-no">{{ i + 1 }}</div>
-                  </td>
-                </tr>
-                <ng-container *ngFor="let item of lineDisplayData; let i = index">
-                  <tr class="invert_tr" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}" 
-                      *ngIf="(GRN_PO_Bool || !item.TagName.includes('UnitPrice')) && item.TagName !== 'Inv - AmountExcTax'">
-                    <td class="lineName invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
-                      <ng-container *ngIf="item.TagName !== 'GRN - AmountExcTax'; else amountExcTax">
-                        <div class="d-flex justify-content-between">
-                          <div>{{ item.TagName }}</div>
-                        </div>
-                      </ng-container>
-                      <ng-template #amountExcTax>AmountExcTax</ng-template>
-                    </td>
-                    <td *ngFor="let line1 of item.linedata" class="linevalue invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
-                      <ng-container [ngSwitch]="item.TagName">
+              <table *ngIf="lineDisplayData?.length > 0" class="mt-2 w-100 grn_table" id="grnTable">
+                
+                  <tr >
+                    <th class="lineName" *ngFor="let grn of lineTable">{{grn.header}}</th>
+                  </tr>
+                  <tr *ngFor="let item of lineDisplayData; let i = index; trackBy: trackByIndex">
+                    <!-- Iterate over headers to match the data field for each row -->
+                    <td *ngFor="let header of lineTable">
+                      <ng-container [ngSwitch]="header.header">
+              
+                        <!-- S.No -->
+                        <ng-container *ngSwitchCase="'S.No'">
+                          <div class="count_line" style="min-width: 50px">{{ i + 1 }}</div>
+                        </ng-container>
+              
+                        <!-- GRN - Quantity -->
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
                           <div>
                             <input #inputval type="text" style="border: 0.2px solid #358dc0" 
-                                 [name]="line1.idDocumentLineItems" [(ngModel)]="line1.Value" 
-                                 (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
-                                 class="form-control inputHeight w-sm" [title]="line1.Value" >
+                                   [name]="item[header.field]?.Value" 
+                                   [(ngModel)]="item[header.field].Value" 
+                                   (change)="onChangeGrn(item[header.field], inputval.value)" 
+                                   [readonly]="item[header.field]?.is_timesheets"
+                                   class="form-control inputHeight w-sm" 
+                                   [title]="item[header.field]?.Value">
                           </div>
                         </ng-container>
-                        <ng-container *ngSwitchCase="'Comments'" [ngSwitch]="GRN_PO_Bool">
-                          <ng-container *ngSwitchCase="false">
-                            <div>
-                              <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
-                                   [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorDesc">
-                            </div>
-                          </ng-container>
+              
+                        <!-- Comments -->
+                        <ng-container *ngSwitchCase="'Comments'">
+                          <div>
+                            <input #inputComment type="text" style="width: 150px; border: 0.2px solid #358dc0"
+                                   class="form-control inputHeight" 
+                                   [title]="item[header.field]?.ErrorDesc ? item[header.field]?.ErrorDesc : ''" 
+                                   [ngModelOptions]="{standalone: true}">
+                          </div>
                         </ng-container>
-                        <ng-container *ngSwitchCase="'Actions'" [ngSwitch]="GRN_PO_Bool">
-                          <ng-container *ngSwitchCase="true">
-                            <span class="linevalue invert_thtd">
-                              <button class="trash_btn" (click)="deleteGrnLine(line1.idDocumentLineItems)">
-                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                              </button>
-                            </span>
-                          </ng-container>
+              
+                        <!-- Actions -->
+                        <ng-container *ngSwitchCase="'Actions'">
+                          <span class="linevalue invert_thtd">
+                            <button class="trash_btn" (click)="deleteGrnLine(item)">
+                              <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </button>
+                          </span>
                         </ng-container>
+              
+                        <!-- Default case for other fields -->
                         <ng-container *ngSwitchDefault>
-                         <div>
-                          <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                          [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                          [value]="line1.Value ? line1.Value : 'NA'" [title]="line1.Value ? line1.Value : ''"
-                          class="form-control inputHeight" 
-                          [name]="line1.idDocumentLineItems"
-                          (click)="!line1.Value? open_dialog_comp('manpower_metadata'): null"
-                          [disabled]="line1.Value" [ngModelOptions]="{standalone: true}">
-                         </div>
+                          <div>
+                            <input type="text" 
+                                   [ngClass]="{'w-des': header.header === 'Description', 'w-sm': item.TagName !== 'Description'}"
+                                   [ngStyle]="{'border': item[header.field]?.is_mapped === 1 ? '2px solid #f2be42' : ''}"
+                                   [value]="item[header.field]?.Value ? item[header.field]?.Value : 'NA'" 
+                                   [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
+                                   class="form-control inputHeight" 
+                                   [name]="item[header.field]?.Value"
+                                   [disabled]="item[header.field]?.Value || !GRN_PO_Bool" 
+                                   [ngModelOptions]="{standalone: true}">
+                          </div>
                         </ng-container>
+              
                       </ng-container>
                     </td>
                   </tr>
-                </ng-container>
               </table>
             </div>
             <table

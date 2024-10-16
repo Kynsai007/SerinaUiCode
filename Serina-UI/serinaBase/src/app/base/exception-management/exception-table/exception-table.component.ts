@@ -663,6 +663,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.sideBarBoolean.emit(true);
   }
   updatePO(e) {
+    console.log(e)
     this.invoiceID = e.idDocument;
     this.SpinnerService.show();
     this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {

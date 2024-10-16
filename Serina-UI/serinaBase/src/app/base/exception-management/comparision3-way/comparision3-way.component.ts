@@ -189,11 +189,14 @@ export class Comparision3WayComponent
   poLinedata = [];
   soLinedata = [];
   lineTable = [
+    { header: 'S.No', field: '' },
     { header: 'Description', field: 'Description' },
-    { header: 'Unit', field: 'Unit' },
-    { header: 'Price', field: 'UnitPrice' },
-    { header: 'Quantity', field: 'Quantity' },
-    { header: 'Amount', field: 'amount' }
+    { header: 'PO quantity', field: 'PurchQty'},
+    { header: 'Inv - Quantity', field: 'Quantity' },
+    { header: 'GRN - Quantity', field: 'GRNQuantity' },
+    { header: 'PO balance quantity', field: 'RemainInventPhysical'},
+    { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
+    { header: 'Comments', field: '' }
   ];
   documentViewBool: boolean;
   isDesktop: boolean;
@@ -419,6 +422,7 @@ export class Comparision3WayComponent
   disable_save_btn: boolean;
   saveDisabled: boolean;
   grnTooltip: string;
+  headerData = [];
 
   constructor(
     fb: FormBuilder,
@@ -1339,227 +1343,250 @@ export class Comparision3WayComponent
   }
 
   headerDataOrder() {
+    console.log(this.inputData)
     if(!this.isServiceData){
-      this.inputData.forEach(ele => {
-        if (ele.TagLabel == 'VendorName') {
-          ele.order = 1
-        } else if (ele.TagLabel == 'VendorAddress') {
-          ele.order = 2
-        } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
-          ele.order = 3
-          this.po_num = ele?.Value;
-        } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
-          this.invoiceNumber = ele?.Value;
-          ele.order = 4
-        } else if (ele.TagLabel == 'InvoiceTotal') {
-          ele.order = 5
-        } else if (ele.TagLabel == 'InvoiceDate') {
-          ele.order = 6
-        } else if (ele.TagLabel == 'TotalTax') {
-          ele.order = 7
-        } else if (ele.TagLabel == 'SubTotal') {
-          ele.order = 8
-          this.invoice_subTotal = ele?.Value;
-        } else if (ele.TagLabel == 'PaymentTerm') {
-          ele.order = 9
-        } else if (ele.TagLabel == 'TRN') {
-          ele.order = 10
-        } else if (ele.TagLabel == 'DueDate') {
-          ele.order = 11
+      const orderMap = {
+        'VendorName': 1,
+        'VendorAddress': 2,
+        'PurchaseOrder': 3,
+        'PurchId': 3,
+        'POHeaderId': 3,
+        'InvoiceId': 4,
+        'bill_number': 4,
+        'InvoiceTotal': 5,
+        'InvoiceDate': 6,
+        'TotalTax': 7,
+        'SubTotal': 8,
+        'PaymentTerm': 9,
+        'TRN': 10,
+        'DueDate': 11,
+      };
+
+      Object.keys(this.inputData).forEach(label => {
+
+        const order = orderMap[label];
+        label = label.toString();
+        if (order) {
+          this.inputData[label].order = order;
+          if (label === 'PurchaseOrder' || label === 'PurchId' || label === 'POHeaderId') {
+            this.po_num = this.inputData[label]?.Value;
+          } else if (label === 'InvoiceId' || label === 'bill_number') {
+            this.invoiceNumber = this.inputData[label]?.Value;
+          } else if (label === 'SubTotal') {
+            this.invoice_subTotal = this.inputData[label]?.Value;
+          }
+          this.headerData.push({TagLabel: label, ...this.inputData[label]})
         }
-      })
+      });
+      
     } else {
-      this.inputData.forEach(ele => {
-        let tag = ele.TagLabel.toLowerCase();
-        if (tag == 'company name') {
-          ele.order = 1
-        } else if (tag.includes('customer po box')) {
-          ele.order = 2
-        } else if (tag == 'bill number') {
-          ele.order = 3
-        } else if (tag.includes('customer trn')) {
-          ele.order = 4
-        } else if (tag == 'bill issue date') {
-          ele.order = 5
-        } else if (tag == 'account number') {
-          ele.order = 6
-        } else if (tag == 'bill period') {
-          ele.order = 7
-        } 
-      })
+      const orderMap = {
+        'company name': 1,
+        'customer po box': 2,
+        'bill number': 3,
+        'customer trn': 4,
+        'bill issue date': 5,
+        'account number': 6,
+        'bill period': 7
+      };
+
+      Object.keys(this.inputData).forEach(label => {
+        const order = orderMap[label];
+        if (order) {
+          this.inputData[label].order = order;
+          if (label === 'InvoiceId' || label === 'bill_number') {
+            this.invoiceNumber = this.inputData[label]?.Value;
+          } else if (label === 'SubTotal') {
+            this.invoice_subTotal = this.inputData[label]?.Value;
+          }
+        }
+        this.headerData.push({TagLabel: label, ...this.inputData[label]})
+
+      });
     }
     // Separate items with and without the 'order' key
-    const withOrder = this.inputData.filter(item => item.hasOwnProperty('order'));
-    const withoutOrder = this.inputData.filter(item => !item.hasOwnProperty('order'));
+    const withOrder = this.headerData.filter(item => item.hasOwnProperty('order'));
+    const withoutOrder = this.headerData.filter(item => !item.hasOwnProperty('order'));
 
     // Sort the items with 'order' by their 'order' value
     withOrder.sort((a, b) => a.order - b.order);
 
     // Concatenate the sorted items with 'order' and those without 'order'
-    this.inputData = withOrder.concat(withoutOrder);
+    this.headerData = withOrder.concat(withoutOrder);
   }
 
   readGRNInvData() {
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
-        this.lineDisplayData = data.ok?.linedata;
-        this.grnLineCount = this.lineDisplayData[0]?.linedata;
-        let dummyLineArray = this.lineDisplayData;
-        dummyLineArray.forEach((ele, i, array) => {
-          if (ele.TagName == 'Quantity') {
-            ele.TagName = 'Inv - Quantity';
-            ele.linedata?.forEach((ele2, index) => {
-              this.validatePOInvUnit.push({ invoice_itemcode: ele2?.invoice_itemcode })
-              if (ele.linedata?.length <= ele.grndata?.length) {
-                ele.grndata?.forEach((ele3) => {
-                  ele.grndata[index].old_value = ele2?.Value;
-                });
-              }
-            });
-          } else if (ele.TagName == 'UnitPrice') {
-            ele.TagName = 'Inv - UnitPrice';
-          } else if (ele.TagName == 'Description' || ele.TagName == 'Name') {
-            if (ele.linedata?.length > 0) {
-              this.descrptonBool = true;
-            }
-          }
-          if (ele.TagName == 'AmountExcTax') {
-            ele.TagName = 'Inv - AmountExcTax';
-            ele.linedata.forEach(v => {
-              this.GRN_line_total = this.GRN_line_total + Number(v.Value)
-            })
-          }
+        this.lineDisplayData = [];
+       const lineData = data.ok?.linedata;
+        this.grnLineCount = lineData.length;
+        let dummyLineArray = lineData;
+        this.lineDisplayData = lineData;
+        lineData.forEach(item=>{
+          Object.keys(item).forEach(label=>{
+            console.log(label)
+            // if(label === ''){
+            //   this.GRN_line_total = this.GRN_line_total + Number(v.Value)
+            // }
+          })
+        })
+        console.log(this.lineDisplayData)
+        // dummyLineArray.forEach((ele, i, array) => {
+        //   if (ele.TagName == 'Quantity') {
+        //     ele.TagName = 'Inv - Quantity';
+        //     ele.linedata?.forEach((ele2, index) => {
+        //       this.validatePOInvUnit.push({ invoice_itemcode: ele2?.invoice_itemcode })
+        //       if (ele.linedata?.length <= ele.grndata?.length) {
+        //         ele.grndata?.forEach((ele3) => {
+        //           ele.grndata[index].old_value = ele2?.Value;
+        //         });
+        //       }
+        //     });
+        //   } else if (ele.TagName == 'UnitPrice') {
+        //     ele.TagName = 'Inv - UnitPrice';
+        //   } else if (ele.TagName == 'Description' || ele.TagName == 'Name') {
+        //     if (ele.linedata?.length > 0) {
+        //       this.descrptonBool = true;
+        //     }
+        //   }
+        //   if (ele.TagName == 'AmountExcTax') {
+        //     ele.TagName = 'Inv - AmountExcTax';
+        //     ele.linedata.forEach(v => {
+        //       this.GRN_line_total = this.GRN_line_total + Number(v.Value)
+        //     })
+        //   }
 
-          setTimeout(() => {
-            if (
-              ele.TagName == 'Inv - Quantity' &&
-              (ele.grndata == null || ele.grndata.length == 0)
-            ) {
-              array.splice(2, 0, {
-                TagName: 'GRN - Quantity',
-                linedata: ele.linedata,
-              });
-              array.splice(7, 0, {
-                TagName: 'Comments',
-                linedata: ele.linedata,
-              });
-            } else if (
-              ele.TagName == 'Inv - Quantity' &&
-              ele.grndata != null &&
-              ele.grndata &&
-              ele.grndata.length != 0
-            ) {
-              array.splice(2, 0, {
-                TagName: 'GRN - Quantity',
-                linedata: ele.grndata,
-              });
-              array.splice(7, 0, {
-                TagName: 'Comments',
-                linedata: ele.grndata,
-              });
-              let poQty = [];
-              let poBalQty = [];
-              ele.podata.forEach((v) => {
-                if (v.TagName == 'PurchQty') {
-                  poQty.push(v);
-                } else if (v.TagName == 'RemainInventPhysical') {
-                  poBalQty.push(v);
-                }
-              });
-              if (poQty.length > 0) {
-                array.splice(8, 0, { TagName: 'PO quantity', linedata: poQty });
-                // array.splice(9, 0, {
-                //   TagName: 'PO balance quantity',
-                //   linedata: poBalQty,
-                // });
-              }
-            } else if (
-              ele.TagName == 'Inv - UnitPrice' &&
-              (ele.grndata == null || ele.grndata.length == 0)
-            ) {
-              array.splice(4, 0, {
-                TagName: 'GRN - UnitPrice',
-                linedata: ele.linedata,
-              });
-            } else if (
-              ele.TagName == 'Inv - UnitPrice' &&
-              ele.grndata != null &&
-              ele.grndata &&
-              ele.grndata.length != 0
-            ) {
-              array.splice(4, 0, {
-                TagName: 'GRN - UnitPrice',
-                linedata: ele.grndata,
-              });
-            } else if (
-              ele.TagName == 'Inv - AmountExcTax' &&
-              (ele.grndata == null || ele.grndata.length == 0)
-            ) {
-              array.splice(6, 0, {
-                TagName: 'GRN - AmountExcTax',
-                linedata: ele.linedata,
-              });
-            } else if (
-              ele.TagName == 'Inv - AmountExcTax' &&
-              ele.grndata != null &&
-              ele.grndata &&
-              ele.grndata.length != 0
-            ) {
-              array.splice(6, 0, {
-                TagName: 'GRN - AmountExcTax',
-                linedata: ele.grndata,
-              });
-            }
-          }, 10);
-        });
+        //   setTimeout(() => {
+        //     if (
+        //       ele.TagName == 'Inv - Quantity' &&
+        //       (ele.grndata == null || ele.grndata.length == 0)
+        //     ) {
+        //       array.splice(2, 0, {
+        //         TagName: 'GRN - Quantity',
+        //         linedata: ele.linedata,
+        //       });
+        //       array.splice(7, 0, {
+        //         TagName: 'Comments',
+        //         linedata: ele.linedata,
+        //       });
+        //     } else if (
+        //       ele.TagName == 'Inv - Quantity' &&
+        //       ele.grndata != null &&
+        //       ele.grndata &&
+        //       ele.grndata.length != 0
+        //     ) {
+        //       array.splice(2, 0, {
+        //         TagName: 'GRN - Quantity',
+        //         linedata: ele.grndata,
+        //       });
+        //       array.splice(7, 0, {
+        //         TagName: 'Comments',
+        //         linedata: ele.grndata,
+        //       });
+        //       let poQty = [];
+        //       let poBalQty = [];
+        //       ele.podata.forEach((v) => {
+        //         if (v.TagName == 'PurchQty') {
+        //           poQty.push(v);
+        //         } else if (v.TagName == 'RemainInventPhysical') {
+        //           poBalQty.push(v);
+        //         }
+        //       });
+        //       if (poQty.length > 0) {
+        //         array.splice(8, 0, { TagName: 'PO quantity', linedata: poQty });
+        //         // array.splice(9, 0, {
+        //         //   TagName: 'PO balance quantity',
+        //         //   linedata: poBalQty,
+        //         // });
+        //       }
+        //     } else if (
+        //       ele.TagName == 'Inv - UnitPrice' &&
+        //       (ele.grndata == null || ele.grndata.length == 0)
+        //     ) {
+        //       array.splice(4, 0, {
+        //         TagName: 'GRN - UnitPrice',
+        //         linedata: ele.linedata,
+        //       });
+        //     } else if (
+        //       ele.TagName == 'Inv - UnitPrice' &&
+        //       ele.grndata != null &&
+        //       ele.grndata &&
+        //       ele.grndata.length != 0
+        //     ) {
+        //       array.splice(4, 0, {
+        //         TagName: 'GRN - UnitPrice',
+        //         linedata: ele.grndata,
+        //       });
+        //     } else if (
+        //       ele.TagName == 'Inv - AmountExcTax' &&
+        //       (ele.grndata == null || ele.grndata.length == 0)
+        //     ) {
+        //       array.splice(6, 0, {
+        //         TagName: 'GRN - AmountExcTax',
+        //         linedata: ele.linedata,
+        //       });
+        //     } else if (
+        //       ele.TagName == 'Inv - AmountExcTax' &&
+        //       ele.grndata != null &&
+        //       ele.grndata &&
+        //       ele.grndata.length != 0
+        //     ) {
+        //       array.splice(6, 0, {
+        //         TagName: 'GRN - AmountExcTax',
+        //         linedata: ele.grndata,
+        //       });
+        //     }
+        //   }, 10);
+        // });
         this.lineDisplayData = dummyLineArray;
         this.getInvTypes();
-        setTimeout(() => {
-          this.lineDisplayData = this.lineDisplayData.filter((v) => {
-            return !(
-              v.TagName == 'Inv - AmountExcTax'
-            );
-          });
-        }, 100);
-        let arr = dummyLineArray;
-        setTimeout(() => {
-          arr.forEach((ele1) => {
-            if (ele1.TagName.includes('GRN') || ele1.TagName == 'Description') {
-              this.GRNObject.push(ele1.linedata);
-            }
-            if (ele1.TagName == 'GRN - Quantity') {
-              ele1.linedata?.forEach((el) => {
-                el.is_quantity = true;
-              });
-            }
-            this.GRNObject = [].concat(...this.GRNObject);
-          });
-          this.GRNObject.forEach((val) => {
-            if (!val.old_value) {
-              val.old_value = val.Value;
-            }
-          });
-        }, 100);
+        // setTimeout(() => {
+        //   this.lineDisplayData = this.lineDisplayData.filter((v) => {
+        //     return !(
+        //       v.TagName == 'Inv - AmountExcTax'
+        //     );
+        //   });
+        // }, 100);
+        // let arr = dummyLineArray;
+        // setTimeout(() => {
+        //   arr.forEach((ele1) => {
+        //     if (ele1.TagName.includes('GRN') || ele1.TagName == 'Description') {
+        //       this.GRNObject.push(ele1.linedata);
+        //     }
+        //     if (ele1.TagName == 'GRN - Quantity') {
+        //       ele1.linedata?.forEach((el) => {
+        //         el.is_quantity = true;
+        //       });
+        //     }
+        //     this.GRNObject = [].concat(...this.GRNObject);
+        //   });
+        //   this.GRNObject.forEach((val) => {
+        //     if (!val.old_value) {
+        //       val.old_value = val.Value;
+        //     }
+        //   });
+        // }, 100);
 
-        const pushedArrayHeader = [];
-        data.ok.headerdata.forEach((element) => {
-          this.mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
-          pushedArrayHeader.push(this.mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
-        let inv_num_data: any = this.inputData.filter(val => {
-          return val.TagLabel == 'InvoiceId';
-        })
-        this.invoiceNumber = inv_num_data[0]?.Value;
-        let po_num_data = this.inputData.filter((val) => {
-          return (val.TagLabel == 'PurchaseOrder');
-        });
+        // const pushedArrayHeader = [];
+        // data.ok.headerdata.forEach((element) => {
+        //   this.mergedArray = {
+        //     ...element.DocumentData,
+        //     ...element.DocumentTagDef,
+        //   };
+        //   this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+        //   pushedArrayHeader.push(this.mergedArray);
+        // });
+        this.inputData = data?.ok?.headerdata?.headerData;
+        // let inv_num_data: any = this.inputData.filter(val => {
+        //   return val.TagLabel == 'InvoiceId';
+        // })
+        // this.invoiceNumber = inv_num_data[0]?.Value;
+        // let po_num_data = this.inputData.filter((val) => {
+        //   return (val.TagLabel == 'PurchaseOrder');
+        // });
         this.headerDataOrder();
-        this.po_num = po_num_data[0]?.Value;
+        // this.po_num = po_num_data[0]?.Value;
         this.getPODocId(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
@@ -1586,6 +1613,9 @@ export class Comparision3WayComponent
         this.error("Server error");
       }
     );
+  }
+  trackByIndex(index: number, item: any): number {
+    return index;
   }
 
   readFilePath() {

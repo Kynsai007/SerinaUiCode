@@ -474,7 +474,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectIT/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(2));
   }
   vendorRejectInvoice(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/${this.invoiceID}`, data).pipe(retry(3));
   }
   rejectGRN(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectGRN/${this.invoiceID}/${this.userId}`).pipe(retry(3));
@@ -512,13 +512,13 @@ export class SharedService {
   
   // SupportDocumnet
   uploadSupportDoc(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}`, data, {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/${this.invoiceID}`, data, {
       reportProgress: true,
       observe: 'events',
     }).pipe(retry(3));
   }
   downloadSupportDoc(doc_name) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
   }
   getGRNAttachment(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGrnAttachment/${this.invoiceID}`).pipe(retry(3));
