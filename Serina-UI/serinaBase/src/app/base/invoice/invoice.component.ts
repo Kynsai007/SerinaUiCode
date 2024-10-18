@@ -555,7 +555,7 @@ isMobile:boolean;
       const invoicePushedArray = [];
       data?.result?.ven?.ok?.Documentdata?.forEach((element) => {
         let invoiceData = {
-          ...element.Document,
+          ...element.DocumentINV,
           ...element.Entity,
           ...element.EntityBody,
           ...element.VendorAccount,
@@ -613,10 +613,10 @@ isMobile:boolean;
       const invoicePushedArray = [];
       data?.result?.ven?.ok?.Documentdata?.forEach((element) => {
         let invoiceData = {
-          ...element.Document,
+          ...element.DocumentINV,
           ...element.Entity,
           ...element.EntityBody,
-          ...element.DocumentHistoryLogs,
+          ...element.DocumentHistoryLogINV,
           ...element.VendorAccount,
           ...element.Vendor,
         };
@@ -626,7 +626,7 @@ isMobile:boolean;
 
       data?.result?.ser?.ok?.Documentdata?.forEach((element) => {
         let invoiceData = {
-          ...element.Document,
+          ...element.DocumentINV,
           ...element.Entity,
           ...element.EntityBody,
           ...element.ServiceProvider,

@@ -165,13 +165,13 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAccessPermissionUser/${this.userId}`, data).pipe(retry(3));
   }
   updateRoleData(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data).pipe(retry(3));
+    return this.http.put(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data).pipe(retry(3));
   }
   deleteRole() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/accessPermissionDefID/${this.ap_id}`).pipe(retry(3));
   }
   editRole(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/applyAccessPermission/${this.userId}`, data).pipe(retry(3));
+    return this.http.patch(`${this.apiUrl}/${this.apiVersion}/Permission/applyAccessPermission/${this.userId}`, data).pipe(retry(3));
   }
   newAmountApproval(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAmountApproval/${this.userId}`, data).pipe(retry(3));
@@ -351,13 +351,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${string}/${id}`).pipe(retry(3));
   }
   changeStatus(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/idDocument/${this.invoiceID}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/${this.invoiceID}`,data).pipe(retry(3));
   }
   updatePO(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(3));
   }
   get_poDoc_id(id){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPOid/${this.userId}/${id}`).pipe(retry(3));
   }
   
   readReadyGRNData(API_route,param):Observable<any> {
@@ -370,19 +370,19 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}`,value).pipe(retry(3))
   }
   getPo_numbers(idVen){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
   }
   getPO_Lines(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}`).pipe(retry(3))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/getPOLines/${this.userId}/${po_num}`).pipe(retry(3))
   }
   getPO_details(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_details/${this.userId}/${po_num}`).pipe(retry(3))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPO_details/${this.userId}/${po_num}`).pipe(retry(3))
   }
   getGRN_Lines(grn_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGRN_Lines/${this.userId}/${grn_num}`).pipe(retry(3))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/getGRNLines/${this.userId}/${grn_num}`).pipe(retry(3))
   }
   checkGRN_PO_duplicates(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/checkGRN_PO_availability/${this.userId}/${po_num}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/checkGRNavailability/${this.userId}/${po_num}`).pipe(retry(3));
   }
   checkGRN_PO_balance(bool){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`).pipe(retry(3));
@@ -431,8 +431,8 @@ export class SharedService {
 
     
   // view Invoice
-  getInvoiceInfo() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2),catchError(this.handleError))
+  getInvoiceInfo(bool) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}?po_lines=${bool}`).pipe(retry(2),catchError(this.handleError))
   }
   getInvoiceFilePath() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceFile/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))

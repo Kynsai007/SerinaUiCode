@@ -93,10 +93,10 @@ export class ExceptionsService {
 
   // lock feature
   getDocumentLockInfo(data):Observable<any> {
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`,data)
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getLockInfo/${this.userId}/${this.invoiceID}`,data)
   }
   updateDocumentLockInfo(data):Observable<any> {
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`,data)
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateLockInfo/${this.userId}/${this.invoiceID}`,data)
   }
   checkInvStatus(id){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/checkInvStatus/3/?doc_id=${id}`).pipe(retry(3))
@@ -104,7 +104,7 @@ export class ExceptionsService {
 
   // line related
   removeLineData(item_code):Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/deleteLineItem/${this.invoiceID}/${item_code}`)
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/document/deleteLineItem/${this.invoiceID}/${item_code}`)
   }
   checkItemCode(item_code):Observable<any> {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/checkLineItemExists/${this.invoiceID}/${item_code}`)

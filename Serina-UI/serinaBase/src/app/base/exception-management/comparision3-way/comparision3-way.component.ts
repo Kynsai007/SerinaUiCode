@@ -71,7 +71,7 @@ export class Comparision3WayComponent
   vendorData = [];
   lineDisplayData: any;
   Itype: string;
-  updateInvoiceData: any = [];
+  updateInvoiceData:any;
   headerName: string;
   editPermissionBoolean: boolean;
   changeApproveBoolean: boolean;
@@ -111,8 +111,6 @@ export class Comparision3WayComponent
   lineCount = [];
   currentTab = 'header';
   lineItems: any;
-  inv_itemcode: any;
-  po_itemcode: any;
   vendorAcId: any;
   mappedData: any;
   zoomVal: number = 0.8;
@@ -190,9 +188,9 @@ export class Comparision3WayComponent
   soLinedata = [];
   lineTable = [
     { header: 'S.No', field: '' },
-    { header: 'Description', field: 'Description' },
+    { header: 'Description', field: 'PODescription' },
     { header: 'PO quantity', field: 'PurchQty'},
-    { header: 'Inv - Quantity', field: 'Quantity' },
+    { header: 'Inv - Quantity', field: 'GRNQuantity' },
     { header: 'GRN - Quantity', field: 'GRNQuantity' },
     { header: 'PO balance quantity', field: 'RemainInventPhysical'},
     { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
@@ -423,6 +421,7 @@ export class Comparision3WayComponent
   saveDisabled: boolean;
   grnTooltip: string;
   headerData = [];
+  lineTableHeaders: string[];
 
   constructor(
     fb: FormBuilder,
@@ -893,7 +892,7 @@ export class Comparision3WayComponent
   getInvoiceFulldata_po() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.SharedService.getInvoiceInfo().subscribe(
+    this.SharedService.getInvoiceInfo(false).subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
         data.ok.headerdata.forEach((element) => {
@@ -963,23 +962,19 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.inputDisplayArray = [];
     // this.lineData = [];
-    let serviceName;
+    let bool = false;
+
     if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
-      serviceName = this.SharedService;
     } else {
       this.pageType = "mapping";
-      serviceName = this.exceptionService;
+      bool = true;
     }
-    serviceName?.getInvoiceInfo().subscribe(
+    this.SharedService?.getInvoiceInfo(bool).subscribe(
       (data: any) => {
-        let response;
-        this.lineData = data?.linedata;
-        if (serviceName == this.SharedService) {
-          response = data?.ok
-        } else {
-          response = data;
-        }
+        let response = data.ok;
+        this.lineData = data?.ok?.linedata;
+        
         if (response?.uploadtime) {
           this.uploadtime = response?.uploadtime;
         }
@@ -989,38 +984,22 @@ export class Comparision3WayComponent
         }
 
         this.getInvTypes();
-        // this.lineDataConversion();
-        if (this.pageType == "mapping") {
-          this.calculateCost();
-        }
-        // this.po_total = response.po_total;
-        const pushedArrayHeader = [];
-        // if(data?.ok?.cost_alloc != null){
-        //   this.normalCostAllocation = true;
-        data?.ok?.cost_alloc?.forEach(cost => {
+        // if (this.pageType == "mapping") {
+        //   this.calculateCost();
+        // }
+        this.po_total = response.po_total;
+        response?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
         })
-
-        // }
-        // else{
         this.normalCostAllocation = false;
-        data?.ok?.dynamic_cost_alloc?.forEach(dynamic => {
+        response?.dynamic_cost_alloc?.forEach(dynamic => {
           this.dynamicdata.push(dynamic);
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
-        // }
-        response?.headerdata?.forEach((element) => {
-          this.mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          this.mergedArray.DocumentUpdates = element?.DocumentUpdates;
-          pushedArrayHeader.push(this.mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
-        this.temp_header_data = response?.headerdata?.slice();
+        this.inputData = response?.headerdata;
+        // this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
 
         if (response?.approverData?.to_approve_by) {
@@ -1069,124 +1048,152 @@ export class Comparision3WayComponent
           this.projectCArr = this.dataService.projectCArr;
           this.projectIdArr = this.dataService.projectIdArr;
         }
-        let vendorData;
-        if (this.pageType == 'normal') {
-          vendorData = response?.vendordata;
-          if (this.Itype == 'PO') {
-            let count = 0;
-            let array = data?.ok?.linedata;
-            array.forEach((val) => {
-              if (val.TagName == 'LineNumber') {
-                val.id = 1;
-              } else if (val.TagName == 'ItemId') {
-                val.id = 2;
-              } else if (val.TagName == 'Name') {
-                val.id = 3;
-              } else if (val.TagName == 'ProcurementCategory') {
-                val.id = 4;
-              } else if (val.TagName == 'PurchQty') {
-                val.id = 5;
-              } else if (val.TagName == 'UnitPrice') {
-                val.id = 6;
-              } else if (val.TagName == 'DiscAmount') {
-                val.id = 7;
-              } else if (val.TagName == 'DiscPercent') {
-                val.id = 8;
-              } else {
-                count = count + 9;
-                val.id = count;
-              }
-            });
-            this.lineDisplayData = array.sort((a, b) => a.id - b.id);
-          } else {
-            this.lineDisplayData = data.ok.linedata;
-            if (this.isDesktop) {
-              this.lineDisplayData.unshift({
-                TagName: 'S.No',
-                idDocumentLineItemTags: 1,
-              });
-
-            } else {
-              // Get the maximum number of linedata entries across all tags
-              const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
-
-              // Iterate through the index of linedata entries
-              for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
-                const transformedData: any = [];
-                let hasError = false;
-                let hasUpdated = false;
-
-                // Iterate through the received data
-                this.lineDisplayData.forEach(tag => {
-                  const tagName = tag.TagName;
-                  const linedata = tag.linedata[dataIndex];
-                  const itemData = linedata.DocumentLineItems;
-
-                  // Check if any isError is 1
-                  if (itemData.isError === 1) {
-                    hasError = true;
-                  }
-                  if (itemData.IsUpdated === 1) {
-                    hasUpdated = true;
-                  }
-
-                  // Create an object with the TagName and linedata for the current index
-                  const tagObject = {
-                    TagName: tagName,
-                    linedata: linedata
-                  };
-
-                  // Add the tagObject to the transformedData array
-                  transformedData.push(tagObject);
-                });
-                transformedData.hasError = hasError;
-                transformedData.hasUpdated = hasUpdated;
-                // Add the transformedData array for the current index to the main array
-                this.linedata_mobile.push(transformedData);
-              }
-            }
-            if (this.editable && !this.fin_boolean) {
-              this.lineDisplayData.push({
-                TagName: 'Actions',
-                idDocumentLineItemTags: 1,
-              });
-            }
-            this.inv_line_total = 0;
-            this.lineDisplayData.forEach((ele) => {
-              if (ele.TagName == 'S.No') {
-                ele.linedata = this.lineDisplayData[2]?.linedata;
-              } else if (ele.TagName == 'Actions') {
-                ele.linedata = this.lineDisplayData[2]?.linedata;
-              }
-              if (ele.TagName == 'AmountExcTax') {
-                ele.linedata.forEach(ele => {
-                  this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
-                })
-              }
-            });
-          }
+        this.lineDisplayData = response.linedata;
+        let fieldOrder;
+        if(this.Itype == 'PO'){
+          fieldOrder = {
+            "LineNumber": 1,
+            "ItemId": 2,
+            "Name": 3,
+            "ProcurementCategory": 4,
+            "PurchQty": 5,
+            "UnitPrice": 6,
+            "DiscAmount": 7,
+            "DiscPercent": 8
+          };
         } else {
-          vendorData = response?.Vendordata;
-          this.lineDisplayData = response.linedata.Result;
-          this.temp_line_data = JSON.parse(JSON.stringify(response.linedata.Result));
-          this.lineDisplayData.forEach((element, index, arr) => {
-            this.lineCount = arr[0].items
-            if (element.tagname == 'Description') {
-              element.order = 1;
-            } else if (element.tagname == 'Quantity') {
-              element.order = 2;
-            } else if (element.tagname == 'UnitPrice') {
-              element.order = 3;
-            } else if (element.tagname == 'Unit') {
-              element.order = 4;
-            } else if (element.tagname == 'Discount') {
-              element.order = 5;
-            } else if (element.tagname == 'AmountExcTax') {
-              element.order = 6;
-            }
-          });
-          this.lineDisplayData = this.lineDisplayData.sort((a, b) => a.order - b.order);
+          fieldOrder = {
+            "Description": 1,
+            "Quantity": 2,
+            "UnitPrice": 3,
+            "AmountExcTax": 4,
+            "Discount": 5,
+            "Tax": 6,
+            "VAT%": 7,
+            "Amount": 8
+          };
         }
+
+        if (this.lineDisplayData.length > 0) {
+          this.lineTableHeaders = Object.keys(this.lineDisplayData[0].lines)
+            .sort((a, b) => (fieldOrder[a] || 100) - (fieldOrder[b] || 100));
+        }
+        this.temp_line_data = JSON.parse(JSON.stringify(response.linedata));
+
+        // if (this.pageType == 'normal') {
+        //   if (this.Itype == 'PO') {
+        //     let count = 0;
+        //     let array = response?.linedata;
+        //     array.forEach((val) => {
+        //       if (val.TagName == 'LineNumber') {
+        //         val.id = 1;
+        //       } else if (val.TagName == 'ItemId') {
+        //         val.id = 2;
+        //       } else if (val.TagName == 'Name') {
+        //         val.id = 3;
+        //       } else if (val.TagName == 'ProcurementCategory') {
+        //         val.id = 4;
+        //       } else if (val.TagName == 'PurchQty') {
+        //         val.id = 5;
+        //       } else if (val.TagName == 'UnitPrice') {
+        //         val.id = 6;
+        //       } else if (val.TagName == 'DiscAmount') {
+        //         val.id = 7;
+        //       } else if (val.TagName == 'DiscPercent') {
+        //         val.id = 8;
+        //       } else {
+        //         count = count + 9;
+        //         val.id = count;
+        //       }
+        //     });
+        //     this.lineDisplayData = array.sort((a, b) => a.id - b.id);
+        //   } else {
+        //     this.lineDisplayData = response.linedata;
+        //     if (this.isDesktop) {
+        //       // this.lineDisplayData.unshift({
+        //       //   TagName: 'S.No',
+        //       //   idDocumentLineItemTags: 1,
+        //       // });
+
+        //     } else {
+        //       // Get the maximum number of linedata entries across all tags
+        //       const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
+
+        //       // Iterate through the index of linedata entries
+        //       for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
+        //         const transformedData: any = [];
+        //         let hasError = false;
+        //         let hasUpdated = false;
+
+        //         // Iterate through the received data
+        //         this.lineDisplayData.forEach(tag => {
+        //           const tagName = tag.TagName;
+        //           const linedata = tag.linedata[dataIndex];
+        //           const itemData = linedata.DocumentLineItems;
+
+        //           // Check if any isError is 1
+        //           if (itemData.isError === 1) {
+        //             hasError = true;
+        //           }
+        //           if (itemData.IsUpdated === 1) {
+        //             hasUpdated = true;
+        //           }
+
+        //           // Create an object with the TagName and linedata for the current index
+        //           const tagObject = {
+        //             TagName: tagName,
+        //             linedata: linedata
+        //           };
+
+        //           // Add the tagObject to the transformedData array
+        //           transformedData.push(tagObject);
+        //         });
+        //         transformedData.hasError = hasError;
+        //         transformedData.hasUpdated = hasUpdated;
+        //         // Add the transformedData array for the current index to the main array
+        //         this.linedata_mobile.push(transformedData);
+        //       }
+        //     }
+        //     if (this.editable && !this.fin_boolean) {
+        //       this.lineDisplayData.push({
+        //         TagName: 'Actions',
+        //         idDocumentLineItemTags: 1,
+        //       });
+        //     }
+        //     this.inv_line_total = 0;
+        //     this.lineDisplayData.forEach((ele) => {
+        //       if (ele.TagName == 'S.No') {
+        //         ele.linedata = this.lineDisplayData[2]?.linedata;
+        //       } else if (ele.TagName == 'Actions') {
+        //         ele.linedata = this.lineDisplayData[2]?.linedata;
+        //       }
+        //       if (ele.TagName == 'AmountExcTax') {
+        //         ele.linedata.forEach(ele => {
+        //           this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
+        //         })
+        //       }
+        //     });
+        //   }
+        // } else {
+        //   this.lineDisplayData.forEach((element, index, arr) => {
+        //     this.lineCount = arr[0].items
+        //     if (element.tagname == 'Description') {
+        //       element.order = 1;
+        //     } else if (element.tagname == 'Quantity') {
+        //       element.order = 2;
+        //     } else if (element.tagname == 'UnitPrice') {
+        //       element.order = 3;
+        //     } else if (element.tagname == 'Unit') {
+        //       element.order = 4;
+        //     } else if (element.tagname == 'Discount') {
+        //       element.order = 5;
+        //     } else if (element.tagname == 'AmountExcTax') {
+        //       element.order = 6;
+        //     }
+        //   });
+        //   this.lineDisplayData = this.lineDisplayData.sort((a, b) => a.order - b.order);
+        // }
+        let vendorData = response?.vendordata;
         if (vendorData) {
           this.isServiceData = false;
           this.vendorData = {
@@ -1425,10 +1432,9 @@ export class Comparision3WayComponent
         this.lineDisplayData = lineData;
         lineData.forEach(item=>{
           Object.keys(item).forEach(label=>{
-            console.log(label)
-            // if(label === ''){
-            //   this.GRN_line_total = this.GRN_line_total + Number(v.Value)
-            // }
+            if(label === 'GRNAmountExcTax'){
+              this.GRN_line_total = this.GRN_line_total + Number(item[label].Value)
+            }
           })
         })
         console.log(this.lineDisplayData)
@@ -1618,6 +1624,9 @@ export class Comparision3WayComponent
     return index;
   }
 
+  hasPoLine(item: any): boolean {
+    return Object.values(item.lines).some((line: any) => line.Value?.po_line);
+  }
   readFilePath() {
     this.showInvoice = '';
     this.SpinnerService.show();
@@ -1714,7 +1723,7 @@ export class Comparision3WayComponent
     }
   }
 
-  onChangeValue(key, value, data) {
+  onChangeValue(key, value, fieldName) {
     if (key == 'InvoiceTotal' || key == 'SubTotal') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
@@ -1722,14 +1731,14 @@ export class Comparision3WayComponent
         this.isAmtStr = false;
       }
     }
+
     let updateValue = {
-      documentDataID: data.idDocumentData,
-      OldValue: data.Value || '',
-      NewValue: value,
+      "header": {}
     };
-    this.updateInvoiceData.push(updateValue);
+    updateValue.header[key] = value;
+    this.updateInvoiceData = updateValue;
   }
-  onChangeLineValue(key, value, data) {
+  onChangeLineValue(key, value, fieldData) {
     if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
@@ -1744,30 +1753,36 @@ export class Comparision3WayComponent
       }
     }
     let updateValue = {
-      documentLineItemID: data?.idDocumentLineItems,
-      OldValue: data.Value || '',
-      NewValue: value,
+      "line": [
+        {
+          "itemcode": 0,
+          "data": {}
+        }
+      ]
     };
-    this.updateInvoiceData.push(updateValue);
+    updateValue.line[0].itemcode = fieldData?.ItemCode || fieldData?.itemCode?.Value;
+    updateValue.line[0].data[key] =  value;
+    this.updateInvoiceData = updateValue;
   }
 
   saveChanges() {
+    console.log(this.updateInvoiceData)
     if (!this.isAmtStr && !this.isEmpty) {
-      if (this.updateInvoiceData.length != 0) {
+      if (this.updateInvoiceData) {
         this.SharedService.updateInvoiceDetails(this.updateInvoiceData
         ).subscribe(
           (data: any) => {
             this.success('Changes saved successfully')
-            this.updateInvoiceData = [];
+            delete this.updateInvoiceData;
           },
           (err) => {
-            this.updateInvoiceData = [];
+            delete this.updateInvoiceData;
             this.error("Server error or Please check the data");
           }
         );
       }
     } else {
-      this.updateInvoiceData = [];
+      delete this.updateInvoiceData;
       let err = ''
       if (this.isAmtStr) {
         err = 'Alphabets not allowed in the Quantity and Amount Fields.';
@@ -2277,46 +2292,17 @@ export class Comparision3WayComponent
     });
   }
 
-  lineMapping(val, el, val1) {
-    let itemCodeArray = [];
-    let presetBoolean: boolean = false;
-
-    this.inv_itemcode = val;
-    this.po_itemcode = el;
-    this.updateLine();
-    // if (itemCodeArray.length > 1) {
-    //   presetBoolean = itemCodeArray.includes(el);
-    // }
-    // if (this.mappedData?.length > 0) {
-    //   let presetArray = this.mappedData?.filter((ele1) => {
-    //     return ele1.ItemMetaData?.itemcode == el;
-    //   });
-    //   if (presetArray.length > 0) {
-    //     presetBoolean = true;
-    //   }
-    // }
-    // if (presetBoolean) {
-    //   if (confirm('Lineitem already mapped, you want to change it again')) {
-    //     this.displayErrorDialog = true;
-    //   }
-    // } else {
-    //   itemCodeArray.push(el);
-    //   this.displayErrorDialog = true;
-    // }
+  lineMapping(inv_code, po_code) {
+    this.updateLine(inv_code,po_code);
   }
 
   cancelSelectErrorRule() {
     this.displayErrorDialog = false;
   }
 
-  updateLine() {
+  updateLine(inv_code,po_code) {
     this.exceptionService
-      .updateLineItems(
-        this.inv_itemcode,
-        this.po_itemcode,
-        1,
-        this.vendorAcId
-      )
+      .updateLineItems(inv_code,po_code,1,this.vendorAcId)
       .subscribe(
         (data: any) => {
           this.displayErrorDialog = false;
@@ -2422,9 +2408,11 @@ export class Comparision3WayComponent
   selectUserForReject(event) {
     this.rejectionUserId = event;
   }
-  onChangeGrn(lineItem, val) {
-    const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
-    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+  onChangeGrn(fieldName, val,linedata) {
+    // const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    const po_qty_value = linedata?.PurchQty?.Value;
+    const po_balance_qty_value = linedata?.RemainInventPhysical?.Value;
 
     let checking_value;
     let error_msg;
@@ -2443,36 +2431,47 @@ export class Comparision3WayComponent
       //     el.Value = lineItem.old_value;
       //   }
       // })
-      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      // this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
       this.error(`GRN Quantity cannot be greater than ${error_msg}`);
       this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
       this.disable_save_btn = true;
       return;
     }
     if (this.GRN_PO_Bool) {
-      this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
+      this.updateAmountExcTax(fieldName, val, linedata);
     } else {
-      this.onChangeLineValue('Quantity', val, lineItem);
-      this.updateAmountExcTax(lineItem, val, 'GRN - UnitPrice', 'GRN - AmountExcTax', 'invoice_itemcode');
+      // this.onChangeLineValue('Quantity', val, linedata);
+      this.updateAmountExcTax(fieldName, val, linedata);
+      this.update("Please add comments as well")
     }
   }
-  updateAmountExcTax(lineItem, newQuantity: number, TagName_u, TagName_a, field) {
-    if (lineItem) {
-      const unitPrice = this.lineDisplayData.find(item => item.TagName == TagName_u)
-        .linedata.find(data => data[field] === lineItem[field]);
+  updateAmountExcTax(fieldName, newQuantity: number, linedata) {
+    if (fieldName) {
+      const unitPrice = linedata.GRNUnitPrice;
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
-      const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
-        .linedata.find(data => data[field] === lineItem[field]);
+      // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
+      //   .linedata.find(data => data[field] === lineItem[field]);
 
-      if (amountExcTaxItem) {
-        amountExcTaxItem.Value = amountExcTax;
-        amountExcTaxItem.ErrorDesc = "Quantity changed";
-      }
+      // if (amountExcTaxItem) {
+      //   amountExcTaxItem.Value = amountExcTax;
+      //   amountExcTaxItem.ErrorDesc = "Quantity changed";
+      // }
       this.GRN_line_total = 0;
-      this.lineDisplayData.forEach(ele => {
-        if (ele.TagName == TagName_a) {
-          ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
-        }
+      // this.lineDisplayData.forEach(ele => {
+
+      //   if (ele.TagName == TagName_a) {
+      //     ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
+      //   }
+      // })
+      this.lineDisplayData.forEach(item=>{
+        Object.keys(item).forEach(label=>{
+          if(label === 'GRNAmountExcTax'){
+            this.GRN_line_total = this.GRN_line_total + Number(item[label].Value);
+          }
+          if(linedata.itemCode == item['itemCode']){
+            item['GRNAmountExcTax'] = amountExcTax;
+          }
+        })
       })
     }
   }
@@ -2880,7 +2879,6 @@ export class Comparision3WayComponent
     } else if (str == 'manpower') {
       this.SpinnerService.show();
       matdrf.afterClosed().subscribe((resp: any) => {
-        console.log(resp)
         if (resp) {
           this.manPowerAPI_request = {
             "startdate": resp?.dates?.startdate,
@@ -2899,7 +2897,7 @@ export class Comparision3WayComponent
               el.linedata.forEach(ele => {
                 grnQuantity.linedata.forEach(res => {
                   if (ele.LineNumber == res.LineNumber) {
-                    this.onChangeGrn(ele, res.Value);
+                    this.onChangeGrn(ele, res.Value,res);
                     ele.Value = res.Value;
                   }
                 })
@@ -3298,10 +3296,10 @@ export class Comparision3WayComponent
 
   confirmPO() {
     let updateValue = {
-      documentDataID: this.searchPOArr.idDocumentData,
-      OldValue: this.searchPOArr.Value || '',
-      NewValue: this.SharedService.po_num,
+      "header": {}
     };
+    updateValue.header['PurchaseOrder'] = this.SharedService.po_num;
+    this.updateInvoiceData = updateValue;
     this.updateInvoiceData.push(updateValue);
     this.saveChanges();
     this.progressDailogBool = false;

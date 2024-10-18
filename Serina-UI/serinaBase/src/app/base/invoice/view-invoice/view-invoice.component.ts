@@ -555,173 +555,173 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
   }
   getInvoiceFulldata() {
-    this.SpinnerService.show();
-    this.inputDisplayArray = [];
-    this.lineData = [];
-    this.SharedService.getInvoiceInfo().subscribe(
-      (data: any) => {
-        const pushedArrayHeader = [];
-        data?.ok?.cost_alloc?.forEach(cost => {
-          let merge = { ...cost.AccountCostAllocation }
-          this.costAllocation.push(merge);
-        })
-        console.log(data.ok.doc_type)
-        if(data.ok.doc_type.toLowerCase() === 'advance'){
-          this.advancedInvoice = true;
-        }
-        if (data?.ok?.uploadtime) {
-          this.uploadtime = data.ok.uploadtime;
-        }
-        data.ok.headerdata.forEach((element) => {
-          this.mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
-          pushedArrayHeader.push(this.mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
-        let inv_num_data: any = this.inputData.filter((val) => {
-          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
-        });
-        this.invoiceNumber = inv_num_data[0]?.Value;
-        let inv_total: any = this.inputData.filter((val) => {
-          return (val.TagLabel == 'InvoiceTotal');
-        });
-        this.invoiceTotal = inv_total[0]?.Value;
-        if (this.tagService.documentType == 'lcm') {
-          this.readSavedLCMLineData();
-        }
-        let po_num_data = this.inputData.filter((val) => {
-          return (val.TagLabel == 'PurchaseOrder');
-        });
-        this.po_num = po_num_data[0]?.Value;
-        if (this.po_num && this.ap_boolean) {
-          // this.getPODocId(this.po_num);
-        }
-        // this.getGRNnumbers(this.po_num);
-        if (data.ok.vendordata) {
-          this.isServiceData = false;
-          this.vendorData = {
-            ...data.ok.vendordata[0].Vendor,
-            ...data.ok.vendordata[0].VendorAccount,
-            ...data.ok.vendordata[0].VendorUser,
-          };
-          this.vendorName = this.vendorData['VendorName'];
-          this.vendorId = this.vendorData['idVendor'];
-        }
-        if (data.ok.servicedata) {
-          this.isServiceData = true;
-          this.vendorData = {
-            ...data.ok.servicedata[0].ServiceAccount,
-            ...data.ok.servicedata[0].ServiceProvider,
-          };
-          this.vendorName = this.vendorData['ServiceProviderName'];
-        }
-        // if(!this.isServiceData && this.Itype == 'Invoice' ){
-        //   this.readPOLines();
-        // }
-        if (this.Itype == 'PO') {
-          let count = 0;
-          let array = data.ok.linedata;
-          array.forEach((val) => {
-            if (val.TagName == 'LineNumber') {
-              val.id = 1;
-            } else if (val.TagName == 'ItemId') {
-              val.id = 2;
-            } else if (val.TagName == 'Name') {
-              val.id = 3;
-            } else if (val.TagName == 'ProcurementCategory') {
-              val.id = 4;
-            } else if (val.TagName == 'PurchQty') {
-              val.id = 5;
-            } else if (val.TagName == 'UnitPrice') {
-              val.id = 6;
-            } else if (val.TagName == 'DiscAmount') {
-              val.id = 7;
-            } else if (val.TagName == 'DiscPercent') {
-              val.id = 8;
-            } else {
-              count = count + 9;
-              val.id = count;
-            }
-            // this.lineCount = val.linedata;
-          });
-          this.lineDisplayData = array.sort((a, b) => a.id - b.id);
-        } else {
-          this.lineDisplayData = data.ok.linedata;
-          // this.lineCount = this.lineDisplayData[0].linedata;
-          // console.log(this.lineCount)
-          if (this.isDesktop) {
-            this.lineDisplayData.unshift({
-              TagName: 'S.No',
-              idDocumentLineItemTags: 1,
-            });
+    // this.SpinnerService.show();
+    // this.inputDisplayArray = [];
+    // this.lineData = [];
+    // this.SharedService.getInvoiceInfo().subscribe(
+    //   (data: any) => {
+    //     const pushedArrayHeader = [];
+    //     data?.ok?.cost_alloc?.forEach(cost => {
+    //       let merge = { ...cost.AccountCostAllocation }
+    //       this.costAllocation.push(merge);
+    //     })
+    //     console.log(data.ok.doc_type)
+    //     if(data.ok.doc_type.toLowerCase() === 'advance'){
+    //       this.advancedInvoice = true;
+    //     }
+    //     if (data?.ok?.uploadtime) {
+    //       this.uploadtime = data.ok.uploadtime;
+    //     }
+    //     data.ok.headerdata.forEach((element) => {
+    //       this.mergedArray = {
+    //         ...element.DocumentData,
+    //         ...element.DocumentTagDef,
+    //       };
+    //       this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+    //       pushedArrayHeader.push(this.mergedArray);
+    //     });
+    //     this.inputData = pushedArrayHeader;
+    //     let inv_num_data: any = this.inputData.filter((val) => {
+    //       return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
+    //     });
+    //     this.invoiceNumber = inv_num_data[0]?.Value;
+    //     let inv_total: any = this.inputData.filter((val) => {
+    //       return (val.TagLabel == 'InvoiceTotal');
+    //     });
+    //     this.invoiceTotal = inv_total[0]?.Value;
+    //     if (this.tagService.documentType == 'lcm') {
+    //       this.readSavedLCMLineData();
+    //     }
+    //     let po_num_data = this.inputData.filter((val) => {
+    //       return (val.TagLabel == 'PurchaseOrder');
+    //     });
+    //     this.po_num = po_num_data[0]?.Value;
+    //     if (this.po_num && this.ap_boolean) {
+    //       // this.getPODocId(this.po_num);
+    //     }
+    //     // this.getGRNnumbers(this.po_num);
+    //     if (data.ok.vendordata) {
+    //       this.isServiceData = false;
+    //       this.vendorData = {
+    //         ...data.ok.vendordata[0].Vendor,
+    //         ...data.ok.vendordata[0].VendorAccount,
+    //         ...data.ok.vendordata[0].VendorUser,
+    //       };
+    //       this.vendorName = this.vendorData['VendorName'];
+    //       this.vendorId = this.vendorData['idVendor'];
+    //     }
+    //     if (data.ok.servicedata) {
+    //       this.isServiceData = true;
+    //       this.vendorData = {
+    //         ...data.ok.servicedata[0].ServiceAccount,
+    //         ...data.ok.servicedata[0].ServiceProvider,
+    //       };
+    //       this.vendorName = this.vendorData['ServiceProviderName'];
+    //     }
+    //     // if(!this.isServiceData && this.Itype == 'Invoice' ){
+    //     //   this.readPOLines();
+    //     // }
+    //     if (this.Itype == 'PO') {
+    //       let count = 0;
+    //       let array = data.ok.linedata;
+    //       array.forEach((val) => {
+    //         if (val.TagName == 'LineNumber') {
+    //           val.id = 1;
+    //         } else if (val.TagName == 'ItemId') {
+    //           val.id = 2;
+    //         } else if (val.TagName == 'Name') {
+    //           val.id = 3;
+    //         } else if (val.TagName == 'ProcurementCategory') {
+    //           val.id = 4;
+    //         } else if (val.TagName == 'PurchQty') {
+    //           val.id = 5;
+    //         } else if (val.TagName == 'UnitPrice') {
+    //           val.id = 6;
+    //         } else if (val.TagName == 'DiscAmount') {
+    //           val.id = 7;
+    //         } else if (val.TagName == 'DiscPercent') {
+    //           val.id = 8;
+    //         } else {
+    //           count = count + 9;
+    //           val.id = count;
+    //         }
+    //         // this.lineCount = val.linedata;
+    //       });
+    //       this.lineDisplayData = array.sort((a, b) => a.id - b.id);
+    //     } else {
+    //       this.lineDisplayData = data.ok.linedata;
+    //       // this.lineCount = this.lineDisplayData[0].linedata;
+    //       // console.log(this.lineCount)
+    //       if (this.isDesktop) {
+    //         this.lineDisplayData.unshift({
+    //           TagName: 'S.No',
+    //           idDocumentLineItemTags: 1,
+    //         });
 
-          } else {
-            // Get the maximum number of linedata entries across all tags
-            const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
+    //       } else {
+    //         // Get the maximum number of linedata entries across all tags
+    //         const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
 
-            // Iterate through the index of linedata entries
-            for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
-              const transformedData:any = [];
-              let hasError = false;
-              let hasUpdated = false;
+    //         // Iterate through the index of linedata entries
+    //         for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
+    //           const transformedData:any = [];
+    //           let hasError = false;
+    //           let hasUpdated = false;
 
-              // Iterate through the received data
-              this.lineDisplayData.forEach(tag => {
-                const tagName = tag.TagName;
-                const linedata = tag.linedata[dataIndex];
-                const itemData = linedata.DocumentLineItems;
+    //           // Iterate through the received data
+    //           this.lineDisplayData.forEach(tag => {
+    //             const tagName = tag.TagName;
+    //             const linedata = tag.linedata[dataIndex];
+    //             const itemData = linedata.DocumentLineItems;
 
-                // Check if any isError is 1
-                if (itemData.isError === 1) {
-                  hasError = true;
-                }
-                if (itemData.IsUpdated === 1) {
-                  hasUpdated = true;
-                }
+    //             // Check if any isError is 1
+    //             if (itemData.isError === 1) {
+    //               hasError = true;
+    //             }
+    //             if (itemData.IsUpdated === 1) {
+    //               hasUpdated = true;
+    //             }
 
-                // Create an object with the TagName and linedata for the current index
-                const tagObject = {
-                  TagName: tagName,
-                  linedata: linedata
-                };
+    //             // Create an object with the TagName and linedata for the current index
+    //             const tagObject = {
+    //               TagName: tagName,
+    //               linedata: linedata
+    //             };
 
-                // Add the tagObject to the transformedData array
-                transformedData.push(tagObject);
-              });
-              transformedData.hasError = hasError;
-              transformedData.hasUpdated = hasUpdated;
-              // Add the transformedData array for the current index to the main array
-              this.linedata_mobile.push(transformedData);
-            }
-          }
-          if (this.editable) {
-            this.lineDisplayData.push({
-              TagName: 'Actions',
-              idDocumentLineItemTags: 1,
-            });
-          }
-          this.lineDisplayData.forEach((ele) => {
-            if (ele.TagName == 'S.No') {
-              ele.linedata = this.lineDisplayData[1]?.linedata;
-            } else if (ele.TagName == 'Actions') {
-              ele.linedata = this.lineDisplayData[1]?.linedata;
-            }
-          });
-        }
-        this.support_doc_list = data.ok.support_doc?.files;
-        if (this.support_doc_list == null) {
-          this.support_doc_list = []
-        }
-        this.SpinnerService.hide();
-      },
-      (error) => {
-        this.SpinnerService.hide();
-        this.errorTriger('Server error');
-      }
-    );
+    //             // Add the tagObject to the transformedData array
+    //             transformedData.push(tagObject);
+    //           });
+    //           transformedData.hasError = hasError;
+    //           transformedData.hasUpdated = hasUpdated;
+    //           // Add the transformedData array for the current index to the main array
+    //           this.linedata_mobile.push(transformedData);
+    //         }
+    //       }
+    //       if (this.editable) {
+    //         this.lineDisplayData.push({
+    //           TagName: 'Actions',
+    //           idDocumentLineItemTags: 1,
+    //         });
+    //       }
+    //       this.lineDisplayData.forEach((ele) => {
+    //         if (ele.TagName == 'S.No') {
+    //           ele.linedata = this.lineDisplayData[1]?.linedata;
+    //         } else if (ele.TagName == 'Actions') {
+    //           ele.linedata = this.lineDisplayData[1]?.linedata;
+    //         }
+    //       });
+    //     }
+    //     this.support_doc_list = data.ok.support_doc?.files;
+    //     if (this.support_doc_list == null) {
+    //       this.support_doc_list = []
+    //     }
+    //     this.SpinnerService.hide();
+    //   },
+    //   (error) => {
+    //     this.SpinnerService.hide();
+    //     this.errorTriger('Server error');
+    //   }
+    // );
   }
 
   // readFilePath() {

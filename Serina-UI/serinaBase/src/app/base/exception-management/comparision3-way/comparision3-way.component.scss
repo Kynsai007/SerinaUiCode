@@ -63,10 +63,10 @@ $theme_color: var(--themeColor);
 }
 
 .invoice_color {
-  background-color: #FFFFFF;
+  background-color: #FFFFFF !important;
 }
 .po_color {
-  background-color: #EAF3F9;
+  background-color: #EAF3F9 !important;
 }
 .grn_color {
   background-color: #ded1e9;
@@ -273,10 +273,10 @@ $theme_color: var(--themeColor);
  .invert_tr td:nth-child(odd) {
     background-color: #358cd01a;
   }
-  .grn_table tr:nth-child(even) {
+  .ex_table tr:nth-child(even) {
     background-color: #ffffff;
   }
- .grn_table tr:nth-child(odd) {
+  .ex_table tr:nth-child(odd) {
     background-color: #358cd01a;
   }
   .linevalue button {
@@ -479,6 +479,7 @@ $theme_color: var(--themeColor);
       font-weight: 500;
       border: 0;
       background: transparent;
+      padding-left: 10px !important;
     }
   
   }
