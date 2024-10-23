@@ -221,7 +221,8 @@
                 router.url.includes('roles') ||
                 router.url.includes('service_batch_trigger') ||
                 router.url.includes('bulkUploadService') ||
-                router.url.includes('ERP_approvals'),
+                router.url.includes('ERP_approvals') ||
+                router.url.includes('settings'),
               cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
           >
@@ -269,6 +270,12 @@
               (click)="onMenuChange('Service Bulk upload/ Batch trigger')"
               *ngIf="serviceInvoiceAccess"
               >Service Bulk upload/ Batch trigger</a
+            >
+            <a
+              [routerLink]="'settings'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('Settings')"
+              >Settings</a
             >
             <!-- <a
               [routerLink]="'service_batch_trigger'"

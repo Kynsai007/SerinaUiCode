@@ -3143,7 +3143,10 @@ export class Comparision3WayComponent
       this.progressDailogBool = false;
       this.SharedService.updateGRNnumber(this.selectedGRNList).subscribe(data => {
         this.getGRNtabData();
-        this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch")
+        this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch");
+        if(this.router.url.includes('Inv_vs_GRN_details')){
+          this.syncBatch();
+        }
 
       }, err => {
         this.error("Server error");

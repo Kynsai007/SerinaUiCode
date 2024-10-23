@@ -1,82 +1,229 @@
-<div class="container-fluid pl-0">
-    
-    <div>
-        <div class=" sidebarTab">
-
-              <div class="routeLinks" style="margin-top: 50px;">
-
-                <div class="navLink overTab" routerLinkActive="active" [routerLink]="'generalSettings'">
-                  General Settings
-                </div>
-
-                <div class="navLink overTab" routerLinkActive="active" [routerLink]="'notificationSettings'">
-                  Notification Settings
-                </div>
-                
-                <!-- <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'ocrConfig'" >
-                  OCR Configuration
-                </div>
-    
-                <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'modelException'">
-                  Invoice Model Exception 
-                </div>
-                <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'techException'">
-                  Technical Exception
-                </div>
-
-                <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'erpexception'">
-                  ERP Exception 
-                </div>
-
-                <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'generalLogic'">
-                  General Logical 
-                </div>
-
-                <div *ngIf="isAdmin" class="navLink overTab" routerLinkActive="active" [routerLink]="'reportsException'">
-                  Reports Configuraiton
-                </div> -->
-
-
-
-                <!-- <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'ocr'?'active':'navLink'" (click)="menuChange('ocr')" >
-                  OCR Configuration
-                </div>
-    
-                <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'inModel'?'active':'navLink'" (click)="menuChange('inModel')">
-                  Invoice Model Exception 
-                </div>
-                <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'techEx'?'active':'navLink'" (click)="menuChange('techEx')">
-                  Technical Exception
-                </div>
-
-                <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'erpEx'?'active':'navLink'" (click)="menuChange('erpEx')">
-                  ERP Exception 
-                </div>
-
-                <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'generalLogic'?'active':'navLink'" (click)="menuChange('generalLogic')">
-                  General Logical 
-                </div>
-
-                <div class="navLink overTab" [ngClass] = "activeMenuSetting == 'reports'?'active':'navLink'" (click)="menuChange('reports')">
-                  Reports Configuraiton
-                </div> -->
-    
-                
-            </div>
+<div class="fullpage">
+  <h6 class="headh6 text_color">
+    <ul class="nav nav-tabs tabBox pl-2">
+      <li [routerLink]="['notificationSettings']">
+        <a class="nav-link" [class.active]="viewType == 'Notification'" (click)="viewType = 'Notification'">Email
+          Notification </a>
+      </li>
+    </ul>
+  </h6>
+  <div class="fullconatainer">
+    <div class="leftcontainer">
+      <div class="left-content">
+        <h6 class="left-head">Email Template Details</h6>
+        <div class="select-template-group">
+          <label class="f-12 mb-0">Notification group</label>
+          <p-autoComplete [(ngModel)]="selectedItem" [suggestions]="filteredEnt" (onSelect)="onSelectionChange($event)"
+            (completeMethod)="searchTemplates($event)" field="TemplateGroupName" name="TemplateGroupName"
+            [dropdown]="true" [completeOnFocus]="true" [autofocus]="true" [forceSelection]="true"
+            placeholder="Select a template" required>
+          </p-autoComplete>
         </div>
-        <div class="sidebarTabContent">
-          <!-- <app-ocr-config *ngIf="activeMenuSetting == 'ocr'"></app-ocr-config>
-          <app-model-exception [action]='actions' *ngIf="activeMenuSetting == 'inModel'"></app-model-exception>
-          <app-tech-exception *ngIf="activeMenuSetting == 'techEx'"></app-tech-exception>
-          <app-erpexception *ngIf="activeMenuSetting == 'erpEx'"></app-erpexception>
-          <app-general-logic *ngIf="activeMenuSetting == 'generalLogic'"></app-general-logic>
-          <app-reports *ngIf="activeMenuSetting == 'reports'"></app-reports> -->
-            <router-outlet></router-outlet>
+        <div class="select-recipient" *ngIf="isEditable">
+          <label class="f-12 mb-0">Add Recepiants</label>
+          <label class="f-12 mb-0" *ngIf="exTemplatete">Group Name: {{ groupName }} <i class="fa fa-edit" (click)="editGroupName()"></i></label>
+          <p-multiSelect [options]="emailRecepeantsList" 
+               [(ngModel)]="selectedEmails"
+               selectedItemsLabel="{0} items selected" 
+               maxSelectedLabels="2" 
+               class="f-12"
+               placeholder="Select Emails"
+               [disabled]="isDisabled"
+               (onChange)="selectedRecipients()">
+        </p-multiSelect>
         </div>
-
+        <div class="select-recipient" *ngIf="isEditable">
+          <label class="f-12 mb-0">Add Cc</label>
+          <p-multiSelect  [options]="filteredCcOptionsList"  defaultLabel=""  [(ngModel)]="selectedCc"
+            selectedItemsLabel="{0} items selected" 
+            maxSelectedLabels="2" class="f-12"
+            placeholder="Select Emails"
+            [disabled]="isDisabled"
+            >
+          </p-multiSelect>
+        </div>
+        <div class="e-edit" *ngIf="editable">
+          <label class="label-edit">Editable</label>
+          <label class="switch  mb-1 inputHeight">
+            <input type="checkbox" [(ngModel)]="isEditable">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="add-subject" *ngIf="newTemplete">
+          <label class="f-12 mb-0  sub">Add Template Name</label>
+          <input type="text" [(ngModel)]="etemplateName" class="form-control mb-1 inputHeight inputbox" />
+        </div>
+        <div class="add-subject" *ngIf="isEditable">
+          <label class="f-12 mb-0  sub">Add Subject</label>
+          <input type="text" [(ngModel)]="eSubject" class="form-control mb-1 inputHeight inputbox" [disabled]="isDisabled" />
+        </div>
+        <div class="add-content" *ngIf="isEditable">
+          <label for="textarea" class="f-12 mb-0  sub">Discribtion</label>
+          <textarea required="" cols="40" rows="10" id="textarea" name="textarea"
+            class="form-control mb-1 inputHeight inputbox textarea" [(ngModel)]="eContent" [disabled]="isDisabled"></textarea>
+        </div>
+      </div>
     </div>
+    <div class="rightcontainer">
+      <div *ngIf="templatesname" class="templist">
+        <ng-container *ngFor="let temp of templates ">
+          <div class="tempcard">
+            <div class="cards" >
+              <!-- <div class="dlt-button-card">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </div> -->
+              <div class="headers">
+                <div class="card-head">Email</div>
+              </div>
+              <div class="descriptions">
+                <div class="line line-1"></div>
+                <div class="line line-2"></div>
+                <div class="line line-3"></div>
+              </div>
+              <div class="btns">
+              </div>
+              <div class="f-16 tempname">
+                <div>{{ temp.TemplateName }}</div>
+              </div>
+            </div>
+            <div class="circle-div">
+              <div class="dlt-button" (click)="deleteTemplate(temp)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </div>
+              <div class="edt-button" (click)="openTemplate(temp,'edit')">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              </div>
+              <div class="edt-button" (click)="openTemplate(temp,'send')">
+                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="button-card" (click)="createTemplate()">
+          <button class="icon-btn add-btn">
+            <div class="add-icon"></div>
+            <div class="btn-txt">Add New Email Template</div>
+        </button>
+        </div>
+      </div>
+      <div class="right-content" *ngIf="emailtemplateavail">
+        <span class="pointer mr-2">
+          <!-- <mat-icon class="goBack_pos blue-icon" svgIcon="back_arrow"></mat-icon> -->
+          <h6 class="left-head" style="margin-left: 8px; margin-bottom: 0;">Email Template Preview</h6>
+        </span>
+        <div class="email-prev">
+          <div class="logo-div">
+            <img alt="Serina logo" src="assets/Serina Assets/new_theme/logo.png" class="ser-logo">
+
+          </div>
+          <div class="top-cont">
+            <div class="img-container">
+              <div class="img-cntnt">
+                <img *ngIf="rejInvoice" alt="Serina logo" src="assets/Serina Assets/rejection-img.png"
+                  class="img-itm">
+                <img *ngIf="sucessInvoice" alt="Serina logo" src="assets/Serina Assets/sucess-img.png"
+                  class="img-itm">
+              </div>
+              <div *ngIf="rejInvoice" class="text-cntnt">
+                <h5 class="txt-itm">{{ templateGroupName }}</h5>
+              </div>
+              <div *ngIf="sucessInvoice" class="text-cntnt">
+                <h5 class="txt-itm-sucs">
+                 <span>Hurray!!</span><br>
+                 <span class="esubject">{{ eSubject }}</span>
+                </h5>
+              </div>
+              <!-- <div>
+
+              </div> -->
+            </div>
+          </div>
+          <div class="mail-body">
+            <span class="email-wsh">Dear User,</span>
+            <div class="mail-content">
+              <span class="mail-econtent" [innerHTML]="sanitizedContent"></span>
+            </div>
+            <div class="support">
+              <span class="normal-text">
+                If you have any questions. just reply to this email
+              </span>
+              <span class="mail-adr">
+                Help.serina@datasemantics.co
+              </span>
+            </div>
+            <div class="ser-gret">
+              <div class="mail-end-grt">
+                we're always happy to help out.
+              </div>
+              <div class="end-credits">
+                <span class="end-crd">Cheers,</span><br>
+                <span class="end-ser">Serina Team</span>
+              </div>
+              
+            </div>
+            <div class="mail-footer">
+              <span class="footer-text">Terms of use</span>
+              <span class="footer-pri">Privacy Policy</span>
+              <!-- <div class="img-cont"> -->
+              <img alt="Serina logo" src="assets/Serina Assets/linkedin.png" class="link-img">
+              <img alt="Serina logo" src="assets/Serina Assets/facebook.png" class="fac-img">
+              <img alt="Serina logo" src="assets/Serina Assets/instagram.png" class="inst-img">
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- </ng-template> -->
+    </div>
+  </div>
+  <!-- <footer class="page-footer" *ngIf="emailtemplateavail"> -->
+    <div class="btnFooter" *ngIf="emailtemplateavail">
+      <div class="m_r_80">
+        <button type="button" class="f-12 secondary_btn mr-3"  (click)="backBtn()">Back</button>
+        <button type="button" class="f-12 secondary_btn mr-3"  (click)="cancelChanges()">Cancel</button>
+        <button type="button" class="primary_btn f-12" *ngIf="exTemplatete" (click)="updateExTempleateRecp()">
+          Update
+        </button> 
+        <button type="button" class="primary_btn f-12 " *ngIf="sendEmail">
+          Send
+        </button> 
+        <button type="button" class="primary_btn f-12" *ngIf="newTemplete" 
+          (click)="addGroup ? open_dialog() : createNewTemplate()"
+          [disabled]="!etemplateName || !eSubject || !eContent || !selectedEmails" [ngClass]="{'dull-mode': !etemplateName || !eSubject || !eContent || !selectedEmails }">
+          Create
+        </button> 
+      </div>
+  <!-- </footer> -->
 </div>
+  <ng-template #dialogTemplate>
+    <div class="full-dialogbox">
+      <p>*You are seleected Multiple Recipiants So set it in a Group</p>
+      <div class="mContent">
+        <div class="add-grup-name">
+          <label class="f-12 mb-0  sub">Add Group Name</label>
+          <input type="text" class="form-control mb-1 groupnamebox" [(ngModel)]="groupName" />
+        </div>
+      </div>
+      <div mat-dialog-actions>
+        <div class="button-box">
+          <button
+            type="button"
+            class="f-12 secondary_btn mr-3 cancel-button"
+            (click)="closeDialog()">
+              Cancel
+          </button>
+          <button
+            type="button"
+            class="primary_btn f-12 next-button"
+            (click)="exTemplatete? closeDialog() : createNewTemplate()"
+            >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template> 
+<!-- <div class="footer"> -->
+<!-- </div> -->
 <p-toast></p-toast>
-
-
-
