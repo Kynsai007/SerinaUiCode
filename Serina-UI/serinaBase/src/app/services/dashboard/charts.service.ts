@@ -576,28 +576,28 @@ export class ChartsService {
 
 // vendor process reports API's
   getInvoiceCountByEntity(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyentity/${this.userId}/${this.docType}${filter}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyentity/${this.userId}${filter}`);
   }
   getPagesCountByEntity(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invpagecountbyentity/${this.userId}/${this.docType}${filter}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invpagecountbyentity/${this.userId}${filter}`);
   }
   getInvoiceCountByVendorData(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyvendor/${this.userId}/${this.docType}${filter}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyvendor/${this.userId}${filter}`);
   }
   getRejectInvoicesCount(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/rejectedinvcountbyvendor/${this.userId}/${this.docType}${filter}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/rejectedinvcountbyvendor/${this.userId}${filter}`);
   }
   getInvoiceCountBySource(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbysource/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbysource/${this.userId}${filter}`).pipe(retry(3));
   }
   getPendingInvByAmount(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/pendinginvbyamount/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/pendinginvbyamount/${this.userId}${filter}`).pipe(retry(3));
   }
   getAgeingReport(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/ageingreport/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/ageingreport/${this.userId}${filter}`).pipe(retry(3));
   }
   getvendorBasedSummary(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}${filter}`).pipe(retry(3));
   }
   getPOSummary(filter): Observable<any>{
     let fil = ''
@@ -609,7 +609,7 @@ export class ChartsService {
 
   /*vendor exception reports API's */
   getvendorExceptionSummary(query): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/exceptionsummary/${this.userId}/${this.docType}${query}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/exceptionsummary/${this.userId}${query}`).pipe(retry(3));
   }
   getEmailExceptionSummary(filter): Observable<any>{
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/emailexceptions${filter}`).pipe(retry(3));
@@ -620,19 +620,19 @@ export class ChartsService {
   }
   /*service based process reports*/
   getServiceBasedSummary(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}${filter}`).pipe(retry(3));
   }
   getPendingInvByAmountSP(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/servpendingbyamount/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/servpendingbyamount/${this.userId}${filter}`).pipe(retry(3));
   }
   getProcessByAmountSP(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/servprocessedbyamount/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/servprocessedbyamount/${this.userId}${filter}`).pipe(retry(3));
   }
   getProcessVsTotal_OverallSP(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/overallserv/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/overallserv/${this.userId}${filter}`).pipe(retry(3));
   }
   getProcessVsTotalSP(filter): Observable<any>{
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/overallservbyprovider/${this.userId}/${this.docType}${filter}`).pipe(retry(3));
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/overallservbyprovider/${this.userId}${filter}`).pipe(retry(3));
   }
 
 

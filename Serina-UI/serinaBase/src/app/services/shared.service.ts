@@ -361,7 +361,7 @@ export class SharedService {
   }
   
   readReadyGRNData(API_route,param):Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${API_route}/${this.userId}${param}`).pipe(retry(3))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/${API_route}/${this.userId}${param}`).pipe(retry(3))
   }
   readReadyGRNInvData():Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3))
@@ -385,7 +385,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/checkGRNavailability/${this.userId}/${po_num}`).pipe(retry(3));
   }
   checkGRN_PO_balance(bool){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`).pipe(retry(3));
   }
   createGRNWithPO(param,manpowerParam,value){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value).pipe(retry(2))
@@ -400,7 +400,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceGrn/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
   }
   downloadGRN(api_param,data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadGRNList/${this.userId}${api_param}`,data).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/grn/downloadGRNList/${this.userId}${api_param}`,data).pipe(retry(2))
   }
   SOASearch(api_param){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadReport/${this.userId}${api_param}`).pipe(retry(2))
@@ -431,8 +431,8 @@ export class SharedService {
 
     
   // view Invoice
-  getInvoiceInfo(bool) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}?po_lines=${bool}`).pipe(retry(2),catchError(this.handleError))
+  getInvoiceInfo(bool,doc_type) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/document/readDocumentData/${this.userId}/${this.invoiceID}?po_lines=${bool}&doc_type=${doc_type}`).pipe(retry(2),catchError(this.handleError))
   }
   getInvoiceFilePath() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceFile/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))
@@ -495,7 +495,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'').pipe(retry(3));
   }
   getGRNTabData(){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3));
   }
 
   // invoiceStatusHistory

@@ -82,7 +82,7 @@ export class CreateGRNComponent implements OnInit {
     if(this.permissionService.GRNPageAccess == true){
       if(this.router.url.includes('Create_GRN_inv_list')){
         this.pageNumber = this.ds.crGRNTabPageNumber;
-        this.api_route = 'readGRNReadyInvoiceList';
+        this.api_route = 'Invoice/readGRNReadyInvoiceList';
         this.isDesktop = this.ds.isDesktop;
         if(!this.isDesktop){
           this.mob_columns()
@@ -92,7 +92,7 @@ export class CreateGRNComponent implements OnInit {
         this.readEntity();
       } else {
         this.pageNumber = this.ds.aprTabPageNumber;
-        this.api_route = 'GRNToBeApproved';
+        this.api_route = 'grn/GRNToBeApproved';
         this.readTableData_apr('');
       }
       this.prepareColumnsArray();

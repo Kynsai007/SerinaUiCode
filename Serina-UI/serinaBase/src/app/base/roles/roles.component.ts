@@ -449,7 +449,7 @@ export class RolesComponent implements OnInit {
       this.max_role_amount = 0;
   
       this.sharedService.displayRoleInfo().subscribe((data: any) => {
-        this.roleInfoDetails = data.roleinfo;
+        this.roleInfoDetails = data.roleinfo.AccessPermissionDef;
         this.role_priority = this.roleInfoDetails.Priority;
   
         this.max_role_amount = data.roleinfo?.AmountApproveLevel?.MaxAmount || 0;

@@ -617,7 +617,7 @@ export class Comparision3WayComponent
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
-      if (!['advance invoice'].includes(this.documentType)) {
+      if (!['advance invoice'].includes(this.documentType) && this.Itype == 'invoice') {
         this.getGRNtabData();
         this.getGrnAttachment();
       }
@@ -892,7 +892,7 @@ export class Comparision3WayComponent
   getInvoiceFulldata_po() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.SharedService.getInvoiceInfo(false).subscribe(
+    this.SharedService.getInvoiceInfo(false,'po').subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
         data.ok.headerdata.forEach((element) => {
@@ -970,7 +970,13 @@ export class Comparision3WayComponent
       this.pageType = "mapping";
       bool = true;
     }
-    this.SharedService?.getInvoiceInfo(bool).subscribe(
+    let doc_type = 'invoice';
+    doc_type = this.Itype;
+    if(this.Itype == 'Service'){
+      doc_type = 'invoice'
+    }
+
+    this.SharedService?.getInvoiceInfo(bool,doc_type.toLowerCase()).subscribe(
       (data: any) => {
         let response = data.ok;
         this.lineData = data?.ok?.linedata;
@@ -3091,25 +3097,29 @@ export class Comparision3WayComponent
   };
 
   CheckItemStatus(item) {
-    this.exceptionService.checkItemCode(item).subscribe((data: any) => {
-      if (data.status == "not exists") {
+    // this.exceptionService.checkItemCode(item).subscribe((data: any) => {
+    //   if (data.status == "not exists") {
         let addLineData = {
           "documentID": this.invoiceID,
           "itemCode": item
         };
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
-          this.success("Line item Added")
+          if (data.status == "success"){
+            this.success("Line item Added")
+            this.getInvoiceFulldata('');
+          } else {
+            this.error(data.message)
+          }
 
-          this.getInvoiceFulldata('');
         });
         this.displayrejectDialog = false;
-      } else {
-        this.error("Item code already exists, Please try with another item code.");
-      }
-    }, err => {
-      this.error("Server error");
-      this.displayrejectDialog = false;
-    })
+      // } else {
+      //   this.error("Item code already exists, Please try with another item code.");
+      // }
+    // }, err => {
+    //   this.error("Server error");
+    //   this.displayrejectDialog = false;
+    // })
   }
   // getPO_lines(str) {
   //   this.exceptionService.getPOLines().subscribe((data: any) => {
