@@ -257,6 +257,11 @@ const routes: Routes = [
             component: NotificationsComponent,
           },
           {
+            path: 'settings',
+            loadChildren: () => import('./settings/settings.module').then(m =>m.SettingsModule),
+            canActivate: [AdminGaurdService]
+          },
+          {
             path: '', redirectTo: 'invoice', pathMatch: 'full'
           },
           {
