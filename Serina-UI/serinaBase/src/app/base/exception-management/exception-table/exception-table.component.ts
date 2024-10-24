@@ -439,170 +439,190 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   // edit invoice details if something wrong
   editInvoice(e) {
-    this.tagService.approval_selection_boolean = false;
-    this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
-    this.ds.ent_code = e.EntityCode;
+    this.initializeEditInvoice(e);
+    
     if (this.router.url.includes('invoice')) {
+        this.handleInvoiceRouting(e);
+    } else {
+        this.handleNonInvoiceRouting(e);
+    }
+  }
+
+  // Initialize common properties for edit invoice
+  initializeEditInvoice(e) {
+      this.tagService.approval_selection_boolean = false;
+      this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
+      this.ds.ent_code = e.EntityCode;
+      this.ds.editableInvoiceData = e;
+      this.sharedService.invoiceID = e.idDocument;
+      this.ds.subStatusId = e.idDocumentSubstatus;
+      this.ds.statusId = e.documentStatusID;
+  }
+
+  // Handle routing for invoice related URLs
+  handleInvoiceRouting(e) {
       this.tagService.submitBtnBoolean = false;
-      let route: string;
-      if (this.router.url.includes('PO')) {
-        route = 'PODetails';
-        delete this.ds.editableInvoiceData;
-      } else if (this.router.url.includes('GRN')) {
-        route = 'GRNDetails';
-        delete this.ds.editableInvoiceData;
-      } else if (this.router.url.includes('ServiceInvoices')) {
-        route = 'serviceDetails';
-        this.ds.editableInvoiceData = e;
-      } else {
-        route = 'InvoiceDetails';
-        this.ds.editableInvoiceData = e;
-      }
-      if (this.userType == 'vendor_portal') {
-        this.router.navigate([
-          `/vendorPortal/invoice/${route}/${e.idDocument}`,
-        ]);
-      } else if (this.userType == 'customer_portal') {
-        if (e.documentsubstatusID != 30 && route != 'InvoiceDetails') {
-          this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
-        } else {
-          this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
-        }
-      }
+
+      const route = this.getRouteForInvoice();
+      this.ds.editableInvoiceData = this.shouldSaveEditableInvoiceData(route) ? e : undefined;
+
+      const baseRoute = this.userType === 'vendor_portal' ? 'vendorPortal' : 'customer';
+      const invoiceUrl = this.getInvoiceUrl(baseRoute, route, e);
+
+      this.router.navigate([invoiceUrl]);
+
       this.tagService.createInvoice = true;
       this.tagService.displayInvoicePage = false;
       this.tagService.editable = false;
-      this.sharedService.invoiceID = e.idDocument;
-      this.ds.subStatusId = e.idDocumentSubstatus;
-      this.ds.statusId = e.documentStatusID
-    } else {
-      this.ds.editableInvoiceData = e;
+  }
+
+  // Determine which route to navigate based on the URL
+  getRouteForInvoice() {
+      if (this.router.url.includes('PO')) return 'PODetails';
+      if (this.router.url.includes('GRN')) return 'GRNDetails';
+      if (this.router.url.includes('ServiceInvoices')) return 'serviceDetails';
+      return 'InvoiceDetails';
+  }
+
+  // Check if editableInvoiceData should be saved
+  shouldSaveEditableInvoiceData(route) {
+      return route !== 'PODetails' && route !== 'GRNDetails';
+  }
+
+  // Determine the full navigation URL based on portal type and document status
+  getInvoiceUrl(baseRoute, route, e) {
+      if (this.userType === 'customer_portal' && e.documentsubstatusID !== 30 && route !== 'InvoiceDetails') {
+          return `${baseRoute}/invoice/${route}/${e.idDocument}`;
+      }
+      return `${baseRoute}/invoice/comparision-docs/${e.idDocument}`;
+  }
+
+  // Handle routing for non-invoice related URLs
+  handleNonInvoiceRouting(e) {
       this.ExceptionsService.invoiceID = e.idDocument;
-      this.ds.subStatusId = e.idDocumentSubstatus;
       this.tagService.editable = true;
-      this.sharedService.invoiceID = e.idDocument;
       this.tagService.documentType = e.UploadDocType?.toLowerCase();
       this.ds.idDocumentType = e.idDocumentType;
       this.ds.entityID = e.idEntity;
       this.sharedService.selectedEntityId = e.idEntity;
-      if (this.router.url == `/${this.portalName}/Create_GRN_inv_list` || this.router.url.includes('GRN_approvals')) {
-        this.updatePO(e);
-        this.ds.grnWithPOBoolean = false;
-      } else if (this.router.url.includes('Service_ExceptionManagement')) {
-        this.tagService.submitBtnBoolean = true;
-        if (e.documentStatusID == 24) {
-          this.tagService.approval_selection_boolean = true;
-        }
-        this.router.navigate([
-          `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
-        ]);
+
+      if (this.isGRNOrApprovalsRoute()) {
+          this.updatePO(e);
+          this.ds.grnWithPOBoolean = false;
+      } else if (this.isServiceExceptionManagementRoute()) {
+          this.navigateToServiceDetails(e);
       } else {
-        if (this.router.url.includes('approvals')) {
+          this.handleApprovalOrBatchProcess(e);
+      }
+  }
+
+  // Check if the current route is related to GRN or Approvals
+  isGRNOrApprovalsRoute() {
+      return this.router.url === `/${this.portalName}/Create_GRN_inv_list` || this.router.url.includes('GRN_approvals');
+  }
+
+  // Check if the current route is Service Exception Management
+  isServiceExceptionManagementRoute() {
+      return this.router.url.includes('Service_ExceptionManagement');
+  }
+
+  // Navigate to service details route
+  navigateToServiceDetails(e) {
+      this.tagService.submitBtnBoolean = true;
+      if (e.documentStatusID === 24) {
+          this.tagService.approval_selection_boolean = true;
+      }
+      this.router.navigate([`${this.portalName}/invoice/serviceDetails/${e.idDocument}`]);
+  }
+
+  // Handle approval or batch process routing
+  handleApprovalOrBatchProcess(e) {
+      if (this.router.url.includes('approvals')) {
           this.tagService.financeApprovePermission = true;
-        }
-        this.SpinnerService.show();
-        let session = {
-          "session_status": false,
-          "client_address": JSON.parse(sessionStorage.getItem('userIp'))
-        }
-        this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
+      }
+      
+      this.SpinnerService.show();
+      const session = {
+          session_status: false,
+          client_address: JSON.parse(sessionStorage.getItem('userIp'))
+      };
 
+      this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
           this.SpinnerService.hide();
-          if (data.result?.lock_info?.lock_status == 0) {
-            this.SpinnerService.show();
-            this.ExceptionsService.checkInvStatus(e.idDocument).subscribe((resp: any) => {
-              this.SpinnerService.hide();
-              if (resp.result.status == e.documentStatusID && resp.result.substatus == e.documentsubstatusID) {
-                if (!this.router.url.includes('approvalPending')) {
-                  if (this.permissionService.editBoolean == true) {
-                    if (e.documentStatusID == 24) {
-                      this.tagService.approval_selection_boolean = true;
-                    } else if (e.documentStatusID == 49 || e.documentsubstatusID == 51) {
-                      this.tagService.LCM_boolean = true;
-                      this.tagService.approval_selection_boolean = true;
-                    }
-                    if (e.documentsubstatusID == 35) {
-                      this.getPOLines(e);
-                    } else {
-                      if(this.router.url.includes('approvals')){
-                        if(!this.router.url.includes('ServiceInvoices')){
-                          this.router.navigate([
-                            `${this.portalName}/approvals/comparision-docs/${e.idDocument}`,
-                          ]);
-                        } else {
-                          this.router.navigate([
-                            `${this.portalName}/approvals/serviceDetails/${e.idDocument}`,
-                          ]);
-                        }
-
-                      } else {
-                        this.router.navigate([
-                          `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                        ]);
-                      }
-
-                    }
-
-                    let sessionData = {
-                      session_status: true,
-                    };
-                    // this.ExceptionsService.updateDocumentLockInfo(JSON.stringify(sessionData)).subscribe((data:any)=>{})
-                    this.tagService.submitBtnBoolean = true;
-                    if (this.tagService.batchProcessTab == 'PODoc') {
-                      this.tagService.headerName = 'Edit PO';
-                    } else {
-                      this.tagService.headerName = 'Edit Invoice';
-                    }
-                  } else {
-                    this.displayResponsivepopup = true;
-                    this.confirmText = 'Sorry, you do not have access to edit';
-                  }
-                } else if (this.router.url.includes('approvalPending')) {
-                  // if (this.permissionService.changeApproveBoolean == true) {
-                  //   if (e.documentsubstatusID == (29 || 4)) {
-                  //     this.ExceptionsService.selectedRuleId = e.ruleID;
-                  //     this.router.navigate([
-                  //       `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
-                  //     ]);
-                  //   } else {
-                  //     this.router.navigate([
-                  //       `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                  //     ]);
-                  //   }
-                  //   // this.invoiceListBoolean = false;
-                  //   this.tagService.approveBtnBoolean = true;
-                  //   this.tagService.headerName = 'Approve Invoice';
-                  //   this.tagService.approvalType = e.Approvaltype;
-                  // } else {
-                  //   this.displayResponsivepopup = true;
-                  //   this.confirmText = 'Sorry, you do not have Permission to Approve';
-                  // }
-                  this.tagService.submitBtnBoolean = true;
-                  this.tagService.headerName = 'Edit Invoice';
-                  this.tagService.approval_selection_boolean = true;
-                  // this.ExceptionsService.selectedRuleId = e?.ruleID;
-                  this.router.navigate([
-                    `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`
-                  ]);
-                }
-              } else {
-                this.error("Hey someone already made changes on this document, can you refresh and try again?")
-              }
-            }, err => {
-              this.SpinnerService.hide();
-              this.error("Server error");
-            })
+          if (data.result?.lock_info?.lock_status === 0) {
+              this.handleDocumentLockSuccess(e);
           } else {
-            this.displayResponsivepopup = true;
-            this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;
+              this.displayLockPopup(data.result.User);
           }
-        }, err => {
+      }, err => {
           this.SpinnerService.hide();
           this.error("Please try after sometime");
-        });
-      }
-    }
+      });
   }
+
+  // Handle document lock success scenario
+  handleDocumentLockSuccess(e) {
+      this.SpinnerService.show();
+      this.ExceptionsService.checkInvStatus(e.idDocument).subscribe((resp: any) => {
+          this.SpinnerService.hide();
+          if (resp.result.status === e.documentStatusID && resp.result.substatus === e.documentsubstatusID) {
+              this.handleDocumentStatusMatch(e);
+          } else {
+              this.error("Hey, someone already made changes on this document, can you refresh and try again?");
+          }
+      }, err => {
+          this.SpinnerService.hide();
+          this.error("Server error");
+      });
+  }
+
+  // Handle scenario where document status matches
+  handleDocumentStatusMatch(e) {
+      if (!this.router.url.includes('approvalPending')) {
+          if (this.permissionService.editBoolean) {
+              this.setupApprovalPermissions(e);
+              this.navigateToComparisonDocs(e);
+          } else {
+              this.displayResponsivepopup = true;
+              this.confirmText = 'Sorry, you do not have access to edit';
+          }
+      } else {
+          this.setupApprovalPending(e);
+      }
+  }
+
+  // Set up approval permissions based on document status
+  setupApprovalPermissions(e) {
+      if (e.documentStatusID === 24 || e.documentStatusID === 49 || e.documentsubstatusID === 51) {
+          this.tagService.approval_selection_boolean = true;
+      }
+      if (e.documentsubstatusID === 35) {
+          this.getPOLines(e);
+      }
+  }
+
+  // Navigate to appropriate comparison documents page
+  navigateToComparisonDocs(e) {
+      const route = this.router.url.includes('approvals') && !this.router.url.includes('ServiceInvoices') ?
+          `${this.portalName}/approvals/comparision-docs/${e.idDocument}` :
+          `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`;
+      this.router.navigate([route]);
+  }
+
+  // Handle approval pending scenario
+  setupApprovalPending(e) {
+      this.tagService.submitBtnBoolean = true;
+      this.tagService.headerName = 'Edit Invoice';
+      this.tagService.approval_selection_boolean = true;
+      this.router.navigate([`${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`]);
+  }
+
+  // Display lock popup if the document is being edited by another user
+  displayLockPopup(user) {
+      this.displayResponsivepopup = true;
+      this.confirmText = `Sorry, "${user?.firstName} ${user?.lastName}" is doing changes for this invoice.`;
+  }
+
   editGRN(e){
     this.ExceptionsService.po_num = e.PODocumentID;
     this.sharedService.po_num = e.PODocumentID;

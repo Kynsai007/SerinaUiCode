@@ -283,4 +283,19 @@ export class DataService {
     document.documentElement.style.setProperty('--themeColor', primary);
     document.documentElement.style.setProperty('--textWColor', secondary);
   }
+
+  uni_filter(list,label,event){
+    let filtered: any[] = [];
+    let query = event.query;
+    if (list?.length > 0) {
+      for (let i = 0; i < list?.length; i++) {
+        let item: any = list[i];
+        if (item[label].toLowerCase().includes(query.toLowerCase())) {
+          filtered.push(item);
+        }
+      }
+    }
+
+    return filtered;
+  }
 }
