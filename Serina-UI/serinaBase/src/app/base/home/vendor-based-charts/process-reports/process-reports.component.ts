@@ -9,6 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Calendar } from 'primeng/calendar';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-process-reports',
@@ -74,6 +75,8 @@ export class ProcessReportsComponent implements OnInit {
     { title: 'Exceptions' , count:0, image:'vendor_err' },
     { title: 'Average Upload Time' , count:0, image:'vendor_rm' },]
   @ViewChild('datePicker') datePicker: Calendar;
+  @ViewChild('filterForm') filterForm:NgForm;
+  filteredEnt: any;
 
   constructor(
     private chartsService: ChartsService,
@@ -221,22 +224,6 @@ export class ProcessReportsComponent implements OnInit {
   selectVendor(event){
     this.selectedVendorValue = event;
     this.selectedVendor = event.VendorName;
-    // let vendor = ''
-    // if(event.VendorName != 'ALL'){
-    //   vendor = `?vendor=${event.VendorName}`
-    // }
-    
-    // this.chartsData();
-    // this.readInvSummmary(vendor);
-    // this.readvendorAmount(vendor);
-    // this.readInvCountByVendor(vendor);
-    // this.readInvCountBySource(vendor);
-    // this.readInvAgeReport(vendor);
-    // this.getEntitySummary();
-    // this.readSource();
-    // setTimeout(() => {
-    //   this.setConatinerForCharts();
-    // }, 800);
   }
 
   chartsData() {
@@ -244,62 +231,33 @@ export class ProcessReportsComponent implements OnInit {
       ['Vendor', 'Amount',{type: 'string', role: 'annotation'}]
     ];
     this.invoiceAgechartData = [
-      ['age', 'InvoiceCount'],
-      // ['0-10', 80, ''],
-      // ['11-20', 10, ''],
-      // ['21-30', 19, ''],
-      // ['>31', 21, ''],
+      ['age', 'InvoiceCount']
     ];
 
     this.invoiceBysourceChartdata = [
-      ['Source', 'Count'],
-      // ['Email', 110, 'color:#89D390'],
-      // ['Serina Portal ', 50, 'color:#5167B2'],
-      // ['Share Point', 50, 'color:#FB4953'],
+      ['Source', 'Count']
     ];
-    // this.invoiceByEntityChartdata = [
-    //   ['Entity', 'Count'],
-    //   // ['AGI', 110],
-    //   // ['AG Masonry ', 50],
-    //   // ['AG Nasco', 50],
-    // ];
+
     this.pagesByEntityChartdata = [
-      ['Entity', 'Count'],
-      // ['AGI', 110],
-      // ['AG Masonry ', 50],
-      // ['AG Nasco', 50],
+      ['Entity', 'Count']
     ]
     this.invCountByvendor = [
-      ['Vendor', 'Invoices'],
-      // ['Mehtab', 80],
-      // ['Alpha Data', 10],
-      // ['First Choice', 19],
-      // ['Metscon', 210],
+      ['Vendor', 'Invoices']
     ];
   }
 
   getEntitySummary() {
     this.serviceProviderService.getSummaryEntity().subscribe((data: any) => {
       this.entity = data.result;
+      this.entity.unshift({idEntity:'ALL',EntityName:'ALL'});
+      this.filteredEnt = this.entity;
     });
   }
   selectEntityFilter(e) {
-    this.selectedEntityValue = e;
-    // let entity = '';
-    // if(e != ""){
-    //   entity = `?entity=${e}`
-    // }
-    // this.chartsData();
-    // this.readInvSummmary(entity);
-    // this.readvendorAmount(entity);
-    // this.readInvCountByVendor(entity);
-    // this.readInvCountBySource(entity);
-    // this.readInvAgeReport(entity);
-    // this.selectedVendor = '';
-    // this.readSource();
-    // setTimeout(() => {
-    //   this.setConatinerForCharts();
-    // }, 500);
+    this.selectedEntityValue = e.idEntity;
+  }
+  filterEntity(event){
+    this.filteredEnt = this.dataService.uni_filter(this.entity,'EntityName',event);
   }
 
   readSource(){
@@ -399,7 +357,6 @@ export class ProcessReportsComponent implements OnInit {
           }
         });
       });
-      console.log(this.invCountByvendor)
       this.SpinnerService.hide();
     }, err=>{
       this.SpinnerService.hide();
@@ -572,5 +529,11 @@ export class ProcessReportsComponent implements OnInit {
     if(dialog){
       dialog.close();
     }
+  }
+  clearFilter(){
+    this.filterForm.control.reset();
+    this.selectedVendor = 'ALL';
+    this.selectedSourceValue = 'ALL';
+    this.selectedEntityValue = 'ALL';
   }
 }

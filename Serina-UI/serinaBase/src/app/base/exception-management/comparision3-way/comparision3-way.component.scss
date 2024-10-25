@@ -807,3 +807,16 @@ dialog::backdrop {
   display: inherit;
   cursor: pointer;
 }
+.ulPOlist {
+  list-style-type: none;
+  padding: 0;
+  max-height: 56vh;
+  overflow: auto;
+}
+.POSelectionDiv{
+  overflow: auto;
+  max-height: 50vh;
+}
+.p-dialog .p-dialog-content {
+  overflow: auto;
+}

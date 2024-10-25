@@ -125,51 +125,62 @@
     <h6 class="f-14">Please select the option to filter</h6>
     <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
   </div>
-  <div class="inputBox">
-    <label class="f-12 shade_color">Start & End Date</label><br>
-    <p-calendar
-      #datePicker
-      [(ngModel)]="rangeDates"
-      selectionMode="range"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
-      placeholder="Select dates to Filter"
-      [readonlyInput]="true"
-      [showIcon]="true"
-      showButtonBar="true"
-      inputId="range"
-      (onClearClick)="clearDates()"
-      (onSelect) = "selectedDates(rangeDates)"
-    ></p-calendar>
-  </div>
+  <form #filterForm="ngForm" >
     <div class="inputBox">
-      <label class="f-12 shade_color">Select ServiceProvider</label><br>
-      <select class="form-control f-12 font_weight" (change)="selectedService($event.target.value)">
-        <option value="">Select</option>
-        <option value="ALL" selected>ALL</option>
-        <option *ngFor="let service of serviceData" [value]="service.ServiceProviderName">
-          {{ service.ServiceProviderName }}
-        </option>
-      </select>
+      <label class="f-12 shade_color">Start & End Date</label><br>
+      <p-calendar
+        #datePicker
+        [(ngModel)]="rangeDates"
+        name="pCalendar"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        showButtonBar="true"
+        inputId="range"
+        (onClearClick)="clearDates()"
+        (onSelect) = "selectedDates(rangeDates)"
+      ></p-calendar>
     </div>
+      <div class="inputBox">
+        <label class="f-12 shade_color">Select ServiceProvider</label><br>
+        <p-autoComplete
+          placeholder="Search or select from dropdown"
+          (onSelect)="selectedService($event)"
+          [group]="false"
+          [suggestions]="filteredService"
+          (completeMethod)="filterService($event)"
+          field="ServiceProviderName"
+          [dropdown]="true"
+          name="Service"
+          ngModel
+        >
+        </p-autoComplete>
+      </div>
+    
+      <div class="inputBox">
+        <label class="f-12 shade_color">Select Entity</label><br>
+      <p-autoComplete
+        placeholder="Search or select from dropdown"
+        (onSelect)="selectEntityFilter($event)"
+        [group]="false"
+        [suggestions]="filteredEnt"
+        (completeMethod)="filterEntity($event)"
+        field="EntityName"
+        [dropdown]="true"
+        name="entity"
+        ngModel
+      >
+      </p-autoComplete>
+      </div>
   
-    <div class="inputBox">
-      <label class="f-12 shade_color">Select Entity</label><br>
-      <select
-      class="f-12 form-control font_weight"
-      (change)="selectEntityFilter($event.target.value)"
-    >
-      <option value="">Select Entity</option>
-      <option value="ALL" selected>ALL</option>
-      <option *ngFor="let entity of entity" [value]="entity.idEntity">
-        {{ entity.EntityName }}
-      </option>
-    </select>
-    </div>
-
-    <div class="d-flex justify-content-end footer mt-3">
-      <button class="btnUpload" (click)="filterByDate(rangeDates)">Filter</button>
-    </div>
+      <div class="d-flex justify-content-end footer mt-3">
+        <button class="secondary_btn f-12 mr-3" type="button" (click)="clearFilter()">Clear</button>
+        <button class="primary_btn f-12" type="button" (click)="filterByDate(rangeDates)">Filter</button>
+      </div>
+  </form>
 </dialog>
 
 <ngx-spinner

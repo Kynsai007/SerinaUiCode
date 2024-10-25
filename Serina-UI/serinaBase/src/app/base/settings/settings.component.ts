@@ -10,6 +10,7 @@ import {
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NotificationService } from 'src/app/services/notification/notification.service';
 interface EmailRecipient {
   reciptentId: number;
   recipientEmail: string;
@@ -93,7 +94,7 @@ export class SettingsComponent implements OnInit {
               private PermissionService : PermissionService,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,
-              private SharedService: SharedService,
+              private notificationService: NotificationService,
               private AlertService: AlertService,
               private sanitizer: DomSanitizer,
               public dialog: MatDialog
@@ -108,7 +109,7 @@ export class SettingsComponent implements OnInit {
     alert("Sorry!, you do not have access");
     this.router.navigate(['customer/invoice/allInvoices'])
   }
-  this.SharedService.getEmailRecipients().subscribe((data: any) =>{
+  this.notificationService.getEmailRecipients().subscribe((data: any) =>{
       
     this.emailRecepiants = data;
 
@@ -186,7 +187,7 @@ export class SettingsComponent implements OnInit {
   //   this.getTemplateGroup()
   // }
   getTemplateGroup(){
-    this.SharedService.getTemplateGroup().subscribe((data: any) =>{
+    this.notificationService.getTemplateGroup().subscribe((data: any) =>{
       
       this.templateGroups = data.data;
     })
@@ -231,7 +232,7 @@ export class SettingsComponent implements OnInit {
   
    
     this.templateGroupId = event.TemplateGroupID;
-    this.SharedService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
+    this.notificationService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
       
       this.templates = data.data;
     })
@@ -255,7 +256,7 @@ export class SettingsComponent implements OnInit {
     this.emailtemplateavail = true;
     this.editable = false;
     this.templateNameId = event.TemplateID;
-    this.SharedService.getEmailRecipientsSpec(this.templateNameId).subscribe((data: any) =>{
+    this.notificationService.getEmailRecipientsSpec(this.templateNameId).subscribe((data: any) =>{
       // this.selectedEmails = data.map(item => item.Recipients);
       this.selectedEmails = data.map(item => item.Recipients.split(',').map(email => email.trim()))  // Split and trim each email
       .flat();  // Flatten the array of arrays into a single array of emails
@@ -269,7 +270,7 @@ export class SettingsComponent implements OnInit {
       this.exgroupName = this.groupName;
       this.selectedRecipients();
     })
-    this.SharedService.getEmailTemplateSpec(this.templateNameId).subscribe((data: any) =>{
+    this.notificationService.getEmailTemplateSpec(this.templateNameId).subscribe((data: any) =>{
       
       this.spectemplates = data.data;
       if (this.spectemplates.length > 0) {
@@ -299,11 +300,11 @@ export class SettingsComponent implements OnInit {
   deleteTemplate(event){
 
     this.templateNameId = event.TemplateID;
-    this.SharedService.deleteEmailTemplate(this.templateGroupId,this.templateNameId).subscribe((data: any) => {
+    this.notificationService.deleteEmailTemplate(this.templateGroupId,this.templateNameId).subscribe((data: any) => {
       if (data?.message) {
         this.success(data?.message)
-          this.SharedService.deleteEmailRecipients(this.templateNameId,this.recepientsGroupId).subscribe((data: any) => {})
-          this.SharedService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
+          this.notificationService.deleteEmailRecipients(this.templateNameId,this.recepientsGroupId).subscribe((data: any) => {})
+          this.notificationService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
       
             this.templates = data.data;
           })
@@ -356,7 +357,7 @@ export class SettingsComponent implements OnInit {
         templateContent: this.eContent,
         templateName: this.etemplateName
       };
-      this.SharedService.createNewEmailTemplate(this.newTemplateDetails).subscribe((data: any) => {
+      this.notificationService.createNewEmailTemplate(this.newTemplateDetails).subscribe((data: any) => {
         if (data) {
           this.recipientsDetails = {
             partitionKey: data,
@@ -364,7 +365,7 @@ export class SettingsComponent implements OnInit {
             recipients: this.selectedEmails.join(', '),
             ccRecipients: this.selectedCc.join(', ')
           }
-          this.SharedService.setEmailRecipients(this.recipientsDetails).subscribe((data: any) => {
+          this.notificationService.setEmailRecipients(this.recipientsDetails).subscribe((data: any) => {
             if(data.RowKey){
               let mesage = "Template Created Sccessfully"
               this.success(mesage)
@@ -376,7 +377,7 @@ export class SettingsComponent implements OnInit {
               this.addGroup = false;
               this.addGroupPopUp = false;
               this.closeDialog();
-              this.SharedService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
+              this.notificationService.getEmailTemplate(this.templateGroupId).subscribe((data: any) =>{
                 this.templates = data.data;
               })
             }
@@ -424,7 +425,7 @@ export class SettingsComponent implements OnInit {
         };
   
         // Call service to update the email template
-        this.SharedService.editEmailTemplate(this.editedDetails, this.templateGroupId, this.templateNameId)
+        this.notificationService.editEmailTemplate(this.editedDetails, this.templateGroupId, this.templateNameId)
           .subscribe((data: any) => {
             if (data?.message) {
               this.success(data?.message);
@@ -440,7 +441,7 @@ export class SettingsComponent implements OnInit {
         this.selectedCc !== this.exCcMails || 
         this.groupName !== this.exgroupName
       ) {
-        this.SharedService.updateEmailRecipients(this.templateNameId, this.recepientsGroupId, this.editedrecipientsDetails)
+        this.notificationService.updateEmailRecipients(this.templateNameId, this.recepientsGroupId, this.editedrecipientsDetails)
           .subscribe((data: any) => { 
             if (data?.Message) {
             this.success(data?.Message);

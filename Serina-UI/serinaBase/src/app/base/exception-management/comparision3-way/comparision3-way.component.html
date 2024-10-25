@@ -365,7 +365,7 @@
                         ></i
                       ></span> -->
                       <span
-                        *ngIf="value.TagLabel == 'PurchaseOrder' && editable"
+                        *ngIf="value.TagLabel == 'PurchaseOrder' && editable && !router.url.includes('Create_GRN_inv_list')"
                       >
                         <i
                           class="fa fa-search info_icon pointer po_s_icon"
@@ -380,7 +380,7 @@
                       [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
                       [value]="value.Value"
                       [title]="value.Value"
-                      [disabled]="!editable || fin_boolean"
+                      [disabled]="!editable || fin_boolean || router.url.includes('Create_GRN_inv_list')"
                       (change)="
                       value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
                       "
@@ -663,9 +663,9 @@
                               ><i
                                 [ngStyle]="{
                                   color:
-                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc.includes('Low')
+                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc?.includes('Low')
                                       ? '#D81616'
-                                      :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc.includes('Low')
+                                      :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc?.includes('Low')
                                       ? '#f7c83e'
                                       : ''
                                 }"
@@ -2286,7 +2286,7 @@
   [header]="headerpop"
   [(visible)]="progressDailogBool"
   [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: p_width, maxHeight: '80svh' }"
+  [style]="{ width: p_width, maxHeight: '100svh' }"
   [baseZIndex]="10000"
   [draggable]="true"
   [resizable]="false"
@@ -2324,7 +2324,7 @@
   <div
     class="row"
     *ngIf="headerpop == 'Confirm PO number' || headerpop == 'Select GRN'"
-    style="min-height: 40vh"
+    style="min-height: 40vh;max-height: 60vh;"
   >
     <div class="col-md-4">
       <input
@@ -2339,10 +2339,10 @@
           [id]="i"
           (click)="selectedPO(i, $event.target.value)"
           [ngClass]="
-            activePOId == poitem.Document.PODocumentID ? 'activePO' : ''
+            activePOId == poitem?.PODocumentID ? 'activePO' : ''
           "
         >
-          {{ poitem.Document.PODocumentID }}
+          {{ poitem.PODocumentID }}
         </li>
       </ul>
       <div
@@ -2423,7 +2423,8 @@
           PO Date: {{ poDate[0]?.DocumentData?.Value | date : "medium" }}
         </div>
       </h6>
-      <table
+      <div class= "POSelectionDiv">
+        <table
         class="table f-12"
         *ngIf="
           PO_GRN_Number_line?.length > 0 && headerpop == 'Confirm PO number'
@@ -2444,6 +2445,7 @@
           <td>{{ (item.PurchQty * item.UnitPrice).toFixed(2) }}</td>
         </tr>
       </table>
+      </div>
       <ng-container *ngIf="headerpop == 'Select GRN'">
         <div *ngFor="let grnLine of selectedGRNLines">
           <div class="f-13">GRN : {{ grnLine?.grnNumber }}</div>

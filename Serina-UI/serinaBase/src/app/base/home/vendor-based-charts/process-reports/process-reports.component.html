@@ -154,73 +154,77 @@
     <h6 class="f-14">Please select the option to filter</h6>
     <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
   </div>
-  <div class="inputBox">
-    <label class="f-12 shade_color">Start & End Date</label><br>
-    <p-calendar
-      #datePicker
-      [(ngModel)]="rangeDates"
-      selectionMode="range"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
-      placeholder="Select dates to Filter"
-      [readonlyInput]="true"
-      [showIcon]="true"
-      showButtonBar="true"
-      inputId="range"
-      (onSelect) = "selectedDates(rangeDates)"
-      (onClearClick)="clearDates()"
-    ></p-calendar>
-  </div>
+  <form #filterForm="ngForm">
     <div class="inputBox">
-      <label class="f-12 shade_color">Select Vendor</label><br>
-      <p-autoComplete
-        placeholder="Select"
-        (onSelect)="selectVendor($event)"
-        [group]="false"
-        [(ngModel)]="selectedVendorValue"
-        [suggestions]="filteredVendors"
-        (completeMethod)="filterVendor($event)"
-        field="VendorName"
-        [dropdown]="true"
-      >
-        <ng-template let-group pTemplate="group">
-          <div class="flex align-items-center">
-            <span class="f-12">{{ group.VendorName }}</span>
-          </div>
-        </ng-template>
-      </p-autoComplete>
+      <label class="f-12 shade_color">Start & End Date</label><br>
+      <p-calendar
+        #datePicker
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        showButtonBar="true"
+        inputId="range"
+        (onSelect) = "selectedDates(rangeDates)"
+        (onClearClick)="clearDates()"
+        name="calendar"
+      ></p-calendar>
     </div>
+      <div class="inputBox">
+        <label class="f-12 shade_color">Select Vendor</label><br>
+        <p-autoComplete
+          placeholder="Please search"
+          (onSelect)="selectVendor($event)"
+          [group]="false"
+          [(ngModel)]="selectedVendorValue"
+          [suggestions]="filteredVendors"
+          (completeMethod)="filterVendor($event)"
+          field="VendorName"
+          [dropdown]="true"
+          name="vendor"
+        >
+        </p-autoComplete>
+      </div>
+    
+      <div class="inputBox">
+        <label class="f-12 shade_color">Select Entity</label><br>
+        <p-autoComplete
+          placeholder="Search or select from dropdown"
+          (onSelect)="selectEntityFilter($event)"
+          [group]="false"
+          [suggestions]="filteredEnt"
+          (completeMethod)="filterEntity($event)"
+          field="EntityName"
+          name="entity"
+          ngModel
+          [dropdown]="true"
+        >
+        </p-autoComplete>
+      </div>
+    
+      <div class="inputBox">
+        <label class="f-12 shade_color">Select Source type</label><br>
+        <select
+          class="f-12 form-control font_weight"
+          (change)="selectedSource($event.target.value)"
+          ngModel
+          name="source"
+        >
+          <option value="" disabled selected>Select </option>
+          <option value="ALL">ALL</option>
+          <option *ngFor="let source of sourceData" [value]="source.sourceType">
+            {{ source.sourceType }}
+          </option>
+        </select>
+      </div>
   
-    <div class="inputBox">
-      <label class="f-12 shade_color">Select Entity</label><br>
-      <select
-        class="f-12 form-control font_weight"
-        (change)="selectEntityFilter($event.target.value)"
-      >
-        <option value="">Select</option>
-        <option value="ALL">ALL</option>
-        <option *ngFor="let entity of entity" [value]="entity.idEntity">
-          {{ entity.EntityName }}
-        </option>
-      </select>
-    </div>
   
-    <div class="inputBox">
-      <label class="f-12 shade_color">Select Source type</label><br>
-      <select
-        class="f-12 form-control font_weight"
-        (change)="selectedSource($event.target.value)"
-      >
-        <option value="" disabled selected>Select </option>
-        <option value="ALL">ALL</option>
-        <option *ngFor="let source of sourceData" [value]="source.sourceType">
-          {{ source.sourceType }}
-        </option>
-      </select>
-    </div>
-
-
-    <div class="d-flex justify-content-end footer mt-3">
-      <button class="btnUpload" (click)="filterByDate(rangeDates)">Filter</button>
-    </div>
+      <div class="d-flex justify-content-end footer mt-3">
+        <button class="secondary_btn f-12 mr-3" type="button" (click)="clearFilter()">Clear</button>
+        <button class="primary_btn f-12" type="button" (click)="filterByDate(rangeDates)">Filter</button>
+      </div>
+  </form>
 </dialog>

@@ -9,6 +9,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { DatePipe } from '@angular/common';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { Calendar } from 'primeng/calendar';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-process-reportservice',
@@ -58,6 +59,10 @@ export class ProcessReportserviceComponent implements OnInit {
   client_name:string;
   @ViewChild('datePicker') datePicker: Calendar;
   agi_p_link = "https://apps.powerapps.com/play/e/f81e19e2-1c2c-e736-93f4-b631f0177a44/a/6227c405-6da3-4ea7-9865-d13ca96b4593?tenantId=38a3f678-5fe7-4dbb-8eb9-eee7a0c6fd57&hint=6d334e0e-0c8e-479e-80f7-583e64497066&sourcetime=1729059118010"
+  filteredEnt: any[];
+  filteredService: any[];
+  @ViewChild('filterForm') filterForm:NgForm;
+
   constructor(
     private sharedService: SharedService,
     private chartsService: ChartsService,
@@ -179,6 +184,8 @@ export class ProcessReportserviceComponent implements OnInit {
         return a.findIndex(t=>(t.ServiceProviderName===v.ServiceProviderName))===i ;
       });
       this.serviceData = uniqueArray;
+      this.serviceData.unshift({idServiceProvider:'ALL',ServiceProviderName:'ALL'});
+      this.filteredService = this.serviceData;
     });
   }
 
@@ -296,15 +303,17 @@ export class ProcessReportserviceComponent implements OnInit {
   getEntitySummary() {
     this.entitySubscription = this.dataStoreService.entityData.subscribe((data: any) => {
       this.entity = data;
+      this.entity.unshift({idEntity:'ALL',EntityName:'ALL'});
+      this.filteredEnt = this.entity;
     });
   }
 
   selectEntityFilter(e) {
-    this.selectedEntityValue = e;
+    this.selectedEntityValue = e.idEntity;
   }
 
   selectedService(e){
-    this.selectedServiceValue = e ;
+    this.selectedServiceValue = e.ServiceProviderName;
   }
   dateRange() {
     this.dateFilterService.dateRange();
@@ -449,5 +458,17 @@ closeDialog(){
   if(dialog){
     dialog.close();
   }
+}
+filterEntity(event){
+  this.filteredEnt = this.dataStoreService.uni_filter(this.entity,'EntityName',event);
+}
+filterService(event){
+  this.filteredService = this.dataStoreService.uni_filter(this.serviceData,'ServiceProviderName',event);
+}
+clearFilter(){
+  this.filterForm.control.reset();
+  this.selectedEntityValue = 'ALL';
+  this.selectedDateValue = '';
+  this.selectedServiceValue = 'ALL';
 }
 }

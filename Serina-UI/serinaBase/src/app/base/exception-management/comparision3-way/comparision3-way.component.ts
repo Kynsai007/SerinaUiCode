@@ -1356,7 +1356,7 @@ export class Comparision3WayComponent
   }
 
   headerDataOrder() {
-    console.log(this.inputData)
+    this.headerData = [];
     if(!this.isServiceData){
       const orderMap = {
         'VendorName': 1,
@@ -3185,7 +3185,7 @@ export class Comparision3WayComponent
     })
   }
   selectedGRN(event, grn_num) {
-    this.updateInvoiceData = [];
+    delete this.updateInvoiceData;
     let bool: boolean = event.target.checked;
     this.readGRNLines(grn_num, bool);
   }
@@ -3283,11 +3283,11 @@ export class Comparision3WayComponent
     }
   }
   selectedPO(id, event) {
-    this.updateInvoiceData = [];
+    delete this.updateInvoiceData;
     let po_num_text = document.getElementById(id).innerHTML;
     let po_num = po_num_text.trim();
     this.poDate = this.poNumbersList.filter((val) => {
-      return val.Document.PODocumentID == po_num
+      return val.PODocumentID == po_num
     });
     this.activePOId = po_num;
     this.SharedService.po_doc_id = po_num;
@@ -3313,7 +3313,6 @@ export class Comparision3WayComponent
     };
     updateValue.header['PurchaseOrder'] = this.SharedService.po_num;
     this.updateInvoiceData = updateValue;
-    this.updateInvoiceData.push(updateValue);
     this.saveChanges();
     this.progressDailogBool = false;
     setTimeout(() => {

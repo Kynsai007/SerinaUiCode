@@ -142,8 +142,15 @@
         *ngIf="POLineData[0]?.Name"
       >
         <button
+          class="secondary_btn f-12 mr-3"
+          type="button"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+        <button
           *ngIf="!uploadBool"
-          class="primary_btn f-12 mr-3"
+          class="primary_btn f-12"
           type="submit"
           [disabled]="selectedPOLines.length == 0"
         >
@@ -151,20 +158,14 @@
         </button>
         <button
           *ngIf="uploadBool"
-          class="primary_btn f-12 mr-3"
+          class="primary_btn f-12"
           type="button"
           [disabled]="selectedPOLines.length == 0"
           (click)="validateFlip()"
         >
           Validate
         </button>
-        <button
-          class="secondary_btn f-12"
-          type="button"
-          mat-dialog-close
-        >
-          Cancel
-        </button>
+
       </div>
 
       <div
