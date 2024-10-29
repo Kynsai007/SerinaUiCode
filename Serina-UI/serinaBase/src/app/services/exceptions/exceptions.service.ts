@@ -211,7 +211,7 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/change_entity/${this.invoiceID}?entity_id=${ent_id}`)
   }
   changeInvType(type){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/changInvoiceType/${this.userId}/${this.invoiceID}?invoice_type=${type}`) 
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/changeInvoiceType/${this.userId}/${this.invoiceID}?invoice_type=${type}`) 
   }
   getAdPercentage(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?inv_id=${this.invoiceID}`,data) 
@@ -227,6 +227,10 @@ export class ExceptionsService {
   }
   createTimesheet(po_id,manPowerAPI_request: any,context:any) {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${po_id}/${context}/${this.userId}`,manPowerAPI_request) 
+  }
+
+  createTicket(inv_id){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/ticket_creation/${inv_id}`) 
   }
 
   convertData(inputData, purchId: string) {

@@ -331,7 +331,7 @@ export class SharedService {
 
   /*Approver related */
   readApprovers(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocumentApprovers/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/getApprovers/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
   setApprovers(data, bool) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/setDocumentApproval/${this.userId}/idInvoice/${this.invoiceID}?pre_approve=${bool}`, data).pipe(retry(3));
@@ -391,7 +391,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value).pipe(retry(2))
   }
   duplicateGRNCheck(value,param){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/grn/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
   }
   validateUnitprice(data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))

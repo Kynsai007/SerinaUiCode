@@ -321,6 +321,7 @@
                 <div *ngFor="let value of headerData ">
                   <!-- [ngStyle]="{ 'width':value?.TagLabel?.includes('Vendor') ? 'calc(100svw - 74svw)':''}" -->
                   <div
+                    *ngIf="!value?.TagLabel?.toLowerCase().includes('dummy')"
                     class="input_container"
                     [ngClass]="
                       value?.TagLabel?.includes('Vendor')

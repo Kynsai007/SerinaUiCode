@@ -326,7 +326,7 @@ export class CreateGRNComponent implements OnInit {
     this.ngxSpinner.show();
     this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
       this.ngxSpinner.hide();
-      this.poLineData = data.result;
+      this.poLineData = data?.result;
       this.PO_GRN_Number_line = this.poLineData;
       this.permissionService.enable_create_grn = true;
       // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
@@ -506,7 +506,7 @@ export class CreateGRNComponent implements OnInit {
             let arr = []
             data.data.forEach(el=>{
               let merged = {
-                ...el.Document,
+                ...el.DocumentPO,
                 ...el.Entity,
                 ...el.Vendor
               }
