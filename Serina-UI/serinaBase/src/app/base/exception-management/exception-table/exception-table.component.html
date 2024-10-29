@@ -668,6 +668,10 @@
           <span *ngIf="router.url.includes('invoice/ServiceInvoices') && ERPName == 'Dynamics AX'">
             <i class="fa fa-download showEye ml-3" (click)="erpDownload($event, invoiceData)"></i>
           </span>
+
+          <span *ngIf="router.url.includes('allInvoices') || router.url.includes('invoice/ServiceInvoices')" pTooltip="Click here to raise a ticket in Zoho.">
+            <i class="fa fa-ticket showEye ml-2" (click)="raiseTicket(invoiceData.idDocument)"></i>
+          </span>
         </td>
       </tr>
     </ng-template>

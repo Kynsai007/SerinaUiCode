@@ -422,6 +422,7 @@ export class Comparision3WayComponent
   grnTooltip: string;
   headerData = [];
   lineTableHeaders: string[];
+  isDraft: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -866,6 +867,7 @@ export class Comparision3WayComponent
     this.po_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Qty');
     this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
     this.lineDisplayData = this.GRN_PO_tags;
+    console.log(this.lineDisplayData)
     let arr = this.GRN_PO_tags;
     setTimeout(() => {
       arr.forEach((ele1) => {
@@ -2548,6 +2550,10 @@ export class Comparision3WayComponent
   }
 
   confirm_pop(grnQ, boolean, txt) {
+    this.isDraft = false ;
+    if(txt.includes('saved')){
+      this.isDraft = true ;
+    }
     const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
     let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
     if (validationBool) {
@@ -2557,7 +2563,7 @@ export class Comparision3WayComponent
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
-        if (this.isManpowerTags) {
+        if (this.isManpowerTags && this.manPowerAPI_request) {
           this.createTimesheetAPI();
         }
         this.onSave_submit(grnQ, boolean, txt);
@@ -2666,9 +2672,12 @@ export class Comparision3WayComponent
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
       manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id=${this.invoiceID}`;
     } else if(this.manpowerHeaderId && !this.dataService.isEditGRN){
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}`;
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}`;
+    } else if(!this.manpowerHeaderId && this.dataService.isEditGRN){
+      manPower = `&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
     }
-    if(this.isManpowerTags && !this.manpowerHeaderId){
+    if(this.isManpowerTags && !this.manpowerHeaderId && this.manPowerAPI_request){
+      this.SpinnerService.hide();
       return;
     }
     this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
