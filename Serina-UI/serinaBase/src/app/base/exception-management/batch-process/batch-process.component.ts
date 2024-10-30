@@ -249,9 +249,9 @@ export class BatchProcessComponent implements OnInit {
         const batchData = [];
         let mergedStatus = [{ id:0, name:'All'}];
         let vendorNameList = [];
-        data.forEach((element) => {
+        data?.data?.forEach((element) => {
           let mergeData = {
-            ...element.Document,
+            ...element.DocumentINV,
             ...element.DocumentSubStatus,
             ...element.Entity,
             ...element.Vendor,
