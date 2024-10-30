@@ -1078,7 +1078,7 @@
                     <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
               </div>
-              <table *ngIf="lineDisplayData?.length > 0" class="mt-2 w-100 ex_table" id="grnTable">
+              <table *ngIf="lineDisplayData?.length > 0 " class="mt-2 w-100 ex_table" id="grnTable">
                 
                   <tr >
                     <th class="lineName" *ngFor="let grn of lineTable">{{grn.header}}</th>
@@ -1144,6 +1144,69 @@
                     </td>
                   </tr>
               </table>
+
+              <!-- <table *ngIf="lineDisplayData?.length > 0 && GRN_PO_Bool" class="invert mt-2 w-100 ex_table" id="grnTable">
+                <tr class="invert_tr" style="width: 50px">
+                  <th class="lineName invert_th_td text-center" style="min-width: 50px">S.No</th>
+                  <td *ngFor="let item of grnLineCount; let i = index" class="count_line">
+                    <div class="s-no">{{ i + 1 }}</div>
+                  </td>
+                </tr>
+                <ng-container *ngFor="let item of lineDisplayData; let i = index">
+                  <tr class="invert_tr" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}" 
+                      *ngIf="(GRN_PO_Bool || !item.TagName.includes('UnitPrice')) && item.TagName !== 'Inv - AmountExcTax'">
+                    <td class="lineName invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
+                      <ng-container *ngIf="item.TagName !== 'GRN - AmountExcTax'; else amountExcTax">
+                        <div class="d-flex justify-content-between">
+                          <div>{{ item.TagName }}</div>
+                        </div>
+                      </ng-container>
+                      <ng-template #amountExcTax>AmountExcTax</ng-template>
+                    </td>
+                    <td *ngFor="let line1 of item.linedata" class="linevalue invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
+                      <ng-container [ngSwitch]="item.TagName">
+                        <ng-container *ngSwitchCase="'GRN - Quantity'">
+                          <div>
+                            <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                                 [name]="line1.idDocumentLineItems" [(ngModel)]="line1.Value" 
+                                 (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
+                                 class="form-control inputHeight w-sm" [title]="line1.Value" >
+                          </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'Comments'" [ngSwitch]="GRN_PO_Bool">
+                          <ng-container *ngSwitchCase="false">
+                            <div>
+                              <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
+                                   [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
+                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorDesc">
+                            </div>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'Actions'" [ngSwitch]="GRN_PO_Bool">
+                          <ng-container *ngSwitchCase="true">
+                            <span class="linevalue invert_thtd">
+                              <button class="trash_btn" (click)="deleteGrnLine(line1.idDocumentLineItems)">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                              </button>
+                            </span>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                         <div>
+                          <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
+                          [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
+                          [value]="line1.Value ? line1.Value : 'NA'" [title]="line1.Value ? line1.Value : ''"
+                          class="form-control inputHeight" 
+                          [name]="line1.idDocumentLineItems"
+                          (click)="!line1.Value? open_dialog_comp('manpower_metadata'): null"
+                          [disabled]="line1.Value" [ngModelOptions]="{standalone: true}">
+                         </div>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-container>
+              </table> -->
             </div>
             <table
               class="total"

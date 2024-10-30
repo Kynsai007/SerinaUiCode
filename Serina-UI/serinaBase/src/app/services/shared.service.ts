@@ -616,10 +616,10 @@ export class SharedService {
 
   // LCM
   getLCMPOnum(ent_id) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readLCMPolist/${this.userId}?inv_id=${this.invoiceID}&entity_id=${ent_id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readLCMPolist/${this.userId}?inv_id=${this.invoiceID}&entity_id=${ent_id}`).pipe(retry(3));
   }
   getLCMLines(po_num) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readLcmLineData/${this.userId}?inv_id=${this.invoiceID}&po_id=${po_num}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/readLcmLineData/${this.userId}?inv_id=${this.invoiceID}&po_id=${po_num}`).pipe(retry(3));
   }
   getChargesCode(dataArea, ContextRecId, ContextTableId) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/chargescode/${dataArea}/${ContextRecId}/${ContextTableId}`).pipe(retry(3));

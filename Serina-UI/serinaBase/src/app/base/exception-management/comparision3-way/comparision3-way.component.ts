@@ -456,22 +456,28 @@ export class Comparision3WayComponent
       this.mappingForCredit = true;
     } 
     const commonTags = [
-      { TagName: 'Description', linedata: [] },
-      { TagName: 'PO Qty', linedata: [] },
-      { TagName: 'AmountExcTax', linedata: [] },
-      { TagName: 'GRN - Quantity', linedata: [] },
-      { TagName: 'UnitPrice', linedata: [] },
-      { TagName: 'Actions', linedata: [] }
+      { header: 'S.No', field: '' },
+      { header: 'Description', field: 'Name' },
+      { header: 'PO quantity', field: 'PurchQty'},
+      { header: 'GRN - Quantity', field: 'RemainInventPhysical' },
+      { header: 'PO balance quantity', field: 'RemainInventPhysical'},
+      { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
+      { header: 'Actions', field:''}
     ];
 
     this.GRN_PO_tags = [...commonTags];
-
-    if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
-    }
+    // if (this.client_name === 'Cenomi') {
+    //   this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
+    // }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
+    if(this.GRN_PO_Bool){
+      this.lineTable = commonTags;
+    } else {
+      this.readFilePath();
+    }
+    console.log(this.lineTable)
     this.ent_code = this.dataService.ent_code;
     this.flipEnabled = true;
     // this.flipEnabled = this.dataService.configData.flipBool;
@@ -492,7 +498,7 @@ export class Comparision3WayComponent
     }
     this.getEntity();
     this.initialData();
-    this.readFilePath();
+    
     this.ERPCostAllocation();
     this.AddPermission();
 
@@ -792,63 +798,82 @@ export class Comparision3WayComponent
   get_PO_GRN_Lines() {
     this.GRNObject = [];
     this.descrptonBool = true;
-    this.dataService.GRN_PO_Data.forEach((ele, i) => {
-      const tagMappings = {
-        'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
-        'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
-        'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
-        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
-        'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
-        'AmountExcTax': {
-          value: (ele) => {
-            const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
-            let amount;
-            if(this.dataService.isEditGRN){
-              amount = (unitPrice * ele.GRNQty).toFixed(2);
-            } else {
-              amount = (unitPrice * ele.PurchQty).toFixed(2);
-            }
-            this.GRN_line_total += Number(amount);
-            return Number(amount);
-          },
-          isMapped: '',
-          tagName: 'AmountExcTax'
-        },
-        'Actions': { value: '', isMapped: '', tagName: 'Actions' }
-      };
-
-      if (this.client_name == 'Cenomi' && this.isManpowerTags) {
-        tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
-        tagMappings['Monthly quantity'] = {
-          value: (ele) => {
-            let monthlyQuantity = 0;
-            if (ele.durationMonth) {
-              monthlyQuantity = ele.PurchQty / ele.durationMonth;
-            }
-            return monthlyQuantity.toFixed(2);
-          }, isMapped: '', tagName: 'Monthly quantity'
-        }
-        tagMappings['Is Timesheets'] = { value: 'isTimesheets', isMapped: '', tagName: 'Is Timesheets' }
-        tagMappings['Number of Shifts'] = { value: 'shifts', isMapped: '', tagName: 'Number of Shifts' }
+    let linesData = []
+    this.dataService.GRN_PO_Data.forEach((ele,i)=>{
+      linesData.push({
+      })
+      for(const line in ele){
+        linesData[i][line] = {Value: ele[line]}
       }
-
-      this.GRN_PO_tags.forEach((tag, index) => {
-        if (tagMappings[tag.TagName]) {
-          const mapping = tagMappings[tag.TagName];
-          const value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
-          tag.linedata.push({
-            Value: value,
-            old_value: mapping.oldValue ? ele[mapping.oldValue] : undefined,
-            ErrorDesc: '',
-            idDocumentLineItems: ele.LineNumber,
-            is_mapped: mapping.isMapped,
-            LineNumber: ele.LineNumber || ele.itemCode,
-            tagName_u: `${mapping.tagName}-${ele.LineNumber || ele.itemCode}-${i}`,
-            tagName: mapping.tagName
-          });
-        }
-      });
+      const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+      let amount;
+      if(this.dataService.isEditGRN){
+        amount = (unitPrice * ele.GRNQty).toFixed(2);
+      } else {
+        amount = (unitPrice * ele.PurchQty).toFixed(2);
+      }
+      this.GRN_line_total += Number(amount);
+      linesData[i]['GRNAmountExcTax'] = {Value: amount}
     })
+    console.log(linesData)
+    // this.dataService.GRN_PO_Data.forEach((ele, i) => {
+    //   const tagMappings = {
+    //     'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
+    //     'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
+    //     'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
+    //     'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
+    //     'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
+    //     'AmountExcTax': {
+    //       value: (ele) => {
+    //         const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+    //         let amount;
+    //         if(this.dataService.isEditGRN){
+    //           amount = (unitPrice * ele.GRNQty).toFixed(2);
+    //         } else {
+    //           amount = (unitPrice * ele.PurchQty).toFixed(2);
+    //         }
+    //         this.GRN_line_total += Number(amount);
+    //         return Number(amount);
+    //       },
+    //       isMapped: '',
+    //       tagName: 'AmountExcTax'
+    //     },
+    //     'Actions': { value: '', isMapped: '', tagName: 'Actions' }
+    //   };
+
+    //   if (this.client_name == 'Cenomi' && this.isManpowerTags) {
+    //     tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
+    //     tagMappings['Monthly quantity'] = {
+    //       value: (ele) => {
+    //         let monthlyQuantity = 0;
+    //         if (ele.durationMonth) {
+    //           monthlyQuantity = ele.PurchQty / ele.durationMonth;
+    //         }
+    //         return monthlyQuantity.toFixed(2);
+    //       }, isMapped: '', tagName: 'Monthly quantity'
+    //     }
+    //     tagMappings['Is Timesheets'] = { value: 'isTimesheets', isMapped: '', tagName: 'Is Timesheets' }
+    //     tagMappings['Number of Shifts'] = { value: 'shifts', isMapped: '', tagName: 'Number of Shifts' }
+    //   }
+
+    //   this.GRN_PO_tags.forEach((tag, index) => {
+    //     console.log(tag)
+    //     if (tagMappings[tag.TagName]) {
+    //       const mapping = tagMappings[tag.TagName];
+    //       const value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
+    //       tag.linedata.push({
+    //         Value: value,
+    //         old_value: mapping.oldValue ? ele[mapping.oldValue] : undefined,
+    //         ErrorDesc: '',
+    //         idDocumentLineItems: ele.LineNumber,
+    //         is_mapped: mapping.isMapped,
+    //         LineNumber: ele.LineNumber || ele.itemCode,
+    //         tagName_u: `${mapping.tagName}-${ele.LineNumber || ele.itemCode}-${i}`,
+    //         tagName: mapping.tagName
+    //       });
+    //     }
+    //   });
+    // })
     const timeSheetTag = this.GRN_PO_tags.find(item => item.TagName === 'Is Timesheets');
     if (timeSheetTag) {
       this.GRN_PO_tags.forEach(item => {
@@ -866,26 +891,26 @@ export class Comparision3WayComponent
     }
     this.po_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Qty');
     this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
-    this.lineDisplayData = this.GRN_PO_tags;
+    this.lineDisplayData = linesData;
     console.log(this.lineDisplayData)
     let arr = this.GRN_PO_tags;
     setTimeout(() => {
-      arr.forEach((ele1) => {
-        if (ele1.TagName == 'GRN - Quantity' || ele1.TagName == 'Description' || ele1.TagName == 'UnitPrice') {
-          this.GRNObject.push(ele1.linedata);
-        }
-        if (ele1.TagName == 'GRN - Quantity') {
-          ele1.linedata?.forEach((el) => {
-            el.is_quantity = true;
-          });
-        }
-        this.GRNObject = [].concat(...this.GRNObject);
-      });
-      this.GRNObject.forEach((val) => {
-        if (!val.old_value) {
-          val.old_value = val.Value;
-        }
-      });
+      // arr.forEach((ele1) => {
+      //   if (ele1.TagName == 'GRN - Quantity' || ele1.TagName == 'Description' || ele1.TagName == 'UnitPrice') {
+      //     this.GRNObject.push(ele1.linedata);
+      //   }
+      //   if (ele1.TagName == 'GRN - Quantity') {
+      //     ele1.linedata?.forEach((el) => {
+      //       el.is_quantity = true;
+      //     });
+      //   }
+      //   this.GRNObject = [].concat(...this.GRNObject);
+      // });
+      // this.GRNObject.forEach((val) => {
+      //   if (!val.old_value) {
+      //     val.old_value = val.Value;
+      //   }
+      // });
     }, 100);
     this.grnLineCount = this.lineDisplayData[0]?.linedata;
     this.isGRNDataLoaded = true;

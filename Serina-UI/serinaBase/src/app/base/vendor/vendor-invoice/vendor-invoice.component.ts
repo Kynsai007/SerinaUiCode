@@ -116,6 +116,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
          res.push(response);
         });
         this.accountList = res;
+        this.accountsArray = this.accountList;
       }
       // if (this.accountList.length > 10) {
       //   this.showPaginator = true;
