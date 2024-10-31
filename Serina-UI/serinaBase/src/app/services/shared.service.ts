@@ -388,7 +388,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`).pipe(retry(3));
   }
   createGRNWithPO(param,manpowerParam,value){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/grn/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value).pipe(retry(2))
   }
   duplicateGRNCheck(value,param){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/grn/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))

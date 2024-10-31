@@ -459,7 +459,7 @@ export class Comparision3WayComponent
       { header: 'S.No', field: '' },
       { header: 'Description', field: 'Name' },
       { header: 'PO quantity', field: 'PurchQty'},
-      { header: 'GRN - Quantity', field: 'RemainInventPhysical' },
+      { header: 'GRN - Quantity', field: 'GRNQty' },
       { header: 'PO balance quantity', field: 'RemainInventPhysical'},
       { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
       { header: 'Actions', field:''}
@@ -800,11 +800,11 @@ export class Comparision3WayComponent
     this.descrptonBool = true;
     let linesData = []
     this.dataService.GRN_PO_Data.forEach((ele,i)=>{
-      linesData.push({
-      })
+      linesData.push({})
       for(const line in ele){
         linesData[i][line] = {Value: ele[line]}
       }
+      linesData[i]['GRNQty'] = { Value: ele['RemainInventPhysical']}
       const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
       let amount;
       if(this.dataService.isEditGRN){
@@ -874,7 +874,7 @@ export class Comparision3WayComponent
     //     }
     //   });
     // })
-    const timeSheetTag = this.GRN_PO_tags.find(item => item.TagName === 'Is Timesheets');
+    const timeSheetTag = this.GRN_PO_tags?.find(item => item.TagName === 'Is Timesheets');
     if (timeSheetTag) {
       this.GRN_PO_tags.forEach(item => {
         if (item.TagName == 'GRN - Quantity') {
@@ -893,7 +893,7 @@ export class Comparision3WayComponent
     this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
     this.lineDisplayData = linesData;
     console.log(this.lineDisplayData)
-    let arr = this.GRN_PO_tags;
+    let arr = linesData;
     setTimeout(() => {
       // arr.forEach((ele1) => {
       //   if (ele1.TagName == 'GRN - Quantity' || ele1.TagName == 'Description' || ele1.TagName == 'UnitPrice') {
@@ -2686,7 +2686,7 @@ export class Comparision3WayComponent
     }
   }
 
-  createGRNWithPO(bool) {
+  createGRNWithPO(bool,payLoad) {
     // bool = bool ? 'false' : 'true';
     this.SpinnerService.show();
     let inv_number = '';
@@ -2705,7 +2705,7 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
       return;
     }
-    this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
+    this.SharedService.createGRNWithPO(inv_number, manPower,payLoad).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2732,29 +2732,41 @@ export class Comparision3WayComponent
   }
 
   grnDuplicateCheck(boolean) {
-    if (this.GRNObjectDuplicate.length > 0) {
+    if (this.lineDisplayData.length > 0) {
       let arr = [];
-      this.GRNObjectDuplicate.forEach((ele) => {
-        ele.Value = ele?.Value?.toString()
-        if (this.router.url.includes("GRN_approvals")) {
-          if (ele.is_quantity) {
-            let obj = {
-              line_id: ele.invoice_itemcode,
-              quantity: ele.Value
+      let grnWithPOPayload = [];
+      this.lineDisplayData.forEach((objV) => {
+        Object.keys(objV).forEach(ele=>{
+            if (this.router.url.includes("GRN_approvals")) {
+              if (ele == 'Quantity') {
+                let obj = {
+                  line_id: objV?.invoice_itemcode?.Value,
+                  quantity: objV[ele]?.Value,
+                }
+                arr.push(obj)
+              }
+            } else {
+
+              if (ele == 'GRNQty') {
+                let obj = {
+                  line_id: objV?.LineNumber?.Value,
+                  quantity: objV[ele]?.Value,
+                }
+                arr.push(obj)
+              }
             }
-            arr.push(obj)
-          }
-        } else {
-          if (ele.tagName == 'Quantity') {
-            let obj = {
-              line_id: ele.idDocumentLineItems,
-              quantity: ele.Value
-            }
-            arr.push(obj)
+        })
+        let objData = {
+          itemCode : objV?.LineNumber?.Value,
+          lineData: {
+            'Quantity' : { Value : objV?.GRNQty?.Value },
+            'UnitPrice' : { Value: objV?.UnitPrice?.Value}
           }
         }
+        grnWithPOPayload.push(objData)
 
       })
+      console.log(grnWithPOPayload)
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
       let extra_param = '';
@@ -2781,7 +2793,7 @@ export class Comparision3WayComponent
               if (this.router.url.includes("GRN_approvals")) {
                 this.Approve_grn();
               } else {
-                this.createGRNWithPO(boolean);
+                this.createGRNWithPO(boolean,grnWithPOPayload);
               }
 
             } else {
