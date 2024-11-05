@@ -3064,7 +3064,11 @@ export class Comparision3WayComponent
           ele.durationMonth = meta.durationMonth || "NA";
           ele.isTimesheets = str == "new" ? meta.isTimesheets : true;
           ele.shifts = meta.shifts || "NA";
-
+          let monthlyQuantity = 0;
+          if (ele.durationMonth) {
+              monthlyQuantity = ele.PurchQty / ele.durationMonth;
+            }
+          ele.monthlyQuantity = monthlyQuantity.toFixed(2)
           if(ele.isTimesheets){
             this.isManpower = true;
           }
@@ -3094,10 +3098,7 @@ export class Comparision3WayComponent
     })
   }
   create_GRN_PO_tags() {
-    this.GRN_PO_tags = this.GRN_PO_tags.filter((tag) => tag.linedata = []);
-    if(this.GRN_PO_tags.filter(tag => tag.TagName == 'Duration in months').length == 0) {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
-    }
+    this.lineTable.splice(6, 0, { header: 'Duration in months', field: 'durationMonth' }, { header: 'Monthly quantity', field: 'monthlyQuantity' }, { header: 'Is Timesheets', field: 'isTimesheets' }, { header: 'Number of Shifts', field: 'shifts' })
   }
   open_dialog(str) {
     if (str == 'reject') {
@@ -3150,7 +3151,7 @@ export class Comparision3WayComponent
           "itemCode": item
         };
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
-          if (data.status == "success"){
+          if (data.status == "added"){
             this.success("Line item Added")
             this.getInvoiceFulldata('');
           } else {

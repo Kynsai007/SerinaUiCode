@@ -1,3 +1,4 @@
+$theme_color: rgb(53, 141, 192);
 .d_flex {
     display: flex;
     flex-wrap: wrap;
@@ -35,13 +36,18 @@
     border: none;
   }
   .btnadd{
-    background-color: #273c75;
+    background-color: $theme_color;
     color: #ffffff;
     font-size:large;
   }
   .card-body{
     background-color: #ffffff;
   }
+  // .card-body:hover {
+  //   background-color: #193b68;
+  //   color: #ffffff !important;
+  //   transform: scale(1.05);
+  // }
   .loader{
     zoom: 0.3;
     margin-top: 100px;

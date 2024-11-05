@@ -360,6 +360,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
         this.FRMetaData = data.FRMetaData;
+        this.headerArray = [];
         if(this.FRMetaData?.mandatoryheadertags){
           this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
           if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){

@@ -217,16 +217,16 @@ export class ExceptionsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?inv_id=${this.invoiceID}`,data) 
   }
   getManpowerMetaData(po_id){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getmanPowerMetadata/${po_id}/${this.userId}`) 
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/grn/getmanPowerMetadata/${po_id}/${this.userId}`) 
   }
   getManpowerPrefill(po_id,s_date,e_date){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerPrefill/${po_id}?startdate=${s_date}&enddate=${e_date}`) 
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/grn/getManpowerPrefill/${po_id}?startdate=${s_date}&enddate=${e_date}`) 
   }
   getManPowerData(){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}/${this.userId}`) 
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/grn/getManpowerGRN/${this.invoiceID}/${this.userId}`) 
   }
   createTimesheet(po_id,manPowerAPI_request: any,context:any) {
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${po_id}/${context}/${this.userId}`,manPowerAPI_request) 
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/grn/createManpowerGRN/${po_id}/${context}/${this.userId}`,manPowerAPI_request) 
   }
 
   createTicket(inv_id){

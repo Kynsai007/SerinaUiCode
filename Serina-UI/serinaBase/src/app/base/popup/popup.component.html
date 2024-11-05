@@ -340,84 +340,46 @@
 
     <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
        
-      <!-- <table class="table f-12">
-        <tr class="tHead">
-          <th *ngFor="let head of manPowerData">{{ head.TagName }}</th>
-        </tr>
-        <tr
-          *ngFor="
-            let poLine of orderHistoryData?.order_history;
-            let i = index
-          "
-          class="tbdytr"
-        >
-          <td>
-            <input
-              type="text"
-              class="pos-r mr-1"
-              style="top: 4px"
-              name="SOMap"
-              [id]="poLine.idDocumentLineItems"
-              (change)="onSelectMaster(poLine.Description)"
-            />
-            <label [for]="poLine.idDocumentLineItems">{{
-              poLine.Description
-            }}</label>
-          </td>
-          <td>{{ poLine.Unit }}</td>
-          <td>{{ poLine.UnitPrice }}</td>
-          <td>{{ poLine.Quantity }}</td>
-        </tr>
-      </table> -->
-      <table class="invert mt-2 w-100" id="grnTable">
-        <tr class="invert_tr" style="width: 50px">
-          <td
+      <table class=" mt-2 w-100" id="grnTable">
+        <!-- <tr class="invert_tr" style="width: 50px"> -->
+          <tr >
+            <th class="lineName" *ngFor="let tag of manPowerTable">{{tag.header}}</th>
+          </tr>
+          <!-- <td
             class="lineName invert_th_td text-center"
             style="min-width: 50px"
           >
             S.No
-          </td>
-          <td
+          </td> -->
+          <!-- <td
             class="count_line"
             *ngFor="let item2 of grnLineCount; let ind = index"
           >
             <div class="s-no">
               {{ ind + 1 }}
             </div>
-          </td>
-        </tr>
-        <ng-container
-          *ngFor="let item of manPowerData; let i = index"
-        >
-          <tr
-            class="invert_tr"
-            *ngIf="
-              !['AmountExcTax','UnitPrice','Duration in months','Is Timesheets','Actions','Number of Shifts'].includes(item.TagName)
-            "
-          >
+          </td> -->
+        <!-- </tr> -->
+        <ng-container>
+          <tr *ngFor="let item of manPowerData; let i = index">
             <td
-              class="lineName invert_th_td"
+              *ngFor="let tag of manPowerTable;"
             >
-              <div  class="d-flex justify-content-between">
-                <div>{{ item.TagName }}</div>
-              </div>
-            </td>
-            <td
-              class="linevalue invert_th_td"
-              *ngFor="let line1 of item.linedata; let i = index"
-            >
-              <div *ngIf="item.TagName != 'Actions'" [ngStyle]="{'background-color': (['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData) ? '#f1f1f1':''}">
+              <div *ngIf="tag.header == 'S.No'" class="count_line f-12" style="min-width: 50px">{{ i + 1 }}</div>
+            
+              <div *ngIf="tag.header != 'S.No' " [ngStyle]="{'background-color': (['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Qty'].includes(tag.header)) ? '#f1f1f1':''}">
                 <input
                   #inputval
-                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity','PO Balance Qty'].includes(item.TagName)?'text':'number'"
-                  [name]="line1.tagName_u"
-                  [title]="line1.Value"
+                  [type]="['Description','PO Qty','GRN - Qty','PO Balance Qty','Shift'].includes(tag.header)?'text':'number'"
+                  [name]="item[tag.field].id"
+                  [id]="item[tag.field].id"
+                  [title]="item[tag.field].Value"
                   class="form-control inputHeight w-sm"
-                  [(ngModel)]="line1.Value"
-                  [ngClass]="item.TagName == 'Description'?'w-des':''"
+                  [(ngModel)]="item[tag.field].Value"
+                  [ngClass]="tag.header == 'Description'?'w-des':''"
                   required
-                  (change)="onChange(line1, line1.Value)"
-                  [disabled]="['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
+                  (change)="onChange(item, item[tag.field]?.Value)"
+                  [disabled]="['Description','PO Qty','PO Balance Qty','Shift','GRN - Qty'].includes(tag.header) || ['Monthly quantity','Number of Shifts'].includes(tag.header)"
                 />
               </div>
               <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">

@@ -5,8 +5,8 @@
     background: #F0F0F0;
 }
 .max_h {
-    max-height: 93vh;
-    min-height: 93vh;
+    max-height: 90vh;
+    min-height: 90vh;
     overflow: auto;
     overflow-x: hidden;
 }
@@ -25,6 +25,6 @@ ul li a {
 }
 
 .active_in {
-    background-color: #f2be42;
-    color: #272727 !important;
+    background-color: rgb(53, 141, 192);
+    color: #ffffff !important;
 }

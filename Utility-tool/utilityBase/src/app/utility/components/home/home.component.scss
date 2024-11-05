@@ -1,14 +1,24 @@
+
+$theme_color: rgb(53, 141, 192);
 .title{
-  position: absolute;
-  left: 2%;
-  top: 12px;
-  font-size: 17px;
+  // position: relative;
+  // left: 2%;
+  // top: 12px;
+  font-size: 18px;
   font-weight: 600;
+  align-content: center;
+  // width: max-content;
+  // padding-top: 7px !important;
   // color: #222f3e;
+}
+.title::first-letter {
+  color: $theme_color;
+  font-size: 22px;
 }
 .container-fluid{
   padding-left: 0px;
   padding-right: 0px;
+  // background-color: #ffffff;
 }
 .pl-4{
   padding-left: 0 !important;
@@ -42,11 +52,15 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #272727;
+    background:#FFFFFF 0% 0% no-repeat padding-box;;
     display: flex;
     justify-content: flex-end;
     padding-right: 4%;
-    color: #ffffff;
+    color: #272727;
+    height: 60px;
+    padding-top: 7px;
+    box-shadow: 0px 2px 4px #00000029;
+    opacity: 1;
   }
   
   li {
@@ -60,25 +74,71 @@ ul {
     text-decoration: none;
     font-size: small;
     font-weight: 600;
+    height: 60px;
   }
-  
-  li a:hover:not(.active) {
-    text-decoration: underline;
-    color: #f2be42;
-    transition: 300ms;
-  }
+    // .active{
+    //   border-bottom: 2px solid $theme_color;
+    // }
+  // li a:hover:not(.active) {
+  //   text-decoration: underline;
+  //   color: #f2be42;
+  //   transition: 300ms;
+  //   border-bottom: 2px solid $theme_color;
+  // }
   li a:not(.active){
     text-decoration: none;
-    color: #ffffff;
+    color: black;
   }
   
   .active {
-    text-decoration: underline;
-    text-decoration-color: #f2be42;
-    color: #f2be42;
+    // text-decoration: underline;
+    // text-decoration-color: #f2be42;
+    // color: #f2be42;
+    opacity: 1 !important;
+    border-bottom: 2px solid $theme_color;
+    color: $theme_color !important;
   }
   .router_body{
     height: 100vh;
     max-height: 100vh;
     flex-wrap: wrap;
+  }
+  .navbar{
+    display: flex;
+    position: absolute;
+  }
+  .layout {
+    overflow: hidden;
+    height :100vh;
+    height: 100svh;
+    // padding: clamp(30px,54px,80px);
+  }
+  .layout nav {
+    gap: 70px;
+    height: 60px;
+    padding: 0px 18px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 2px 4px #00000029;
+    opacity: 1;
+    // position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .navLinks{
+    align-items: center;
+    gap: 30px;
+    // margin-left: 600px;
+    padding-left: 20px;
+    // margin-left: 850px;
+  }
+  .navLinks .nav_Link {
+    text-align: left;
+    font: normal normal medium 16px/25px Poppins;
+    letter-spacing: 0px;
+    color: #140101;
+    opacity: 0.5;
+    cursor: pointer;
+    height: 60px;
+    display: flex;
+    align-items: center;
   }

@@ -5,7 +5,7 @@ import { ExceptionsService } from 'src/app/services/exceptions/exceptions.servic
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/dataStore/data.service';
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Calendar } from 'primeng/calendar';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
@@ -62,6 +62,14 @@ export class PopupComponent implements OnInit {
   endDate: Date;
   isEditGRN: boolean = false;
   createdDates = [];
+  manPowerTable =[
+    { header: 'S.No', field: '' },
+    { header: 'Description', field: 'Name' },
+    { header: 'PO Qty', field: 'PurchQty'},
+    { header: 'GRN - Qty', field: 'GRNQty' },
+    { header: 'PO Balance Qty', field: 'RemainInventPhysical'},
+    { header: 'Shift', field: 'shiftName'}
+  ];
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -400,7 +408,7 @@ export class PopupComponent implements OnInit {
           this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
             old_data =  data?.data?.timesheets;
 
-            if(old_data){
+            if(old_data.length > 0){
               let item_codes = [];
               old_data.filter(el=> {
                 if(!item_codes.includes(el.itemCode)){
@@ -447,84 +455,133 @@ export class PopupComponent implements OnInit {
           let date1: any = toDate?.split(',')[0]?.split(' ')[1];
           let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
           this.timeSheet = []
-          if (this.manPowerData.length > 4) {
-            this.manPowerData = [];
-            sampleData = sampleData.filter(el => {
-              return ['Description', 'PO Qty', 'PO Balance Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
-            })
-            this.manPowerData = sampleData;
-            let shiftIndex = this.manPowerData.findIndex(el => el.TagName == 'Number of Shifts');
-            let shiftLineData = this.manPowerData[shiftIndex].linedata
-            if(this.manPowerData.filter(el => el.TagName == 'Shift').length == 0){
-              this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
-            }
+          console.log(date, date1)
+          if(date && date1){
+            this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
           }
-          this.timeSheet = [];
-          let index1 = 0;
-          let item_Code = '';
-          this.grnLineCount.forEach((el, index) => {
-            index1++;
-            let lineNumber = el.LineNumber || el.itemCode;
-            if(item_Code != lineNumber){
-              item_Code = lineNumber;
-              index1 = 0;
-            }
+          console.log(this.manPowerData)
+          // if (this.manPowerData.length > 4) {
+          //   this.manPowerData = [];
+          //   sampleData = sampleData.filter(el => {
+          //     return ['Description', 'PO Qty', 'PO Balance Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
+          //   })
+          //   this.manPowerData = sampleData;
+          //   let shiftIndex = this.manPowerData.findIndex(el => el.TagName == 'Number of Shifts');
+          //   let shiftLineData = this.manPowerData[shiftIndex].linedata
+          //   if(this.manPowerData.filter(el => el.TagName == 'Shift').length == 0){
+          //     this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
+          //   }
+          // }
+          // this.timeSheet = [];
+          // let index1 = 0;
+          // let item_Code = '';
+          // this.grnLineCount.forEach((el, index) => {
+          //   index1++;
+          //   let lineNumber = el.LineNumber || el.itemCode;
+          //   if(item_Code != lineNumber){
+          //     item_Code = lineNumber;
+          //     index1 = 0;
+          //   }
 
-            this.timeSheet.push({
-              Value: '',
-              tagName: `timeSheet${index1}`,
-              tagName_u: `timeSheet${index1}`,
-              ErrorDesc: '',
-              idDocumentLineItems: `${lineNumber}-${index1+1}`,
-              is_mapped: '',
-              old_value: '',
-              LineNumber: lineNumber
-            })
-          })
-          let index = 3
-          for (let i = Number(date); i <= Number(date1); i++) {
-            let currentDate = new Date(year, selectedMonth-1, i);
-            if (currentDate >= this.startDate && currentDate <= this.endDate) {
-              continue; // Skip the dates within the excluded range
-            }
-            let data = []
-            let sheet = []
-            sheet = JSON.parse(JSON.stringify(this.timeSheet))
-            sheet.forEach((el, index) => {
-              el.tagName_u = `${month}-${i}-${index}`
-              data.push(el)
-            })
-            this.manPowerData.splice(index, 0, { TagName: `${year}-${selectedMonth}-${i}`, linedata: data })
-            index++
-          }
-          setTimeout(() => {
-            if(old_data){
-              old_data.forEach(el => {
-                el.quantity.forEach(item => {
-                  this.manPowerData.forEach(manpower => {
-                    if(item.date == manpower.TagName){
-                      manpower.linedata.forEach(line => {
-                        if(line.tagName == item.tagName && line.LineNumber == item.itemCode){
-                          line.Value = item.quantity;
-                        }
-                      })
-                    }
-                    manpower.linedata.forEach(line => {
-                      if(line.LineNumber == el.itemCode && !this.createdDates.includes(manpower.TagName) && !this.isEditGRN){
-                        line.isSavedData = true;
-                      }
-                      if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode && this.createdDates.includes(manpower.TagName)){
-                        line.Value = 0;
-                      }
-                    })
-                  })
-                })
-              })
-            }
-          }, 1000)
+          //   this.timeSheet.push({
+          //     Value: '',
+          //     tagName: `timeSheet${index1}`,
+          //     tagName_u: `timeSheet${index1}`,
+          //     ErrorDesc: '',
+          //     idDocumentLineItems: `${lineNumber}-${index1+1}`,
+          //     is_mapped: '',
+          //     old_value: '',
+          //     LineNumber: lineNumber
+          //   })
+          // })
+          // let index = 3
+          // for (let i = Number(date); i <= Number(date1); i++) {
+          //   let currentDate = new Date(year, selectedMonth-1, i);
+          //   if (currentDate >= this.startDate && currentDate <= this.endDate) {
+          //     continue; // Skip the dates within the excluded range
+          //   }
+          //   let data = []
+          //   let sheet = []
+          //   sheet = JSON.parse(JSON.stringify(this.timeSheet))
+          //   sheet.forEach((el, index) => {
+          //     el.tagName_u = `${month}-${i}-${index}`
+          //     data.push(el)
+          //   })
+          //   this.manPowerData.splice(index, 0, { TagName: `${year}-${selectedMonth}-${i}`, linedata: data })
+          //   index++
+          // }
+          // setTimeout(() => {
+          //   if(old_data){
+          //     old_data.forEach(el => {
+          //       el.quantity.forEach(item => {
+          //         this.manPowerData.forEach(manpower => {
+          //           if(item.date == manpower.TagName){
+          //             manpower.linedata.forEach(line => {
+          //               if(line.tagName == item.tagName && line.LineNumber == item.itemCode){
+          //                 line.Value = item.quantity;
+          //               }
+          //             })
+          //           }
+          //           manpower.linedata.forEach(line => {
+          //             if(line.LineNumber == el.itemCode && !this.createdDates.includes(manpower.TagName) && !this.isEditGRN){
+          //               line.isSavedData = true;
+          //             }
+          //             if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode && this.createdDates.includes(manpower.TagName)){
+          //               line.Value = 0;
+          //             }
+          //           })
+          //         })
+          //       })
+          //     })
+          //   }
+          // }, 1000)
         }
 
     }
+  }
+  resetTime(date: any): Date {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      console.error("Invalid date:", date);
+      throw new TypeError("Invalid date object passed to resetTime.");
+    }
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  generateDateRange(startDate: string, endDate: string): Date[] {
+    const dates: Date[] = [];
+    
+    // Convert date strings to Date objects
+    const start = this.resetTime(new Date(startDate + 'T00:00:00'));
+    const end = this.resetTime(new Date(endDate + 'T00:00:00'));
+    
+    let currentDate = start;
+  
+    while (currentDate <= end) {
+      dates.push(new Date(currentDate)); // Push a copy of the current date
+      currentDate.setDate(currentDate.getDate() + 1); // Increment day
+    }
+    return dates;
+  }
+
+  // Main function to update records with date fields
+  addDatesToRecords(records: any[], startDate, endDate): any[] {
+    const dateRange = this.generateDateRange(startDate, endDate);
+    console.log(records,dateRange)
+    records.forEach((record, recordIndex) => {
+      dateRange.forEach((date, dateIndex) => {
+        const formattedDate = formatDate(date, 'yyyy-MM-dd', 'en-US');
+        if (!this.manPowerTable.some(rec => rec.header === formattedDate)) {
+          let rec = { header: formattedDate, field: formattedDate};
+          this.manPowerTable.push(rec);
+        }
+        record[`${formattedDate}`] = {
+          Value: '',
+          id: `date_${recordIndex}_${dateIndex}`
+        };
+      });
+    });
+    
+    return records;
   }
 
   clearDates() {
@@ -622,110 +679,136 @@ export class PopupComponent implements OnInit {
 
   manpowerCreateFunction() {
     this.replicaSheetData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
-
+    console.log(this.replicaSheetData)
     // Step 1: Filter out the entries where "isTimesheet" value is false
-    const isTimesheetsTag = this.replicaSheetData.find(item => item.TagName === 'Is Timesheets');
+    const isTimesheetsItems = this.replicaSheetData.filter((item:any) => item['isTimesheets'].Value == true);
+    console.log(isTimesheetsItems)
+    let tableData = [];
+    isTimesheetsItems.forEach((s, index) => {
+      const s_count: number = s['shifts']?.Value;
+      for (let i = 0; i < s_count; i++) {
+        console.log(`Shift ${i + 1}`);
+        const duplicatedS = { ...s };
+    
+        // Iterate over each property of the duplicated object
+        for (const tag in duplicatedS) {
+          if (typeof duplicatedS[tag] === 'object' && duplicatedS[tag] !== null) {
+            duplicatedS[tag] = { ...duplicatedS[tag], id: `${tag}_${index}_${i}` };
+            console.log(`${tag}_${index}_${i}`);
+          }
+        }
+    
+        // Add a unique shift name and ID
+        duplicatedS['shiftName'] = { Value: `Shift ${i + 1}`, id: `ShiftName_${index}_${i}` };
+        
+        tableData.push(duplicatedS);
+      }
+    });
+    
+    console.log(tableData)
+
     // Get ids of "Is Timesheets" lines where value is false
-    const excludedLineItemIds = isTimesheetsTag.linedata
-      .filter(data => data.Value != true)  // Adjust as needed based on the value's type
-      .map(data => data.idDocumentLineItems);  // Collect IDs of entries to exclude
+    const excludedLineItemIds = []
+    // isTimesheetsTag.linedata
+    //   .filter(data => data.Value != true)  // Adjust as needed based on the value's type
+    //   .map(data => data.idDocumentLineItems);  // Collect IDs of entries to exclude
 
     // Step 2: Filter out the lines with matching IDs in all tags
-    const grnData_po_filtered = this.replicaSheetData.map((item) => {
-      return {
-        ...item,
-        linedata: item.linedata.filter(data => !excludedLineItemIds.includes(data.idDocumentLineItems))
-      };
-    });
+    // const grnData_po_filtered = this.replicaSheetData.map((item) => {
+    //   return {
+    //     ...item,
+    //     linedata: item.linedata.filter(data => !excludedLineItemIds.includes(data.idDocumentLineItems))
+    //   };
+    // });
 
-    // Step 3: Find the "Number of Shifts" tag to get shift counts
-    const numberOfShiftsTag = grnData_po_filtered.find(item => item.TagName === 'Number of Shifts');
-    let replicatedData = [];
-    if (!numberOfShiftsTag) {
-      console.error('Number of Shifts tag not found!');
-    } else {
-      // Step 4: Replicate lines based on shift count and add shift info to each line
-      replicatedData = grnData_po_filtered.map((item) => {
-        return {
-          ...item,
-          linedata: item.linedata.flatMap((line) => {
-            // Find the corresponding shift count from the Number of Shifts tag using the same idDocumentLineItems
-            const shiftCountLine = numberOfShiftsTag.linedata.find(shiftLine => shiftLine.idDocumentLineItems === line.idDocumentLineItems);
-            const shiftCount = shiftCountLine ? parseInt(shiftCountLine.Value, 10) : 1;  // Default to 1 if not found
-            // Replicate the line based on the shift count
-            return Array.from({ length: shiftCount }, (_, index) => ({
-              ...line,
-              idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,
-              tagName_u: `${line.tagName_u}-${index + 1}`,
-              Value: item.TagName == 'Number of Shifts' ? `Shift ${index + 1}` : line.Value  // Add Shift information per replication
-            }));
-          })
-        };
-      });
-    }
+    // // Step 3: Find the "Number of Shifts" tag to get shift counts
+    // const numberOfShiftsTag = grnData_po_filtered.find(item => item.TagName === 'Number of Shifts');
+    // let replicatedData = [];
+    // if (!numberOfShiftsTag) {
+    //   console.error('Number of Shifts tag not found!');
+    // } else {
+    //   // Step 4: Replicate lines based on shift count and add shift info to each line
+    //   replicatedData = grnData_po_filtered.map((item) => {
+    //     return {
+    //       ...item,
+    //       linedata: item.linedata.flatMap((line) => {
+    //         // Find the corresponding shift count from the Number of Shifts tag using the same idDocumentLineItems
+    //         const shiftCountLine = numberOfShiftsTag.linedata.find(shiftLine => shiftLine.idDocumentLineItems === line.idDocumentLineItems);
+    //         const shiftCount = shiftCountLine ? parseInt(shiftCountLine.Value, 10) : 1;  // Default to 1 if not found
+    //         // Replicate the line based on the shift count
+    //         return Array.from({ length: shiftCount }, (_, index) => ({
+    //           ...line,
+    //           idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,
+    //           tagName_u: `${line.tagName_u}-${index + 1}`,
+    //           Value: item.TagName == 'Number of Shifts' ? `Shift ${index + 1}` : line.Value  // Add Shift information per replication
+    //         }));
+    //       })
+    //     };
+    //   });
+    // }
 
-    this.manPowerData = replicatedData;
-    this.grnLineCount = this.manPowerData[0].linedata;
+    this.manPowerData = tableData;
+    // this.grnLineCount = this.manPowerData[0].linedata;
   }
 
   onChange(line, value) {
     const numberOfDays = this.ds.number_of_days; 
+    console.log(line,value)
 
+    // let sepValuesByLineNumber = {};
+    // this.manPowerData.forEach(item => {
+    //   if (!['Description', 'PO Qty', 'PO Balance Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
+    //     item.linedata.forEach(line => {
+    //       const lineNumber = line.LineNumber;
+    //       const value = parseFloat(line.Value);
 
-    let sepValuesByLineNumber = {};
-    this.manPowerData.forEach(item => {
-      if (!['Description', 'PO Qty', 'PO Balance Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          const value = parseFloat(line.Value);
+    //       // Initialize the data structure if it doesn't exist for this line number
+    //       if (!sepValuesByLineNumber[lineNumber]) {
+    //         sepValuesByLineNumber[lineNumber] = { totalValue: 0, shiftCount: 0 };
+    //       }
 
-          // Initialize the data structure if it doesn't exist for this line number
-          if (!sepValuesByLineNumber[lineNumber]) {
-            sepValuesByLineNumber[lineNumber] = { totalValue: 0, shiftCount: 0 };
-          }
+    //       // Accumulate Sep values across shifts
+    //       if (!isNaN(value)) {
+    //         sepValuesByLineNumber[lineNumber].totalValue += value;
+    //       } 
+    //     });
+    //   } else if (item.TagName === "Number of Shifts") {
+    //     // Get the number of shifts for each LineNumber
+    //     item.linedata.forEach(line => {
+    //       const lineNumber = line.LineNumber;
+    //       const shiftCount = parseInt(line.Value.replace("Shift", ""));
 
-          // Accumulate Sep values across shifts
-          if (!isNaN(value)) {
-            sepValuesByLineNumber[lineNumber].totalValue += value;
-          } 
-        });
-      } else if (item.TagName === "Number of Shifts") {
-        // Get the number of shifts for each LineNumber
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          const shiftCount = parseInt(line.Value.replace("Shift", ""));
-
-          if (!isNaN(shiftCount)) {
-            sepValuesByLineNumber[lineNumber].shiftCount = shiftCount;
-          } 
-        });
-      }
-    });
+    //       if (!isNaN(shiftCount)) {
+    //         sepValuesByLineNumber[lineNumber].shiftCount = shiftCount;
+    //       } 
+    //     });
+    //   }
+    // });
 
     // Now calculate the GRN quantity and update the JSON
-    this.manPowerData.forEach(item => {
-      if (item.TagName === "GRN - Quantity") {
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          const sepData = sepValuesByLineNumber[lineNumber];
+    // this.manPowerData.forEach(item => {
+    //   if (item.TagName === "GRN - Quantity") {
+    //     item.linedata.forEach(line => {
+    //       const lineNumber = line.LineNumber;
+    //       const sepData = sepValuesByLineNumber[lineNumber];
 
-          if (sepData && (!line.isSavedData || this.isEditGRN)) {
-            const { totalValue, shiftCount } = sepData;
+    //       if (sepData && (!line.isSavedData || this.isEditGRN)) {
+    //         const { totalValue, shiftCount } = sepData;
 
-            // Check for valid shiftCount and totalValue before dividing
-            if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
+    //         // Check for valid shiftCount and totalValue before dividing
+    //         if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
 
-              const calculatedGRNQuantity = totalValue / (numberOfDays * shiftCount);
-              line.Value = calculatedGRNQuantity.toFixed(2); 
-            } else {
-              line.Value = "0"; // Default to 0 if something is missing
-            }
-          } else {
-            line.Value = "0"; // Default to 0 if no data
-          }
-        });
-      }
-    });
+    //           const calculatedGRNQuantity = totalValue / (numberOfDays * shiftCount);
+    //           line.Value = calculatedGRNQuantity.toFixed(2); 
+    //         } else {
+    //           line.Value = "0"; // Default to 0 if something is missing
+    //         }
+    //       } else {
+    //         line.Value = "0"; // Default to 0 if no data
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   confirmFun(body, type, head) {

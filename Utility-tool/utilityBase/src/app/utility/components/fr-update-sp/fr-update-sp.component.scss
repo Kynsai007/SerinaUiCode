@@ -46,12 +46,12 @@ a:active {
 }
 .btnbg{
     color: #ffffff;
-    background-color: #273c75;
+    background-color: rgb(53, 141, 192);
 }
 .btncancel{
     background-color: #ffffff;
-    color: #273c75;
-    border: 1px solid #273c75;
+    color: rgb(53, 141, 192);
+    border: 1px solid rgb(53, 141, 192);
 }
 .req_clr {
     color: red;
@@ -72,14 +72,14 @@ a:active {
 
 .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
     color: #ffffff;
-    background-color: #273c75;
+    background-color: rgb(53, 141, 192);
     border-color: #dee2e6 #dee2e6 #fff;
     font-weight: 600;
 }
 
 .nav-tabs .nav-link:not(.active){
     background-color: #ffffff;
-    color: #273c75;
+    color: rgb(53, 141, 192);
 }
 
 .max_width {
@@ -161,6 +161,44 @@ a:active {
     background-color: #fafafa;
     cursor: pointer;
 }
+#checkBoxesService {
+    // display: none;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    padding: 3px;
+    z-index: 123;
+    position: absolute;
+    width: 100%;
+    max-height: 117px;
+    overflow: auto;
+}
+
+#checkBoxesService label {
+    display: block;
+}
+
+#checkBoxesService label:hover {
+    background-color: #fafafa;
+    cursor: pointer;
+}
+.multipleSelection {
+    position: relative;
+}
+.cdk-drag-preview {
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .cdk-drag-placeholder {
+    background-color: #e9ecef;
+    border: 1px dashed #ddd;
+  }
+  
+  .cdk-drag-animating {
+    transition: transform 0.2s ease;
+  }
 
 .permisionDiv{
     border: 1px solid lightgray;

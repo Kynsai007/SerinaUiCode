@@ -1,13 +1,13 @@
-<div class="container-fluid p-0">
-    <ul *ngIf="this.router.url !='/IT_Utility/home'">
+<!-- <div class="container-fluid p-0 ">
+    <ul class="d-flex" *ngIf="this.router.url !='/IT_Utility/home'">
         <div class="title">Serina Configuration Portal</div>
         <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="IT_Utility/home">Home</a></li>
         <li *ngIf="showGPTTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/customers">GPT Setup</a></li>
         <li *ngIf="showCustomersTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/customers">Customers</a></li>
         <li *ngIf="showVendorsTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/vendors">Vendors</a></li>
         <li *ngIf="showServiceTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/service-providers">Service Providers</a></li>
-        <li *ngIf="isAdmin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="settings">Settings</a></li>
-        <li><a routerLink="/IT_Utility/guide"routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Guide</a></li>
+        <li *ngIf="isAdmin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="settings/mail-listener">Settings</a></li>
+        <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/guide">Guide</a></li>
         <li title="Sign Out" (click)="openPopup()"><a >
           <img src="assets/logout_ic.svg" style="width: 20px; cursor: pointer;">
             </a>
@@ -17,7 +17,8 @@
         <router-outlet></router-outlet>
     </div>
     <div style="margin-bottom: 8%;"></div>
-</div>
+</div> -->
+
 <p-dialog header=" " [(visible)]="displaypopup" [breakpoints]="{'960px': '75vw'}" [style]="{width: '30vw'}"
   [baseZIndex]="10000" [draggable]="false" [resizable]="false">
   <div class="text-center">
@@ -36,3 +37,73 @@
 
   </ng-template>
 </p-dialog>
+
+ <!-- <div class="layout">
+  <nav class="desktop d-flex justify-content-between" >
+    <div class="d-flex" style="gap: 64px">
+      <div>
+        <div class="title">Serina Configuration Portal</div>
+      </div>
+      <div class="navLinks d-flex justify-content-between">
+        <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/guide">Guide</a></li>
+      </div>
+    </div>
+  </nav>
+</div> -->
+
+<div class="layout">
+  <nav class="desktop d-flex justify-content-between w-100" >
+      <div class="title">Serina Configuration Portal</div>
+      <div class="navLinks d-flex justify-content-between">
+        <div
+          class="nav_Link f-14"
+          routerLinkActive="active"
+          [routerLink]="'home'">Home
+        </div>
+        <div
+         *ngIf="showGPTTab"
+         class="nav_Link f-14"
+         routerLinkActive="active"
+         [routerLink]="'vendors'">GPT Setup
+        </div>
+        <div
+          *ngIf="showCustomersTab"
+          class="nav_Link f-14"
+          routerLinkActive="active"
+          [routerLink]="'customers'">customers
+        </div>
+        <div
+         *ngIf="showVendorsTab"
+         class="nav_Link f-14"
+         routerLinkActive="active"
+         [routerLink]="'/IT_Utility/vendors'">Vendors
+        </div>
+        <div
+         *ngIf="showServiceTab"
+         class="nav_Link f-14"
+         routerLinkActive="active"
+         [routerLink]="'/IT_Utility/service-providers'">Service Providers
+        </div>
+        <div
+         *ngIf="isAdmin"
+         class="nav_Link f-14"
+         routerLinkActive="active"
+         [routerLink]="'settings/mail-listener'">Settings
+        </div>
+        <div
+         class="nav_Link f-14"
+         routerLinkActive="active"
+         [routerLink]="'/IT_Utility/guide'"
+         [routerLinkActiveOptions]="{exact: true}">Guide
+        </div>
+        <div
+         class="nav_Link f-14"
+         title="Sign Out" (click)="openPopup()"
+         ><img src="assets/logout_ic.svg" style="width: 20px; cursor: pointer;">
+        </div>
+      </div>
+  </nav>
+  <div class="pl-4 router_body">
+    <router-outlet></router-outlet>
+</div>
+</div>
