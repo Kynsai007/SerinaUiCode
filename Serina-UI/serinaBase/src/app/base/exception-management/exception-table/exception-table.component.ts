@@ -525,7 +525,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             this.SpinnerService.show();
             this.ExceptionsService.checkInvStatus(e.idDocument).subscribe((resp: any) => {
               this.SpinnerService.hide();
-              if (resp.result.status == e.documentStatusID && resp.result.substatus == e.documentsubstatusID) {
+              if (resp.result.status_id== e.documentStatusID && resp.result.substatus_id == e.documentsubstatusID) {
                 if (!this.router.url.includes('approvalPending')) {
                   if (this.permissionService.editBoolean == true) {
                     if (e.documentStatusID == 24) {
