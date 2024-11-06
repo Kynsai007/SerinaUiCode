@@ -160,11 +160,11 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }
     this.getModalList(this.selecteddocType);
     this.changeMetaData();
-    this.getAccuracyScore();
+    this.getAccuracyScore('2024-10-01','2024-10-30');
     this.getVendorAccounts();
     this.getfrConfig();
     this.getSynonyms();
-    this.getRules();
+    // this.getRules();
     this.getAmountRules();
   }
   changeDocFormat(val:any){
@@ -190,8 +190,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       _this.outletRef.createEmbeddedView(_this.contentRef);
     }, 500);
   }
-  getAccuracyScore(){
-    this.sharedService.getAccuracyScore("vendor",this.vendorName).subscribe(data => {
+  getAccuracyScore(s_date,e_date){
+    this.sharedService.getAccuracyScore("vendor",this.vendorName,s_date,e_date).subscribe(data => {
       this.accuracyScore = data;
       this.documentCount = data["DocumentCount"];
     })
@@ -271,7 +271,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   
   selectTemplate(modal_id){
-    this.selectedDocFormat = this.modalList.filter(v => v.DocumentModel.idDocumentModel == modal_id)[0].labels;
+    this.selectedDocFormat = this.modalList.filter(v => v.idDocumentModel == modal_id)[0].labels;
     this.currentTemplate = modal_id;
     this.getAllTags(this.currentTemplate,this.selecteddocType);
     this.getTrainingTestingRes(modal_id);
@@ -280,12 +280,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
-        return modal_id == ele.DocumentModel.idDocumentModel;
+        return modal_id == ele.idDocumentModel;
       })
       this.modelData = selected[0];
-      this.mobservice.setModelData(this.modelData.DocumentModel);
-      sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
-      this.FolderPath = this.modelData.DocumentModel.folderPath;
+      this.mobservice.setModelData(this.modelData);
+      sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
+      this.FolderPath = this.modelData?.folderPath;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
   }
@@ -341,9 +341,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         this.downloading = false;
       })
   }
-  downloadDocAccuracy(tagtype){
+  downloadDocAccuracy(tagtype,s_date,e_date){
     this.downloading = true;
-    this.sharedService.downloadDocAccuracy(tagtype).subscribe((response:any)=>{
+    this.sharedService.downloadDocAccuracy(tagtype,s_date,e_date).subscribe((response:any)=>{
       let blob: any = new Blob([response], { type: 'application/vnd.ms-excel; charset=utf-8' });
       const url = window.URL.createObjectURL(blob);
       // window.open(url);
@@ -542,12 +542,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.enableMetaDataBoolean = value;
   }
   getModalList(doctype:string) {
-    this.sharedService.getModalList(this.vendorData.idVendor,doctype).subscribe((data: any) => {
+    this.sharedService.getModalList(this.vendorData.idVendor,'vendor').subscribe((data: any) => {
       this.modalList = data;
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
-        this.selectTemplate(this.modalList[0].DocumentModel.idDocumentModel);
+        this.selectTemplate(this.modalList[0].idDocumentModel);
         this.checkselect = false;
       }
     })
@@ -563,7 +563,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       return;
     }
     if(this.modalList && this.modalList.length > 0){
-      let checkexists = this.modalList.filter(v => v.DocumentModel.modelName == value['modelName']);
+      let checkexists = this.modalList.filter(v => v.modelName == value['modelName']);
       if(checkexists.length > 0){
         this.modaladderr = true;
         return;
@@ -713,12 +713,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     (<HTMLDivElement>document.getElementById("meta")).classList.add("show");
   }
  }
-  getRules() {
-    this.sharedService.getRules().subscribe((data:any)=>{
-      this.rulesData = data;
-      this.filterdRules = data;
-    })
-  }
+  // getRules() {
+  //   this.sharedService.getRules().subscribe((data:any)=>{
+  //     this.rulesData = data;
+  //     this.filterdRules = data;
+  //   })
+  // }
   getAmountRules() {
     this.sharedService.getAmountRules().subscribe((data:any)=>{
       this.amountRulesData = data;

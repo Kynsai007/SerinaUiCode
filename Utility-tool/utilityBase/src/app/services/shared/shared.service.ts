@@ -480,7 +480,7 @@ export class SharedService {
       ).pipe(retry(3));
   }
   getFrConfig(): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getfrconfig/${this.userId}`).pipe(
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getfrconfig/${this.userId}`).pipe(
       take(1)
     );
   }
@@ -491,38 +491,38 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/emailconfig/getAllMailListeners`).pipe(retry(3));
   }
   getMetaData(documentId): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getfrmetadata/${documentId}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getfrmetadata/${documentId}`).pipe(retry(3));
   }
   downloadDoc(tagtype){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/entityTaggedInfo?tagtype=${tagtype}`,{responseType: 'blob'}).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/metadata/entityTaggedInfo?tagtype=${tagtype}`,{responseType: 'blob'}).pipe(retry(3));
   }
-  downloadDocAccuracy(tagtype){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/getAccuracyByEntity/${tagtype}`,{responseType: 'blob'}).pipe(retry(3));
+  downloadDocAccuracy(tagtype,s_date,e_date){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/metadata/getAccuracyByEntity/${tagtype}&start_date=${s_date}&end_date=${e_date}`,{responseType: 'blob'}).pipe(retry(3));
   }
-  getAccuracyScore(type,name){
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getActualAccuracy/${type}?name=${name}`).pipe(retry(3));
+  getAccuracyScore(type,name,s_date,e_date){
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getActualAccuracy/${type}?name=${name}&start_date=${s_date}&end_date=${e_date}`).pipe(retry(3));
   }
   getAllTags(tagtype,docType):Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getalltags?tagtype=${tagtype}&docType=${docType}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getalltags?tagtype=${tagtype}&docType=${docType}`).pipe(retry(3));
   }
   updateFrConfig(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/updatefrconfig/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/updatefrconfig/${this.userId}`, data).pipe(retry(3));
   }
   getRules(): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/documentrules`).pipe(retry(3));
   }
   getAmountRules(): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/documentrulesnew`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/readerprules`).pipe(retry(3));
   }
   updateFrMetaData(documentId,data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/update_metadata/${documentId}`,data).pipe(retry(3));
   }
-  getModalList(v_id,doctype): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellist/${v_id}?doctype=${doctype}`).pipe(retry(3));
+  getModalList(v_id,type): Observable<any> {
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getmodellist/${v_id}?context=${type}`).pipe(retry(3));
   }
-  getModalListSP(s_id): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellistsp/${s_id}`).pipe(retry(3));
-  }
+  // getModalListSP(s_id): Observable<any> {
+  //   return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellistsp/${s_id}`).pipe(retry(3));
+  // }
 
   createNewTemplate(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/createmodel/${this.userId}`, data).pipe(retry(3));
@@ -532,7 +532,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/uploadfolder`, data).pipe(retry(3));
   }
   uploadHTMLFile(data,folderpath): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_html_template?folderpath=${folderpath}`,data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/upload_html_template?folderpath=${folderpath}`,data).pipe(retry(3));
   }
   uploadBlob(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_blob`, data).pipe(retry(3));
@@ -558,7 +558,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_fields_file`,frobj).pipe(retry(3));
   }
   getFinalData(modal_id): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getfinaldata/${modal_id}`).pipe(
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/blob/getfinaldata/${modal_id}`).pipe(
       tap((data: any) => {
         this.finalJsonData.next(data);
       })
@@ -587,16 +587,16 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/copymodelsSP/${serviceaccount}/${modelname}`).pipe(retry(3));
   }
   getallEntities(): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/get_all_entities/${this.userId}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/get_entities/${this.userId}`).pipe(retry(3));
   }
   updateEntity(ent,obj):Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/update_entity/${ent}`,obj).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/update_entity/${ent}`,obj).pipe(retry(3));
   }
   uploadDb(data, modal_id):Observable<any>{
     return  this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/newModel/${modal_id}/${this.userId}`, data).pipe(retry(3));
   }
   getTrainingTestRes(modal_id):Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getTrainTestResults/${modal_id}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getTrainTestResults/${modal_id}`).pipe(retry(3));
   }
   getTaggingInfo(container,folderpath,connstr,documentId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}`,{headers:new HttpHeaders({'container':container,'connstr':connstr,"path":folderpath})}).pipe(retry(3));

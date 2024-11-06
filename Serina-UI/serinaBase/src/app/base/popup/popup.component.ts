@@ -417,9 +417,9 @@ export class PopupComponent implements OnInit {
               })
               let va_bool:boolean;
               let lineArr = [];
-              this.manPowerData[0].linedata.filter(id=>{
-                if(!lineArr.includes(id.LineNumber)){
-                  lineArr.push(Number(id.LineNumber))
+              this.manPowerData.filter(id=>{
+                if(!lineArr.includes(id.LineNumber.Value)){
+                  lineArr.push(Number(id.LineNumber.Value))
                 }
               });
               va_bool = lineArr.every(e=> item_codes.includes(e))
@@ -434,18 +434,18 @@ export class PopupComponent implements OnInit {
                 el.quantity.forEach(item => {
                   item.itemCode = el.itemCode
                   item.LineNumber = el.itemCode
-                  if(el.shift == 'Shift 1'){
-                    item.tagName = 'timeSheet0'
-                  }
-                  if(el.shift == 'Shift 2'){
-                    item.tagName = 'timeSheet1'
-                  }
-                  if(el.shift == 'Shift 3'){
-                    item.tagName = 'timeSheet2'
-                  }
-                  if(el.shift == 'Shift 4'){
-                    item.tagName = 'timeSheet3'
-                  }
+                  // if(el.shift == 'Shift 1'){
+                  //   item.tagName = 'timeSheet0'
+                  // }
+                  // if(el.shift == 'Shift 2'){
+                  //   item.tagName = 'timeSheet1'
+                  // }
+                  // if(el.shift == 'Shift 3'){
+                  //   item.tagName = 'timeSheet2'
+                  // }
+                  // if(el.shift == 'Shift 4'){
+                  //   item.tagName = 'timeSheet3'
+                  // }
                 })
               })
             }
@@ -454,12 +454,23 @@ export class PopupComponent implements OnInit {
           let date: any = frmDate?.split(',')[0]?.split(' ')[1];
           let date1: any = toDate?.split(',')[0]?.split(' ')[1];
           let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
+          if(old_data.length>0){
+            sampleData.forEach(el=>{
+              old_data.forEach(old=>{
+                if(el.LineNumber == old.itemCode){
+                  old.quantity.forEach(qty=>{
+                    let tag = qty.date
+                    el[tag] = qty.quantity;
+                  })
+                }
+              })
+            })
+          }
           this.timeSheet = []
-          console.log(date, date1)
+          console.log(sampleData)
           if(date && date1){
             this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
           }
-          console.log(this.manPowerData)
           // if (this.manPowerData.length > 4) {
           //   this.manPowerData = [];
           //   sampleData = sampleData.filter(el => {
@@ -566,7 +577,6 @@ export class PopupComponent implements OnInit {
   // Main function to update records with date fields
   addDatesToRecords(records: any[], startDate, endDate): any[] {
     const dateRange = this.generateDateRange(startDate, endDate);
-    console.log(records,dateRange)
     records.forEach((record, recordIndex) => {
       dateRange.forEach((date, dateIndex) => {
         const formattedDate = formatDate(date, 'yyyy-MM-dd', 'en-US');
@@ -575,7 +585,7 @@ export class PopupComponent implements OnInit {
           this.manPowerTable.push(rec);
         }
         record[`${formattedDate}`] = {
-          Value: '',
+          Value: record[`${formattedDate}`]?.Value || '',
           id: `date_${recordIndex}_${dateIndex}`
         };
       });
@@ -679,22 +689,18 @@ export class PopupComponent implements OnInit {
 
   manpowerCreateFunction() {
     this.replicaSheetData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
-    console.log(this.replicaSheetData)
     // Step 1: Filter out the entries where "isTimesheet" value is false
     const isTimesheetsItems = this.replicaSheetData.filter((item:any) => item['isTimesheets'].Value == true);
-    console.log(isTimesheetsItems)
     let tableData = [];
     isTimesheetsItems.forEach((s, index) => {
       const s_count: number = s['shifts']?.Value;
       for (let i = 0; i < s_count; i++) {
-        console.log(`Shift ${i + 1}`);
         const duplicatedS = { ...s };
     
         // Iterate over each property of the duplicated object
         for (const tag in duplicatedS) {
           if (typeof duplicatedS[tag] === 'object' && duplicatedS[tag] !== null) {
             duplicatedS[tag] = { ...duplicatedS[tag], id: `${tag}_${index}_${i}` };
-            console.log(`${tag}_${index}_${i}`);
           }
         }
     
@@ -704,112 +710,38 @@ export class PopupComponent implements OnInit {
         tableData.push(duplicatedS);
       }
     });
-    
-    console.log(tableData)
-
-    // Get ids of "Is Timesheets" lines where value is false
-    const excludedLineItemIds = []
-    // isTimesheetsTag.linedata
-    //   .filter(data => data.Value != true)  // Adjust as needed based on the value's type
-    //   .map(data => data.idDocumentLineItems);  // Collect IDs of entries to exclude
-
-    // Step 2: Filter out the lines with matching IDs in all tags
-    // const grnData_po_filtered = this.replicaSheetData.map((item) => {
-    //   return {
-    //     ...item,
-    //     linedata: item.linedata.filter(data => !excludedLineItemIds.includes(data.idDocumentLineItems))
-    //   };
-    // });
-
-    // // Step 3: Find the "Number of Shifts" tag to get shift counts
-    // const numberOfShiftsTag = grnData_po_filtered.find(item => item.TagName === 'Number of Shifts');
-    // let replicatedData = [];
-    // if (!numberOfShiftsTag) {
-    //   console.error('Number of Shifts tag not found!');
-    // } else {
-    //   // Step 4: Replicate lines based on shift count and add shift info to each line
-    //   replicatedData = grnData_po_filtered.map((item) => {
-    //     return {
-    //       ...item,
-    //       linedata: item.linedata.flatMap((line) => {
-    //         // Find the corresponding shift count from the Number of Shifts tag using the same idDocumentLineItems
-    //         const shiftCountLine = numberOfShiftsTag.linedata.find(shiftLine => shiftLine.idDocumentLineItems === line.idDocumentLineItems);
-    //         const shiftCount = shiftCountLine ? parseInt(shiftCountLine.Value, 10) : 1;  // Default to 1 if not found
-    //         // Replicate the line based on the shift count
-    //         return Array.from({ length: shiftCount }, (_, index) => ({
-    //           ...line,
-    //           idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,
-    //           tagName_u: `${line.tagName_u}-${index + 1}`,
-    //           Value: item.TagName == 'Number of Shifts' ? `Shift ${index + 1}` : line.Value  // Add Shift information per replication
-    //         }));
-    //       })
-    //     };
-    //   });
-    // }
 
     this.manPowerData = tableData;
-    // this.grnLineCount = this.manPowerData[0].linedata;
   }
 
   onChange(line, value) {
     const numberOfDays = this.ds.number_of_days; 
-    console.log(line,value)
-
-    // let sepValuesByLineNumber = {};
-    // this.manPowerData.forEach(item => {
-    //   if (!['Description', 'PO Qty', 'PO Balance Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
-    //     item.linedata.forEach(line => {
-    //       const lineNumber = line.LineNumber;
-    //       const value = parseFloat(line.Value);
-
-    //       // Initialize the data structure if it doesn't exist for this line number
-    //       if (!sepValuesByLineNumber[lineNumber]) {
-    //         sepValuesByLineNumber[lineNumber] = { totalValue: 0, shiftCount: 0 };
-    //       }
-
-    //       // Accumulate Sep values across shifts
-    //       if (!isNaN(value)) {
-    //         sepValuesByLineNumber[lineNumber].totalValue += value;
-    //       } 
-    //     });
-    //   } else if (item.TagName === "Number of Shifts") {
-    //     // Get the number of shifts for each LineNumber
-    //     item.linedata.forEach(line => {
-    //       const lineNumber = line.LineNumber;
-    //       const shiftCount = parseInt(line.Value.replace("Shift", ""));
-
-    //       if (!isNaN(shiftCount)) {
-    //         sepValuesByLineNumber[lineNumber].shiftCount = shiftCount;
-    //       } 
-    //     });
-    //   }
-    // });
-
-    // Now calculate the GRN quantity and update the JSON
-    // this.manPowerData.forEach(item => {
-    //   if (item.TagName === "GRN - Quantity") {
-    //     item.linedata.forEach(line => {
-    //       const lineNumber = line.LineNumber;
-    //       const sepData = sepValuesByLineNumber[lineNumber];
-
-    //       if (sepData && (!line.isSavedData || this.isEditGRN)) {
-    //         const { totalValue, shiftCount } = sepData;
-
-    //         // Check for valid shiftCount and totalValue before dividing
-    //         if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
-
-    //           const calculatedGRNQuantity = totalValue / (numberOfDays * shiftCount);
-    //           line.Value = calculatedGRNQuantity.toFixed(2); 
-    //         } else {
-    //           line.Value = "0"; // Default to 0 if something is missing
-    //         }
-    //       } else {
-    //         line.Value = "0"; // Default to 0 if no data
-    //       }
-    //     });
-    //   }
-    // });
-  }
+    const lineNumber = line.LineNumber.Value;
+    let totalShiftsData = 0;
+    let shiftsCount = 0;
+    this.manPowerData.forEach(ele=>{
+      if(ele.LineNumber.Value == lineNumber){
+        for(const tag in ele){
+          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+            if(ele[tag].Value){
+              totalShiftsData = totalShiftsData + Number(ele[tag].Value)
+            }
+          }
+        }
+        if(ele.shifts.Value){
+          shiftsCount = Number(ele.shifts.Value);
+        }
+      }
+    });
+    if(shiftsCount > 0){
+      const grnQty = totalShiftsData / (shiftsCount * Number(numberOfDays));
+      this.manPowerData.forEach(ele=>{
+        if(ele.LineNumber.Value == lineNumber){
+          ele.GRNQty.Value = grnQty.toFixed(3);
+        }
+      });
+    }
+   }
 
   confirmFun(body, type, head) {
     return this.mat_dlg.open(ConfirmationComponent, {

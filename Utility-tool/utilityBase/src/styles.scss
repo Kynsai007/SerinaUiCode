@@ -15,11 +15,16 @@ body {
 body {
     margin: 0;
 }
-
+$themeColor: rgb(53, 141, 192);
+.primaryButton{
+  background-color: $themeColor;
+  color: #ffffff;
+  font-size:large;
+}
 
 .btnbg {
-    background: #f2be42;
-    color: #272727;
+    background: rgb(53, 141, 192);
+    color: #ffffff;
     border: 0;
 }
 .f-18 {
@@ -107,7 +112,7 @@ input:checked + .slider:before {
 }
 
 input:checked + .slider {
-  background-color: #f2be42;
+  background-color: #358dc0;
 }
 
 input:focus + .slider {
@@ -183,15 +188,15 @@ input:checked + .slider:before {
 
 .btnbg-s{
   color: #ffffff;
-  background-color: #273c75;
+  background-color: $themeColor;
 }
 .btncancel{
   background-color: #ffffff;
-  color: #273c75;
-  border: 1px solid #273c75;
+  color: $themeColor;
+  border: 1px solid $themeColor;
 }
 .goBackIn{
-    color: #f2be42;
+    color: #358dc0;
     font-size: 20px;
     margin-left: 10px;
     cursor: pointer;

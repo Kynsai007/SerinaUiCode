@@ -19,7 +19,7 @@ serviceTriggerBoolean: boolean;
   settingsPageAccess: boolean;
   vendor_SP_PageAccess: boolean;
   uploadPermissionBoolean: any;
-  enable_create_grn: boolean;
+  enable_create_grn: boolean = true;
   show_document_status: boolean;
   constructor() { }
 }

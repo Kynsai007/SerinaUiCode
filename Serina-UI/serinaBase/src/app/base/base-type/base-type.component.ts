@@ -115,6 +115,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
     this.portalName = this.dataStoreService.portalName;
+    this.dataStoreService.configData.client_name = 'Cenomi'
     if(this.dataStoreService.configData.client_name == 'Cenomi'){
       this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
       this.dataStoreService.changeTheme("#20113E",'#ffffff');

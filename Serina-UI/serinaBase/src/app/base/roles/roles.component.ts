@@ -1105,11 +1105,11 @@ export class RolesComponent implements OnInit {
           //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.DepartmentName });
           // }
           // else {
-            let merge = { ...element.Entity,...element.EntityBody,...element.UserAccess,...element.Department};
-            entityData.push(merge);
-            if (element.Entity) {
+            // let merge = { ...element.Entity,...element.EntityBody,...element.UserAccess,...element.Department};
+            entityData.push(element);
+            if (element.EntityName) {
               // Push the Entity object into the entities array
-              this.entities.push({ idEntity: element.Entity.idEntity, EntityName: `${element.Entity.EntityName}-${element?.Entity?.EntityCode}` }); 
+              this.entities.push({ idEntity: element.idEntity, EntityName: `${element.Entity.EntityName}-${element?.Entity?.EntityCode}` }); 
             }
             let preApproveBool = false;
             if(element.UserAccess?.preApprove == 1){

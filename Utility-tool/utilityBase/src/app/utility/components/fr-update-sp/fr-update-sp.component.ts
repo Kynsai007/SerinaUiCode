@@ -117,7 +117,7 @@ export class FrUpdateSpComponent implements OnInit {
       this.SPData = this.sharedService.currentSPData;
       this.SPName = this.sharedService.currentSPData.ServiceProviderName;
     }
-    this.getAccuracyScore();
+    this.getAccuracyScore('2024-10-01','2024-10-30');
     this.getfrConfig();
     this.getModalList();
   }
@@ -129,8 +129,8 @@ export class FrUpdateSpComponent implements OnInit {
     }, 500);
   }
 
-  getAccuracyScore(){
-    this.sharedService.getAccuracyScore("sp",this.SPName).subscribe(data => {
+  getAccuracyScore(s_date,e_date){
+    this.sharedService.getAccuracyScore("sp",this.SPName,s_date,e_date).subscribe(data => {
       this.accuracyScore = data;
     })
   }
@@ -203,12 +203,12 @@ export class FrUpdateSpComponent implements OnInit {
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
-        return modal_id == ele.DocumentModel.idDocumentModel;
+        return modal_id == ele.idDocumentModel;
       })
       this.modelData = selected[0];
-      this.mobservice.setModelData(this.modelData.DocumentModel);
-      sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
-      this.FolderPath = this.modelData.DocumentModel.folderPath;
+      this.mobservice.setModelData(this.modelData);
+      sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
+      this.FolderPath = this.modelData?.folderPath;
 
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
@@ -268,9 +268,9 @@ export class FrUpdateSpComponent implements OnInit {
         this.downloading = false;
       })
   }
-  downloadDocAccuracy(tagtype){
+  downloadDocAccuracy(tagtype,s_date,e_date){
     this.downloading = true;
-    this.sharedService.downloadDocAccuracy(tagtype).subscribe((response:any)=>{
+    this.sharedService.downloadDocAccuracy(tagtype,s_date,e_date).subscribe((response:any)=>{
       let blob: any = new Blob([response], { type: 'application/vnd.ms-excel; charset=utf-8' });
       const url = window.URL.createObjectURL(blob);
       // window.open(url);
@@ -443,12 +443,12 @@ export class FrUpdateSpComponent implements OnInit {
     this.enableMetaDataBoolean = value;
   }
   getModalList() {
-    this.sharedService.getModalListSP(this.SPData.idServiceProvider).subscribe((data: any) => {
+    this.sharedService.getModalList(this.SPData.idServiceProvider,'service').subscribe((data: any) => {
       this.modalList = data;
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
-        this.selectTemplate(this.modalList[0].DocumentModel.idDocumentModel);
+        this.selectTemplate(this.modalList[0].idDocumentModel);
         this.checkselect = false;
       }
     })
@@ -464,7 +464,7 @@ export class FrUpdateSpComponent implements OnInit {
       return;
     }
     if(this.modalList && this.modalList.length > 0){
-      let checkexists = this.modalList.filter(v => v.DocumentModel.modelName == value['modelName']);
+      let checkexists = this.modalList.filter(v => v.modelName == value['modelName']);
       if(checkexists.length > 0){
         this.modaladderr = true;
         return;

@@ -190,7 +190,7 @@ export class Comparision3WayComponent
     { header: 'S.No', field: '' },
     { header: 'Description', field: 'PODescription' },
     { header: 'PO quantity', field: 'PurchQty'},
-    { header: 'Inv - Quantity', field: 'GRNQuantity' },
+    { header: 'Inv - Quantity', field: 'Quantity' },
     { header: 'GRN - Quantity', field: 'GRNQuantity' },
     { header: 'PO balance quantity', field: 'RemainInventPhysical'},
     { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
@@ -417,7 +417,7 @@ export class Comparision3WayComponent
   manpowerHeaderId: any;
   po_qty_array: any;
   po_balance_qty_array: any;
-  disable_save_btn: boolean;
+  disable_save_btn: boolean = false;
   saveDisabled: boolean;
   grnTooltip: string;
   headerData = [];
@@ -485,6 +485,7 @@ export class Comparision3WayComponent
     this.isDesktop = this.dataService.isDesktop;
     this.documentViewBool = this.isDesktop;
     this.enable_create_grn = this.permissionService.enable_create_grn;
+    console.log(this.enable_create_grn)
     this.doc_status = this.dataService?.editableInvoiceData?.status;
     this.batch_id = this.dataService?.editableInvoiceData?.batch_id;
     this.activatedRoute.queryParams.subscribe(params => {
@@ -1467,6 +1468,8 @@ export class Comparision3WayComponent
           Object.keys(item).forEach(label=>{
             if(label === 'GRNAmountExcTax'){
               this.GRN_line_total = this.GRN_line_total + Number(item[label].Value)
+            } else if(label === 'PODescription' && item[label].Value){
+              this.descrptonBool = true;
             }
           })
         })
@@ -2481,6 +2484,7 @@ export class Comparision3WayComponent
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice;
+      console.log(unitPrice,newQuantity)
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
       // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
       //   .linedata.find(data => data[field] === lineItem[field]);
@@ -2497,12 +2501,16 @@ export class Comparision3WayComponent
       //   }
       // })
       this.lineDisplayData.forEach(item=>{
+        console.log(item)
         Object.keys(item).forEach(label=>{
           if(label === 'GRNAmountExcTax'){
+            console.log(this.GRN_line_total, Number(item[label].Value))
             this.GRN_line_total = this.GRN_line_total + Number(item[label].Value);
           }
           if(linedata.itemCode == item['itemCode']){
-            item['GRNAmountExcTax'] = amountExcTax;
+            
+            item['GRNAmountExcTax'].Value = amountExcTax;
+            console.log(item['GRNAmountExcTax'])
           }
         })
       })
@@ -2579,8 +2587,12 @@ export class Comparision3WayComponent
     if(txt.includes('saved')){
       this.isDraft = true ;
     }
-    const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
-    let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
+    // const GRNQtyArr = this.lineDisplayData.find(item=> item.GRNQty === 'GRN - Quantity');
+    let label = 'GRNQuantity';
+    if(this.GRN_PO_Bool){
+      label = 'GRNQty'
+    }
+    let validationBool = this.lineDisplayData?.some(el=> el[label]?.Value == '' ||  el[label]?.Value == undefined);
     if (validationBool) {
       this.error('Please add a valid GRN Quantity');
       return;
@@ -2826,6 +2838,39 @@ export class Comparision3WayComponent
   }
 
   grnAPICall(boolean, txt) {
+    // let arr = [];
+    let grnWithInvPayload = [];
+    this.lineDisplayData.forEach((objV) => {
+      // Object.keys(objV).forEach(ele=>{
+      //     if (this.router.url.includes("GRN_approvals")) {
+      //       if (ele == 'GRNQuantity') {
+      //         let obj = {
+      //           line_id: objV?.invoice_itemcode?.Value,
+      //           quantity: objV[ele]?.Value,
+      //         }
+      //         arr.push(obj)
+      //       }
+      //     } else {
+
+      //       if (ele == 'GRNQuantity') {
+      //         let obj = {
+      //           line_id: objV?.LineNumber?.Value,
+      //           quantity: objV[ele]?.Value,
+      //         }
+      //         arr.push(obj)
+      //       }
+      //     }
+      // })
+      let objData = {
+        itemCode : objV?.LineNumber?.Value,
+        lineData: {
+          'Quantity' : { Value : objV?.GRNQuantity?.Value },
+          'UnitPrice' : { Value: objV?.GRNUnitPrice?.Value}
+        }
+      }
+      grnWithInvPayload.push(objData)
+
+    })
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
       boolean, this.GRNObject
@@ -2865,7 +2910,11 @@ export class Comparision3WayComponent
   }
 
   validateInvPOUnitPrice() {
-    this.SharedService.validateUnitprice(this.validatePOInvUnit).subscribe((data: any) => {
+    let arr = []
+    this.lineDisplayData.forEach(el=>{
+      arr.push({"invoice_itemcode": el.invoice_itemcode.Value});
+    })
+    this.SharedService.validateUnitprice(arr).subscribe((data: any) => {
       if (data.result.length > 0) {
         this.validateUnitpriceBool = true;
       } else {
@@ -2940,23 +2989,25 @@ export class Comparision3WayComponent
           if(this.dataService.isEditGRN){
             this.manPowerAPI_request.grnDocumentId = this.invoiceID;
           }
-          const response = this.prepare_api_request(resp.data);
+          const response = this.prepare_manpower_payload(resp.data);
           this.manPowerAPI_request.data = response;
           this.manPowerGRNData = resp.data;
-          let grnQuantity = resp.data.find(el => el.TagName == 'GRN - Quantity');
+          
+          // Replacing the GRN Qty with timesheet qty
           this.lineDisplayData = this.lineDisplayData.map(el => {
-            if (el.TagName == 'GRN - Quantity') {
-              el.linedata.forEach(ele => {
-                grnQuantity.linedata.forEach(res => {
-                  if (ele.LineNumber == res.LineNumber) {
-                    this.onChangeGrn(ele, res.Value,res);
-                    ele.Value = res.Value;
+            for(const tag in el){
+              if(tag == 'GRNQty'){
+                this.manPowerGRNData.forEach(x=>{
+                  if(x.LineNumber.Value == el.LineNumber.Value){
+                    this.onChangeGrn('GRNQty', x.GRNQty.Value, x);
+                    el.GRNQty.Value = x.GRNQty.Value;
                   }
                 })
-              })
+              }
             }
             return el;
           })
+          console.log(this.lineDisplayData)
           this.SpinnerService.hide();
         }
         this.SpinnerService.hide();
@@ -2964,97 +3015,28 @@ export class Comparision3WayComponent
     }
   }
 
-  prepare_api_request(inputData) {
+  prepare_manpower_payload(inputData){
     this.saveDisabled = false;
     let shiftData = [];
-
-    // Organize shift data for each LineNumber
-    let shiftsByLineNumber = {};
-    inputData.forEach(item => {
-      if (item.TagName === "Number of Shifts" || item.TagName === "Shift") {
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          const shift = line.Value;
-
-          if (!shiftsByLineNumber[lineNumber]) {
-            shiftsByLineNumber[lineNumber] = {};
-          }
-
-          // Associate the shift with the corresponding idDocumentLineItems for this line
-          shiftsByLineNumber[lineNumber][line.idDocumentLineItems] = shift;
-        });
-      }
-    });
-    // Gather quantities by date for each LineNumber and shift
-    let quantitiesByLineNumberAndShift = {};
-    inputData.forEach(item => {
-      if (!['Description', 'PO Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity','PO Balance Qty'].includes(item.TagName)) {
-        const date = item.TagName;
-
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          if(line.Value == '' || line.Value == undefined){
+    inputData.forEach(el=>{
+      let quantity = [];
+      for(const tag in el){
+        if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+          if(el[tag].Value){
+            quantity.push({date:tag, quantity: el[tag].Value})
+          } else {
             this.saveDisabled = true;
           }
-          const value = parseFloat(line.Value);
-          
-          const idDocumentLineItems = line.idDocumentLineItems;
-
-          // Check if there is a shift associated with this idDocumentLineItems for the current lineNumber
-          const shift = shiftsByLineNumber[lineNumber]?.[idDocumentLineItems];
-
-          if (shift) {
-            // Ensure data structure exists for the current shift and line number
-            if (!quantitiesByLineNumberAndShift[lineNumber]) {
-              quantitiesByLineNumberAndShift[lineNumber] = {};
-            }
-
-            if (!quantitiesByLineNumberAndShift[lineNumber][shift]) {
-              quantitiesByLineNumberAndShift[lineNumber][shift] = [];
-            }
-
-            // Add the date and quantity to the correct shift
-            quantitiesByLineNumberAndShift[lineNumber][shift].push({
-              date: date,
-              quantity: value
-            });
-          } 
-        });
+        }
       }
-    });
-
-    // Gather durationmonth from linedisplaydata
-    let durationByLineNumber = {};
-    this.lineDisplayData.forEach(item => {
-      if (item.TagName == "Duration in months") {
-        item.linedata.forEach(line => {
-          const lineNumber = line.LineNumber;
-          const idDocumentLineItems = line.idDocumentLineItems;
-          const duration = line.Value; 
-          if (!durationByLineNumber[lineNumber]) {
-            durationByLineNumber[lineNumber] = {};
-          }
-
-          durationByLineNumber[lineNumber][idDocumentLineItems] = parseInt(duration, 10); // Store the duration as integer
-        });
-      }
-    });
-
-    // Prepare the result in the desired format
-    Object.keys(quantitiesByLineNumberAndShift).forEach(lineNumber => {
-      Object.keys(quantitiesByLineNumberAndShift[lineNumber]).forEach(shift => {
-        const durationmonth = durationByLineNumber[lineNumber][lineNumber] || null;
-
-        shiftData.push({
-          itemCode: lineNumber,
-          shift: shift,
-          quantity: JSON.stringify(quantitiesByLineNumberAndShift[lineNumber][shift]),
-          durationmonth: durationmonth
-        });
+      shiftData.push({
+        itemCode: el.LineNumber.Value,
+        shift: el.shiftName.Value,
+        quantity: JSON.stringify(quantity),
+        durationmonth: el.durationMonth.Value
       });
-    });
-
-    return shiftData;
+    })
+    return shiftData
   }
 
   createTimeSheetDisplayData(str) {
@@ -3487,7 +3469,8 @@ export class Comparision3WayComponent
     this.progress = 1;
     const formData: any = new FormData();
     for (const file of this.uploadFileList) {
-      formData.append('files', file, file.name);
+      const cleanedFileName = file.name.replace(/\.(?=.*\.)/g, '');
+      formData.append('files', file, cleanedFileName);
     }
     this.SpinnerService.show()
     this.SharedService.uploadSupportDoc(formData)
