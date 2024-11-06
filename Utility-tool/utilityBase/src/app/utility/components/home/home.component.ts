@@ -1,7 +1,7 @@
 import { SharedService } from 'src/app/services/shared/shared.service';
 import { AuthenticationService } from 'src/app/services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +16,12 @@ export class HomeComponent implements OnInit {
   showVendorsTab:boolean=true;
   showCustomersTab:boolean=true;
   showGPTTab:boolean=false;
+  isSettingsActive: boolean;
   constructor(private authService : AuthenticationService,
     private sharedService : SharedService,public router:Router) { }
 
   ngOnInit(): void {
+    this.addActiveClass();
     let ocr_engine = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.ocr_engine;
     let docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
     let serviceTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.serviceInvoices;
@@ -54,7 +56,14 @@ export class HomeComponent implements OnInit {
     }
     this.isAdmin = this.sharedService.isAdmin;
   }
-
+  addActiveClass(){
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        // Check if the route includes "settings"
+        this.isSettingsActive = event.url.includes('settings');
+      }
+    });
+  }
   signOut(){
     this.authService.logout();
   }
