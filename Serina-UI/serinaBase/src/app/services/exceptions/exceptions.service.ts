@@ -142,7 +142,7 @@ export class ExceptionsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateGRNdata/${this.userId}/idDocument/${this.invoiceID}`,data)
   }
   readProjectData(){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/getProjectIDs/1?inv_id=${this.invoiceID}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/getCreditNoteProjIds/1?inv_id=${this.invoiceID}`);
   }
   readProjectCatData(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/getProjectCategoryIDs/1?inv_id=${this.invoiceID}`);

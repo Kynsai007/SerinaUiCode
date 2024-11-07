@@ -449,10 +449,10 @@ export class RolesComponent implements OnInit {
       this.max_role_amount = 0;
   
       this.sharedService.displayRoleInfo().subscribe((data: any) => {
-        this.roleInfoDetails = data.roleinfo.AccessPermissionDef;
+        this.roleInfoDetails = data.roleinfo;
         this.role_priority = this.roleInfoDetails.Priority;
   
-        this.max_role_amount = data.roleinfo?.AmountApproveLevel?.MaxAmount || 0;
+        this.max_role_amount = data.roleinfo?.MaxAmount || 0;
   
         this.AddorModifyUserBoolean = this.roleInfoDetails.User === 1;
         this.userRoleBoolean = this.roleInfoDetails.Permissions === 1;
@@ -790,6 +790,7 @@ export class RolesComponent implements OnInit {
 
       });
     }
+    console.log(this.updateUsersEntityInfo)
   }
 
   readDeparment(){
@@ -1109,41 +1110,41 @@ export class RolesComponent implements OnInit {
             entityData.push(element);
             if (element.EntityName) {
               // Push the Entity object into the entities array
-              this.entities.push({ idEntity: element.idEntity, EntityName: `${element.Entity.EntityName}-${element?.Entity?.EntityCode}` }); 
+              this.entities.push({ idEntity: element?.idEntity, EntityName: `${element.EntityName}-${element?.EntityCode}` }); 
             }
             let preApproveBool = false;
-            if(element.UserAccess?.preApprove == 1){
+            if(element?.preApprove == 1){
               preApproveBool = true;
             } else {
               preApproveBool = false;
             }
 
             let roleName = this.subroleList?.filter(el=>{
-              return el.idAccessPermissionDef == element.UserAccess?.subRole
+              return el.idAccessPermissionDef == element.subRole
             })
-            let clubedEnt = element.Entity?.EntityName
-            if(element?.Entity?.EntityCode){
-              clubedEnt = `${element.Entity?.EntityName}-${element?.Entity?.EntityCode}`
+            let clubedEnt = element?.EntityName
+            if(element?.EntityCode){
+              clubedEnt = `${element?.EntityName}-${element?.EntityCode}`
             }
           this.selectedEntitys.push({
             entity: clubedEnt,
-            entityBody: element.EntityBody?.EntityBodyName,
-            entityDept: element.Department?.DepartmentName,
-            idUserAccess: element.UserAccess?.idUserAccess,
-            EntityID: element.Entity?.idEntity,
-            EntityBodyID: element.EntityBody?.idEntityBody,
-            DepartmentID: element.Department?.idDepartment,
-            maxAmount:element.UserAccess?.maxAmount,
-            userPriority:element.UserAccess?.userPriority,
+            entityBody: element?.EntityBodyName,
+            entityDept: element?.DepartmentName,
+            idUserAccess: element?.idUserAccess,
+            EntityID: element?.idEntity,
+            EntityBodyID: element?.idEntityBody,
+            DepartmentID: element?.idDepartment,
+            maxAmount:element?.maxAmount,
+            userPriority:element?.userPriority,
             preApprove:preApproveBool,
             subRole: roleName[0]?.NameOfRole
           });
           this.updateEntityUserDummy.push({
-            idUserAccess: element.UserAccess?.idUserAccess,
-            EntityID: element.Entity?.idEntity,
-            EntityBodyID: element.EntityBody?.idEntityBody,
-            DepartmentID: element.Department?.idDepartment,
-            subRole:element.UserAccess?.idUserAccess
+            idUserAccess: element?.idUserAccess,
+            EntityID: element?.idEntity,
+            EntityBodyID: element?.idEntityBody,
+            DepartmentID: element?.idDepartment,
+            subRole:element?.idUserAccess
           });
           if(!this.financeApproveDisplayBoolean){
               this.entitySelection_user = this.entityList.filter(ele=>{

@@ -1864,45 +1864,35 @@ export class Comparision3WayComponent
       let errorType: string;
       let errorTypeHead: string;
       let errorTypeLine: string;
-      this.inputData.forEach((data: any) => {
-        if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
-          if (data.Value == '' || isNaN(+data.Value)) {
+      Object.keys(this.inputData).forEach(tag=>{
+        if (tag == 'InvoiceTotal' || tag == 'SubTotal') {
+          if (this.inputData[tag].Value == '' || isNaN(+this.inputData[tag].Value)) {
             count++;
             errorTypeHead = 'AmountHeader';
           }
-        } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
-          if (data.Value == '') {
+        } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(tag)) {
+          if (this.inputData[tag].Value == '') {
             count++;
             errorType = 'emptyHeader';
           }
         }
-      });
+      })
 
       this.lineDisplayData.forEach((element) => {
-        if (
-          ['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)
-        ) {
-          element.items.forEach((ele) => {
-            ele.linedetails.forEach((ele1) => {
-              if (
-                ele1.invline[0]?.DocumentLineItems?.Value == '' ||
-                isNaN(+ele1.invline[0]?.DocumentLineItems?.Value)
-              ) {
+        Object.keys(element.lines).forEach(tag=>{
+          if (['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(tag)) {
+            if (element.lines[tag]?.Value == '' ||isNaN(+element.lines[tag]?.Value)) {
+              count++;
+              errorTypeLine = 'AmountLine';
+            }
+            if (tag == 'Quantity') {
+              if (element.lines[tag]?.Value == 0) {
                 count++;
-                errorTypeLine = 'AmountLine';
+                errorTypeLine = 'quantity';
               }
-
-              if (element.tagname == 'Quantity') {
-                if (
-                  ele1.invline[0]?.DocumentLineItems?.Value == 0
-                ) {
-                  count++;
-                  errorTypeLine = 'quantity';
-                }
-              }
-            });
-          });
-        }
+            }
+          }
+        })
       });
       if (count == 0) {
         this.uploadCompleted = true;
@@ -4156,32 +4146,6 @@ export class Comparision3WayComponent
   }
 
   onChangeAdvance(data, in_value, tagName) {
-    // let amount_old;
-    // let amt_line_id;
-    // let ad_line_id;
-    // let ad_percent_old;
-    // let prev_value_amt;
-    // let prev_value_ad;
-    // this.lineDisplayData.forEach(tag=>{
-    //   if(tag.TagName == 'AmountExcTax'){
-    //     prev_value_amt = data.Value.toString();
-    //     tag.linedata.forEach(ele=>{
-    //       if(ele.DocumentLineItems.itemCode == data.itemCode){
-    //         amount_old = ele.DocumentLineItems.Value;
-    //         amt_line_id = ele.DocumentLineItems.idDocumentLineItems;
-    //       }
-    //     })
-    //   }
-    //   if(tag.TagName == 'AdvancePercent'){
-    //     prev_value_ad = data.Value.toString();
-    //     tag.linedata.forEach(ele=>{
-    //       if(ele.DocumentLineItems.itemCode == data.itemCode){
-    //         ad_percent_old = ele.DocumentLineItems.Value;
-    //         ad_line_id = ele.DocumentLineItems.idDocumentLineItems;
-    //       }
-    //     })
-    //   }
-    // })
     this.advanceAPIbody = {
       "linenumber": data.itemCode,
       "prev_value": data.Value.toString(),
@@ -4247,23 +4211,27 @@ export class Comparision3WayComponent
     this.filteredPreData = filtered;
   }
   onSelectPrePay(event, value, tagname, index) {
-    let old_value
-    this.temp_line_data.forEach(tag => {
-      if (tag.tagname == tagname) {
-        old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
-      }
-    })
-    let obj = {
-      tag_id: value.idDocumentLineItems,
-      tag_name: tagname,
-      prev_value: old_value,
-      curr_value: event,
-    }
-    this.exceptionService.savePreData(obj).subscribe((data: any) => {
-      this.success('Changes saved successfully')
-    }, err => {
-      this.error("Server error or Please check the data");
-    })
+    this.onChangeValue(tagname,event,value);
+    // setTimeout(() => {
+    //   this.saveChanges();
+    // }, 1000);
+    // let old_value
+    // this.temp_line_data.forEach(tag => {
+    //   if (tag.tagname == tagname) {
+    //     old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
+    //   }
+    // })
+    // let obj = {
+    //   tag_id: value.idDocumentLineItems,
+    //   tag_name: tagname,
+    //   prev_value: old_value,
+    //   curr_value: event,
+    // }
+    // this.exceptionService.savePreData(obj).subscribe((data: any) => {
+    //   this.success('Changes saved successfully')
+    // }, err => {
+    //   this.error("Server error or Please check the data");
+    // })
   }
 
   filterProject(event, tag) {
@@ -4289,18 +4257,22 @@ export class Comparision3WayComponent
   }
 
   onSelectProject(event, value) {
-    let old_val: any = this.temp_header_data.filter(el => value.idDocumentData == el?.DocumentData?.idDocumentData);
-    let obj = {
-      tag_id: value.idDocumentData,
-      tag_name: value.TagLabel,
-      prev_value: old_val[0]?.DocumentData?.Value,
-      curr_value: event,
-    }
-    this.exceptionService.saveProjectData(obj).subscribe((data: any) => {
-      this.success('Changes saved successfully')
-    }, err => {
-      this.error("Server error or Please check the data");
-    })
+    this.onChangeValue(value.TagLabel,event,value);
+    setTimeout(() => {
+      this.saveChanges();
+    }, 1000);
+    // let old_val: any = this.temp_header_data.filter(el => value.idDocumentData == el?.DocumentData?.idDocumentData);
+    // let obj = {
+    //   tag_id: value.idDocumentData,
+    //   tag_name: value.TagLabel,
+    //   prev_value: old_val[0]?.DocumentData?.Value,
+    //   curr_value: event,
+    // }
+    // this.exceptionService.saveProjectData(obj).subscribe((data: any) => {
+    //   this.success('Changes saved successfully')
+    // }, err => {
+    //   this.error("Server error or Please check the data");
+    // })
   }
   ap_api_body() {
     return {
