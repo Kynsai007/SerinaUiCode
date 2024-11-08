@@ -423,6 +423,7 @@ export class Comparision3WayComponent
   headerData = [];
   lineTableHeaders: string[];
   isDraft: boolean;
+  serverError: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -472,11 +473,7 @@ export class Comparision3WayComponent
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
-    if(this.GRN_PO_Bool){
-      this.lineTable = commonTags;
-    } else {
-      this.readFilePath();
-    }
+
     console.log(this.lineTable)
     this.ent_code = this.dataService.ent_code;
     this.flipEnabled = true;
@@ -485,7 +482,6 @@ export class Comparision3WayComponent
     this.isDesktop = this.dataService.isDesktop;
     this.documentViewBool = this.isDesktop;
     this.enable_create_grn = this.permissionService.enable_create_grn;
-    console.log(this.enable_create_grn)
     this.doc_status = this.dataService?.editableInvoiceData?.status;
     this.batch_id = this.dataService?.editableInvoiceData?.batch_id;
     this.activatedRoute.queryParams.subscribe(params => {
@@ -502,7 +498,11 @@ export class Comparision3WayComponent
     
     this.ERPCostAllocation();
     this.AddPermission();
-
+    if(this.GRN_PO_Bool){
+      this.lineTable = commonTags;
+    } else {
+      this.readFilePath();
+    }
     this.isAdmin = this.dataService.isAdmin;
 
   }
@@ -1251,6 +1251,7 @@ export class Comparision3WayComponent
       (error) => {
         this.SpinnerService.hide();
         this.error("Server error");
+        this.serverError = true;
       }
     );
   }
@@ -1653,6 +1654,7 @@ export class Comparision3WayComponent
       (error) => {
         this.SpinnerService.hide();
         this.error("Server error");
+        this.serverError = true;
       }
     );
   }
@@ -1666,7 +1668,7 @@ export class Comparision3WayComponent
   readFilePath() {
     this.showInvoice = '';
     this.SpinnerService.show();
-    this.exceptionService.readFilePath().subscribe(
+    this.SharedService.getInvoiceFilePath().subscribe(
       (data: any) => {
         this.content_type = data?.content_type;
         if (data.filepath && data.content_type == 'application/pdf') {
@@ -2267,17 +2269,7 @@ export class Comparision3WayComponent
   }
 
   filterPO(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.poList.length; i++) {
-      let country = this.poList[i];
-      if (
-        country.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(country);
-      }
-    }
-    this.filteredPO = filtered;
+    this.filteredPO = this.dataService.uni_filter(this.poList,'PODocumentID',event);
   }
 
   onSelectPO(value) {
@@ -2300,17 +2292,17 @@ export class Comparision3WayComponent
     });
   }
   filterPOLine(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.lineItems.length; i++) {
-      let item = this.lineItems[i];
-      if (
-        item.Value.toLowerCase().includes(query.toLowerCase())
-      ) {
-        filtered.push(item);
-      }
-    }
-    this.filteredPOLine = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.lineItems.length; i++) {
+    //   let item = this.lineItems[i];
+    //   if (
+    //     item.Value.toLowerCase().includes(query.toLowerCase())
+    //   ) {
+    //     filtered.push(item);
+    //   }
+    // }
+    this.filteredPOLine = this.dataService.uni_filter(this.lineItems,'Value',event);
   }
   readErrorTypes() {
     this.exceptionService.readErrorTypes().subscribe((data: any) => {
@@ -3272,16 +3264,8 @@ export class Comparision3WayComponent
     this.getDate();
   }
   filterPOnumber(event) {
-    let filtered: any[] = [];
-    let query = event.query;
     if (this.poNumbersList?.length > 0) {
-      for (let i = 0; i < this.poNumbersList?.length; i++) {
-        let PO: any = this.poNumbersList[i];
-        if (PO.PODocumentID.toLowerCase().includes(query.toLowerCase())) {
-          filtered.push(PO);
-        }
-        this.filteredPO = filtered;
-      }
+      this.filteredPO = this.dataService.uni_filter(this.poNumbersList,'PODocumentID',event);
     }
   }
   POsearch(val) {
@@ -3698,17 +3682,17 @@ export class Comparision3WayComponent
       })
   }
   filterEntity(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.entityList?.length; i++) {
-      let country = this.entityList[i];
-      if (
-        country.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(country);
-      }
-    }
-    this.filteredEnt = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.entityList?.length; i++) {
+    //   let country = this.entityList[i];
+    //   if (
+    //     country.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(country);
+    //   }
+    // }
+    this.filteredEnt = this.dataService.uni_filter(this.entityList,'EntityName',event);
   }
   // onSelectEnt(event){
   //   this.selectedEntity = event.EntityName;
@@ -3745,17 +3729,17 @@ export class Comparision3WayComponent
   }
 
   filterPOnumber_LCM(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.POlist_LCM?.length; i++) {
-      let country = this.POlist_LCM[i];
-      if (
-        country.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(country);
-      }
-    }
-    this.filteredPO = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.POlist_LCM?.length; i++) {
+    //   let country = this.POlist_LCM[i];
+    //   if (
+    //     country.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(country);
+    //   }
+    // }
+    this.filteredPO = this.dataService.uni_filter(this.POlist_LCM,'PODocumentID',event);
   }
 
   selectedPO_lcm(value) {
@@ -3780,17 +3764,17 @@ export class Comparision3WayComponent
     })
   }
   filterLCMLine(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.LCMItems?.length; i++) {
-      let country = this.LCMItems[i];
-      if (
-        country.PoLineDescription.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(country);
-      }
-    }
-    this.filteredLCMLines = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.LCMItems?.length; i++) {
+    //   let country = this.LCMItems[i];
+    //   if (
+    //     country.PoLineDescription.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(country);
+    //   }
+    // }
+    this.filteredLCMLines = this.dataService.uni_filter(this.LCMItems,'PoLineDescription',event);
   }
   OnSelectLine(event) {
     this.selectedLCMLine = event.PoLineDescription;
@@ -3833,17 +3817,17 @@ export class Comparision3WayComponent
     })
   }
   filterCost(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.chargeList?.length; i++) {
-      let country = this.chargeList[i];
-      if (
-        country.MarkupCode.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(country);
-      }
-    }
-    this.filteredCost = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.chargeList?.length; i++) {
+    //   let country = this.chargeList[i];
+    //   if (
+    //     country.MarkupCode.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(country);
+    //   }
+    // }
+    this.filteredCost = this.dataService.uni_filter(this.chargeList,'MarkupCode',event);
   }
   onSelectCost(event) {
     this.selectedCost = event.MarkupCode;
@@ -4198,17 +4182,17 @@ export class Comparision3WayComponent
     } else {
       arr = this.invNumbersList;
     }
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < arr?.length; i++) {
-      let str = arr[i];
-      if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(str);
-      }
-    }
-    this.filteredPreData = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < arr?.length; i++) {
+    //   let str = arr[i];
+    //   if (
+    //     str.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(str);
+    //   }
+    // }
+    this.filteredPreData = this.dataService.uni_filter(arr,tag,event);
   }
   onSelectPrePay(event, value, tagname, index) {
     this.onChangeValue(tagname,event,value);
@@ -4242,17 +4226,17 @@ export class Comparision3WayComponent
     } else {
       arr = this.projectCArr;
     }
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < arr?.length; i++) {
-      let str = arr[i];
-      if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
-      ) {
-        filtered.push(str);
-      }
-    }
-    this.filteredProject = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < arr?.length; i++) {
+    //   let str = arr[i];
+    //   if (
+    //     str.toLowerCase().indexOf(query.toLowerCase()) == 0
+    //   ) {
+    //     filtered.push(str);
+    //   }
+    // }
+    this.filteredProject = this.dataService.uni_filter(arr,tag,event);
     this.SpinnerService.hide();
   }
 

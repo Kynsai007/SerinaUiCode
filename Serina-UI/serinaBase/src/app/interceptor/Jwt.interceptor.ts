@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AlertService } from '../services/alert/alert.service';
 import { Router } from '@angular/router';
+import { DataService } from '../services/dataStore/data.service';
 
 
 
@@ -18,7 +19,8 @@ export class JwtInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router) { }
+  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router,private dataService: DataService) {
+   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     request = this.addToken(request);
@@ -54,6 +56,9 @@ export class JwtInterceptor implements HttpInterceptor {
               })
             );
           }
+        } else if (error.status === 503 || error.status === 0) {
+          this.dataService.isServiceLive = false;
+          this.router.navigate(['/error']);
         }
         return throwError(error);
       })

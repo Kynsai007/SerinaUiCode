@@ -27,10 +27,10 @@ const routes: Routes = [
     loadChildren: () => import('./shared-module/shared-module.module').then(m => m.SharedModuleModule)
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  // {
-  //   path: '404',
-  //   component: ErrorPageComponent
-  // },
+  {
+    path: 'error',
+    component: ErrorPageComponent
+  },
   {
     path: '**', 
     redirectTo: 'login'

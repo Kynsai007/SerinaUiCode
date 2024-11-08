@@ -1,9 +1,15 @@
-<div class="container " style="text-align: center;">
+<!-- <div *ngIf="ServiceError" class="container " style="text-align: center;">
     <div class="row">
         <div class="col " style="margin-top: 60px">
-            <!-- <mat-icon aria-hidden="false" aria-label="Example home icon" class="bug">bug_report</mat-icon> -->
             <img src="assets/2420671.jpg" alt="" width="400" height="400">
             <h1 for="error">This page is not found ! <span style="color: red;">404</span></h1>
         </div>
     </div>
+</div> -->
+<div class="text-center" style="overflow: hidden;">
+    <div><img src="./../../assets/Serina Assets/503_1_1.PNG" alt="server down" width="300"></div>
+    <div class="f-18 mt-4">503 Service Unavailable</div>
+    <div class="f-12">Server is not available at this moment, please try again later.</div>
+    <button class="f-12 primary_btn mt-2" (click)="onRefresh()">Refresh</button>
+    <hr>
 </div>

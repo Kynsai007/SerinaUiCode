@@ -1,4 +1,4 @@
-<div class="row invoice-body">
+<div *ngIf="!serverError" class="row invoice-body">
   <div class="viewPdf d-flex">
     <div
       class="d-flex"
@@ -2287,64 +2287,11 @@
   </div>
 </div>
 
-<!-- Rule selection modal-->
-<!-- <p-dialog
-  header="Change Rule For Batch "
-  [(visible)]="displayRuleDialog"
-  [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '31vw' }"
-  [baseZIndex]="10000"
-  [draggable]="false"
-  [resizable]="false"
->
-  <div>
-    <mat-radio-group
-      class="example-radio-group"
-      [(ngModel)]="SelectRuleOption.value"
-    >
-      <mat-radio-button
-        class="example-radio-button f-13"
-        *ngFor="let rule of givenRules"
-        [value]="rule"
-        [disabled]="rule.IsActive == 0"
-      >
-        {{ rule.Name }}
-        <span *ngIf="rule.IsActive == 0" class="f-11 ml-1 glow"
-          >Coming soon</span
-        >
-      </mat-radio-button>
-    </mat-radio-group>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center">
-      <button
-        type="button"
-        class="btn btnVender bg-btn-cancel"
-        (click)="displayRuleDialog = false"
-      >
-        Cancel
-      </button>
-      <button
-        *ngIf="!save_rule_boolean"
-        type="button"
-        class="btn btnVender bg-btn-success"
-        (click)="sendReview()"
-      >
-        Send for Review Batch
-      </button>
-      <button
-        *ngIf="save_rule_boolean"
-        type="button"
-        class="btn btnVender bg-btn-success"
-        (click)="save_rule()"
-      >
-        Save
-      </button>
-    </div>
-  </ng-template>
-</p-dialog> -->
-
+<div *ngIf="serverError" class="f-12 text-center pt-5">
+  <div><img src="/assets/Serina Assets/new_theme/Group 1599.svg" alt="error"></div>
+  An unexpected error occurred. Please try again later. <br>
+  <button class="f-12 primary_btn mt-2" (click)="backToInvoice()">Return to Invoice list</button>
+</div>
 <!-- Add label-->
 <p-dialog
   [header]="headerpop"
@@ -2650,51 +2597,6 @@
     </div>
   </ng-template>
 </p-dialog>
-
-<!-- edit type selection modal-->
-<!-- <p-dialog
-  header="Select Error type "
-  [(visible)]="displayErrorDialog"
-  [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '31vw' }"
-  [baseZIndex]="10000"
-  [draggable]="false"
-  [resizable]="false"
->
-  <div>
-    <mat-radio-group
-      class="example-radio-group"
-      [(ngModel)]="SelectErrorOption"
-    >
-      <mat-radio-button
-        class="example-radio-button f-13"
-        *ngFor="let rule of givenErrors"
-        [value]="rule.idbatcherrortypes"
-      >
-        {{ rule.name }}
-      </mat-radio-button>
-    </mat-radio-group>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center">
-      <button
-        type="button"
-        class="btn btnVender bg-btn-cancel"
-        (click)="cancelSelectErrorRule()"
-      >
-        Cancel
-      </button>
-      <button
-        type="button"
-        class="btn btnVender bg-btn-success"
-        (click)="updateLine()"
-      >
-        Save Changes
-      </button>
-    </div>
-  </ng-template>
-</p-dialog> -->
 
 <!-- Reject modal-->
 <p-dialog

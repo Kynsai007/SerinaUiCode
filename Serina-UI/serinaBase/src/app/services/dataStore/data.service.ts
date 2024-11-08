@@ -239,6 +239,7 @@ export class DataService {
   manpowerResponse: { dates: { startdate: string; enddate: string; }; data: any[]; };
   serviceStatus: any;
   invoiceStatus: any;
+  isServiceLive: boolean = true;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
