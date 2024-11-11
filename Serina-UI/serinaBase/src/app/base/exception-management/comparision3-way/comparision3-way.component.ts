@@ -501,7 +501,9 @@ export class Comparision3WayComponent
     if(this.GRN_PO_Bool){
       this.lineTable = commonTags;
     } else {
-      this.readFilePath();
+      if(this.Itype == 'Invoice'){
+        this.readFilePath();
+      }
     }
     this.isAdmin = this.dataService.isAdmin;
 
