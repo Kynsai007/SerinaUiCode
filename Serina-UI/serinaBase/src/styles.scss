@@ -323,6 +323,10 @@ input:checked + .slider:before {
   // border: 0 !important;
   // border-right: 1px solid rgba(49, 57, 113, 0.2) !important;
 }
+.p-datatable .p-sortable-column:focus {
+  box-shadow: none;
+  outline: 0 none;
+}
 .table_bg {
   background-color: #a72845 !important;
 }
