@@ -182,11 +182,12 @@ export class UplaodListenerComponent implements OnInit {
       this.exception = false;
       this.err = "";
       this.saving = true;
-      this.sharedService.saveemailconfig(this.configData.value).subscribe(data => {
+      this.sharedService.saveemailconfig(this.configData.value).subscribe((data:any) => {
+        console.log(data)
         this.saving = false;
         if(data['message'] == "success"){
           this.msg = "Email Settings Saved!"
-        }else{
+        } else {
           this.exception = true;
           this.msg = "";
           this.err = "Some Error occured!"

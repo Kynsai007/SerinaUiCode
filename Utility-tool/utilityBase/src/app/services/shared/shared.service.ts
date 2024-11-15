@@ -468,10 +468,10 @@ export class SharedService {
   }
 
   getVendorAccounts(v_id): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/vendoraccount/${v_id}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/vendoraccount/${v_id}`).pipe(retry(3));
   }
   getSPAccounts(v_id): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/serviceaccount/${v_id}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/serviceaccount/${v_id}`).pipe(retry(3));
   }
   getSummaryEntity() {
     return this.http
@@ -529,17 +529,17 @@ export class SharedService {
   }
 
   uploadFolder(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/uploadfolder`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/uploadfolder`, data).pipe(retry(3));
   }
   uploadHTMLFile(data,folderpath): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/upload_html_template?folderpath=${folderpath}`,data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/upload_html_template?folderpath=${folderpath}`,data).pipe(retry(3));
   }
   uploadBlob(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_blob`, data).pipe(retry(3));
   }
 
   uploadFileblob(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/uploadfile`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/uploadfile`, data).pipe(retry(3));
   }
 
   modelValidate(data): Observable<any> {

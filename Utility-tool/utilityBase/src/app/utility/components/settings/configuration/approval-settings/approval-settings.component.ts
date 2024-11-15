@@ -79,42 +79,51 @@ export class ApprovalSettingsComponent implements OnInit {
   }
   readSettings(){
     this.sharedService.readApprovalSettings().subscribe((data:any)=>{
-      data.result.forEach((element) => {
-        let amountBoolean = false;
-        if (element.ApproveSetting?.isAmountBased){
-          amountBoolean = true;
-        }
-
-        this.selectedEntitys.push({
-          entity: element.Entity?.EntityName,
-          entityBody: element.EntityBody?.EntityBodyName,
-          entityDept: element.Department?.DepartmentName,
-          entityID: element.Entity?.idEntity,
-          EntityBodyID: element.EntityBody?.idEntityBody,
-          departmentID: element.Department?.idDepartment,
-          isAmountBased: amountBoolean,
-          idapproversettings : element.ApproveSetting?.idapproversettings
+      if(data.status  == 'success'){
+        data?.result?.result.forEach((element) => {
+          let amountBoolean = false;
+          if (element.ApproveSetting?.isAmountBased){
+            amountBoolean = true;
+          }
+  
+          this.selectedEntitys.push({
+            entity: element?.EntityName,
+            entityBody: element.EntityBodyName,
+            entityDept: element?.DepartmentName,
+            entityID: element?.idEntity,
+            EntityBodyID: element?.idEntityBody,
+            departmentID: element?.idDepartment,
+            isAmountBased: amountBoolean,
+            idapproversettings : element?.idapproversettings
+          });
+          // this.updateUsersEntityInfo.push({
+          //   entityID: element.Entity?.idEntity,
+          //   EntityBodyID: element.EntityBody?.idEntityBody,
+          //   departmentID: element.Department?.idDepartment,
+          //   isAmountBased: element.ApproveSetting?.isAmountBased,
+          //   isActive: element.ApproveSetting?.isActive,
+          // });
         });
-        // this.updateUsersEntityInfo.push({
-        //   entityID: element.Entity?.idEntity,
-        //   EntityBodyID: element.EntityBody?.idEntityBody,
-        //   departmentID: element.Department?.idDepartment,
-        //   isAmountBased: element.ApproveSetting?.isAmountBased,
-        //   isActive: element.ApproveSetting?.isActive,
-        // });
-      });
+        console.log(this.selectedEntitys)
+
+      }
       // this.updateUserEntityDummy = this.updateUsersEntityInfo;
     })
   }
   UpdateSettings(){
    
     this.sharedService.updateApprovalSettings(this.updateUsersEntityInfo).subscribe((data:any)=>{
-      
-      this.sharedService.updateObject.detail = "Entity data updated."
-      this.messageService.add(this.sharedService.updateObject);
-      this.updateUsersEntityInfo = [];
-      this.selectedEntitys = [];
-      this.readSettings();
+      if(data.status === 'success'){
+        this.sharedService.updateObject.detail = "Entity data updated."
+        this.messageService.add(this.sharedService.updateObject);
+        this.updateUsersEntityInfo = [];
+        this.selectedEntitys = [];
+        this.readSettings();
+      } else {
+        this.sharedService.errorObject.detail = data.message;
+        this.messageService.add(this.sharedService.errorObject);
+      }
+
     },err=>{
       this.sharedService.errorObject.detail = "Server error"
       this.messageService.add(this.sharedService.errorObject);

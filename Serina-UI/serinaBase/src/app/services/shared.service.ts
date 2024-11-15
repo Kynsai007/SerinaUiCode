@@ -168,7 +168,7 @@ export class SharedService {
     return this.http.put(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data).pipe(retry(3));
   }
   deleteRole() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/accessPermissionDefID/${this.ap_id}`).pipe(retry(3));
+    return this.http.delete(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/accessPermissionDefID/${this.ap_id}`).pipe(retry(3));
   }
   editRole(data: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${this.apiVersion}/Permission/applyAccessPermission/${this.userId}`, data).pipe(retry(3));
@@ -592,7 +592,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/PONumbers/${this.userId}?entityid=${ent_id}&vendorid=${ven_id}&createddatestart=${s_date}&createddateend=${e_date}`).pipe(retry(3));
   }
   readPOLines(po_num) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/POLines/${po_num}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/POGRNLines/${po_num}`).pipe(retry(3));
   }
   saveMultiPO(data, query) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/MultiPo/savedata${query}`, data).pipe(retry(3));

@@ -538,7 +538,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   }
   releaseDocs(){
     this.settingService.releseNotes().subscribe((data:any)=>{
-      if(data){
+      if(data?.releaseinfo){
         this.releaseDailog(data)
       }
     })

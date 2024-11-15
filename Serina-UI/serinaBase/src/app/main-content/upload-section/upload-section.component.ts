@@ -376,7 +376,8 @@ export class UploadSectionComponent implements OnInit {
         { name:'Invoice', value:'invoice'},
         { name:'Advance - Tax', value:'prepayment-tax'},
         { name:'Advance - Pro-forma', value:'prepayment-proforma'},
-        { name:'Credit Note', value:'credit note'}
+        { name:'Credit Note', value:'credit note'},
+        { name:'Multiple PO', value:'multiPO'}
       ];
       this.sub_type = [
         { tagName:'Quantity', value:'credit-quantity'},
@@ -583,29 +584,31 @@ export class UploadSectionComponent implements OnInit {
     this.sltGRNNum = null;
     this.PO_GRN_Number_line = null;
     this.slQckPONum = null;
-    if (type == 'ideal') {
+    console.log(val)
     this.selectedInvoiceType = val ;
+
+    if (type == 'ideal') {
       if(val == 'non po invoice'){
         this.displaySelectPdfBoolean = true;
       } else if(val == 'invoice'){
         this.displaySelectPdfBoolean = false;
         this.getCategory();
       }
-      // this.LCMBoolean = 'No';
-      // if (val == 'invoice' || val == "non po invoice") {
-      //   this.poTypeBoolean = true;
-      // } else if (val == 'LCM') {
-      //   this.poTypeBoolean = true;
-      //   this.LCMBoolean = 'Yes';
-      // }
-      // else if (val == 'multiPO') {
-      //   this.poTypeBoolean = false;
-      //   this.readPONumbers(this.s_date, this.e_date);
-      //   if (this.displaySelectPdfBoolean) {
-      //     this.mutliPODailog = true;
-      //     this.multiBtn = 'Submit';
-      //   }
-      // }
+      this.LCMBoolean = 'No';
+      console.log(val)
+      if (val == 'invoice' || val == "non po invoice") {
+        this.poTypeBoolean = true;
+      } else if (val == 'LCM') {
+        this.poTypeBoolean = true;
+        this.LCMBoolean = 'Yes';
+      } else if (val == 'multiPO') {
+        this.poTypeBoolean = false;
+        this.readPONumbers(this.s_date, this.e_date);
+        // if (this.displaySelectPdfBoolean) {
+          this.mutliPODailog = true;
+          this.multiBtn = 'Submit';
+        // }
+      }
     } else {
       this.selectedInvoiceType_quick = val ;
       this.LCMBoolean = 'No';
@@ -880,18 +883,22 @@ export class UploadSectionComponent implements OnInit {
       // this.readPOLines(event.PODocumentID);
     } else {
       if (this.selectedInvoiceType_quick == 'invoice') {
-        this.readPOLines(event.PODocumentID);
+        // this.readPOLines(event.PODocumentID);
         } else {
-          this.getVendorInvoices(event.PODocumentID);
+          // this.getVendorInvoices(event.PODocumentID);
         }
-        this.selectedPONumber = event.PODocumentID;
-        this.multiPO.controls['Name'].reset();
-        this.multiPO.controls['POLineAmount'].reset();
-        this.multiPO.controls['GRN_Name'].reset();
-        this.multiPO.controls['GRN_number'].reset();
-        this.multiPO.controls['GRNQty'].reset();
-        this.multiPO.controls['GRNLineAmount'].reset();
-        this.multiPO.controls['ConsumedPOQty'].reset();
+    }
+    console.log(this.selectedInvoiceType);
+    if(this.selectedInvoiceType == 'multiPO'){
+      this.readPOLines(event.PODocumentID);
+      this.selectedPONumber = event.PODocumentID;
+      this.multiPO.controls['Name'].reset();
+      this.multiPO.controls['POLineAmount'].reset();
+      this.multiPO.controls['GRN_Name'].reset();
+      this.multiPO.controls['GRN_number'].reset();
+      this.multiPO.controls['GRNQty'].reset();
+      this.multiPO.controls['GRNLineAmount'].reset();
+      this.multiPO.controls['ConsumedPOQty'].reset();
     }
   }
   selectIdealGrn(event){
@@ -1500,18 +1507,22 @@ export class UploadSectionComponent implements OnInit {
     this.sharedService.invoiceID = 12344;
     this.approverNameList = [];
     this.sharedService.readApprovers(this.approversSendData[0]).subscribe((data: any) => {
-      let resultData = data?.result
-      let array = [];
-      let list = [];
-      let count = 0;
-      for (const item in resultData) {
-        count = count + 1;
-        list = resultData[item].sort((a, b) => a.userPriority - b.userPriority);
-        this.approverList[`${item}_${count}`] = list;
-        this.approverNameList.push(resultData[item][0]?.User?.firstName)
-        array.push(resultData[item][0]?.User?.idUser);
+      if(data.status == 'success'){
+        let resultData = data?.result;
+        let array = [];
+        let list = [];
+        let count = 0;
+        for (const item in resultData) {
+          count = count + 1;
+          list = resultData[item].sort((a, b) => a.userPriority - b.userPriority);
+          this.approverList[`${item}_${count}`] = list;
+          this.approverNameList.push(resultData[item][0]?.User?.firstName)
+          array.push(resultData[item][0]?.User?.idUser);
+        }
+        this.approversSendData[0].approver = array;
+      } else {
+        this.error(data.message);
       }
-      this.approversSendData[0].approver = array;
       this.spinnerService.hide();
     }, err => {
       this.spinnerService.hide();
@@ -1542,13 +1553,17 @@ export class UploadSectionComponent implements OnInit {
       "userPriority": 0
     }
     this.sharedService.checkPriority(true, obj).subscribe((data: any) => {
-
-      if (data.status == 1) {
-        this.approvalBoolean = true;
-        this.readApproverData();
+      if(data.status == 'success'){
+        if (data?.result?.isvalid == 1) {
+          this.approvalBoolean = true;
+          this.readApproverData();
+        } else {
+          this.approvalBoolean = false;
+        }
       } else {
-        this.approvalBoolean = false;
+        this.error(data.message)
       }
+ 
     })
   }
   addApprovers() {

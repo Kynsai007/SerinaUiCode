@@ -375,9 +375,11 @@ export class RolesComponent implements OnInit {
 
   DeleteRole() {
     this.sharedService.deleteRole().subscribe((data: any) => {
-      if (data.result == 'success') {
+      if (data.status == 'success') {
         this.successAlert('Deleted Successfully');
         this.getDisplayTotalRoles();
+      } else {
+        this.alertFun(data.message);
       }
     });
     this.displayResponsive = false;
@@ -413,13 +415,15 @@ export class RolesComponent implements OnInit {
         .createRole(this.updateroleData)
         .subscribe(
           (data: any) => {
-            if (data.result) {
+            if (data.status === 'success') {
               this.successAlert('Role Created Successfully');
               this.getDisplayTotalRoles();
               this.normalRole = true;
               this.CreateNewRole = false;
               this.editUserdata = false;
               delete this.AccessPermissionTypeId;
+            } else {
+              this.alertFun(data.message)
             }
           },
           (error) => {
@@ -449,35 +453,39 @@ export class RolesComponent implements OnInit {
       this.max_role_amount = 0;
   
       this.sharedService.displayRoleInfo().subscribe((data: any) => {
-        this.roleInfoDetails = data.roleinfo;
-        this.role_priority = this.roleInfoDetails.Priority;
-  
-        this.max_role_amount = data.roleinfo?.MaxAmount || 0;
-  
-        this.AddorModifyUserBoolean = this.roleInfoDetails.User === 1;
-        this.userRoleBoolean = this.roleInfoDetails.Permissions === 1;
-        this.invoiceBoolean = this.roleInfoDetails.NewInvoice === 1;
-  
-        this.vendorTriggerBoolean = this.roleInfoDetails.allowBatchTrigger;
-        this.spTriggerBoolean = this.roleInfoDetails.allowServiceTrigger;
-        this.configAccessBoolean = this.roleInfoDetails.isConfigPortal;
-        this.dashboardAccessBoolean = this.roleInfoDetails.isDashboard;
-        this.exceptionPageBoolean = this.roleInfoDetails.is_epa;
-        this.GRNPageBoolean = this.roleInfoDetails.is_gpa;
-        this.vendorPageBoolean = this.roleInfoDetails.is_vspa;
-        this.settingsPageBoolean = this.roleInfoDetails.is_spa;
-        this.show_document_status = this.roleInfoDetails.show_document_status;
-        this.is_fp = this.roleInfoDetails.is_fp;
-        this.is_fpa = this.roleInfoDetails.is_fpa;
-        this.set_approval_enabled = this.roleInfoDetails.set_approval_enabled;
-        // this.is_grn_approval = this.roleInfoDetails.is_grn_approval;
-  
-        const accessPermissionTypeId = this.roleInfoDetails.AccessPermissionTypeId;
-  
-        this.viewInvoiceBoolean = accessPermissionTypeId >= 1;
-        this.editInvoiceBoolean = accessPermissionTypeId >= 2;
-        this.changeApproveBoolean = accessPermissionTypeId >= 3;
-        this.financeApproveBoolean = accessPermissionTypeId === 4;
+        if(data.status === 'success'){
+          this.roleInfoDetails = data?.result?.roleinfo;
+          this.role_priority = this.roleInfoDetails.Priority;
+    
+          this.max_role_amount = data?.roleinfo?.MaxAmount || 0;
+    
+          this.AddorModifyUserBoolean = this.roleInfoDetails.User === 1;
+          this.userRoleBoolean = this.roleInfoDetails.Permissions === 1;
+          this.invoiceBoolean = this.roleInfoDetails.NewInvoice === 1;
+    
+          this.vendorTriggerBoolean = this.roleInfoDetails.allowBatchTrigger;
+          this.spTriggerBoolean = this.roleInfoDetails.allowServiceTrigger;
+          this.configAccessBoolean = this.roleInfoDetails.isConfigPortal;
+          this.dashboardAccessBoolean = this.roleInfoDetails.isDashboard;
+          this.exceptionPageBoolean = this.roleInfoDetails.is_epa;
+          this.GRNPageBoolean = this.roleInfoDetails.is_gpa;
+          this.vendorPageBoolean = this.roleInfoDetails.is_vspa;
+          this.settingsPageBoolean = this.roleInfoDetails.is_spa;
+          this.show_document_status = this.roleInfoDetails.show_document_status;
+          this.is_fp = this.roleInfoDetails.is_fp;
+          this.is_fpa = this.roleInfoDetails.is_fpa;
+          this.set_approval_enabled = this.roleInfoDetails.set_approval_enabled;
+          // this.is_grn_approval = this.roleInfoDetails.is_grn_approval;
+    
+          const accessPermissionTypeId = this.roleInfoDetails.AccessPermissionTypeId;
+    
+          this.viewInvoiceBoolean = accessPermissionTypeId >= 1;
+          this.editInvoiceBoolean = accessPermissionTypeId >= 2;
+          this.changeApproveBoolean = accessPermissionTypeId >= 3;
+          this.financeApproveBoolean = accessPermissionTypeId === 4;
+        } else {
+          this.alertFun(data.message)
+        }
   
         this.SpinnerService.hide();
       });
@@ -610,13 +618,15 @@ export class RolesComponent implements OnInit {
       .updateRoleData(this.updateroleData)
       .subscribe(
         (data: any) => {
-          if (data.result) {
-            this.successAlert("Updated successfully");
+          if (data.status == 'success') {
+            this.successAlert(data?.result?.result);
             this.getDisplayTotalRoles();
             this.normalRole = true;
             this.CreateNewRole = false;
             this.editUserdata = false;
             delete this.AccessPermissionTypeId;
+          } else {
+            this.alertFun(data.message);
           }
         },
         (error) => {
@@ -647,15 +657,16 @@ export class RolesComponent implements OnInit {
   }
 
   filterEntity(event) {
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.entityList.length; i++) {
-      let country = this.entityList[i];
-      if (country.EntityName.toLowerCase().includes(query.toLowerCase())) {
-        filtered.push(country);
-      }
-    }
-    this.filteredEntities = filtered;
+    // let filtered: any[] = [];
+    // let query = event.query;
+    // for (let i = 0; i < this.entityList.length; i++) {
+    //   let country = this.entityList[i];
+    //   if (country.EntityName.toLowerCase().includes(query.toLowerCase())) {
+    //     filtered.push(country);
+    //   }
+    // }
+    
+    this.filteredEntities = this.dataService.uni_filter(this.entityList,'EntityName',event);
   }
   filterEntityBody(event) {
     if (this.entityBodyList) {
@@ -938,28 +949,32 @@ export class RolesComponent implements OnInit {
       }
     let obj = this.updateUsersEntityInfo[this.updateUsersEntityInfo.length-1];
     this.sharedService.checkPriority(bool,obj).subscribe((data:any)=>{
-      if(bool == true){
-        if(data.status == 1){
-          this.entityBaseApproveBoolean = true;
-          this.isAmountBasedON = data.isAmountBased;
+      if(data.status === 'success'){
+        if(bool == true){
+          if(data?.result?.isvalid == 1){
+            this.entityBaseApproveBoolean = true;
+            this.isAmountBasedON = data.isAmountBased;
+          } else {
+            this.entityBaseApproveBoolean = false;
+          }
         } else {
-          this.entityBaseApproveBoolean = false;
+          if(data?.result?.isvalid == 2){
+              this.selectedEntitys.forEach((element) => {
+                if (element.entity == this.selectedEntityName && !element.userPriority) {
+                  element.userPriority = e;
+                }
+              });
+              delete this.approval_priority;
+          } else if(data?.result?.isvalid == 1){
+            this.entityBaseApproveBoolean = true;
+            // this.alertBoolean = true;
+            // this.displayResponsive = true;
+            // this.deleteBtnText = data.result;
+            this.alertFun(data?.result?.result);
+          }
         }
       } else {
-        if(data.status == 2){
-            this.selectedEntitys.forEach((element) => {
-              if (element.entity == this.selectedEntityName && !element.userPriority) {
-                element.userPriority = e;
-              }
-            });
-            delete this.approval_priority;
-        } else if(data.status == 1){
-          this.entityBaseApproveBoolean = true;
-          // this.alertBoolean = true;
-          // this.displayResponsive = true;
-          // this.deleteBtnText = data.result;
-          this.alertFun(data.result);
-        }
+        this.alertFun(data.message);
       }
 
     },err=>{
@@ -1088,74 +1103,79 @@ export class RolesComponent implements OnInit {
     this.sharedService
       .readEntityUserData(value.idUser)
       .subscribe((data: any) => {
-        let entityData = [];
-        this.entitySelection_user = [];
-        this.selectedService = []
-        this.serviceData.forEach(ser=>{
-          if(data?.service_providers?.some(id=> ser?.ServiceProviderName == id)){
-            this.selectedService.push(ser);
-          }
-        })
-        data.result.forEach((element) => {
-          // if (!element.EntityBody && !element.Department) {
-          //   this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody, entityDept: element.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.idDepartment });
-          //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.DepartmentName });
-          // }
-          // else if (!element.Department) {
-          //   this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody.EntityBodyName, entityDept: element.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department });
-          //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.DepartmentName });
-          // }
-          // else {
-            // let merge = { ...element.Entity,...element.EntityBody,...element.UserAccess,...element.Department};
-            entityData.push(element);
-            if (element.EntityName) {
-              // Push the Entity object into the entities array
-              this.entities.push({ idEntity: element?.idEntity, EntityName: `${element.EntityName}-${element?.EntityCode}` }); 
+        if(data.status == 'success'){
+          let entityData = [];
+          this.entitySelection_user = [];
+          this.selectedService = []
+          this.serviceData.forEach(ser=>{
+            if(data?.result?.service_providers?.some(id=> ser?.ServiceProviderName == id)){
+              this.selectedService.push(ser);
             }
-            let preApproveBool = false;
-            if(element?.preApprove == 1){
-              preApproveBool = true;
-            } else {
-              preApproveBool = false;
-            }
-
-            let roleName = this.subroleList?.filter(el=>{
-              return el.idAccessPermissionDef == element.subRole
-            })
-            let clubedEnt = element?.EntityName
-            if(element?.EntityCode){
-              clubedEnt = `${element?.EntityName}-${element?.EntityCode}`
-            }
-          this.selectedEntitys.push({
-            entity: clubedEnt,
-            entityBody: element?.EntityBodyName,
-            entityDept: element?.DepartmentName,
-            idUserAccess: element?.idUserAccess,
-            EntityID: element?.idEntity,
-            EntityBodyID: element?.idEntityBody,
-            DepartmentID: element?.idDepartment,
-            maxAmount:element?.maxAmount,
-            userPriority:element?.userPriority,
-            preApprove:preApproveBool,
-            subRole: roleName[0]?.NameOfRole
-          });
-          this.updateEntityUserDummy.push({
-            idUserAccess: element?.idUserAccess,
-            EntityID: element?.idEntity,
-            EntityBodyID: element?.idEntityBody,
-            DepartmentID: element?.idDepartment,
-            subRole:element?.idUserAccess
-          });
-          if(!this.financeApproveDisplayBoolean){
-              this.entitySelection_user = this.entityList.filter(ele=>{
-                return  entityData?.some(id => id.idEntity == ele.idEntity)
+          })
+          data?.result?.result.forEach((element) => {
+            // if (!element.EntityBody && !element.Department) {
+            //   this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody, entityDept: element.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.idDepartment });
+            //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.DepartmentName });
+            // }
+            // else if (!element.Department) {
+            //   this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody.EntityBodyName, entityDept: element.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department });
+            //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.DepartmentName });
+            // }
+            // else {
+              // let merge = { ...element.Entity,...element.EntityBody,...element.UserAccess,...element.Department};
+              entityData.push(element);
+              if (element.EntityName) {
+                // Push the Entity object into the entities array
+                this.entities.push({ idEntity: element?.idEntity, EntityName: `${element.EntityName}-${element?.EntityCode}` }); 
+              }
+              let preApproveBool = false;
+              if(element?.preApprove == 1){
+                preApproveBool = true;
+              } else {
+                preApproveBool = false;
+              }
+  
+              let roleName = this.subroleList?.filter(el=>{
+                return el.idAccessPermissionDef == element.subRole
               })
+              let clubedEnt = element?.EntityName
+              if(element?.EntityCode){
+                clubedEnt = `${element?.EntityName}-${element?.EntityCode}`
+              }
+            this.selectedEntitys.push({
+              entity: clubedEnt,
+              entityBody: element?.EntityBodyName,
+              entityDept: element?.DepartmentName,
+              idUserAccess: element?.idUserAccess,
+              EntityID: element?.idEntity,
+              EntityBodyID: element?.idEntityBody,
+              DepartmentID: element?.idDepartment,
+              maxAmount:element?.maxAmount,
+              userPriority:element?.userPriority,
+              preApprove:preApproveBool,
+              subRole: roleName[0]?.NameOfRole
+            });
+            this.updateEntityUserDummy.push({
+              idUserAccess: element?.idUserAccess,
+              EntityID: element?.idEntity,
+              EntityBodyID: element?.idEntityBody,
+              DepartmentID: element?.idDepartment,
+              subRole:element?.idUserAccess
+            });
+            if(!this.financeApproveDisplayBoolean){
+                this.entitySelection_user = this.entityList.filter(ele=>{
+                  return  entityData?.some(id => id.idEntity == ele.idEntity)
+                })
+            }
+            // }
+          });
+          if(this.financeApproveDisplayBoolean){
+            this.checkEntity();
           }
-          // }
-        });
-        if(this.financeApproveDisplayBoolean){
-          this.checkEntity();
+        } else {
+          this.alertFun(data.message)
         }
+
 
       });
   }
@@ -1205,6 +1225,7 @@ export class RolesComponent implements OnInit {
   }
 
   updateAccessAPICall(editUser){
+    this.SpinnerService.show();
     this.sharedService.updatecustomeruser(editUser).subscribe(
       (data: any) => {
         if (data.result == 'Updated') {
@@ -1223,9 +1244,12 @@ export class RolesComponent implements OnInit {
 
               });
           }
-          this.DisplayCustomerUserDetails();
-          this.entityBaseApproveBoolean = false;
-          this.successAlert("Updated successfully");
+          setTimeout(() => {
+            this.DisplayCustomerUserDetails();
+            this.entityBaseApproveBoolean = false;
+            this.successAlert("Updated successfully");
+            this.SpinnerService.hide();
+          }, 100);
 
           this.normalRole = true;
           this.CreateNewRole = false;
@@ -1417,13 +1441,17 @@ export class RolesComponent implements OnInit {
     this.SpinnerService.show();
     this.sharedService.displayRolesData().subscribe((data: any) => {
       this.SpinnerService.hide();
-      this.DisplayRoleName = data.roles;
-      this.subroleList = this.DisplayRoleName.filter(ele=>{
-        return ele.AccessPermissionTypeId == 4;
-      })
-      this.DisplayRoleName = this.DisplayRoleName.sort(
-        (a, b) => b.isDefault - a.isDefault
-      );
+      if(data.status === 'success'){
+        this.DisplayRoleName = data?.result?.roles;
+        this.subroleList = this.DisplayRoleName.filter(ele=>{
+          return ele.AccessPermissionTypeId == 4;
+        })
+        this.DisplayRoleName = this.DisplayRoleName.sort(
+          (a, b) => b.isDefault - a.isDefault
+        );
+      } else {
+        this.alertFun(data.message)
+      }
     });
   }
 

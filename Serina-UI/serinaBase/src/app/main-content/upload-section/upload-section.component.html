@@ -260,7 +260,7 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType != 'non po invoice' && selectedOption != 'Service'
+              !['non po invoice','multiPO'].includes(selectedInvoiceType) && selectedOption != 'Service'
             "
             class="selectFilter"
             [ngClass]="{

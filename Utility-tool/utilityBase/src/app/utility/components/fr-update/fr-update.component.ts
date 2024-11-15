@@ -291,8 +291,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   getTrainingTestingRes(modal_id){
     this.sharedService.getTrainingTestRes(modal_id).subscribe((data: any) =>{
-      this.trainingResult = data['training_result'] ? JSON.parse(data['training_result']) : {};
-      this.testingResult = data['test_result'] ? JSON.parse(data['test_result']) : {};
+      this.trainingResult = data['training_result'] ? data['training_result'] : {};
+      this.testingResult = data['test_result'] ? data['test_result'] : {};
       this.trainingAverageAccuracy = data['training_result'] ? (this.trainingResult['trainResult']['averageModelAccuracy'] * 100).toFixed(1)+"%" : "Not Trained!";
       this.testingAverageAccuracy = data['test_result'] ? (this.testingResult['documentResults'][0]['docTypeConfidence'] *100).toFixed(1)+"%" : "Not Tested!";
       this.trainingFields = 'trainResult' in this.trainingResult ? this.trainingResult['trainResult']['fields'] : [];
@@ -482,7 +482,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
             if(this.instanceData.idinstance == 3){
               this.selectedGRNType = 2;
             }
-            this.onSelectGRNType(this.selectedGRNType);
+            // this.onSelectGRNType(this.selectedGRNType);
           }
         
           

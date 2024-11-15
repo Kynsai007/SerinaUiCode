@@ -3069,7 +3069,7 @@ export class Comparision3WayComponent
   open_dialog(str) {
     if (str == 'reject') {
       this.rejectModalHeader = 'ADD Rejection Comments';
-      this.getApprovedUserList();
+      // this.getApprovedUserList();
     } else if (str == 'approve') {
       this.rejectModalHeader = 'Add Pre-approval Comments';
       if (this.preApproveBoolean == false) {
