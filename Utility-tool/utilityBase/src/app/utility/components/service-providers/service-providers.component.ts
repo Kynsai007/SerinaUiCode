@@ -88,6 +88,7 @@ export class ServiceProvidersComponent implements OnInit {
     this.onboard_status = this.sharedService.onboard_status;
     this.spNameForSearch = this.sharedService.spNameForSearch;
     this.getEntitySummary();
+    this.getServiceList();
   }
 
   readOnboardedSPList() {
@@ -284,8 +285,10 @@ export class ServiceProvidersComponent implements OnInit {
     this.sharedService
       .getServiceList(param)
       .subscribe((data: any) => {
-        this.filteredService = data.map(element => element.ServiceProvider);
+        const service = data.map(element => element.ServiceProvider);
         this.serviceData = data.map(element => element.ServiceProvider);
+        this.filteredService = [...new Map(service.map(v => [v.ServiceProviderCode, v])).values()];
+        this.serviceData = this.filteredService;
 
       });
   }

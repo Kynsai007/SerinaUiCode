@@ -142,6 +142,7 @@ export class VendorsComponent implements OnInit {
   selectEntity(value) {
     this.selectedEntityId = value.idEntity;
     this.sharedService.selectedEntityId = value.idEntity;
+    console.log(value)
     this.sharedService.selected_ent = value;
     this.getCustomerVendors();
   }
@@ -312,27 +313,29 @@ export class VendorsComponent implements OnInit {
     if(this.selectedEntityId != 'ALL'){
       param = `&ent_id=${this.selectedEntityId}`
     }
+    this.vendorAccount = [];
     this.sharedService
       .getVendorsListToCreateNewlogin(`?offset=1&limit=100`)
       .subscribe((data: any) => {
-        this.vendorAccount = data.vendorlist;
+        this.vendorAccount = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()];      
         this.vendorAccount.unshift({ VendorName: 'ALL', idVendor: "ALL" })
         // this.filteredVendors = arr;
       });
   }
+
   filterVendor(event) {
     let query = event.query.toLowerCase();
     let param = ''
     if(this.selectedEntityId != 'ALL'){
       param = `&ent_id=${this.selectedEntityId}`
     }
-    if (query != '') {
+    // if (query != '') {
       this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&${param}&ven_name=${query}`).subscribe((data: any) => {
-        this.filteredVendors = data.vendorlist;
+        this.filteredVendors = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()];
       });
-    } else {
-      this.filteredVendors = this.vendorAccount;
-    }
+    // } else {
+    //   this.filteredVendors = this.vendorAccount;
+    // }
   }
   selectedVendor(event){
     this.vendorNameForSearch = event.VendorName;

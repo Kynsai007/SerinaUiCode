@@ -59,7 +59,7 @@ export class SharedService {
   customerNameForSearch:any;
   spNameForSearch = 'ALL';
   selected_Vendor: any;
-  selected_ent: any;
+  selected_ent = {EntityName: 'ALL', idEntity: 'ALL'};
   selected_sp: any;
   currencies = [ 
     {"currency":"AED",
@@ -587,7 +587,7 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/copymodelsSP/${serviceaccount}/${modelname}`).pipe(retry(3));
   }
   getallEntities(): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/get_entities/${this.userId}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/get_entities?u_id=${this.userId}`).pipe(retry(3));
   }
   updateEntity(ent,obj):Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/fr/model/update_entity/${ent}`,obj).pipe(retry(3));

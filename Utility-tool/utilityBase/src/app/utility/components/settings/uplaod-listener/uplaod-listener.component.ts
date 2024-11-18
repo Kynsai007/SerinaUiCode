@@ -60,9 +60,9 @@ export class UplaodListenerComponent implements OnInit {
     })
   }
   getmailConfig(doctype){
-    this.sharedService.getemailconfig(doctype).subscribe(data => {
+    this.sharedService.getemailconfig(doctype).subscribe((data:any) => {
       if(data['message'] == "success"){
-        this.configData.patchValue({'email':data['config'].email,'email_tenant_id':data['config'].email_tenant_id,'email_client_id':data['config'].email_client_id,'email_client_secret':data['config'].email_client_secret,'host':data['config'].host,'folder':data['config'].folder,'loginuser':'','loginpass':'','acceptedDomains':data["config"]['acceptedDomains'],'acceptedEmails':data["config"]['acceptedEmails']})
+        this.configData.patchValue({'email':data['config']?.email,'email_tenant_id':data['config'].email_tenant_id,'email_client_id':data['config'].email_client_id,'email_client_secret':data['config'].email_client_secret,'host':data['config'].host,'folder':data['config'].folder,'loginuser':'','loginpass':'','acceptedDomains':data["config"]['acceptedDomains'],'acceptedEmails':data["config"]['acceptedEmails']})
       }
     })
   }

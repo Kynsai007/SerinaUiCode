@@ -192,7 +192,7 @@ export class Comparision3WayComponent
     { header: 'PO quantity', field: 'PurchQty'},
     { header: 'Inv - Quantity', field: 'Quantity' },
     { header: 'GRN - Quantity', field: 'GRNQuantity' },
-    { header: 'PO balance quantity', field: 'RemainInventPhysical'},
+    { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
     { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
     { header: 'Comments', field: '' }
   ];
@@ -461,7 +461,7 @@ export class Comparision3WayComponent
       { header: 'Description', field: 'Name' },
       { header: 'PO quantity', field: 'PurchQty'},
       { header: 'GRN - Quantity', field: 'GRNQty' },
-      { header: 'PO balance quantity', field: 'RemainInventPhysical'},
+      { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
       { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
       { header: 'Actions', field:''}
     ];
@@ -807,7 +807,7 @@ export class Comparision3WayComponent
       for(const line in ele){
         linesData[i][line] = {Value: ele[line]}
       }
-      linesData[i]['GRNQty'] = { Value: ele['RemainInventPhysical']}
+      linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical']}
       const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
       let amount;
       if(this.dataService.isEditGRN){
@@ -823,7 +823,7 @@ export class Comparision3WayComponent
     //   const tagMappings = {
     //     'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
     //     'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
-    //     'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
+    //     'PO Balance Qty': { value: 'RemainPurchPhysical', isMapped: '', tagName: 'PO Balance Qty' },
     //     'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
     //     'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
     //     'AmountExcTax': {
@@ -943,7 +943,7 @@ export class Comparision3WayComponent
           this.dataService.GRN_PO_Data.forEach(grn_line=>{
             if(line.LineNumber == grn_line.LineNumber){
               grn_line.PurchQty = line.PurchQty;
-              grn_line.RemainInventPhysical = line.RemainInventPhysical;
+              grn_line.RemainPurchPhysical = line.RemainPurchPhysical;
               
             }
           })
@@ -1534,7 +1534,7 @@ export class Comparision3WayComponent
         //       ele.podata.forEach((v) => {
         //         if (v.TagName == 'PurchQty') {
         //           poQty.push(v);
-        //         } else if (v.TagName == 'RemainInventPhysical') {
+        //         } else if (v.TagName == 'RemainPurchPhysical') {
         //           poBalQty.push(v);
         //         }
         //       });
@@ -2432,7 +2432,7 @@ export class Comparision3WayComponent
     // const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_qty_value = linedata?.PurchQty?.Value;
-    const po_balance_qty_value = linedata?.RemainInventPhysical?.Value;
+    const po_balance_qty_value = linedata?.RemainPurchPhysical?.Value;
 
     let checking_value;
     let error_msg;
@@ -3005,7 +3005,7 @@ export class Comparision3WayComponent
     inputData.forEach(el=>{
       let quantity = [];
       for(const tag in el){
-        if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+        if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
           if(el[tag].Value){
             quantity.push({date:tag, quantity: el[tag].Value})
           } else {
