@@ -195,10 +195,10 @@ export class ExceptionsService {
   }
 
   getApprovedUsers(){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getApprovedUsers/${this.userId}/${this.invoiceID}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/wf/getApprovedUsers/${this.userId}/${this.invoiceID}`);
   }
   rejectApprove(data,ap_id){
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/rejectApprover/${this.userId}/${this.invoiceID}?approver_id=${ap_id}`,data);
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/wf/rejectApprover/${this.userId}/${this.invoiceID}?approver_id=${ap_id}`,data);
   }
 
   rejectCommentsList(){

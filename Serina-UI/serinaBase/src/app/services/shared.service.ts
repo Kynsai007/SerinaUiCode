@@ -334,7 +334,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/getApprovers/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
   setApprovers(data, bool) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/setDocumentApproval/${this.userId}/idInvoice/${this.invoiceID}?pre_approve=${bool}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/wf/setDocumentApproval/${this.userId}/idInvoice/${this.invoiceID}?pre_approve=${bool}`, data).pipe(retry(3));
   }
 
   /* invoice Related */
@@ -474,7 +474,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectIT/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(2));
   }
   vendorRejectInvoice(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/wf/rejectVendor/${this.userId}/${this.invoiceID}`, data).pipe(retry(3));
   }
   rejectGRN(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectGRN/${this.invoiceID}/${this.userId}`).pipe(retry(3));
