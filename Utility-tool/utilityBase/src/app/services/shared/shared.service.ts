@@ -535,7 +535,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/upload_html_template?folderpath=${folderpath}`,data).pipe(retry(3));
   }
   uploadBlob(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_blob`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/upload_blob`, data).pipe(retry(3));
   }
 
   uploadFileblob(data): Observable<any> {
