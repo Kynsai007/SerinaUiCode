@@ -511,14 +511,17 @@ export class SharedService {
   }
   
   // SupportDocumnet
-  uploadSupportDoc(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}`, data, {
+  uploadSupportDoc(id,data) {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${id}`, data, {
       reportProgress: true,
       observe: 'events',
     }).pipe(retry(3));
   }
   downloadSupportDoc(doc_name) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
+  }
+  deleteSupport(filename){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/deleteSupportingDocument/${this.userId}/idDocument/${this.invoiceID}?file_name=${filename}`).pipe(retry(3));
   }
   getGRNAttachment(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGrnAttachment/${this.invoiceID}`).pipe(retry(3));

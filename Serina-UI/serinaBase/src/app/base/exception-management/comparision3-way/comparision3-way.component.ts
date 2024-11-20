@@ -617,7 +617,9 @@ export class Comparision3WayComponent
       // this.readMappingData();
       if (!['advance invoice'].includes(this.documentType)) {
         this.getGRNtabData();
-        this.getGrnAttachment();
+        if(this.client_name != 'SRG'){
+          this.getGrnAttachment();
+        }
       }
 
 
@@ -1562,6 +1564,7 @@ export class Comparision3WayComponent
         this.headerDataOrder();
         this.po_num = po_num_data[0]?.Value;
         this.getPODocId(this.po_num);
+        this.getGRNnumbers(this.exceptionService.po_num)
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -2666,6 +2669,9 @@ export class Comparision3WayComponent
         this.headerpop = 'GRN Creation Status';
         this.APIResponse = data.message;
       }
+      if(data.grn_doc_id && this.uploadFileList.length >0){
+        this.uploadSupport(data.grn_doc_id);
+      }
 
     }, err => {
       this.SpinnerService.hide();
@@ -3398,7 +3404,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < event.target.files.length; i++) {
       this.uploadFileList.push(event.target.files[i]);
     }
-    this.uploadSupport();
+    this.uploadSupport(this.invoiceID);
   }
   onSelectFile(event) {
     for (let i = 0; i < event.target.files.length; i++) {
@@ -3406,11 +3412,14 @@ export class Comparision3WayComponent
 
     }
   }
+  addToQueue(){
+    this.success("Added");
+  }
   removeUploadQueue(index) {
     this.uploadFileList.splice(index, 1);
   }
 
-  uploadSupport() {
+  uploadSupport(id) {
     this.progress = 1;
     const formData: any = new FormData();
     for (const file of this.uploadFileList) {
@@ -3418,7 +3427,7 @@ export class Comparision3WayComponent
       formData.append('files', file, cleanedFileName);
     }
     this.SpinnerService.show()
-    this.SharedService.uploadSupportDoc(formData)
+    this.SharedService.uploadSupportDoc(id,formData)
       .pipe(
         map((event: any) => {
           if (event.type == HttpEventType.UploadProgress) {
@@ -3469,6 +3478,28 @@ export class Comparision3WayComponent
         this.error("Server error");
       }
     );
+  }
+
+  deleteSupport(file){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation');
+    drf.afterClosed().subscribe((bool:boolean)=>{
+      if(bool){
+        this.support_doc_list = [];
+        this.SpinnerService.show();
+        this.SharedService.deleteSupport(file).subscribe((data:any)=>{
+          console.log(data)
+          if(data.status == 'success'){
+            this.support_doc_list = data.files;
+            console.log(this.support_doc_list)
+            this.success("Deleted successfully.");
+            this.SpinnerService.hide();
+          }
+        },err=>{
+          this.error("Server error");
+          this.SpinnerService.hide();
+        })
+      }
+    })
   }
 
   grnAttachmentDoc(base64, type) {
