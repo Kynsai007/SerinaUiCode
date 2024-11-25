@@ -515,7 +515,7 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/readerprules`).pipe(retry(3));
   }
   updateFrMetaData(documentId,data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/update_metadata/${documentId}`,data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/update_metadata/${documentId}`,data).pipe(retry(3));
   }
   getModalList(v_id,type): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getmodellist/${v_id}?context=${type}`).pipe(retry(3));
@@ -525,7 +525,7 @@ export class SharedService {
   // }
 
   createNewTemplate(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/createmodel/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/createmodel/${this.userId}`, data).pipe(retry(3));
   }
 
   uploadFolder(data): Observable<any> {
@@ -543,7 +543,7 @@ export class SharedService {
   }
 
   modelValidate(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/model_validate`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/model_validate`, data).pipe(retry(3));
   }
   saveLabelsFile(frobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_labels_file`,frobj).pipe(retry(3));
@@ -568,23 +568,23 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_training_result_vendor/${modeltype}/${Id}`).pipe(retry(3));
   }
   reupload_blob(data): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/reupload_blob`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/blob/reupload_blob`, data).pipe(retry(3));
   }
 
   updateModel(data, modal_id): Observable<any> {
-    return this.http.post(`${this.url}/${this.apiVersion}/fr/updatemodel/${modal_id}`, data).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/model/updatemodel/${modal_id}`, data).pipe(retry(3));
   }
   checkSameVendors(vendoraccount,modelname): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/checkduplicatevendors/${vendoraccount}/${modelname}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/checkduplicatevendors/${vendoraccount}/${modelname}`).pipe(retry(3));
   }
   checkSameSP(serviceaccount,modelname): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/checkduplicatesp/${serviceaccount}/${modelname}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/checkduplicatesp/${serviceaccount}/${modelname}`).pipe(retry(3));
   }
   copymodels(vendoraccount,modelname): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/copymodels/${vendoraccount}/${modelname}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/model/copymodels/${vendoraccount}/${modelname}`).pipe(retry(3));
   }
   copymodelsSP(serviceaccount,modelname): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/copymodelsSP/${serviceaccount}/${modelname}`).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/model/copymodelsSP/${serviceaccount}/${modelname}`).pipe(retry(3));
   }
   getallEntities(): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/get_entities?u_id=${this.userId}`).pipe(retry(3));
@@ -599,10 +599,14 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/metadata/getTrainTestResults/${modal_id}`).pipe(retry(3));
   }
   getTaggingInfo(container,folderpath,connstr,documentId): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}`,{headers:new HttpHeaders({'container':container,'connstr':connstr,"path":folderpath})}).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}?folder_path=${folderpath}`,
+      // {headers:new HttpHeaders({'container':container,'connstr':connstr,"path":folderpath})}
+    ).pipe(retry(3));
   }
   getAnalyzeResult(frobj):Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/${frobj['container']}`,{headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})}).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/?filename=${frobj['filename']}`,
+      // {headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})}
+    ).pipe(retry(3));
   }
   getAnalyzeResultHTML(filename):Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result_html?filename=${filename}`).pipe(retry(3));
@@ -683,7 +687,7 @@ export class SharedService {
   }
 
   getLabelsInfo(folderPath,filename): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}`,{headers:new HttpHeaders({'folderpath':folderPath})}).pipe(retry(3));
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}?folder_path=${folderPath}`,{headers:new HttpHeaders({'folderpath':folderPath})}).pipe(retry(3));
   }
 
   readServiceRules(){

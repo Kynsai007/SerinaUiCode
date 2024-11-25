@@ -307,8 +307,8 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
                                                         <i class="fa fa-table"></i> {{f.fieldKey}}
                                                     </span>
                                                     <div *ngIf="f.fieldType == 'string'" style="display: flex; justify-content: flex-end;margin-left: 150px;">
-                                                        <i *ngIf="!loadingIndex && (labelsJson.labels[getLabelIndex(f)] && labelsJson.labels[getLabelIndex(f)]?.value.length > 0)" class="fa fa-check" style="color: #27ae60;"></i>
-                                                        <i *ngIf="!loadingIndex && (!labelsJson.labels[getLabelIndex(f)] || labelsJson.labels[getLabelIndex(f)]?.value.length == 0)" class="fa fa-times" style="color: #e74c3c;"></i>
+                                                        <i *ngIf="!loadingIndex && (labelsJson?.labels[getLabelIndex(f)] && labelsJson?.labels[getLabelIndex(f)]?.value?.length > 0)" class="fa fa-check" style="color: #27ae60;"></i>
+                                                        <i *ngIf="!loadingIndex && (!labelsJson?.labels[getLabelIndex(f)] || labelsJson?.labels[getLabelIndex(f)]?.value?.length == 0)" class="fa fa-times" style="color: #e74c3c;"></i>
                                                         <div *ngIf="loadingIndex === i" class="spinner-border spinner-border-sm" role="status" style="margin-top: 40%;">
                                                         </div>
                                                     </div>

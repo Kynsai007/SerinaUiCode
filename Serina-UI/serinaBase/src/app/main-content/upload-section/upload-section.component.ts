@@ -1507,7 +1507,7 @@ export class UploadSectionComponent implements OnInit {
     this.sharedService.invoiceID = 12344;
     this.approverNameList = [];
     this.sharedService.readApprovers(this.approversSendData[0]).subscribe((data: any) => {
-      if(data.status == 'success'){
+      // if(data.status == 'success'){
         let resultData = data?.result;
         let array = [];
         let list = [];
@@ -1520,9 +1520,9 @@ export class UploadSectionComponent implements OnInit {
           array.push(resultData[item][0]?.User?.idUser);
         }
         this.approversSendData[0].approver = array;
-      } else {
-        this.error(data.message);
-      }
+      // } else {
+      //   this.error(data.message);
+      // }
       this.spinnerService.hide();
     }, err => {
       this.spinnerService.hide();

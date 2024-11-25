@@ -284,6 +284,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       })
       this.modelData = selected[0];
       this.mobservice.setModelData(this.modelData);
+      console.log(this.modelData)
       sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
       this.FolderPath = this.modelData?.folderPath;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
@@ -697,6 +698,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     });
   }else{
     _this.saving = false;
+    _this.router.navigate(['IT_Utility/training']);
   }
    } else {
      alert('Please add required fields.');

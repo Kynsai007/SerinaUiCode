@@ -1470,13 +1470,13 @@ export class Comparision3WayComponent
         lineData.forEach(item=>{
           Object.keys(item).forEach(label=>{
             if(label === 'GRNAmountExcTax'){
-              this.GRN_line_total = this.GRN_line_total + Number(item[label].Value)
-            } else if(label === 'PODescription' && item[label].Value){
+              this.GRN_line_total = this.GRN_line_total + Number(item[label]?.Value)
+            } else if(label === 'PODescription' && item[label]?.Value){
               this.descrptonBool = true;
             }
           })
         })
-        console.log(this.lineDisplayData)
+        // console.log(this.lineDisplayData)
         // dummyLineArray.forEach((ele, i, array) => {
         //   if (ele.TagName == 'Quantity') {
         //     ele.TagName = 'Inv - Quantity';
@@ -1632,7 +1632,12 @@ export class Comparision3WayComponent
         // });
         this.headerDataOrder();
         // this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
+        let poNum = this.po_num
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.getPODocId(poNum);
+        this.getGRNnumbers(poNum);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,

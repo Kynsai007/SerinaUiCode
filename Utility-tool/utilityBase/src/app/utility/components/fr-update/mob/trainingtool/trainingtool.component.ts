@@ -77,8 +77,10 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     }
     this.sharedService.getTrainingResult(this.modelData.idDocumentModel).subscribe((data:any) => {
       this.resp = data;
-      if(this.resp['message'] == 'success'){
-        this.previoustraining = this.resp['result']
+      console.log(JSON.parse(JSON.stringify(data?.result)))
+      if(data?.message == 'success'){
+        this.previoustraining = JSON.parse(JSON.stringify(data?.result))
+        console.log(this.previoustraining)
         if(this.previoustraining.length > 0){
           if(this.previoustraining[0].length == 0){
             return;
@@ -118,7 +120,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             this.previoustrainingres.modelInfo = {"status":"succeeded","modelId":this.previoustrainingres.modelId,"modelName":this.previoustrainingres.modelId,"attributes":{"isComposed":false}}
             this.previoustrainingres.trainResult = {"averageModelAccuracy":average};
             this.fields = arr;
-            let resultobj = {'fr_result':JSON.stringify(this.previoustrainingres),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres.modelId}
+            let resultobj = {'fr_result':this.previoustrainingres,'model_id':this.modelData.idDocumentModel.toString(),'model_name':this.previoustrainingres.modelId}
             this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
             })
           }
@@ -160,7 +162,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
       this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId']).subscribe(data=>{
         this.checkmodel = false;
         if(data["modelInfo"]["status"] == "ready"){
-          let resultobj = {'fr_result':JSON.stringify(data),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres['modelInfo']['modelId']}
+          let resultobj = {'fr_result':data,'model_id':this.modelData.idDocumentModel.toString(),'model_name':this.previoustrainingres['modelInfo']['modelId']}
             this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
               this.resp = data;
               if(this.resp['message'] == 'success'){
@@ -179,11 +181,11 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     this.training = true;
     let frobj = {
-      'connstr':this.frConfigData[0].ConnectionString,
-      'folderpath':this.modelData.folderPath,
-      'container':this.frConfigData[0].ContainerName,
-      'account':this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
-      'modelName':modelName
+      // 'connstr':this.frConfigData[0].ConnectionString,
+      'folder_path':this.modelData.folderPath,
+      // 'container':this.frConfigData[0].ContainerName,
+      // 'account':this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
+      'model_name':modelName
     }
     try{
       this.sharedService.trainModel(frobj).subscribe((data:any) => {
@@ -198,7 +200,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
               this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
               this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
               this.nottrained = false;
-              let resultobj = {'fr_result':JSON.stringify(this.resp["result"]),'docid':this.modelData.idDocumentModel,'modelName':this.resp["result"]["modelInfo"]["modelName"]}
+              let resultobj = {'fr_result':this.resp["result"],'model_id':this.modelData.idDocumentModel.toString(),'model_name':this.resp["result"]["modelInfo"]["modelName"]}
               this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
               this.resp = data;
               if(this.resp['message'] == 'success'){
@@ -264,7 +266,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
           }
           this.modelData.modelName = modelName;
           sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
-          let resultobj = {'fr_result':JSON.stringify(this.trainingresult),'docid':this.modelData.idDocumentModel,'modelName':modelName}
+          let resultobj = {'fr_result':this.trainingresult,'model_id':this.modelData.idDocumentModel.toString(),'model_name':modelName}
           this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
             this.resp = data;
             if(this.resp['message'] == 'success'){

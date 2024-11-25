@@ -400,12 +400,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }))
       this.labelsJson = await this.customMizeLabels(this.labelsJson);
       let frobj = {
-        'documentId':this.modelData.idDocumentModel,
-        'container':this.frConfigData[0].ContainerName,
-        'connstr':this.frConfigData[0].ConnectionString,
+        'model_id':this.modelData.idDocumentModel,
+        // 'container':this.frConfigData[0].ContainerName,
+        // 'connstr':this.frConfigData[0].ConnectionString,
         'filename':this.modelData.folderPath+"/"+this.currentfile,
-        'saveJson':null,
-        'labelJson':this.labelsJson
+        // 'saveJson':null,
+        'labels':this.labelsJson
       }
       this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
         this.loadingtableIndex  = false;
@@ -484,6 +484,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         this.connectionString = this.frConfigData[0].ConnectionString;
         this.containerName = this.frConfigData[0].ContainerName;
         if(this.modelData){
+          console.log(this.modelData.folderPath)
           this.sharedService.getTaggingInfo(this.containerName,this.modelData.folderPath,this.connectionString,this.modelData.idDocumentModel).subscribe((data:any) => {
             this.resp = data;
             this.loading = false;
@@ -728,12 +729,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
       }
       let frobj = {
-        'documentId':this.modelData.idDocumentModel,
-        'container':this.frConfigData[0].ContainerName,
-        'connstr':this.frConfigData[0].ConnectionString,
+        'model_id':this.modelData.idDocumentModel,
+        // 'container':this.frConfigData[0].ContainerName,
+        // 'connstr':this.frConfigData[0].ConnectionString,
         'filename':this.modelData.folderPath+"/"+this.currentfile,
-        'saveJson':null,
-        'labelJson':this.labelsJson
+        // 'saveJson':null,
+        'labels':this.labelsJson
       }
       this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
       })
@@ -902,6 +903,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
 
     if (Object.keys(data['labels']).length > 0) {
         this.labelsJson = JSON.parse(data['labels'].blob);
+        console.log(this.labelsJson)
         this.labelsJson["document"] = this.currentfile;
         this.labelsJson = await this.customMizeLabels(this.labelsJson);
     } else {
@@ -1295,12 +1297,12 @@ private initializeFields() {
             }
             _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
-              'documentId':_this.modelData.idDocumentModel,
-              'container':_this.frConfigData[0].ContainerName,
-              'connstr':_this.frConfigData[0].ConnectionString,
+              'model_id':_this.modelData.idDocumentModel,
+              // 'container':_this.frConfigData[0].ContainerName,
+              // 'connstr':_this.frConfigData[0].ConnectionString,
               'filename':_this.modelData.folderPath+"/"+_this.currentfile,
-              'saveJson':null,
-              'labelJson':_this.labelsJson
+              // 'saveJson':null,
+              'labels':_this.labelsJson
             }
             _this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
               _this.loadingIndex = null;
@@ -1519,12 +1521,12 @@ private initializeFields() {
             }
             _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
-              'documentId':_this.modelData.idDocumentModel,
-              'container':_this.frConfigData[0].ContainerName,
-              'connstr':_this.frConfigData[0].ConnectionString,
+              'model_id':_this.modelData.idDocumentModel,
+              // 'container':_this.frConfigData[0].ContainerName,
+              // 'connstr':_this.frConfigData[0].ConnectionString,
               'filename':_this.modelData.folderPath+"/"+_this.currentfile,
-              'saveJson':null,
-              'labelJson':_this.labelsJson
+              // 'saveJson':null,
+              'labels':_this.labelsJson
             }
             _this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
               _this.loadingIndex = null;
@@ -1738,7 +1740,7 @@ private initializeFields() {
       (<HTMLDivElement>document.getElementById("parentcanvas"+this.currentindex)).style.transform = res;  
   }
   getLabelIndex(field){
-    return this.labelsJson["labels"].findIndex(el => el.label == field.fieldKey);
+    return this.labelsJson["labels"]?.findIndex(el => el.label == field.fieldKey);
   }
   async setinitial(i,field){
     if(!field.fieldKey.startsWith(this.currenttable)){
@@ -1877,12 +1879,12 @@ private initializeFields() {
         }))
         this.labelsJson = await this.customMizeLabels(this.labelsJson);
         let frobj = {
-          'documentId':this.modelData.idDocumentModel,
-          'container':this.frConfigData[0].ContainerName,
-          'connstr':this.frConfigData[0].ConnectionString,
+          'model_id':this.modelData.idDocumentModel,
+          // 'container':this.frConfigData[0].ContainerName,
+          // 'connstr':this.frConfigData[0].ConnectionString,
           'filename':this.modelData.folderPath+"/"+this.currentfile,
-          'saveJson':null,
-          'labelJson':this.labelsJson
+          // 'saveJson':null,
+          'labels':this.labelsJson
         }
         this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
           this.loadingIndex = null; 
