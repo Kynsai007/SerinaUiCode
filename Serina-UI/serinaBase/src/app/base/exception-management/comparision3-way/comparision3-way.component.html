@@ -321,7 +321,7 @@
                 <div *ngFor="let value of headerData ">
                   <!-- [ngStyle]="{ 'width':value?.TagLabel?.includes('Vendor') ? 'calc(100svw - 74svw)':''}" -->
                   <div
-                    *ngIf="!value?.TagLabel?.toLowerCase().includes('dummy')"
+                    *ngIf="!value?.TagLabel?.toLowerCase()?.includes('dummy')"
                     class="input_container"
                     [ngClass]="
                       value?.TagLabel?.includes('Vendor')
@@ -330,17 +330,17 @@
                     "
                     [ngStyle]="{
                       border:
-                        value.isError >= 1 && !value.ErrorDesc.includes('Low')
+                        value?.isError >= 1 && !value?.ErrorDesc?.includes('Low')
                           ? '1px solid #D81616'
                           :subStatusId == 110 && value?.TagLabel == 'Current Month VAT'
                           ? '1px solid #D81616'
-                          :value?.TagLabel == 'Customer TRN Number' && value.Value == ''
+                          :value?.TagLabel == 'Customer TRN Number' && value?.Value == ''
                           ? '1px solid #D81616'
-                          :value.isError >= 1 && value.ErrorDesc.includes('Low')
+                          :value?.isError >= 1 && value?.ErrorDesc?.includes('Low')
                           ? '1px solid #f7c83e'
-                          : value.isError === 0 && value.IsUpdated === 0
+                          : value?.isError === 0 && value?.IsUpdated === 0
                           ? '0px solid lightgray'
-                          : value.IsUpdated > 0
+                          : value?.IsUpdated > 0
                           ? '1px solid #37dcc7'
                           : ''
                     }"
@@ -348,8 +348,8 @@
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value.isError == 1 || value.IsUpdated > 0"
-                        [pTooltip]="value.ErrorDesc"
+                        *ngIf="value?.isError == 1 || value?.IsUpdated > 0"
+                        [pTooltip]="value?.ErrorDesc"
                         tooltipPosition="top"
                         ><i
                           class="fa fa-info-circle info_icon"
@@ -366,7 +366,7 @@
                         ></i
                       ></span> -->
                       <span
-                        *ngIf="value.TagLabel == 'PurchaseOrder' && editable && !router.url.includes('Create_GRN_inv_list')"
+                        *ngIf="value?.TagLabel == 'PurchaseOrder' && editable && !router.url.includes('Create_GRN_inv_list')"
                       >
                         <i
                           class="fa fa-search info_icon pointer po_s_icon"
@@ -433,7 +433,7 @@
                     [ngClass]="
                       data?.key?.includes('VendorName') ? 'large_input_box' : ''
                     "
-                    *ngIf="!data?.key.startsWith('id')"
+                    *ngIf="!data?.key?.startsWith('id')"
                   >
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ data.key }}
