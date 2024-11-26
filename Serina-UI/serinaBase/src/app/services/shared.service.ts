@@ -351,10 +351,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${string}/${id}`).pipe(retry(3));
   }
   changeStatus(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/${this.invoiceID}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/document/updateStatus/${this.userId}/${this.invoiceID}`,data).pipe(retry(3));
   }
   updatePO(id){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/POUpdate/${id}`).pipe(retry(3));
   }
   get_poDoc_id(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPOid/${this.userId}/${id}`).pipe(retry(3));
