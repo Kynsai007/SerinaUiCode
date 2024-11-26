@@ -909,6 +909,7 @@ export class Comparision3WayComponent
         let po_lines = this.dataService.po_lines;
         this.dataService.GRN_PO_Data = this.exceptionService.convertData(GRN_linedata, this.exceptionService.po_num);
         this.getPODocId(this.exceptionService.po_num)
+        // this.getGRNnumbers(this.exceptionService.po_num);
         po_lines?.forEach(line=>{
           this.dataService.GRN_PO_Data.forEach(grn_line=>{
             if(line.LineNumber == grn_line.LineNumber){
@@ -1056,10 +1057,12 @@ export class Comparision3WayComponent
           }
         }
         this.headerDataOrder();
-        if (this.po_num) {
-          this.getPODocId(this.po_num);
-          this.getGRNnumbers(this.po_num);
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
         }
+        this.getPODocId(poNum);
+        this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
           this.getProjectData();
           this.getProjectCatData();
@@ -1563,8 +1566,12 @@ export class Comparision3WayComponent
         });
         this.headerDataOrder();
         this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
-        this.getGRNnumbers(this.exceptionService.po_num)
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.getPODocId(poNum);
+        this.getGRNnumbers(poNum);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,

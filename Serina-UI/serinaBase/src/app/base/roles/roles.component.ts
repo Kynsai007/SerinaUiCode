@@ -307,7 +307,9 @@ export class RolesComponent implements OnInit {
     if (this.permissionService.addUsersBoolean == true) {
       this.router.navigate(['/customer/roles', 'createdUsers']);
       this.someParameterValue = 'createdUsers';
-      this.DisplayCustomerUserDetails();
+      if(!this.sharedService.usersList){
+        this.DisplayCustomerUserDetails();
+      }
       this.toGetEntity();
       this.getDisplayTotalRoles();
       this.getVendorsListTocreateNewVendorLogin();
@@ -1258,6 +1260,7 @@ export class RolesComponent implements OnInit {
         usersList.push(mergedData);
       });
       this.CustomerUserReadData = usersList;
+      this.sharedService.usersList = usersList;
       if (this.CustomerUserReadData.length > 10 && this.isDesktop ) {
         this.showPaginator = true;
       }

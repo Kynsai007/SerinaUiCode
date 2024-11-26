@@ -123,12 +123,14 @@ export class InvoiceComponent implements OnInit {
   filteredEnt: any[];
   vendorsList: any;
   filteredVendors: any;
-  grnTabDownloadOpt = 'All';
+  grnTabDownloadOpt = 'Pending';
   cardCount: number;
   searchText: string;
   ERPName: any;
   servicesList: any[];
   filteredService: any[];
+  userList:any[];
+  createdById: any;
   
   close(reason: string) {
     this.sidenav.close();
@@ -194,6 +196,10 @@ isMobile:boolean;
       this.isDesktop = this.ds.isDesktop;
       this.isMobile = this.ds.isMobile;
       this.ERPName = this.ds.configData?.erpname;
+      this.userList = this.sharedService.usersList;
+      if(!this.userList){
+        this.DisplayCustomerUserDetails()
+      }
       if (this.userDetails.user_type == 'customer_portal') {
         this.usertypeBoolean = true;
         this.portal_name = 'customer';
@@ -1370,6 +1376,7 @@ isMobile:boolean;
 
   
   universalSearch(txt){
+
       if(this.route.url == this.serviceInvoiceTab){
         this.ds.serviceGlobe = txt;
         this.serviceinvoiceDispalyData = this.filterDataService;
@@ -1379,6 +1386,9 @@ isMobile:boolean;
         this.invoiceDisplayData = this.filterData;
         this.invoiceDisplayData = this.ds.searchFilter(txt,this.filterData);
       }
+      // if(txt == ''){
+      //   this.filterString(txt);
+      // }
   }
   closeDialog(){
     const dialog = document.querySelector('dialog');
@@ -1398,16 +1408,23 @@ isMobile:boolean;
         "email": this.userEmailID,
         "option": this.grnTabDownloadOpt
       }
-    if(this.rangeDates){
-      const frmDate = this.datePipe.transform(this.rangeDates[0], 'yyyy-MM-dd');
-      const toDate = this.datePipe.transform(this.rangeDates[1], 'yyyy-MM-dd');
-      api_param = `?start_date=${frmDate}&end_date=${toDate}`
-    }
-    this.sharedService.downloadGRN(api_param,api_body).subscribe((data:any)=>{
-      this.success(data.result);
-      this.SpinnerService.hide();
-      this.closeDialog();
-    })
+      let frmDate,toDate;
+      if(this.rangeDates){
+        frmDate = this.datePipe.transform(this.rangeDates[0], 'yyyy-MM-dd');
+        toDate = this.datePipe.transform(this.rangeDates[1], 'yyyy-MM-dd');
+      }
+      if(this.rangeDates && !this.createdById){
+        api_param = `?start_date=${frmDate}&end_date=${toDate}`;
+      } else if(!this.rangeDates && this.createdById){
+        api_param = `?created_by=${this.createdById}`;
+      } else {
+        api_param = `?created_by=${this.createdById}&start_date=${frmDate}&end_date=${toDate}`;
+      }
+      this.sharedService.downloadGRN(api_param,api_body).subscribe((data:any)=>{
+        this.success(data.result);
+        this.SpinnerService.hide();
+        this.closeDialog();
+      })
   }
   success(msg) {
     this.AlertService.success_alert(msg);
@@ -1488,6 +1505,24 @@ filterService(event) {
     }
   }
   this.filteredService = filtered;
+}
+filterUser(event) {
+  console.log(this.sharedService?.usersList)
+  let filtered: any[] = [];
+  let query = event.query;
+
+  if (this.sharedService?.usersList?.length > 0) {
+    for (let i = 0; i < this.sharedService?.usersList?.length; i++) {
+      let ent: any = this.sharedService?.usersList[i];
+      if (ent.firstName.toLowerCase().includes(query.toLowerCase())) {
+        filtered.push(ent);
+      }
+    }
+  }
+  this.userList = filtered;
+}
+selectedUser(evnt){
+  this.createdById = evnt?.userID;
 }
 selectedVendor(val){
 }
@@ -1578,6 +1613,22 @@ ERPReports(bool) {
      this.SpinnerService.hide();
       this.error("Server error");
    }) 
+}
+DisplayCustomerUserDetails() {
+  this.sharedService.readcustomeruser().subscribe((data: any) => {
+    let usersList = [];
+    data.forEach((element) => {
+      let mergedData = {
+        ...element.AccessPermission,
+        ...element.AccessPermissionDef,
+        ...element.User
+      };
+      mergedData.LogName = element?.LogName;
+      usersList.push(mergedData);
+    });
+    this.userList = usersList;
+    this.sharedService.usersList = usersList;
+  });
 }
 
 }
