@@ -1417,7 +1417,7 @@ isMobile:boolean;
         api_param = `?start_date=${frmDate}&end_date=${toDate}`;
       } else if(!this.rangeDates && this.createdById){
         api_param = `?created_by=${this.createdById}`;
-      } else {
+      } else if(this.rangeDates && this.createdById) {
         api_param = `?created_by=${this.createdById}&start_date=${frmDate}&end_date=${toDate}`;
       }
       this.sharedService.downloadGRN(api_param,api_body).subscribe((data:any)=>{
