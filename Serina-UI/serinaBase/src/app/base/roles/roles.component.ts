@@ -307,18 +307,23 @@ export class RolesComponent implements OnInit {
     if (this.permissionService.addUsersBoolean == true) {
       this.router.navigate(['/customer/roles', 'createdUsers']);
       this.someParameterValue = 'createdUsers';
-      if(!this.sharedService.usersList){
-        this.DisplayCustomerUserDetails();
-      }
-      this.toGetEntity();
-      this.getDisplayTotalRoles();
-      this.getVendorsListTocreateNewVendorLogin();
-      this.getVendorSuperUserList();
+      
       this.financeApproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
       this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
+      if(!this.sharedService.usersList){
+        this.DisplayCustomerUserDetails();
+      } else {
+        this.CustomerUserReadData = this.sharedService.usersList;
+      }
+      this.toGetEntity();
+      this.getDisplayTotalRoles();
+      if(this.isVendorportalRequired){
+        this.getVendorsListTocreateNewVendorLogin();
+        this.getVendorSuperUserList();
+      }
 
     } else {
       // this.alertBoolean = true;
