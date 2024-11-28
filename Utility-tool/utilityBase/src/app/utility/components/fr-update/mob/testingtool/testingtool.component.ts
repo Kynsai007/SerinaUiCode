@@ -220,7 +220,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     element.scrollIntoView(); 
   }
   async runAnalyses(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+    const ocr_engine_version = this.modelData?.model_version;
     if(this.file_url != ""){
       const formData: FormData = new FormData();
       formData.append('file', this.file);
@@ -233,7 +233,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         "fr_endpoint":"",
         "fr_key":""
       }
-      this.sharedService.testModel(testobj).subscribe((data:any) => {
+      this.sharedService.testModel(testobj,this.modelData?.model_version).subscribe((data:any) => {
         this.resp = data;
         this.testing = false;
         this.analyzed = true;
@@ -241,7 +241,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
           //this.model_validate();
           this.jsonresult = this.resp['json_result'];
           let obj;
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+          if(ocr_engine_version == "v2.1"){
             this.readResults = this.jsonresult['analyzeResult']['readResults']
             obj = this.readResults.filter(v => v.page == 1);
             this.fields = this.jsonresult.analyzeResult.documentResults[0].fields
@@ -472,14 +472,14 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     saveAs(blob,filename);
   }
   viewTable(f){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+    const ocr_engine_version = this.modelData?.model_version;
     this.rows = [];
     this.currenttable = f;
     this.currentheaders = Object.keys(this.fields[f].valueArray[0].valueObject);
     for(let r=0;r<this.fields[f].valueArray.length;r++){
       let temparr:any[] = [];
       for(let h of this.currentheaders){
-        if(ocr_engine_version == "Azure Form Recognizer 2.1")
+        if(ocr_engine_version == "v2.1")
         temparr.push(this.fields[f].valueArray[r].valueObject[h].text);
         else
         temparr.push(this.fields[f].valueArray[r].valueObject[h].content);
