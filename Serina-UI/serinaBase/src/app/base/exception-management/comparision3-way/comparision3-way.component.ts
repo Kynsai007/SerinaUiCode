@@ -503,6 +503,8 @@ export class Comparision3WayComponent
     } else {
       if(this.Itype == 'Invoice'){
         this.readFilePath();
+      } else {
+        this.isPdfAvailable = true;
       }
     }
     this.isAdmin = this.dataService.isAdmin;
@@ -588,7 +590,7 @@ export class Comparision3WayComponent
     } else if (this.router.url.includes('serviceDetails')) {
       this.Itype = 'Service';
     }
-
+    console.log(this.showPdf)
 
     if (this.router.url.includes('Create_GRN_inv_list') || this.router.url.includes('GRN_approvals') || this.GRN_PO_Bool) {
       if (this.permissionService.GRNPageAccess == true) {

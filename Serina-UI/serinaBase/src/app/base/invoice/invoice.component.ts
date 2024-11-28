@@ -1039,9 +1039,11 @@ isMobile:boolean;
       this.first = event.pageNumber;
     }
     if (this.route.url == this.invoiceTab) {
+      this.changePageInsession('allInvoices',this.first);
       this.ds.allPaginationFirst = this.first;
       this.ds.allPaginationRowLength = event.rows;
     } else if (this.route.url == this.POTab) {
+      this.changePageInsession('PO',this.first);
       this.ds.poPaginationFirst = this.first;
       this.ds.poPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariablePO) {
@@ -1057,6 +1059,7 @@ isMobile:boolean;
         }
       }
     } else if (this.route.url == this.GRNTab) {
+      this.changePageInsession('GRN',this.first);
       this.ds.GRNPaginationFirst = this.first;
       this.ds.GRNPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableGRN) {
@@ -1072,6 +1075,7 @@ isMobile:boolean;
         }
       }
     } else if (this.route.url == this.archivedTab) {
+      this.changePageInsession('Archived',this.first);
       this.ds.archivedPaginationFirst = this.first;
       this.ds.archivedPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableArc) {
@@ -1095,6 +1099,7 @@ isMobile:boolean;
         }
       }
     } else if (this.route.url == this.rejectedTab) {
+      this.changePageInsession('Archived',this.first);
       this.ds.rejectedPaginationFirst = this.first;
       this.ds.rejectedPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableRej) {
@@ -1127,8 +1132,19 @@ isMobile:boolean;
     //   }
     // } 
     else if (this.route.url == this.serviceInvoiceTab) {
+      this.changePageInsession('Service',this.first);
       this.ds.servicePaginationFirst = this.first;
       this.ds.servicePaginationRowLength = event.rows;
+    }
+  }
+
+  changePageInsession(item,count){
+    let sessionData = sessionStorage.getItem(item);
+    if (sessionData) {
+      let session = JSON.parse(sessionData);
+      session.first = count;
+      console.log(item,session)
+      sessionStorage.setItem(item, JSON.stringify(session));
     }
   }
 

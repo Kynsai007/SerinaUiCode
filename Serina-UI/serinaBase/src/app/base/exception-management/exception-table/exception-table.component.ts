@@ -230,7 +230,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.pageNumber = this.ds.invTabPageNumber;
     } else if (this.router.url.includes('PO')) {
       this.pageNumber = this.ds.poTabPageNumber;
-    } else if (this.router.url == `/${this.portalName}/invoice/GRN`) {
+    } else if (this.router.url.includes('invoice/GRN')) {
       this.pageNumber = this.ds.grnTabPageNumber;
     } else if (this.router.url.includes('archived')) {
       this.pageNumber = this.ds.arcTabPageNumber;
@@ -389,7 +389,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         first: this.fst,
         rows: 50
       }
-      this.paginate_doc(evnt);
+      this.paginate_doc(event);
     }
   }
 
@@ -969,7 +969,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.globalSearch = stItem?.filters?.global?.value;
       }
     }
-    else if (this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')) {
+    else if (this.router.url.includes('invoice/GRN') && !this.router.url.includes('GRNExceptions')) {
       this.first = this.ds.GRNPaginationFirst;
       this.rows = this.ds.GRNPaginationRowLength;
       this.stateTable = 'GRN';

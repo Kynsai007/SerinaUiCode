@@ -5,7 +5,7 @@ import { SettingsService } from './../../services/settings/settings.service';
 import { PermissionService } from './../../services/permission.service';
 import { AuthenticationService } from './../../services/auth/auth-service.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, OnDestroy,Renderer2, AfterViewInit  } from '@angular/core';
+import { Component, OnInit, OnDestroy,Renderer2, AfterViewInit, HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 // import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -115,7 +115,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
     this.portalName = this.dataStoreService.portalName;
-    this.dataStoreService.configData.client_name = 'Cenomi'
+    // this.dataStoreService.configData.client_name = 'Cenomi'
     if(this.dataStoreService.configData.client_name == 'Cenomi'){
       this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
       this.dataStoreService.changeTheme("#20113E",'#ffffff');
@@ -631,4 +631,18 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.DisplayMode.unsubscribe();
     this.dialog.closeAll();
   }
+  @HostListener('window:beforeunload', ['$event'])
+  clearSessionStorage(event: Event): void {
+    // Remove session storage items if they exist
+    if (sessionStorage.getItem('allInvoices')) {
+      sessionStorage.removeItem('allInvoices');
+    }
+    if (sessionStorage.getItem('PO')) {
+      sessionStorage.removeItem('PO');
+    }
+    if (sessionStorage.getItem('GRN')) {
+      sessionStorage.removeItem('GRN');
+    }
+  }
+
 }

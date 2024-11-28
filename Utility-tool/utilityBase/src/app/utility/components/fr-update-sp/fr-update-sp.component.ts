@@ -95,6 +95,11 @@ export class FrUpdateSpComponent implements OnInit {
   auto_template_classification:boolean=false;
   showCheckboxServiceDiv:boolean;
   selected_dateFormat:string;
+  modelVersions = [
+    { name: 'Azure Form Recognizer 2.1', version:'v2.1'},
+    { name: 'Azure Form Recognizer 3.0', version:'2022-08-31'},
+    { name: 'Azure Form Recognizer 3.1', version:'2023-07-31'},
+  ]
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
