@@ -289,9 +289,9 @@ export class FrUpdateSpComponent implements OnInit {
       })
   }
   getMetaData(documentId) {
+    this.headerArray = [];
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
       this.FRMetaData = data.FRMetaData;
-      this.headerArray = [];
       this.LineArray = [];
       this.selected_dateFormat = this.FRMetaData?.DateFormat;
       if (this.FRMetaData?.auto_template_classification) {
