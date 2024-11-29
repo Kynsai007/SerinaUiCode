@@ -56,7 +56,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   rowfields:any[]=[];
   colors:string[]= [];
   zoomVal:number = 0.6;
-  jsonresult = {};
+  jsonresult:any = {};
   readResults:any[]=[];
   currenttext:string="";
   labelsJson={};
@@ -91,6 +91,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   drawingRect: any;
   selectedRect: any;
   toDelete:any[]= [];
+  ocr_version: any;
   constructor(private domSanitizer: DomSanitizer,private sharedService:SharedService,private router:Router,private sanitizer: DomSanitizer) { 
     this.fieldsfile = {}
     this.options = {'rect':{'minWidth':10,'minHeight':10}}
@@ -100,6 +101,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     sessionStorage.setItem("layoutInfo",JSON.stringify({}));
     sessionStorage.removeItem("htmlInfo");
     sessionStorage.removeItem("htmlArray");
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     router.events.forEach((event) => {
       if(event instanceof NavigationStart && router.url == '/IT_Utility/training') {
         
@@ -856,7 +858,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     });
   }
   async customMizeLabels(labelsJson:any){
-    const ocr_engine_version = this.modelData?.model_version
+    const ocr_engine_version =  this.ocr_version
     if (ocr_engine_version === "v2.1") {
       if (!labelsJson["labelingState"]) {
           labelsJson["labelingState"] = 2;
@@ -889,8 +891,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return labelsJson
   }
   async analyzeDocument(id: any, filename: string, data: Object) {
-    const instanceConfig = JSON.parse(sessionStorage.getItem('instanceConfig'));
-    const ocrEngineVersion = instanceConfig?.InstanceModel?.ocr_engine || '';
+    // const instanceConfig = JSON.parse(sessionStorage.getItem('instanceConfig'));
+    const ocrEngineVersion =  this.ocr_version || 'v.21';
 
     this.showtags = true;
     this.showtabletags = false;
@@ -935,7 +937,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if (layoutInfo && this.modelData.folderPath + "/" + filename in JSON.parse(layoutInfo)) {
         await this.processLayoutFromStorage(layoutInfo, filename, ocrEngineVersion);
     } else {
-        this.sharedService.getAnalyzeResult(frobj,this.modelData?.model_version).subscribe(async (data: any) => {
+        this.sharedService.getAnalyzeResult(frobj, this.ocr_version).subscribe(async (data: any) => {
             await this.processAnalyzeResult(data, filename, ocrEngineVersion);
         });
     }
@@ -1010,7 +1012,7 @@ private getReadResults(ocrEngineVersion: string): any[] {
     if (ocrEngineVersion === "v2.1") {
         return this.jsonresult['analyzeResult']['readResults'];
     } else {
-        return this.jsonresult['analyzeResult']['pages'];
+        return this.jsonresult?.analyzeResult?.pages;
     }
 }
 
@@ -1609,7 +1611,7 @@ private initializeFields() {
     return Object.keys(obj);
   }
   next(){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     this.currentindex = this.currentindex + 1;
     if(this.currentindex > this.maxpage){
       this.currentindex = 1;
@@ -1640,7 +1642,7 @@ private initializeFields() {
 
 
   previous(){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
       this.currentindex = this.maxpage;
@@ -1945,7 +1947,7 @@ private initializeFields() {
     this.analyzing = true;
     this.ready = false;
     this.layouttext = "Running Layout for all files. Please Wait!"
-    this.sharedService.runLayout(this.modelData.folderPath,this.modelData?.model_version).subscribe((data:any) =>{
+    this.sharedService.runLayout(this.modelData.folderPath, this.ocr_version).subscribe((data:any) =>{
       this.ready = true;
       this.analyzing = false;
       location.reload();

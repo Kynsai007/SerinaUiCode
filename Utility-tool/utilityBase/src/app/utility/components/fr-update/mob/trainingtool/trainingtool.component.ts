@@ -30,6 +30,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any;
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  ocr_version: any;
   
   constructor(private sharedService:SharedService) {
     this.nameinvalid = {
@@ -40,6 +41,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
    }
 
   ngOnInit(): void {
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     try {
       this.setup();   
     }catch(ex){
@@ -49,7 +51,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   ngAfterViewInit(): void {
     sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
     sessionStorage.setItem("frConfigData",JSON.stringify(this.frConfigData));
-    const ocr_engine_version = this.modelData?.model_version;;
+    const ocr_engine_version =  this.ocr_version;
     this.apiversion = ocr_engine_version;
     if(this.apiversion != "v2.1"){
       this.textmodel = "Enter Model Identifier"
@@ -70,7 +72,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     }
   }
   async setup(){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     if(!this.modelData){
       this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
       this.frConfigData = JSON.parse(sessionStorage.getItem("frConfigData")); 
@@ -155,9 +157,9 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   }
   checkModelStatus(){
     this.checkmodel = true;
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     if(ocr_engine_version == "v2.1"){
-      this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId'],this.modelData?.model_version).subscribe(data=>{
+      this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId'], this.ocr_version).subscribe(data=>{
         this.checkmodel = false;
         if(data["modelInfo"]["status"] == "ready"){
           let resultobj = {'fr_result':JSON.stringify(data),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres['modelInfo']['modelId']}
@@ -175,7 +177,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     }
   }
   async trainModel(){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     this.training = true;
     let frobj = {
@@ -186,7 +188,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
       'modelName':modelName
     }
     try{
-      this.sharedService.trainModel(frobj,this.modelData?.model_version).subscribe((data:any) => {
+      this.sharedService.trainModel(frobj, this.ocr_version).subscribe((data:any) => {
         this.successmsg = "";
         this.resp = data;
         console.log(this.resp);

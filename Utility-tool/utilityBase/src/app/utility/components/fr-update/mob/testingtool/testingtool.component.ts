@@ -70,6 +70,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any; 
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  ocr_version: any;
   
   constructor(private sharedService:SharedService,private domSanitizer: DomSanitizer,private messageService: MessageService,private router:Router) {
     this.ready = false;
@@ -89,6 +90,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     return sessionStorage.getItem("temp_lang");
   }
   ngOnInit(): void {
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     try {
       this.setup();
     }catch(ex){
@@ -220,7 +222,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     element.scrollIntoView(); 
   }
   async runAnalyses(){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version || 'v2.1';
     if(this.file_url != ""){
       const formData: FormData = new FormData();
       formData.append('file', this.file);
@@ -233,7 +235,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         "fr_endpoint":"",
         "fr_key":""
       }
-      this.sharedService.testModel(testobj,this.modelData?.model_version).subscribe((data:any) => {
+      this.sharedService.testModel(testobj, this.ocr_version).subscribe((data:any) => {
         this.resp = data;
         this.testing = false;
         this.analyzed = true;
@@ -472,7 +474,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     saveAs(blob,filename);
   }
   viewTable(f){
-    const ocr_engine_version = this.modelData?.model_version;
+    const ocr_engine_version =  this.ocr_version;
     this.rows = [];
     this.currenttable = f;
     this.currentheaders = Object.keys(this.fields[f].valueArray[0].valueObject);

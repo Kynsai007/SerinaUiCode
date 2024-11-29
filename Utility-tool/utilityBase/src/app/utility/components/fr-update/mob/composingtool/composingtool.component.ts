@@ -33,7 +33,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   constructor(private sharedService:SharedService) { }
   
   ngOnInit(): void {
-      this.ocr_engine = this.modelData?.model_version;;
+      this.ocr_engine = this.modelData?.model_version || 'v2.1';
       try {
         this.setup();
       }catch(ex){
@@ -141,7 +141,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       'modelName':modelName,
       'modelIds':modelIds
     }
-    this.sharedService.composeModels(modelsobj,this.modelData?.model_version).subscribe((data:any) => {
+    this.sharedService.composeModels(modelsobj,this.ocr_engine).subscribe((data:any) => {
       this.resp = data;
       this.composing = false;
       if(this.resp['message'] == 'success'){
