@@ -138,7 +138,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
           for(let p of this.previoustraining){
             let jsonobj = JSON.parse(p.training_result);
             if(jsonobj.docTypes){
-              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
+              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelName, "attributes":{"isComposed":false}}
               if(Object.keys(jsonobj.docTypes).length > 1){
                 jsonobj.modelInfo["attributes"]["isComposed"] = true;
               }
@@ -148,7 +148,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
           let index = this.models.findIndex(v => v.modelInfo.modelName == this.modelData.modelName);
           this.modelid = JSON.parse(this.previoustraining[index].training_result).modelInfo.modelId;
           this.defaultmodel = this.modelid;
-          this.modelname = JSON.parse(this.previoustraining[index].training_result).modelInfo.modelName;
+          this.modelname = JSON.parse(this.previoustraining[index].training_result)?.modelInfo?.modelName;
           this.current_result = JSON.parse(this.previoustraining[index].training_result);
           this.nottrained = false;
         }else{

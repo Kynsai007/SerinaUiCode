@@ -34,6 +34,8 @@
     position: relative;
     font-size: small;
     float: right;
+    border: 1px solid lightgray;
+    border-radius: 5px;
   }
   .box{
     box-sizing: border-box;
