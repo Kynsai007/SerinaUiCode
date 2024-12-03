@@ -678,6 +678,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
      value['optionalheadertags'] = this.headerOptTags ? this.headerOptTags.toString() : "";
      value['optionallinertags'] = this.LineOptTags ? this.LineOptTags.toString() : "";
      value["vendorName"] = this.vendorName;
+     value["model_version"] = this.modelData?.DocumentModel?.model_version;
      if(value["vendorType"] == "PO based"){
        value["batchmap"] = 1;
        if(!value['erprule'] || value['erprule'] == ''){
@@ -703,6 +704,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     });
   }else{
     _this.saving = false;
+    _this.router.navigate(['IT_Utility/training']);
   }
    } else {
      alert('Please add required fields.');

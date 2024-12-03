@@ -101,6 +101,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     sessionStorage.setItem("layoutInfo",JSON.stringify({}));
     sessionStorage.removeItem("htmlInfo");
     sessionStorage.removeItem("htmlArray");
+    this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
     this.ocr_version = this.modelData?.model_version || 'v2.1';
     router.events.forEach((event) => {
       if(event instanceof NavigationStart && router.url == '/IT_Utility/training') {

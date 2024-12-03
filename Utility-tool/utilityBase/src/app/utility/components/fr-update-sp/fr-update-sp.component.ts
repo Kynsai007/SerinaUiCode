@@ -290,9 +290,9 @@ export class FrUpdateSpComponent implements OnInit {
   }
   getMetaData(documentId) {
     this.headerArray = [];
+    this.LineArray = [];
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
       this.FRMetaData = data.FRMetaData;
-      this.LineArray = [];
       this.selected_dateFormat = this.FRMetaData?.DateFormat;
       if (this.FRMetaData?.auto_template_classification) {
         this.auto_template_classification = this.FRMetaData?.auto_template_classification;
@@ -571,6 +571,7 @@ export class FrUpdateSpComponent implements OnInit {
      value['optionalheadertags'] = this.headerOptTags ? this.headerOptTags.toString() : "";
      value['optionallinertags'] = this.LineOptTags ? this.LineOptTags.toString() : "";
      value["ServiceProviderName"] = this.SPName;
+     value["model_version"] = this.modelData?.DocumentModel?.model_version;
     //  if(value["SPType"] == "PO based"){
     //    value["batchmap"] = 1;
     //    if(!value['erprule'] || value['erprule'] == ''){

@@ -2237,6 +2237,11 @@ export class Comparision3WayComponent
   readLineItems() {
     this.exceptionService.readLineItems().subscribe((data: any) => {
       this.lineItems = data.description;
+      data?.description?.forEach(el=>{
+        if(el.itemCode && el.Name){
+          el.Value = `${el.itemCode}-${el.Name}-${el.UnitPrice}-${el.SHIP_TO_ORG}-${el.Qty}`
+        }
+      })
     });
   }
   filterPOLine(event) {
