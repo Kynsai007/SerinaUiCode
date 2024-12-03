@@ -241,6 +241,7 @@ export class DataService {
   manpowerResponse: { dates: { startdate: string; enddate: string; }; data: any[]; };
   serviceStatus: any;
   invoiceStatus: any;
+  invoiceNumber: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
