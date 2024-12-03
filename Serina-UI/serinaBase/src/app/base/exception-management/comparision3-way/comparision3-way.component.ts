@@ -1029,7 +1029,7 @@ export class Comparision3WayComponent
             this.isAprUser = true;
           }
         }
-
+        this.invoiceNumber = this.dataService.invoiceNumber;
         // let inv_num_data: any = this.inputData.filter(val => {
         //   return val.TagLabel == 'InvoiceId';
         // })
