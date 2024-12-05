@@ -424,6 +424,7 @@ export class Comparision3WayComponent
   lineTableHeaders: string[];
   isDraft: boolean;
   serverError: boolean;
+  fieldName: any;
 
   constructor(
     fb: FormBuilder,
@@ -4365,4 +4366,8 @@ export class Comparision3WayComponent
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }
+  labelHighlight(text){
+    this.fieldName = text;
+  }
+
 }

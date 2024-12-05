@@ -97,3 +97,18 @@
     border-top-width: 0;
     border-bottom-width: 0;
   }
+:host ::ng-deep {
+    span.highlighted {
+    background-color: #007bff;
+    border-radius: 3px;
+    padding: 2px;
+  }
+  .leader-line {
+    z-index: 1000 !important;
+    pointer-events: none; /* Prevent interaction issues */
+  }
+
+  .custom-leader-line {
+    z-index: 1000 !important;
+  }
+}

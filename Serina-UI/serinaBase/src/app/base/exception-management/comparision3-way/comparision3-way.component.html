@@ -345,7 +345,7 @@
                           : ''
                     }"
                   >
-                    <label class="label-head" style="margin-bottom: -5px"
+                    <label class="label-head" style="margin-bottom: -5px" (click)="labelHighlight(value?.TagLabel)"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
                         *ngIf="value?.isError == 1 || value?.IsUpdated > 0"
@@ -377,6 +377,7 @@
                     </label>
                     <input
                       *ngIf="!value?.TagLabel?.includes('Project')"
+                      id="field-{{value?.TagLabel}}"
                       #inputv
                       [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
                       [value]="value.Value"
@@ -386,6 +387,7 @@
                       value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
                       "
                       (blur)="saveChanges()"
+                      (click)="labelHighlight(value?.TagLabel)"
                       class="form-control inv_inp_cls"
                     />
                     <div *ngIf="value?.TagLabel?.includes('Project')" class="project">
@@ -2266,6 +2268,8 @@
       <app-pdfview
         [vendorName]="vendorName"
         [invoiceNumber]="invoiceNumber"
+        [fieldName]="fieldName"
+        [fieldToPDFMapping]="inputData"
         [btnText]="btnText"
         (boolEmit)="getPdfBool($event)"
         (PdfBtnClick)="viewPdf()"

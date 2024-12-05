@@ -26,6 +26,8 @@ export class PDFviewComponent implements OnInit {
   rotation = 0;
   @Input() vendorName: any;
   @Input() invoiceNumber: any;
+  @Input() fieldToPDFMapping:any;
+  @Input() fieldName:string;
   showPdf: boolean;
   @Input() btnText;
   zoomdata: number = 1;
@@ -50,6 +52,9 @@ export class PDFviewComponent implements OnInit {
       this.readFilePath();
     } else {
       this.showInvoice = this.SharedService.fileSrc;
+    }
+    if(changes?.fieldName){
+      this.linkFieldToPDF(changes?.fieldName?.currentValue)
     }
    }
 
@@ -217,6 +222,7 @@ export class PDFviewComponent implements OnInit {
   afterLoadComplete(pdfData: any) {
     this.totalPages = pdfData.numPages;
     this.isLoaded = true;
+    this.processPDFOrImage(this.showInvoice);
   }
 
   nextPage() {
@@ -256,6 +262,145 @@ export class PDFviewComponent implements OnInit {
         viewerContainer.msRequestFullscreen();
       }
     }
+  }
+
+  
+  linksFieldToPDF(fieldName: string) {
+    const textToHighlight = this.fieldToPDFMapping[fieldName]?.Value;
+    const textElements = document.querySelectorAll('.textLayer span');
+  
+    const normalizeText = (text: string) => text.trim().replace(/\s+/g, ' ').replace(/[^a-zA-Z0-9.]/g, '');
+
+    const normalizedLeftText = normalizeText(textToHighlight);
+
+    const pdfElement = Array.from(textElements).find((el: HTMLElement) => {
+      const normalizedPDFText = normalizeText(el.textContent || '');
+      return normalizedPDFText.includes(normalizedLeftText);
+    });
+  
+    if (pdfElement) {
+      pdfElement.classList.add('highlighted');
+      pdfElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+      // Ensure the left field is visible and accessible
+      const leftField = document.getElementById(`field-${fieldName}`);
+      if (leftField) {
+      // Add LeaderLine with a custom class
+
+
+      // Add custom class for additional styling
+      
+
+      // Manually adjust z-index (if necessary)
+      setTimeout(() => {
+
+        // const line = new LeaderLine(leftField, pdfElement, {
+        //   color: 'blue',
+        //   size: 2,
+        //   startPlug: 'square',
+        //   endPlug: 'arrow3',
+        //   path: 'straight',
+        //   zIndex: 1000,
+        // });
+        // line.setOptions({ className: 'custom-leader-line' });
+      }, 500);
+      setTimeout(()=>{
+        const svg = document.querySelector('svg.leader-line') as HTMLElement;
+        if (svg) {
+          svg.style.zIndex = '1000';
+        }
+      },600)
+      } else {
+        console.error('Left field not found:', fieldName);
+      }
+    } else {
+      console.error('No matching text found for:', textToHighlight);
+    }
+  }
+  
+  linkFieldToPDF(fieldName: string) {
+    const textToHighlight = this.fieldToPDFMapping[fieldName].Value;
+    const textElements = Array.from(document.querySelectorAll('.textLayer span'));
+  
+    // Normalize text to remove unnecessary characters (e.g., currency symbols, extra spaces)
+    const normalizeText = (text: string) => text.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9.]/g, '');
+  
+    const normalizedLeftText = normalizeText(textToHighlight);
+  
+    // Reconstruct combined text for matching
+    let reconstructedText = '';
+    let matchingSpans: HTMLElement[] = [];
+    let pdfElementFound = false;
+  
+    textElements.forEach((el: HTMLElement) => {
+      const normalizedText = normalizeText(el.textContent || '');
+  
+      if (!pdfElementFound) {
+        reconstructedText += normalizedText;
+        matchingSpans.push(el);
+  
+        if (reconstructedText.includes(normalizedLeftText)) {
+          // We found the match, highlight the contributing spans
+          matchingSpans.forEach((span) => span.classList.add('highlighted'));
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          pdfElementFound = true;
+  
+          const leftField = document.getElementById(`field-${fieldName}`);
+          if (leftField) {
+  
+            // Remove existing line for the field, if any
+            // if (this.activeLines[fieldName]) {
+            //   this.activeLines[fieldName].remove();
+            //   delete this.activeLines[fieldName];
+            // }
+  
+            // Create a new LeaderLine
+            // const line = new LeaderLine(leftField, el, {
+            //   color: 'blue',
+            //   size: 2,
+            //   startPlug: 'square',
+            //   endPlug: 'arrow3',
+            //   path: 'straight',
+            //   zIndex: 1000,
+            // });
+  
+            // this.activeLines[fieldName] = line;
+          } else {
+            console.error('Left field not found:', fieldName);
+          }
+        }
+      }
+  
+      // Reset if match fails
+      if (!reconstructedText.includes(normalizedLeftText)) {
+        reconstructedText = '';
+        matchingSpans = [];
+      }
+    });
+  
+    if (!pdfElementFound) {
+      console.error('No matching text found for:', textToHighlight);
+    }
+  }
+  
+
+  // OCR Fallback for non-readable PDFs or images
+  processPDFOrImage(pdfSrc: string) {
+    // Tesseract.recognize(pdfSrc, 'eng', {
+    //   logger: (info) => console.log(info), // Logs OCR progress
+    // }).then(({ data: { text } }) => {
+    //   console.log('Extracted Text:', text);
+    //   this.mapOCRTextToFields(text);
+    // });
+  }
+
+  mapOCRTextToFields(extractedText: string) {
+    // Map extracted text to fields dynamically
+    // Object.keys(this.inputData).forEach((field) => {
+    //   if (extractedText.includes(this.inputData[field].Value)) {
+    //     console.log(`Found field: ${field}`);
+    //   }
+    // });
   }
 
 }
