@@ -278,6 +278,8 @@ export class UploadSectionComponent implements OnInit {
     // { name:'LCM', value:'LCM'},
     { name:'Non-PO', value:'non po invoice'},
     { name:'Single PO', value:'invoice'},
+    { name:'Advance', value:'advance invoice'},
+    { name:'Credit Note', value:'credit note'}
     // { name:'Multiple PO', value:'multiPO'}
   ];
   categoryArr = [];
