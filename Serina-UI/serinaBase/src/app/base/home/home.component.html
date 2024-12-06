@@ -1,1 +1,23 @@
-<app-business-charts></app-business-charts>
+<!-- <app-business-charts></app-business-charts> -->
+<div class="mainDiv">
+    <div class="left">
+        <div class="options">
+            <div *ngFor="let item of menu_list" [routerLink]="item.route_name" class="option f-13" [ngClass]="item.route_name == active_tab ? 'active_cls':''" (click)="tabChange(item.route_name)">{{item.name}}</div>
+            <!-- <div class="option f-14" [routerLink]="'overview'" routerLinkActive="active_cls">Overview</div>
+            <div class="option f-14">Workflow Analysis</div>
+            <div class="option f-14" [routerLink]="'overview'">Exception Analysis</div>
+            <div class="option f-14">Customer Analysis</div>
+            <div class="option f-14">Vendor Analysis</div>
+            <div class="option f-14">Spend Analysis</div>
+            <div class="option f-14">Service Provider</div> -->
+        </div>
+    </div>
+    <div class="right">
+        <div *ngIf="active_tab == 'overview'">
+            <app-process-reports></app-process-reports>
+        </div>
+        <div *ngIf="active_tab == 'exception_analysis'">
+            <app-exception-reports></app-exception-reports>
+        </div>
+    </div>
+</div>

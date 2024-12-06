@@ -29,6 +29,8 @@ import { BusinessChartsComponent } from './home/business-charts/business-charts.
 import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
 import { ExceptionTableComponent } from './exception-management/exception-table/exception-table.component';
 import { EditUserComponent } from './roles/edit-user/edit-user.component';
+import { ProcessReportsComponent } from './home/vendor-based-charts/process-reports/process-reports.component';
+import { ExceptionReportsComponent } from './home/vendor-based-charts/exception-reports/exception-reports.component';
 
 const routes: Routes = [
   { 
@@ -54,6 +56,30 @@ const routes: Routes = [
       {
         path: 'home/comparision-docs/:id',
         component: Comparision3WayComponent,
+      },
+      {
+        path: 'dashboard',
+        component: HomeComponent,
+        children:[
+          { path:'overview',component: ProcessReportsComponent },
+          { path:'exception_analysis', component: ExceptionReportsComponent},          
+          { path:'customer_analysis', component: ExceptionReportsComponent},
+          { path:'workflow_analysis', component: ExceptionReportsComponent},
+          { path:'vendor_analysis', component: ExceptionReportsComponent},
+          { path:'spend_analysis', component: ExceptionReportsComponent},
+          { path:'service_provider', component: ExceptionReportsComponent},
+          { path:'vendorBasedReports',
+            component: BusinessChartsComponent, 
+            children:[
+              { path:'processReports',component: BusinessChartsComponent },
+              { path:'exceptionReports',component: BusinessChartsComponent },
+              { path:'emailExceptionReports',component: BusinessChartsComponent },
+              { path:'onboardedReports',component: BusinessChartsComponent },
+              { path: '' , redirectTo:'processReports', pathMatch:'full'}
+            ]},
+          { path:'serviceBasedReports',component: BusinessChartsComponent },
+          { path: '' , redirectTo:'overview', pathMatch:'full'}
+        ]
       },
           {
             path: 'uploadInvoices',

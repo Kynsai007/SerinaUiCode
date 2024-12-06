@@ -22,17 +22,22 @@ $theme_color: var(--themeColor);
   // max-width: 16vw;
   color: #b2b2b2;
   position: relative;
+  background-color: white;
+  border-radius: 6px;
+  min-width: 160px;
+  align-items: center;
+  justify-content: center;
 }
-.card-div::before,
-.card-div::after {
-  content: "";
-  position: absolute;
-  top: 17px;
-  bottom: 18px;
-  width: 2px;
-  left: -17px;
-  background: #dedede;
-}
+// .card-div::before,
+// .card-div::after {
+//   content: "";
+//   position: absolute;
+//   top: 17px;
+//   bottom: 18px;
+//   width: 2px;
+//   left: -17px;
+//   background: #dedede;
+// }
 // .card-div::before {
 //   left: 0;
 // }
@@ -95,9 +100,10 @@ $theme_color: var(--themeColor);
 }
 
 .bg-w {
-  background: #ffffff 0% 0% no-repeat padding-box;
-  box-shadow: 0px 3px 6px #00000029;
-  border-radius: 6px;
+  // background: #ffffff 0% 0% no-repeat padding-box;
+  // box-shadow: 0px 3px 6px #00000029;
+  // border-radius: 6px;
+  flex-wrap: wrap;
 }
 // .bg-2 {
 //   background-color: #5167b2;
@@ -159,10 +165,13 @@ $theme_color: var(--themeColor);
   z-index: 12;
 }
 .charts_height {
-  max-height: calc(68svh + 30px);
+  max-height: calc(100svh - 200px);
   overflow: auto;
   margin-top: 10px;
 }
+// .charts_box{
+//   width: 45%;
+// }
 :host ::ng-deep {
   .p-autocomplete {
     height: 30px;
