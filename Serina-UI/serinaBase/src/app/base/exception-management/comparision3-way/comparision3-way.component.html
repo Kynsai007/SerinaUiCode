@@ -736,6 +736,7 @@
                                 [name]="item.lines[header]?.po_line?.Value"
                                 styleClass="f-11 input_disabled sel_drp"
                                 [dropdown]="true"
+                                appendTo="body"
                               >
                               </p-autoComplete>
                             </div>
@@ -1832,8 +1833,9 @@
 
 
               <p class="f-11">
-                *Supporting document is not being read by Serina, please check
-                and review manually.
+                *SERINA is not reading the supporting document
+                <strong>(.pdf only)</strong>
+                . Please check and review it manually.
               </p>
             </div>
             <div

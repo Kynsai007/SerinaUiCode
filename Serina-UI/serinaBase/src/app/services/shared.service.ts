@@ -492,7 +492,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`).pipe(retry(3));
   }
   syncBatchTrigger(query){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'').pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/runbatch/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'').pipe(retry(3));
   }
   getGRNTabData(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3));
