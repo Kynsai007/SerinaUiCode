@@ -44,7 +44,11 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && [8,16,17,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
+          portalName == 'customer' 
+          && (this.router.url.includes('Upload') || [8,16,17,18,19,21,27,34,205].includes(subStatusId))
+          || (documentType == 'advance invoice'
+          && [29,108].includes(subStatusId) 
+          && this.userDetails['permissioninfo'].is_fp)
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -606,7 +610,7 @@
               >
                 Select GRN
               </button>
-              <button
+              <!-- <button
                 *ngIf="
                   portalName == 'customer' &&
                   flipEnabled && [8,16,17,18,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
@@ -615,7 +619,7 @@
                 (click)="open_dialog_comp('flip line', '')"
               >
                 Flip PO
-              </button>
+              </button> -->
             </div>
             <div *ngIf="!grnCreateBoolean && pageType == 'mapping'">
               <div class="d-flex justify-content-between flex-wrap">
@@ -1110,13 +1114,13 @@
                 class="d-flex mb-1"
                 style="gap: 5px"
               >
-                <button
+                <!-- <button
                   *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)"
                   class="secondary_btn f-12 mr-2"
                   (click)="open_dialog_comp('flip')"
                 >
                   Flip PO
-                </button>
+                </button> -->
                 <button
                   *ngIf="
                     portalName == 'customer' &&
@@ -1678,6 +1682,7 @@
                       (click)="downloadDoc(file, 'down')"
                     ></i>
                     <i
+                      *ngIf="editable"
                       class="fa fa-trash-o pointer"
                       aria-hidden="true"
                       (click)="deleteSupport(file)"
@@ -2381,7 +2386,8 @@
           PO Date: {{ poDate[0]?.DocumentData?.Value | date : "medium" }}
         </div>
       </h6>
-      <table
+      <div class="maxHDiv">
+        <table
         class="table f-12"
         *ngIf="
           PO_GRN_Number_line?.length > 0 && headerpop == 'Confirm PO number'
@@ -2402,25 +2408,28 @@
           <td>{{ (item.PurchQty * item.UnitPrice).toFixed(2) }}</td>
         </tr>
       </table>
+      </div>
       <ng-container *ngIf="headerpop == 'Select GRN'">
         <div *ngFor="let grnLine of selectedGRNLines">
           <div class="f-13">GRN : {{ grnLine?.grnNumber }}</div>
-          <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
-            <tr>
-              <th style="width: 60px">S.No</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>UnitPrice</th>
-              <!-- <th>AmountExcTax</th> -->
-            </tr>
-            <tr *ngFor="let item of grnLine?.linesData; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ item.Description }}</td>
-              <td>{{ item.Quantity }}</td>
-              <td>{{ item.UnitPrice }}</td>
-              <!-- <td>{{ item.AmountExcTax }}</td> -->
-            </tr>
-          </table>
+          <div class="maxHDiv">
+            <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
+              <tr>
+                <th style="width: 60px">S.No</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>UnitPrice</th>
+                <!-- <th>AmountExcTax</th> -->
+              </tr>
+              <tr *ngFor="let item of grnLine?.linesData; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ item.Description }}</td>
+                <td>{{ item.Quantity }}</td>
+                <td>{{ item.UnitPrice }}</td>
+                <!-- <td>{{ item.AmountExcTax }}</td> -->
+              </tr>
+            </table>
+          </div>
         </div>
         <div
           *ngIf="selected_GRN_total"

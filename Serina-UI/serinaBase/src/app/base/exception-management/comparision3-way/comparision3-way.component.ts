@@ -961,7 +961,10 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
+    this.lineDisplayData = [];
     this.inputDisplayArray = [];
+    this.vendorData = [];
+    this.inputData = [];
     // this.lineData = [];
     let serviceName;
     if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
@@ -989,28 +992,20 @@ export class Comparision3WayComponent
         }
 
         this.getInvTypes();
-        // this.lineDataConversion();
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
-        // this.po_total = response.po_total;
         const pushedArrayHeader = [];
-        // if(data?.ok?.cost_alloc != null){
-        //   this.normalCostAllocation = true;
         data?.ok?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
         })
-
-        // }
-        // else{
         this.normalCostAllocation = false;
         data?.ok?.dynamic_cost_alloc?.forEach(dynamic => {
           this.dynamicdata.push(dynamic);
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
-        // }
         response?.headerdata?.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
@@ -1605,7 +1600,7 @@ export class Comparision3WayComponent
 
   readFilePath() {
     this.showInvoice = '';
-    this.SpinnerService.show();
+    // this.SpinnerService.show();
     this.exceptionService.readFilePath().subscribe(
       (data: any) => {
         this.content_type = data?.content_type;
@@ -1639,7 +1634,7 @@ export class Comparision3WayComponent
         // this.SpinnerService.hide();
       },
       (error) => {
-        this.SpinnerService.hide();
+        // this.SpinnerService.hide();
         this.error("Server error");
       }
     );
@@ -1964,31 +1959,36 @@ export class Comparision3WayComponent
   syncBatch() {
     this.SpinnerService.show();
     this.SharedService.syncBatchTrigger(`?re_upload=false`).subscribe((data: any) => {
-      this.headerpop = 'Batch Progress'
-      this.p_width = '350px';
-      this.progressDailogBool = true;
-      this.GRNDialogBool = false;
-      this.batchData = data[this.invoiceID]?.complete_status;
-      let last_msg = this.batchData[this.batchData.length - 1].msg;
-      let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
-      this.subStatusId = sub_status;
-      this.isBatchFailed = false;
-      this.batchData.forEach(el => {
-        if (el.msg.includes('Tax')) {
-          this.getInvoiceFulldata('');
+      if(data){
+        this.headerpop = 'Batch Progress'
+        this.p_width = '350px';
+        this.progressDailogBool = true;
+        this.GRNDialogBool = false;
+        this.batchData = data[this.invoiceID]?.complete_status;
+        let last_msg = this.batchData[this.batchData.length - 1].msg;
+        let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
+        this.subStatusId = sub_status;
+        this.isBatchFailed = false;
+        this.batchData.forEach(el => {
+          if (el.msg.includes('Tax')) {
+            this.getInvoiceFulldata('');
+          }
+        })
+        if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
+          this.batch_count++;
+          this.isBatchFailed = true;
         }
-      })
-      if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
-        this.batch_count++;
-        this.isBatchFailed = true;
+        if (!(this.batch_count <= 2)) {
+          this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
+          // setTimeout(() => {
+          //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
+          // }, 2000);
+        }
+        this.SpinnerService.hide();
+      } else {
+        this.error("Issue with the batch");
+        this.SpinnerService.hide();
       }
-      if (!(this.batch_count <= 2)) {
-        this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
-        // setTimeout(() => {
-        //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
-        // }, 2000);
-      }
-      this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
       this.error("Server error");
@@ -3312,6 +3312,7 @@ export class Comparision3WayComponent
     this.saveChanges();
     this.progressDailogBool = false;
     setTimeout(() => {
+      this.readLineItems();
       this.getInvoiceFulldata('');
     }, 1000);
   }

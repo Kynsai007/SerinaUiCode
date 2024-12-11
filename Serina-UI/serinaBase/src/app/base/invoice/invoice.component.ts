@@ -131,6 +131,7 @@ export class InvoiceComponent implements OnInit {
   filteredService: any[];
   userList:any[];
   createdById: any;
+  previousUrl: string;
   
   close(reason: string) {
     this.sidenav.close();
@@ -188,6 +189,10 @@ isMobile:boolean;
 
   ngOnInit(): void {
     if(this.permissionService.show_document_status){
+      this.previousUrl = this.ds.getPreviousUrl();
+      if(this.previousUrl?.includes('uploadtime')){
+        window.location.reload();
+      }
       this.userDetails = this.authService.currentUserValue;
       this.userEmailID = this.userDetails.userdetails.email;
       this.GRNCreateBool = this.ds.configData?.enableGRN;

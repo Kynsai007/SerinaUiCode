@@ -1430,6 +1430,7 @@ export class UploadSectionComponent implements OnInit {
     this.showFunFactsComponent = true;
     this.isError = false;
     this.progress = 1;
+    delete this.progressEvent;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
     let timer = setInterval(() => {
