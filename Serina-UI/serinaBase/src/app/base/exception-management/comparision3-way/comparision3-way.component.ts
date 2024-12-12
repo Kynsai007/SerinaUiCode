@@ -1781,89 +1781,96 @@ export class Comparision3WayComponent
   }
 
   approveChangesBatch() {
-    this.getInvoiceFulldata('batch');
+    // this.getInvoiceFulldata('batch');
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
       this.reuploadBoolean = true;
     } else {
       this.reuploadBoolean = false;
     }
-    setTimeout(() => {
-      let count = 0;
-      let errorType: string;
-      let errorTypeHead: string;
-      let errorTypeLine: string;
-      this.inputData.forEach((data: any) => {
-        if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
-          if (data.Value == '' || isNaN(+data.Value)) {
-            count++;
-            errorTypeHead = 'AmountHeader';
-          }
-        } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
-          if (data.Value == '') {
-            count++;
-            errorType = 'emptyHeader';
-          }
-        }
-      });
+    this.uploadCompleted = true;
+    // this.sendToBatch();
+    if (!this.isServiceData) {
+      this.vendorSubmit();
+    } else {
+      this.serviceSubmit();
+    }
+    // setTimeout(() => {
+    //   let count = 0;
+    //   let errorType: string;
+    //   let errorTypeHead: string;
+    //   let errorTypeLine: string;
+    //   this.inputData.forEach((data: any) => {
+    //     if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
+    //       if (data.Value == '' || isNaN(+data.Value)) {
+    //         count++;
+    //         errorTypeHead = 'AmountHeader';
+    //       }
+    //     } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
+    //       if (data.Value == '') {
+    //         count++;
+    //         errorType = 'emptyHeader';
+    //       }
+    //     }
+    //   });
 
-      this.lineDisplayData.forEach((element) => {
-        if (
-          ['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)
-        ) {
-          element.items.forEach((ele) => {
-            ele.linedetails.forEach((ele1) => {
-              if (
-                ele1.invline[0]?.DocumentLineItems?.Value == '' ||
-                isNaN(+ele1.invline[0]?.DocumentLineItems?.Value)
-              ) {
-                count++;
-                errorTypeLine = 'AmountLine';
-              }
+    //   this.lineDisplayData.forEach((element) => {
+    //     if (
+    //       ['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)
+    //     ) {
+    //       element.items.forEach((ele) => {
+    //         ele.linedetails.forEach((ele1) => {
+    //           if (
+    //             ele1.invline[0]?.DocumentLineItems?.Value == '' ||
+    //             isNaN(+ele1.invline[0]?.DocumentLineItems?.Value)
+    //           ) {
+    //             count++;
+    //             errorTypeLine = 'AmountLine';
+    //           }
 
-              if (element.tagname == 'Quantity') {
-                if (
-                  ele1.invline[0]?.DocumentLineItems?.Value == 0
-                ) {
-                  count++;
-                  errorTypeLine = 'quantity';
-                }
-              }
-            });
-          });
-        }
-      });
-      if (count == 0) {
-        this.uploadCompleted = true;
-        // this.sendToBatch();
-        if (!this.isServiceData) {
-          this.vendorSubmit();
-        } else {
-          this.serviceSubmit();
-        }
-      } else {
-        this.SpinnerService.hide();
-        /* Error response starts*/
-        if (errorTypeHead == 'AmountHeader') {
-          setTimeout(() => {
-            this.error("Please verify the 'Sub-Total' and 'Invoice-Total' on the Header")
-          }, 50);
-        }
-        if (errorType == 'emptyHeader') {
-          this.error("Please Check the PO Number, Invoice Date, and Invoice-Id fields on the header");
-        }
-        if (errorTypeLine == 'AmountLine') {
-          setTimeout(() => {
-            this.error("Please verify the Amount, Quantity, Unit price and Amount-Excluding-Tax on the Line details")
-          }, 10);
-        } else if (errorTypeLine == 'quantity') {
-          setTimeout(() => {
-            this.error("Please check the 'Quantity' in the Line details")
-          }, 10);
-        }
-        /* Error response end*/
-      }
-    }, 2000);
+    //           if (element.tagname == 'Quantity') {
+    //             if (
+    //               ele1.invline[0]?.DocumentLineItems?.Value == 0
+    //             ) {
+    //               count++;
+    //               errorTypeLine = 'quantity';
+    //             }
+    //           }
+    //         });
+    //       });
+    //     }
+    //   });
+    //   if (count == 0) {
+    //     this.uploadCompleted = true;
+    //     // this.sendToBatch();
+    //     if (!this.isServiceData) {
+    //       this.vendorSubmit();
+    //     } else {
+    //       this.serviceSubmit();
+    //     }
+    //   } else {
+    //     this.SpinnerService.hide();
+    //     /* Error response starts*/
+    //     if (errorTypeHead == 'AmountHeader') {
+    //       setTimeout(() => {
+    //         this.error("Please verify the 'Sub-Total' and 'Invoice-Total' on the Header")
+    //       }, 50);
+    //     }
+    //     if (errorType == 'emptyHeader') {
+    //       this.error("Please Check the PO Number, Invoice Date, and Invoice-Id fields on the header");
+    //     }
+    //     if (errorTypeLine == 'AmountLine') {
+    //       setTimeout(() => {
+    //         this.error("Please verify the Amount, Quantity, Unit price and Amount-Excluding-Tax on the Line details")
+    //       }, 10);
+    //     } else if (errorTypeLine == 'quantity') {
+    //       setTimeout(() => {
+    //         this.error("Please check the 'Quantity' in the Line details")
+    //       }, 10);
+    //     }
+    //     /* Error response end*/
+    //   }
+    // }, 2000);
   }
 
   sendToBatch() {
@@ -2016,11 +2023,11 @@ export class Comparision3WayComponent
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
-      if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
-        this.processAlert(sub_status);
-      } else {
+      // if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
+      //   this.processAlert(sub_status);
+      // } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
-      }
+      // }
     } else {
       if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
         this.processAlert(sub_status);
