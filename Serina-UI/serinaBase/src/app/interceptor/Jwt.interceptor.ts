@@ -1,10 +1,10 @@
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
+import { catchError, filter, finalize, switchMap, take, tap } from 'rxjs/operators';
 import { AlertService } from '../services/alert/alert.service';
 import { Router } from '@angular/router';
 import { DataService } from '../services/dataStore/data.service';
@@ -19,13 +19,20 @@ export class JwtInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router,private dataService: DataService) {
-   }
+  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router,private ds:DataService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     request = this.addToken(request);
 
     return next.handle(request).pipe(
+      tap(event => {
+        if (event instanceof HttpResponse) {
+          // Access the response headers
+          const headers = event.headers;
+          this.ds.apiVersion = headers.get('x-api-version');
+          this.ds.buildVersion = headers.get('x-api-build-number');
+        }
+      }),
       catchError(error => {
         if (error.status === 401 && !this.router.url.includes('login')) {
           if (!this.isRefreshing) {

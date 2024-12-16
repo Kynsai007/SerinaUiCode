@@ -388,6 +388,20 @@
             inputId="range"
           ></p-calendar>
       </div>
+      <div class="inputBox" >
+        <label class="f-12">Created by</label><br />
+        <p-autoComplete
+          placeholder="Select created by user"
+          (onSelect)="selectedUser($event)"
+          [group]="false"
+          [suggestions]="userList"
+          (completeMethod)="filterUser($event)"
+          field="firstName"
+          [dropdown]="true"
+          name="created"
+        >
+        </p-autoComplete>
+      </div>
       <div class="inputBox">
         <label for="email" class="f-12">Email ID</label> <br>
         <input type="email" id="email" class="form-control f-14" [(ngModel)]="userEmailID">
@@ -521,7 +535,7 @@
     </div>
 
     <div *ngIf="dialogHeader == 'GRN Reports'"  class="footer d-flex justify-content-end" >
-      <button class="btnUpload btn_extra_bg" (click)='email_download()' [disabled]="!userEmailID">Download to email</button>
+      <button class="primary_btn f-12" (click)='email_download()' [disabled]="!userEmailID">Download to email</button>
     </div>
     <ngx-spinner
         bdColor="rgba(251, 251, 251, 0.8)"

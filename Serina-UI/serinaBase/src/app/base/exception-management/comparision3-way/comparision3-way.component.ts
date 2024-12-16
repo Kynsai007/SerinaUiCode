@@ -632,7 +632,9 @@ export class Comparision3WayComponent
       // this.readMappingData();
       if (!['advance invoice'].includes(this.documentType) && this.Itype == 'invoice') {
         this.getGRNtabData();
-        this.getGrnAttachment();
+        if(this.client_name != 'SRG'){
+          this.getGrnAttachment();
+        }
       }
 
 
@@ -993,7 +995,10 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
+    this.lineDisplayData = [];
     this.inputDisplayArray = [];
+    this.vendorData = [];
+    this.inputData = [];
     // this.lineData = [];
     let bool = false;
 
@@ -1075,6 +1080,10 @@ export class Comparision3WayComponent
           }
         }
         this.headerDataOrder();
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
         if (this.po_num) {
           this.getPODocId(this.po_num);
           this.getGRNnumbers(this.po_num);
@@ -1906,6 +1915,61 @@ export class Comparision3WayComponent
           }
         })
       });
+      // const errors = {
+      //   header: new Set<string>(),
+      //   line: new Set<string>(),
+      // };
+      // const errorMessages = {
+      //   InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is empty or invalid.",
+      //   SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is empty or invalid.",
+      //   PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty.",
+      //   InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date.",
+      //   InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty.",
+      //   Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero. ",
+      //   UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is empty or invalid.",
+      //   AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is empty or invalid.",
+      //   Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is empty or invalid.",
+      // };
+      
+      
+      // // Helper function to check if a value is invalid
+      // const isInvalidValue = (value: any) => value === '' || isNaN(+value);
+      
+      // // Validate input data
+      // this.inputData.forEach((data: any) => {
+      //   if (['InvoiceTotal', 'SubTotal'].includes(data.TagLabel)) {
+      //     if (isInvalidValue(data.Value)) {
+      //       count++;
+      //       errors.header.add(data.TagLabel);
+      //     }
+      //   } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
+      //     if (data.Value === '') {
+      //       count++;
+      //       errors.header.add(data.TagLabel);
+      //     }
+      //   }
+      // });
+      
+      // // Validate line display data
+      // this.lineDisplayData.forEach((element) => {
+      //   if (['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)) {
+      //     element.items.forEach((item) => {
+      //       item.linedetails.forEach((lineDetail) => {
+      //         const value = lineDetail.invline[0]?.DocumentLineItems?.Value;
+      
+      //         if (isInvalidValue(value)) {
+      //           count++;
+      //           errors.line.add(element.tagname);
+      //         }
+      
+      //         if (element.tagname === 'Quantity' && +value === 0) {
+      //           count++;
+      //           errors.line.add('Quantity');
+      //         }
+      //       });
+      //     });
+      //   }
+      // });
       if (count == 0) {
         this.uploadCompleted = true;
         // this.sendToBatch();
@@ -2032,31 +2096,36 @@ export class Comparision3WayComponent
   syncBatch() {
     this.SpinnerService.show();
     this.SharedService.syncBatchTrigger(`?re_upload=false`).subscribe((data: any) => {
-      this.headerpop = 'Batch Progress'
-      this.p_width = '350px';
-      this.progressDailogBool = true;
-      this.GRNDialogBool = false;
-      this.batchData = data[this.invoiceID]?.complete_status;
-      let last_msg = this.batchData[this.batchData.length - 1].msg;
-      let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
-      this.subStatusId = sub_status;
-      this.isBatchFailed = false;
-      this.batchData.forEach(el => {
-        if (el.msg.includes('Tax')) {
-          this.getInvoiceFulldata('');
+      if(data){
+        this.headerpop = 'Batch Progress'
+        this.p_width = '350px';
+        this.progressDailogBool = true;
+        this.GRNDialogBool = false;
+        this.batchData = data[this.invoiceID]?.complete_status;
+        let last_msg = this.batchData[this.batchData.length - 1].msg;
+        let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
+        this.subStatusId = sub_status;
+        this.isBatchFailed = false;
+        this.batchData.forEach(el => {
+          if (el.msg.includes('Tax')) {
+            this.getInvoiceFulldata('');
+          }
+        })
+        if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
+          this.batch_count++;
+          this.isBatchFailed = true;
         }
-      })
-      if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
-        this.batch_count++;
-        this.isBatchFailed = true;
+        if (!(this.batch_count <= 2)) {
+          this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
+          // setTimeout(() => {
+          //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
+          // }, 2000);
+        }
+        this.SpinnerService.hide();
+      } else {
+        this.error("Issue with the batch");
+        this.SpinnerService.hide();
       }
-      if (!(this.batch_count <= 2)) {
-        this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
-        // setTimeout(() => {
-        //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
-        // }, 2000);
-      }
-      this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
       this.error("Server error");
@@ -2299,6 +2368,11 @@ export class Comparision3WayComponent
   readLineItems() {
     this.exceptionService.readLineItems().subscribe((data: any) => {
       this.lineItems = data.description;
+      data?.description?.forEach(el=>{
+        if(el.itemCode && el.Name){
+          el.Value = `${el.itemCode}-${el.Name}-${el.UnitPrice}-${el.SHIP_TO_ORG}-${el.Qty}`
+        }
+      })
     });
   }
   filterPOLine(event) {
@@ -2659,11 +2733,15 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            // if (this.invoiceNumber) {
-            this.grnDuplicateCheck(boolean);
-            // } else {
-            //   this.error("Dear user, please add the invoice number.");
-            // }
+            if(this.client_name == 'SRG'){
+              if (this.invoiceNumber) {
+                this.grnDuplicateCheck(boolean);
+                } else {
+                  this.error("Dear user, please add the invoice number.");
+                }
+            } else {
+              this.grnDuplicateCheck(boolean);
+            }
           } else {
             setTimeout(() => {
               if (this.router.url.includes('GRN_approvals')) {
@@ -2726,6 +2804,9 @@ export class Comparision3WayComponent
         this.p_width = '350px';
         this.headerpop = 'GRN Creation Status';
         this.APIResponse = data.message;
+      }
+      if(data.grn_doc_id && this.uploadFileList.length >0){
+        this.uploadSupport(data.grn_doc_id);
       }
 
     }, err => {
@@ -3437,7 +3518,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < event.target.files.length; i++) {
       this.uploadFileList.push(event.target.files[i]);
     }
-    this.uploadSupport();
+    this.uploadSupport(this.invoiceID);
   }
   onSelectFile(event) {
     for (let i = 0; i < event.target.files.length; i++) {
@@ -3449,7 +3530,7 @@ export class Comparision3WayComponent
     this.uploadFileList.splice(index, 1);
   }
 
-  uploadSupport() {
+  uploadSupport(id) {
     this.progress = 1;
     const formData: any = new FormData();
     for (const file of this.uploadFileList) {
@@ -3457,7 +3538,7 @@ export class Comparision3WayComponent
       formData.append('files', file, cleanedFileName);
     }
     this.SpinnerService.show()
-    this.SharedService.uploadSupportDoc(formData)
+    this.SharedService.uploadSupportDoc(id,formData)
       .pipe(
         map((event: any) => {
           if (event.type == HttpEventType.UploadProgress) {
@@ -3508,6 +3589,28 @@ export class Comparision3WayComponent
         this.error("Server error");
       }
     );
+  }
+
+  deleteSupport(file){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation');
+    drf.afterClosed().subscribe((bool:boolean)=>{
+      if(bool){
+        this.support_doc_list = [];
+        this.SpinnerService.show();
+        this.SharedService.deleteSupport(file).subscribe((data:any)=>{
+          console.log(data)
+          if(data.status == 'success'){
+            this.support_doc_list = data.files;
+            console.log(this.support_doc_list)
+            this.success("Deleted successfully.");
+            this.SpinnerService.hide();
+          }
+        },err=>{
+          this.error("Server error");
+          this.SpinnerService.hide();
+        })
+      }
+    })
   }
 
   grnAttachmentDoc(base64, type) {
@@ -4361,6 +4464,8 @@ export class Comparision3WayComponent
     delete this.dataService.number_of_days;
     delete this.SharedService.po_num;
     delete this.exceptionService.po_num;
+    delete this.SharedService.invoiceID;
+    delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
     this.mat_dlg.closeAll();

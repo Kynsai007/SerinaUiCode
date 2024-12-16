@@ -71,6 +71,7 @@ export class SharedService {
   docType: any;
   fileSrc: string;
   current_year:number;
+  usersList: any[];
 
   constructor(private http: HttpClient) {
     let today = new Date();
@@ -511,14 +512,17 @@ export class SharedService {
   }
   
   // SupportDocumnet
-  uploadSupportDoc(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/${this.invoiceID}`, data, {
+  uploadSupportDoc(id,data) {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${id}`, data, {
       reportProgress: true,
       observe: 'events',
     }).pipe(retry(3));
   }
   downloadSupportDoc(doc_name) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
+  }
+  deleteSupport(filename){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/deleteSupportingDocument/${this.userId}/idDocument/${this.invoiceID}?file_name=${filename}`).pipe(retry(3));
   }
   getGRNAttachment(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGrnAttachment/${this.invoiceID}`).pipe(retry(3));
@@ -650,7 +654,41 @@ export class SharedService {
   getAmountofPercentage(data){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?u_id=${this.userId}&inv_id=${this.invoiceID}&adv_perc=${data}`,data).pipe(retry(3));
   }
-
+  getTemplateGroup(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/template-groups`).pipe(retry(3));
+  }
+  getEmailTemplate(tempgropid){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getTemplates/${tempgropid}`).pipe(retry(3));
+  }
+  getEmailTemplateSpec(tempnameid){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getTemplateData/${tempnameid}`).pipe(retry(3));
+  }
+  createNewEmailTemplate(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/createTemplate`, data).pipe(retry(3));
+  }
+  editEmailTemplate(data,tempgropid,tempnameid){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/updateTemplate/${tempgropid}/${tempnameid}`, data).pipe(retry(3));
+  }
+  deleteEmailTemplate(tempgropid,tempnameid){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/delete_template/${tempgropid}/${tempnameid}`, {}).pipe(retry(3));
+  }
+  getEmailRecipients(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/get_Recipients`).pipe(retry(3));
+  }
+  setEmailRecipients(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/createRecipientsGroup`, data).pipe(retry(3));
+  }
+  getEmailRecipientsSpec(tempnameid){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getRecipientsGroup/${tempnameid}`).pipe(retry(3));
+  }
+  updateEmailRecipients(tempnameid,recgrpid,data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/updateRecipients/${tempnameid}/${recgrpid}`, data).pipe(retry(3));
+  }
+  deleteEmailRecipients(tempnameid,recgrpid){
+    console.log(tempnameid)
+    console.log(recgrpid)
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/deleteRecieptsGroups/${tempnameid}/${recgrpid}`, {}).pipe(retry(3));
+  }
 
   // help document download
   downloadHelpDoc(file) {

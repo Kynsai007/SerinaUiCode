@@ -278,6 +278,8 @@ export class UploadSectionComponent implements OnInit {
     // { name:'LCM', value:'LCM'},
     { name:'Non-PO', value:'non po invoice'},
     { name:'Single PO', value:'invoice'},
+    { name:'Advance', value:'advance invoice'},
+    { name:'Credit Note', value:'credit note'}
     // { name:'Multiple PO', value:'multiPO'}
   ];
   categoryArr = [];
@@ -1134,7 +1136,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   onSelectFile(event) {
-    let isSupportedFiletype = !!event.target.files[0].name.toLowerCase().match(/(.png|.jpg|.pdf|.html|.htm)/);
+    let isSupportedFiletype = !!event.target.files[0].name.toLowerCase().match(/(.png|.jpg|.jpeg|.pdf|.html|.htm)/);
     if (isSupportedFiletype) {
       this.isuploadable = false;
       this.selectPageRange = true;
@@ -1298,6 +1300,7 @@ export class UploadSectionComponent implements OnInit {
     this.showFunFactsComponent = true;
     this.isError = false;
     this.progress = 1;
+    delete this.progressEvent;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
     let timer = setInterval(() => {

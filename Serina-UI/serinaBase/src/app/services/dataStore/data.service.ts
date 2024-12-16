@@ -1,6 +1,8 @@
 
 import { Injectable } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -94,6 +96,8 @@ export class DataService {
     { id:3, sub_id:70, name :'Approval Pending', bgcolor: 'inherit', textColor :'#358DC0'},
     { id:4, sub_id:81, name :'GRN Approval Pending', bgcolor: 'inherit', textColor :'#358DC0'},
     { id:27, sub_id:23, name :'Duplicate Invoice', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:29, sub_id:23, name :'Mail Queue', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:30, sub_id:23, name :'PO Cancelled', bgcolor: 'inherit', textColor :'#F1932F'},
   ]
 
   // bgColorCode = [
@@ -240,10 +244,23 @@ export class DataService {
   serviceStatus: any;
   invoiceStatus: any;
   isServiceLive: boolean = true;
-  constructor(
-  ) { 
-    // this.ap_boolean = sessionStorage.getItem("ap_boolean");
-    // console.log(this.ap_boolean)
+  private previousUrl: string | null = null;
+  private currentUrl: string | null = null;
+  apiVersion: string;
+  buildVersion: string;
+  constructor(private router: Router) { 
+    this.currentUrl = this.router.url;
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationStart))
+      .subscribe((event: NavigationStart) => {
+        this.previousUrl = this.currentUrl;
+        this.currentUrl = event.url;
+      });
+  }
+
+  public getPreviousUrl(): string | null {
+    return this.previousUrl;
   }
 
   getEntity():Observable<any>{
