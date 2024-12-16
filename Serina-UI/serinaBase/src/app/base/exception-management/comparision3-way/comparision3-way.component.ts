@@ -1781,96 +1781,100 @@ export class Comparision3WayComponent
   }
 
   approveChangesBatch() {
-    // this.getInvoiceFulldata('batch');
+    this.getInvoiceFulldata('batch');
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
       this.reuploadBoolean = true;
     } else {
       this.reuploadBoolean = false;
     }
-    this.uploadCompleted = true;
-    // this.sendToBatch();
-    if (!this.isServiceData) {
-      this.vendorSubmit();
-    } else {
-      this.serviceSubmit();
-    }
-    // setTimeout(() => {
-    //   let count = 0;
-    //   let errorType: string;
-    //   let errorTypeHead: string;
-    //   let errorTypeLine: string;
-    //   this.inputData.forEach((data: any) => {
-    //     if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
-    //       if (data.Value == '' || isNaN(+data.Value)) {
-    //         count++;
-    //         errorTypeHead = 'AmountHeader';
-    //       }
-    //     } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
-    //       if (data.Value == '') {
-    //         count++;
-    //         errorType = 'emptyHeader';
-    //       }
-    //     }
-    //   });
-
-    //   this.lineDisplayData.forEach((element) => {
-    //     if (
-    //       ['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)
-    //     ) {
-    //       element.items.forEach((ele) => {
-    //         ele.linedetails.forEach((ele1) => {
-    //           if (
-    //             ele1.invline[0]?.DocumentLineItems?.Value == '' ||
-    //             isNaN(+ele1.invline[0]?.DocumentLineItems?.Value)
-    //           ) {
-    //             count++;
-    //             errorTypeLine = 'AmountLine';
-    //           }
-
-    //           if (element.tagname == 'Quantity') {
-    //             if (
-    //               ele1.invline[0]?.DocumentLineItems?.Value == 0
-    //             ) {
-    //               count++;
-    //               errorTypeLine = 'quantity';
-    //             }
-    //           }
-    //         });
-    //       });
-    //     }
-    //   });
-    //   if (count == 0) {
-    //     this.uploadCompleted = true;
-    //     // this.sendToBatch();
-    //     if (!this.isServiceData) {
-    //       this.vendorSubmit();
-    //     } else {
-    //       this.serviceSubmit();
-    //     }
-    //   } else {
-    //     this.SpinnerService.hide();
-    //     /* Error response starts*/
-    //     if (errorTypeHead == 'AmountHeader') {
-    //       setTimeout(() => {
-    //         this.error("Please verify the 'Sub-Total' and 'Invoice-Total' on the Header")
-    //       }, 50);
-    //     }
-    //     if (errorType == 'emptyHeader') {
-    //       this.error("Please Check the PO Number, Invoice Date, and Invoice-Id fields on the header");
-    //     }
-    //     if (errorTypeLine == 'AmountLine') {
-    //       setTimeout(() => {
-    //         this.error("Please verify the Amount, Quantity, Unit price and Amount-Excluding-Tax on the Line details")
-    //       }, 10);
-    //     } else if (errorTypeLine == 'quantity') {
-    //       setTimeout(() => {
-    //         this.error("Please check the 'Quantity' in the Line details")
-    //       }, 10);
-    //     }
-    //     /* Error response end*/
-    //   }
-    // }, 2000);
+    // this.uploadCompleted = true;
+    // // this.sendToBatch();
+    // if (!this.isServiceData) {
+    //   this.vendorSubmit();
+    // } else {
+    //   this.serviceSubmit();
+    // }
+    setTimeout(() => {
+      let count = 0;
+      const errors = {
+        header: new Set<string>(),
+        line: new Set<string>(),
+      };
+      const errorMessages = {
+        InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is empty or invalid.",
+        SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is empty or invalid.",
+        PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty.",
+        InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date.",
+        InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty.",
+        Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero. ",
+        UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is empty or invalid.",
+        AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is empty or invalid.",
+        Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is empty or invalid.",
+      };
+      
+      
+      // Helper function to check if a value is invalid
+      const isInvalidValue = (value: any) => value === '' || isNaN(+value);
+      
+      // Validate input data
+      this.inputData.forEach((data: any) => {
+        if (['InvoiceTotal', 'SubTotal'].includes(data.TagLabel)) {
+          if (isInvalidValue(data.Value)) {
+            count++;
+            errors.header.add(data.TagLabel);
+          }
+        } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
+          if (data.Value === '') {
+            count++;
+            errors.header.add(data.TagLabel);
+          }
+        }
+      });
+      
+      // Validate line display data
+      this.lineDisplayData.forEach((element) => {
+        if (['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)) {
+          element.items.forEach((item) => {
+            item.linedetails.forEach((lineDetail) => {
+              const value = lineDetail.invline[0]?.DocumentLineItems?.Value;
+      
+              if (isInvalidValue(value)) {
+                count++;
+                errors.line.add(element.tagname);
+              }
+      
+              if (element.tagname === 'Quantity' && +value === 0) {
+                count++;
+                errors.line.add('Quantity');
+              }
+            });
+          });
+        }
+      });
+      console.log(count)
+      // Handle success or display error messages
+      if (count == 0) {
+        this.uploadCompleted = true;
+        if (!this.isServiceData) {
+          this.vendorSubmit();
+        } else {
+          this.serviceSubmit();
+        }
+      } else {
+        this.SpinnerService.hide();
+      
+        // Display individual errors for header and line tags
+        errors.header.forEach((tag) => {
+          setTimeout(() => this.error(errorMessages[tag]), 50);
+        });
+      
+        errors.line.forEach((tag) => {
+          setTimeout(() => this.error(errorMessages[tag]), 10);
+        });
+      }
+      
+    }, 3000);
   }
 
   sendToBatch() {
@@ -4395,6 +4399,8 @@ export class Comparision3WayComponent
     delete this.dataService.number_of_days;
     delete this.SharedService.po_num;
     delete this.exceptionService.po_num;
+    delete this.SharedService.invoiceID;
+    delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
     this.mat_dlg.closeAll();

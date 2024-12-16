@@ -246,6 +246,8 @@ export class DataService {
   invoiceNumber: any;
   private previousUrl: string | null = null;
   private currentUrl: string | null = null;
+  apiVersion: string;
+  buildVersion: string;
   constructor(private router: Router) { 
     this.currentUrl = this.router.url;
 
