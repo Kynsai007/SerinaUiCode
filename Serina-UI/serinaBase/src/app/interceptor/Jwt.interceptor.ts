@@ -19,7 +19,10 @@ export class JwtInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router,private ds:DataService) { }
+  constructor(private authService: AuthenticationService, 
+    private alert: AlertService, 
+    private router: Router,
+    private ds:DataService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     request = this.addToken(request);
@@ -64,7 +67,7 @@ export class JwtInterceptor implements HttpInterceptor {
             );
           }
         } else if (error.status === 503 || error.status === 0) {
-          this.dataService.isServiceLive = false;
+          this.ds.isServiceLive = false;
           this.router.navigate(['/error']);
         }
         return throwError(error);

@@ -1572,37 +1572,37 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   uploadSupport() {
-    this.progress = 1;
-    const formData: any = new FormData();
-    for (const file of this.uploadFileList) {
-      formData.append('files', file, file.name);
-    }
-    this.SpinnerService.show()
-    this.SharedService.uploadSupportDoc(formData)
-      .pipe(
-        map((event: any) => {
-          if (event.type == HttpEventType.UploadProgress) {
-            this.progress = Math.round((100 / event.total) * event.loaded);
-          } else if (event.type == HttpEventType.Response) {
-            this.progress = null;
-            this.successAlert("Supporting Documents uploaded Successfully");
-            this.uploadFileList = [];
-            event.body?.result?.forEach(ele => {
-              this.support_doc_list.push(ele);
-            })
-            //  setTimeout(() => {
-            //  this.getInvoiceFulldata();
-            this.SpinnerService.hide()
-          }
-        }),
-        catchError((err: any) => {
-          this.progress = null;
-          this.errorTriger("Server error");
-          this.SpinnerService.hide()
-          return throwError(err.message);
-        })
-      )
-      .toPromise();
+    // this.progress = 1;
+    // const formData: any = new FormData();
+    // for (const file of this.uploadFileList) {
+    //   formData.append('files', file, file.name);
+    // }
+    // this.SpinnerService.show()
+    // this.SharedService.uploadSupportDoc(formData)
+    //   .pipe(
+    //     map((event: any) => {
+    //       if (event.type == HttpEventType.UploadProgress) {
+    //         this.progress = Math.round((100 / event.total) * event.loaded);
+    //       } else if (event.type == HttpEventType.Response) {
+    //         this.progress = null;
+    //         this.successAlert("Supporting Documents uploaded Successfully");
+    //         this.uploadFileList = [];
+    //         event.body?.result?.forEach(ele => {
+    //           this.support_doc_list.push(ele);
+    //         })
+    //         //  setTimeout(() => {
+    //         //  this.getInvoiceFulldata();
+    //         this.SpinnerService.hide()
+    //       }
+    //     }),
+    //     catchError((err: any) => {
+    //       this.progress = null;
+    //       this.errorTriger("Server error");
+    //       this.SpinnerService.hide()
+    //       return throwError(err.message);
+    //     })
+    //   )
+    //   .toPromise();
   }
 
   downloadDoc(doc_name,type) {
