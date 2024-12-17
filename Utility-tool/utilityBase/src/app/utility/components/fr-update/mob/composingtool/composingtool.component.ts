@@ -14,7 +14,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   pid:any;
   resp:any;
   previoustraining:any[]=[];
-  ocr_engine:string="Azure Form Recognizer 2.1";
+  ocr_engine:string="v2.1";
   models:any[]=[];
   nottrained:boolean=true;
   selectedmodels:any[]=[];
@@ -30,10 +30,11 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any; 
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  selectedModelArr = [];
   constructor(private sharedService:SharedService) { }
   
   ngOnInit(): void {
-      this.ocr_engine = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+      this.ocr_engine = this.modelData?.model_version || 'v2.1';
       try {
         this.setup();
       }catch(ex){
@@ -55,21 +56,15 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       this.changeTab.emit({'show1':false,'show2':false,'show3':false,'show4':true});
     }
   }
-  selectmodel(id,i){
-    let model;
-    if(this.ocr_engine == "Azure Form Recognizer 2.1"){
-      model = this.models.filter(v => v.modelInfo.modelId == id)[0];
-    }
-    else{
-      model = id;
-    }
-    let inp = (<HTMLInputElement>document.getElementById("model-"+i));
-    if(inp.checked){
-      inp.checked = false;
-      this.selectedmodels = this.selectedmodels.filter(v => v != model);
+  selectmodel(model_s,id,i,checked){
+    if(checked){
+      this.selectedModelArr.push(model_s.model_version)
+      this.ocr_engine = model_s.model_version;
+      this.selectedmodels.push(model_s);
     }else{
-      inp.checked = true;
-      this.selectedmodels.push(model);
+      this.selectedModelArr = this.selectedModelArr.filter((v, index) => this.selectedModelArr.indexOf(v) !== index)
+      this.ocr_engine = this.selectedModelArr[0];
+      this.selectedmodels = this.selectedmodels.filter(v => v != model_s);
     }
     if(this.selectedmodels.length > 1){
       this.disabled = false;
@@ -105,11 +100,12 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
           for(let p of this.previoustraining){
             let jsonobj = JSON.parse(p.training_result);
             if(jsonobj.docTypes){
-              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
+              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"model_version":p.model_version ,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
               if(Object.keys(jsonobj.docTypes).length > 1){
                 jsonobj.modelInfo["attributes"]["isComposed"] = true;
               }
             }
+            jsonobj.model_version = p.model_version;
             this.models.push(jsonobj);
           }
           this.nottrained = false;
@@ -123,10 +119,10 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
     let modelIds:any[] = [];
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     for(let s of this.selectedmodels){
-      if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+      if(this.ocr_engine == "v2.1"){
         modelIds.push(s.modelInfo.modelId);
       }else{
-        modelIds.push(s);
+        modelIds.push(s.modelId);
       }
     }
     if(modelIds.length == 0){
@@ -141,13 +137,13 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       'modelName':modelName,
       'modelIds':modelIds
     }
-    this.sharedService.composeModels(modelsobj).subscribe((data:any) => {
+    this.sharedService.composeModels(modelsobj,this.ocr_engine).subscribe((data:any) => {
       this.resp = data;
       this.composing = false;
       if(this.resp['message'] == 'success'){
         if(this.resp['result']['message'] == 'success'){
           this.composeresult = this.resp['result']['result'];
-          if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+          if(this.ocr_engine == "v2.1"){
             this.modelName = this.resp['result']['result']['modelInfo']['modelName'];
             this.modelId = this.resp['result']['result']['modelInfo']['modelId'];
             this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");

@@ -122,6 +122,7 @@ export class Comparision3WayComponent
   timer: any;
   callSession: any;
   invoiceNumber = '';
+  invoiceDescription:string;
   vendorName: any;
   isGRNDataLoaded: boolean;
   content_type: any;
@@ -2734,10 +2735,14 @@ export class Comparision3WayComponent
         ) {
           if (this.GRN_PO_Bool) {
             if(this.client_name == 'SRG'){
-              if (this.invoiceNumber) {
+              if (this.invoiceNumber && this.invoiceDescription) {
                 this.grnDuplicateCheck(boolean);
                 } else {
-                  this.error("Dear user, please add the invoice number.");
+                  if(this.invoiceNumber){
+                    this.error("Dear user, please add the invoice description.");
+                  } else {
+                    this.error("Dear user, please add the invoice number.");
+                  }
                 }
             } else {
               this.grnDuplicateCheck(boolean);
@@ -2901,16 +2906,21 @@ export class Comparision3WayComponent
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.validateUnitpriceBool) {
-      if (confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
-        this.grnAPICall(boolean, txt);
+    if (this.client_name !== 'SRG' || this.invoiceDescription) {
+      if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
+        return;
       }
-    } else {
       this.grnAPICall(boolean, txt);
+    } else {
+      this.error('Please add the invoice description');
     }
   }
 
   grnAPICall(boolean, txt) {
+    let inv_des = '';
+    if(this.invoiceDescription !== ''){
+      inv_des = `&document_description=${this.invoiceDescription}`;
+    }
     // let arr = [];
     let grnWithInvPayload = [];
     this.lineDisplayData.forEach((objV) => {
@@ -2946,7 +2956,7 @@ export class Comparision3WayComponent
     })
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
-      boolean, this.GRNObject
+      boolean, this.GRNObject,inv_des
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
