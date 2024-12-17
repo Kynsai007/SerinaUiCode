@@ -1006,6 +1006,19 @@
                       [(ngModel)]="invoiceNumber"
                     />
                   </div>
+
+
+                    <div class="ml-5" *ngIf="client_name == 'SRG'">
+                      <label class="f-12">Invoice Description:</label>
+                      <input
+                        type="text"
+                        name="inv_description"
+                        [ngModelOptions]="{standalone: true}"
+                        class="inv_number f-12 text_color"
+                        placeholder="Please add invoice description"
+                        [(ngModel)]="invoiceDescription"
+                      />
+                    </div>
                 </div>
 
                 <div [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">

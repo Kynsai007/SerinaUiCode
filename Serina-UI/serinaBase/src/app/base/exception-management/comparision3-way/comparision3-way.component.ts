@@ -124,6 +124,7 @@ export class Comparision3WayComponent
   timer: any;
   callSession: any;
   invoiceNumber = '';
+  invoiceDescription:string;
   vendorName: any;
   isGRNDataLoaded: boolean;
   content_type: any;
@@ -796,7 +797,7 @@ export class Comparision3WayComponent
         'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
         'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
         'PO Balance Qty': { value: 'RemainPurchPhysical', isMapped: '', tagName: 'PO Balance Qty' },
-        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
+        'GRN - Quantity': { value: this.dataService.isEditGRN ? 'GRNQty' : (this.client_name === 'Cenomi' ?'':'RemainPurchPhysical'), isMapped: '', tagName: 'Quantity' },
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
           value: (ele) => {
@@ -2625,10 +2626,14 @@ export class Comparision3WayComponent
         ) {
           if (this.GRN_PO_Bool) {
             if(this.client_name == 'SRG'){
-              if (this.invoiceNumber) {
+              if (this.invoiceNumber && this.invoiceDescription) {
                 this.grnDuplicateCheck(boolean);
                 } else {
-                  this.error("Dear user, please add the invoice number.");
+                  if(this.invoiceNumber){
+                    this.error("Dear user, please add the invoice description.");
+                  } else {
+                    this.error("Dear user, please add the invoice number.");
+                  }
                 }
             } else {
               this.grnDuplicateCheck(boolean);
@@ -2662,9 +2667,12 @@ export class Comparision3WayComponent
   createGRNWithPO(bool) {
     // bool = bool ? 'false' : 'true';
     this.SpinnerService.show();
-    let inv_number = '';
+    let inv_param = '';
     if (this.invoiceNumber) {
-      inv_number = `&inv_num=${this.invoiceNumber}`;
+      inv_param += `&inv_num=${this.invoiceNumber}`;
+    }
+    if (this.invoiceDescription) {
+      inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
     }
     let manPower = '';
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
@@ -2678,7 +2686,7 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
       return;
     }
-    this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
+    this.SharedService.createGRNWithPO(inv_param, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2780,19 +2788,25 @@ export class Comparision3WayComponent
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.validateUnitpriceBool) {
-      if (confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
-        this.grnAPICall(boolean, txt);
+    if (this.client_name !== 'SRG' || this.invoiceDescription) {
+      if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
+        return;
       }
-    } else {
       this.grnAPICall(boolean, txt);
+    } else {
+      this.error('Please add the invoice description');
     }
+      
   }
 
   grnAPICall(boolean, txt) {
+    let inv_des = '';
+    if(this.invoiceDescription !== ''){
+      inv_des = `&document_description=${this.invoiceDescription}`;
+    }
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
-      boolean, this.GRNObject
+      boolean, this.GRNObject,inv_des
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
