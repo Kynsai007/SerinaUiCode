@@ -1392,7 +1392,7 @@ export class RolesComponent implements OnInit {
         if (error.status == 422) {
           this.alertFun("Please fill all the given fields");
         } else {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       }
     );
@@ -1587,7 +1587,7 @@ export class RolesComponent implements OnInit {
           this.getVendorSuperUserList();
         },
         (error) => {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       );
    } else {

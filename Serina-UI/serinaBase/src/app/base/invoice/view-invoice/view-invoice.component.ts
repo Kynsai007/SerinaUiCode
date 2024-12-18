@@ -1244,7 +1244,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
   serviceSubmit() {
-    this.SharedService.serviceSubmit().subscribe((data: any) => {
+    this.SharedService.serviceSubmit('').subscribe((data: any) => {
       this.successAlert('send to batch successfully');
       setTimeout(() => {
         this._location.back();

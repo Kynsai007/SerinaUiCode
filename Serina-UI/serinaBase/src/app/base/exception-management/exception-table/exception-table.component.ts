@@ -848,7 +848,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   serviceBatch() {
     this.SpinnerService.show()
-    this.sharedService.serviceSubmit().subscribe((data: any) => {
+    this.sharedService.serviceSubmit('').subscribe((data: any) => {
       this.triggerBoolean = false;
       this.systemCheckEmit.emit("ser");
       this.SpinnerService.hide()

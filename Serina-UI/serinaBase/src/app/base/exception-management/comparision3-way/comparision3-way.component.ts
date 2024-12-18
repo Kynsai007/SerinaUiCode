@@ -1781,7 +1781,7 @@ export class Comparision3WayComponent
     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
 
-  approveChangesBatch() {
+  proceedToBatch(bool) {
     this.getInvoiceFulldata('batch');
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
@@ -1860,7 +1860,7 @@ export class Comparision3WayComponent
         if (!this.isServiceData) {
           this.vendorSubmit();
         } else {
-          this.serviceSubmit();
+          this.serviceSubmit(bool);
         }
       } else {
         this.SpinnerService.hide();
@@ -1912,7 +1912,7 @@ export class Comparision3WayComponent
       }
     );
   }
-  serviceSubmit() {
+  serviceSubmit(bool) {
     // if(!this.normalCostAllocation){
     //   if(this.reqServiceprovider){
     //     this.exceptionService.submitAllocationDetails(this.rows)
@@ -1951,7 +1951,7 @@ export class Comparision3WayComponent
     //   }
     // else{
     this.SpinnerService.show();
-    this.SharedService.serviceSubmit().subscribe((data: any) => {
+    this.SharedService.serviceSubmit(`skip_rule=${bool}`).subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       this.dataService.serviceinvoiceLoadedData = [];
       setTimeout(() => {
@@ -2215,7 +2215,7 @@ export class Comparision3WayComponent
       this.btnText = 'Close';
     }
     if (this.isImgBoolean == true) {
-      this.loadImage();
+      // this.loadImage();
     }
   }
   rotate(angle: number) {

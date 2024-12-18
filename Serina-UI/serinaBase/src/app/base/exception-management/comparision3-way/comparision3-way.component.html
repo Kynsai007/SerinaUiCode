@@ -2070,12 +2070,29 @@
             </button>
 
             <button
+            *ngIf="submitBtn_boolean 
+            && editable 
+            && !fin_boolean 
+            && isServiceData 
+            && ![29,32,80].includes(subStatusId)
+            && !router.includes('uploadtime')"
+            class="primary_btn f-12 mr-3"
+            (click)="
+              approval_selection_boolean && isLCMCompleted
+                ? onSubmitApprovers()
+                : proceedToBatch('true')
+            "
+          >
+            Skip
+          </button>
+
+            <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
               (click)="
                 approval_selection_boolean && isLCMCompleted
                   ? onSubmitApprovers()
-                  : approveChangesBatch()
+                  : proceedToBatch('false')
               "
             >
               Next
