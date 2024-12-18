@@ -2075,7 +2075,7 @@
             && !fin_boolean 
             && isServiceData 
             && ![29,32,80].includes(subStatusId)
-            && !router.includes('uploadtime')"
+            && !router.url.includes('uploadtime')"
             class="primary_btn f-12 mr-3"
             (click)="
               approval_selection_boolean && isLCMCompleted
