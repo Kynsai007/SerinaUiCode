@@ -1,0 +1,70 @@
+<div>
+    <h6>Global Level</h6>
+    <div class="main_div">
+        <div class="d-flex justify-content-between">
+            <div><input type="text" class="form-control f-12" (keyup)="searchGlobalTags($event.target.value)" placeholder="Search By Tag Name..."></div>
+            <div class="d-flex f-12 justify-content-between">
+                <div class="mr-3">Edit Tail Prompt </div>
+                <div class="mr-3"> Vendor        <span class="slider_span">
+                    <label class="switch">
+                      <input
+                        type="checkbox"
+                      />
+                      <span class="slider round"></span>
+                    </label>
+                  </span>Service provider</div>
+                <div class="mr-3"> line        <span class="slider_span">
+                    <label class="switch">
+                      <input
+                        type="checkbox"
+                      />
+                      <span class="slider round"></span>
+                    </label>
+                  </span>header</div>
+                <div><Button class="primaryButton f-12" (click)="openFilterDialog($event)">+ Add More Tags</Button></div>
+            </div>
+        </div>
+        <div class="tableDiv">
+            <table class="table f-12 table-striped">
+                <thead>
+                    <tr>
+                        <th>Tag Name</th>
+                        <th>Description</th>
+                        <th>Is Mandatory</th>
+                        <th>Is Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let tag of tags">
+                        <td>{{tag.name}}</td>
+                        <td>{{tag.description}}</td>
+                        <td><input type="checkbox"  [name]="tag.name" [id]="tag.name" [checked]="tag.isMandatory" (change)="checkTag($event.target.checked,tag.name)"></td>
+                        <td><input type="checkbox"  [name]="tag.name" [id]="tag.name" [checked]="tag.isActive" (change)="checkTag($event.target.checked,tag.name)"></td>
+                        <td><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button class="primaryButton f-12">Test Now</button>
+        </div>
+    </div>
+</div>
+
+<dialog #tagDialog class="dialog"> 
+    <div class="inp_div">
+        <input type="text" class="form-control" name="tag_name" id="tag_name" placeholder="Search By Tag Name" (keyup)="searchTags($event.target.value)">
+    </div>
+    <ul class="tagList">
+        <li *ngFor="let item of dialogList" class="f-12">
+            <label class="m-0" [for]="item.name">
+                <input type="checkbox"  [name]="item.name" [id]="item.name" [checked]="item.isActive" (change)="checkTag($event.target.checked,item.name)"> <span class="tag">{{item.name}}</span>
+            </label>
+        </li>
+    </ul>
+    <footer class="d-flex justify-content-end mt-2">
+        <button class="secondaryButton f-12 mr-3" (click)="closeDialog()">Close</button>
+        <button class="primaryButton f-12" (click)="saveTags()">Save</button>
+    </footer>
+</dialog>

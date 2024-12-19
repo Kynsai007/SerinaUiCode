@@ -15,10 +15,11 @@ import { SharepointListenerComponent } from './sharepoint-listener/sharepoint-li
 import { EntityRoutingComponent } from './entity-routing/entity-routing.component';
 import { ApprovalSettingsComponent } from './configuration/approval-settings/approval-settings.component';
 import { TriggerSettingsComponent } from './configuration/trigger-settings/trigger-settings.component';
+import { OpenaiComponent } from './openai/openai.component';
 
 
 @NgModule({
-  declarations: [SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent],
+  declarations: [SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,

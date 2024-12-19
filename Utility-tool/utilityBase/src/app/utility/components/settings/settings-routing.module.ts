@@ -9,6 +9,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { SettingsPageComponent } from './settings-page/settings-page.component';
 import { EntityRoutingComponent } from './entity-routing/entity-routing.component';
 import { TriggerSettingsComponent } from './configuration/trigger-settings/trigger-settings.component';
+import { OpenaiComponent } from './openai/openai.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
       {
         path: 'change-password',
         component: ChangePasswordComponent,
+      },
+      {
+        path: 'openAI',
+        component: OpenaiComponent,
       },
       {
         path: '',

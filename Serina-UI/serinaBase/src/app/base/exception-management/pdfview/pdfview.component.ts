@@ -54,6 +54,8 @@ export class PDFviewComponent implements OnInit {
       this.readFilePath();
     } else {
       this.showInvoice = this.SharedService.fileSrc;
+      this.isImgBoolean = this.SharedService.isImageBoolean;
+      this.loadImage(); 
     }
     if(changes?.fieldName){
       this.linkFieldToPDF(changes?.fieldName?.currentValue)
@@ -84,10 +86,12 @@ export class PDFviewComponent implements OnInit {
             new Blob([byteArray], { type: 'application/pdf' })
           );
           this.SharedService.fileSrc = this.showInvoice;
+          this.SharedService.isImageBoolean = false;
         } else if (['image/jpg','image/png','image/jpeg'].includes(data.result.content_type)) {
           let filetype = data.result.content_type
           this.isPdfAvailable = false;
           this.isImgBoolean = true;
+          this.SharedService.isImageBoolean = true;
           let img = `data:${filetype};base64,${data.result.filepath}`
           byteArray = new Uint8Array(
             atob(data.result.filepath)
@@ -282,11 +286,13 @@ export class PDFviewComponent implements OnInit {
     } else {
       this.btnText = 'Close';
     }
-    this.loadImage();
+    if(this.isImgBoolean){
+      this.loadImage();
+    }
     this.PdfBtnClick.emit(this.showPdf);
   }
   toggleFullScreen() {
-    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
+    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContainer');
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {

@@ -8,6 +8,14 @@ import { SharedService } from 'src/app/services/shared/shared.service';
   styleUrls: ['./settings-page.component.scss']
 })
 export class SettingsPageComponent implements OnInit {
+  settingsMenuItems = [
+    { name: 'Configuration', link: 'configuration' },
+    { name: 'Mail Listener', link: 'mail-listener' },
+    { name: 'Sharepoint Listener', link: 'sharepoint-listener' },
+    { name: 'Entity Routing', link: 'entity-routing' },
+    { name: 'Open AI', link: 'openAI' },
+    
+  ]
 
   constructor(private sharedService : SharedService,
     private router : Router) { }

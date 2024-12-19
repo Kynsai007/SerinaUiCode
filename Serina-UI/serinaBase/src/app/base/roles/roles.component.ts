@@ -1290,6 +1290,7 @@ export class RolesComponent implements OnInit {
         usersList.push(mergedData);
       });
       this.CustomerUserReadData = usersList;
+      this.sharedService.usersList = usersList;
       if (this.CustomerUserReadData.length > 10 && this.isDesktop ) {
         this.showPaginator = true;
       }
@@ -1416,7 +1417,7 @@ export class RolesComponent implements OnInit {
         if (error.status == 422) {
           this.alertFun("Please fill all the given fields");
         } else {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       }
     );
@@ -1619,7 +1620,7 @@ export class RolesComponent implements OnInit {
           this.getVendorSuperUserList();
         },
         (error) => {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       );
    } else {

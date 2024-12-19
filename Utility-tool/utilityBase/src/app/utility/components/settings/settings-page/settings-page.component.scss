@@ -1,18 +1,27 @@
 .insideCSS {
     // margin: 5px;
-    border-radius: 0;
+    height: calc(100vh - 80px);
+    border-radius: 6px;
     padding: 20px 0px;
-    background: #F0F0F0;
+    background: white;
+    // border: 1px solid lightgray;
+    border-radius: 6px;
+    margin: 0px 10px;
+    box-shadow: 0px 0px 33px #e9ecef;
 }
 .max_h {
-    max-height: 90vh;
-    min-height: 90vh;
+    height: calc(100vh - 80px);
     overflow: auto;
     overflow-x: hidden;
+    background: white;
+    box-shadow: 0px 0px 33px #e9ecef;
+    border-radius: 6px;
+    margin: 10px 0px;
 }
 
 ul li {
     list-style: none;
+    position: relative;
 }
 
 ul li a {
@@ -22,6 +31,20 @@ ul li a {
     display: block;
     font-size: 13px;
     font-weight: 600;
+    position: relative;
+    border-radius: 5px;
+    &.active_in::after{
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -10px; /* Moves the arrow to the outside */
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 0 5px 10px; /* Arrow size */
+        border-color: transparent transparent transparent #358dc0;
+    }
 }
 
 .active_in {

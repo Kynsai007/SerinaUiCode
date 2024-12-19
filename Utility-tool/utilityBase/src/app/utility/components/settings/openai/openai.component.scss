@@ -1,0 +1,119 @@
+ h6 {
+    font-weight: 600;
+    padding: 12px 25px;
+    border-bottom: 1px solid lightgray;
+}
+ .table td {
+    padding: 4px 10px;
+}
+.table th {
+    padding: 8px 10px;
+    background-color: rgba(0, 0, 0, 0.2); padding: 8px 10px;
+}
+.tableDiv {
+    overflow: auto;
+    max-height: calc(100vh - 230px);
+}
+table {
+    // width: 95%;
+    margin: 10px 0px;
+    box-shadow: 1px 0px 10px gray;
+    border-radius: 6px;
+}
+.del_btn{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: red;
+}
+dialog {
+    z-index: 10;
+    margin-top: 10px;
+    background: #ffffff;
+    box-shadow: 0px 6px 12px #00000029;
+    border: none;
+    border-radius: 5px;
+    // height: 310px;
+    width: 450px;
+    position: absolute;
+    overflow: visible;
+    &::after{
+        content: "";
+        position: absolute;
+        top: -45px;
+        right: 35px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 25px 10px 25px 10px;
+        border-color: transparent transparent #fff transparent;
+    }
+  }
+  ul li {
+    list-style-type: none;
+    border-bottom: 1px solid lightgray;
+    padding: 5px 10px;
+  }
+  .tagList {
+    max-height: 35vh;
+    overflow: auto;
+    padding: 10px;
+    padding-top: 0px;
+    margin: 0;
+    .tag{
+        position: relative;
+        top: -3px;
+        left: 10px;
+    }
+  }
+  .inp_div input{
+    border: none;
+    border-bottom: 1px solid lightgray;
+    width: 100%;
+    font-size: 12px;
+    :focus-visible {
+        outline: none;
+    }
+  }
+  .inp_div {
+    padding: 4px 10px;
+  }
+  dialog footer {
+    border-top: 1px solid lightgray;
+    padding: 10px 10px 0px; 
+  }
+  .main_div {
+    padding: 0px 25px;
+  }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 7px;
+    margin-top: 1px;
+    margin-bottom: 0;
+}
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 0px;
+    bottom: -4px;
+    background-color: #2196f3;
+    transition: 0.4s;
+}
+input:checked + .slider:before {
+    background-color: #2196f3;
+}
+input:checked + .slider {
+    background-color: #e9ecef;
+    border: 1px solid #358cd0;
+}
+.slider_span {
+    position: relative;
+    top: 7px;
+}
+.form-control {
+    height: 35px;
+}

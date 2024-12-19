@@ -87,7 +87,7 @@
         <div
          *ngIf="isAdmin"
          class="nav_Link f-14"
-         [ngClass]="{'active': isSettingsActive}"
+         [ngClass]="router.url.includes('settings') ? 'active':''"
          [routerLink]="'settings/mail-listener'">Settings
         </div>
         <div

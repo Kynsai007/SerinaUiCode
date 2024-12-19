@@ -72,6 +72,7 @@ export class SharedService {
   fileSrc: string;
   current_year:number;
   usersList: any[];
+  isImageBoolean: boolean;
 
   constructor(private http: HttpClient) {
     let today = new Date();
