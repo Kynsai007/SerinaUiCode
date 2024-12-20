@@ -108,13 +108,16 @@
     <div class="animate-bottom">
       <div
         *ngIf="vendorsListDispaly.length != 0"
-        class="d_flex"
-        style="margin-left: 2%"
+        class="d_flex vendor_div"
       >
         <div
           *ngFor="let vendor of vendorsListDispaly; let i = index"
           class="card m3 box_shadow card_shape"
         >
+        <div class="status-badge" [ngClass]="vendor.OnboardedStatus == 'Onboarded' ? 'sb_color' : 'rb_color'">
+          <span class="status-indicator" [ngClass]="vendor.OnboardedStatus == 'Onboarded' ? 'indicate_success' : 'indicate_failure'"></span>
+          {{vendor.OnboardedStatus}}
+        </div>
           <div class="card-body">
             <h5 class="card-subtitle f-14">{{ vendor.VendorName }} - {{vendor.VendorCode}}</h5>
             <h6 class="card-subtitle mb-2">
@@ -126,7 +129,7 @@
             <div class="btn_position">
               <!-- <button class="btn btnbg f-13 mr-40">New Template</button> -->
               <div class="d-flex justify-content-between">
-                <div
+                <!-- <div
                   *ngIf="vendor.OnboardedStatus == 'Onboarded'"
                   class="f-12 mt-1"
                   style="color: green"
@@ -147,7 +150,7 @@
                   style="color: rgb(75, 74, 22)"
                 >
                   In-Progress
-                </div>
+                </div> -->
                 <div>
                   FR Update<button
                     class="btn btnbg f-13 ml-3"
