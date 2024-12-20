@@ -213,12 +213,12 @@
         >
       </li>
 
-      <!-- <li
+      <li
         class="nav-item ml-2"
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice'"
+        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
       >
         <a
           class="nav-link"
@@ -228,15 +228,16 @@
           role="tab"
           aria-controls="POline"
           aria-selected="false"
+          [ngClass]="currentTab == 'poline' ? 'active' : ''"
           >PO Lines</a
         >
-      </li> -->
+      </li>
 
       <li
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice'"
+        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
         (click)="changeTab('grn')"
       >
         <a
@@ -1632,6 +1633,7 @@
           <div
             *ngIf="currentTab == 'poline'"
             class="tab-pane fade"
+            [ngClass]="currentTab == 'poline' ? 'show active' : ''"
             id="POline"
             role="tabpanel"
             aria-labelledby="POline-tab"
@@ -2074,7 +2076,7 @@
             && editable 
             && !fin_boolean 
             && isServiceData 
-            && ![29,32,80].includes(subStatusId)
+            && ![29,32,80]?.includes(subStatusId)
             && !router.url.includes('uploadtime')"
             class="primary_btn f-12 mr-3"
             (click)="
