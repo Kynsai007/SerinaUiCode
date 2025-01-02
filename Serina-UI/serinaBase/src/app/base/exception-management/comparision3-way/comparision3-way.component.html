@@ -878,6 +878,7 @@
                               tagName.tagname == 'Description' &&
                               submitBtn_boolean && !fin_boolean
                             "
+                            [title]="data2?.poline[0].Value"
                           >
                             <p-autoComplete
                               *ngIf="tagName.tagname == 'Description'"
@@ -1053,10 +1054,30 @@
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
                           <div>
                             <input #inputval type="text" style="border: 0.2px solid #358dc0" 
-                                 [name]="line1.idDocumentLineItems" [(ngModel)]="line1.Value" 
+                                 [name]="line1.idDocumentLineItems" [value]="line1.Value" [(ngModel)]="line1.Value"
                                  (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
                                  class="form-control inputHeight w-sm" [title]="line1.Value" >
                           </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
+                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi' && !line1.is_timesheets">
+                            <div>
+                              <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                              [name]="line1.idDocumentLineItems" [value]="line1.Value"
+                              (change)="onChangeGrnAmount(line1, inputval.value)" [readonly]="line1.is_timesheets"
+                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                            </div>  
+                          </ng-container>
+                          <ng-container *ngSwitchDefault>
+                            <div>
+                              <input #inputval type="text"
+                              [name]="line1.idDocumentLineItems" [value]="line1.Value" 
+                              [readonly]="line1.is_timesheets"
+                              [disabled]="line1.Value" [ngModelOptions]="{standalone: true}"
+                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                            </div>  
+                          </ng-container>
+                         
                         </ng-container>
                         <ng-container *ngSwitchCase="'Comments'" [ngSwitch]="GRN_PO_Bool">
                           <ng-container *ngSwitchCase="false">
