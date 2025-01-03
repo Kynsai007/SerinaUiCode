@@ -373,7 +373,7 @@ export class Comparision3WayComponent
   lineData: any;
   priceData: any;
   totalPoCost: any;
-  totalInvCost: number;
+  totalInvCost: any;
   invTypeList: any[];
   isBoxOpen: boolean = false;
   activeTab: string = 'percentage';
@@ -840,7 +840,6 @@ export class Comparision3WayComponent
         },
         'Actions': { value: '', isMapped: '', tagName: 'Actions' }
       };
-      console.log(tagMappings)
       if (this.client_name == 'Cenomi' && this.isManpowerTags) {
         tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
         tagMappings['Monthly quantity'] = {
@@ -2547,8 +2546,25 @@ export class Comparision3WayComponent
   }
   onChangeGrnAmount(lineItem, val) {
     const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
-      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(this.decimal_count);
+    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+
+    let checking_value;
+    let error_msg;
+    if(po_balance_qty_value){
+      checking_value = po_balance_qty_value;
+      error_msg = 'PO Balance Quantity';
+    } 
+    this.disable_save_btn = false;
+    if(Number(checking_value) < Number(grnQty)){
+      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+      this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
+      this.disable_save_btn = true;
+      return;
+    }
+
     const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
       .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     
@@ -2736,14 +2752,14 @@ export class Comparision3WayComponent
         ) {
           if (this.GRN_PO_Bool) {
             if(this.client_name == 'SRG'){
-              if (this.invoiceNumber && this.invoiceDescription) {
+              if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
-                  if(this.invoiceNumber){
-                    this.error("Dear user, please add the invoice description.");
-                  } else {
+                  // if(this.invoiceNumber){
+                  //   this.error("Dear user, please add the invoice description.");
+                  // } else {
                     this.error("Dear user, please add the invoice number.");
-                  }
+                  // }
                 }
             } else {
               this.grnDuplicateCheck(boolean);
@@ -4149,7 +4165,7 @@ export class Comparision3WayComponent
         }
       }
       this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost;
+      this.totalInvCost = totalinvCost.toFixed(2);
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");
