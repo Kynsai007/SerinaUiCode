@@ -4152,10 +4152,9 @@ export class Comparision3WayComponent
       let totalinvCost = 0;
       for (let i = 0; i < unitPriceData?.length; i++) {
         const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-        const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-
+        const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
         const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
         if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
           totalpoCost += pounitPrice * poquantity;
