@@ -130,12 +130,12 @@
         >
       </li>
 
-      <!-- <li
+      <li
         class="nav-item ml-2"
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice'"
+        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
       >
         <a
           class="nav-link"
@@ -145,15 +145,16 @@
           role="tab"
           aria-controls="POline"
           aria-selected="false"
+          [ngClass]="currentTab == 'poline' ? 'active' : ''"
           >PO Lines</a
         >
-      </li> -->
+      </li>
 
       <li
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice'"
+        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
         (click)="changeTab('grn')"
       >
         <a
@@ -1015,12 +1016,12 @@
               <table *ngIf="Itype == 'Invoice'" class="f-13 total_table">
                 <tr class="mb-1">
                   <td></td>
-                  <td class="total_txt">Invoice Total</td>
+                  <td class="total_txt">Invoice Total (Line Total)</td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ invoice_subTotal }}</td>
+                  <td class="total_count">{{ invoice_subTotal }} ({{totalInvCost}})</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
                 <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">
@@ -1754,6 +1755,7 @@
           <div
             *ngIf="currentTab == 'poline'"
             class="tab-pane fade"
+            [ngClass]="currentTab == 'poline' ? 'show active' : ''"
             id="POline"
             role="tabpanel"
             aria-labelledby="POline-tab"
@@ -2192,12 +2194,29 @@
             </button>
 
             <button
+            *ngIf="submitBtn_boolean 
+            && editable 
+            && !fin_boolean 
+            && isServiceData 
+            && ![29,32,80]?.includes(subStatusId)
+            && !router.url.includes('uploadtime')"
+            class="primary_btn f-12 mr-3"
+            (click)="
+              approval_selection_boolean && isLCMCompleted
+                ? onSubmitApprovers()
+                : proceedToBatch('true')
+            "
+          >
+            Skip
+          </button>
+
+            <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
               (click)="
                 approval_selection_boolean && isLCMCompleted
                   ? onSubmitApprovers()
-                  : approveChangesBatch()
+                  : proceedToBatch('false')
               "
             >
               Next

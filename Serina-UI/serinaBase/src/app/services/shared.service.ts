@@ -487,8 +487,8 @@ export class SharedService {
   triggerBatch(query): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/triggerbatch/${this.invoiceID}${query}`, '').pipe(retry(3));
   }
-  serviceSubmit(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/submitServiceInvoice/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3));
+  serviceSubmit(param): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/submitServiceInvoice/${this.userId}?inv_id=${this.invoiceID}${param}`).pipe(retry(3));
   }
   vendorSubmitPO(query, uploadtime){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`).pipe(retry(3));
