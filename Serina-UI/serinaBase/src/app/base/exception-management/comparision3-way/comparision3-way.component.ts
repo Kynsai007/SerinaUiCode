@@ -100,7 +100,7 @@ export class Comparision3WayComponent
   GRNObject = [];
   GRNObjectDuplicate = [];
 
-  isPdfAvailable: boolean;
+  isPdfAvailable: boolean = true;
   userDetails: any;
   showPdf: boolean = true;
   btnText = 'Close';
@@ -504,17 +504,15 @@ export class Comparision3WayComponent
     }
     this.getEntity();
     this.initialData();
-    
     this.ERPCostAllocation();
     this.AddPermission();
     if(this.GRN_PO_Bool){
       this.lineTable = commonTags;
-    } else {
+    } 
+    else {
       if(this.Itype == 'Invoice'){
         this.readFilePath();
-      } else {
-        this.isPdfAvailable = true;
-      }
+      } 
     }
     this.isAdmin = this.dataService.isAdmin;
 
@@ -722,7 +720,7 @@ export class Comparision3WayComponent
         { header: 'Object Code', field: 'mainAccount' },
         { header: 'Element Factor', field: 'elementFactor' },
       ]
-    } else if (this.ERP == 'Dynamics') {
+    } else if (this.ERP == 'Dynamics' || this.ERP == 'Oracle') {
       this.allocationFileds = [
         { header: 'Element', field: 'Element' },
         { header: 'Cost Center', field: 'costCenter' },
@@ -821,7 +819,7 @@ export class Comparision3WayComponent
         linesData[i][line] = {Value: ele[line]}
       }
       linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical']}
-      const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+      const unitPrice = parseFloat(ele?.UnitPrice?.replace(/,/g, ''));
       let amount;
       if(this.dataService.isEditGRN){
         amount = (unitPrice * ele.GRNQty).toFixed(2);
@@ -938,15 +936,15 @@ export class Comparision3WayComponent
     this.SharedService.getInvoiceInfo(false,'po').subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
-        data.ok.headerdata.forEach((element) => {
-          this.mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
-          pushedArrayHeader.push(this.mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
+        // data.ok.headerdata.forEach((element) => {
+        //   this.mergedArray = {
+        //     ...element.DocumentData,
+        //     ...element.DocumentTagDef,
+        //   };
+        //   this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+        //   pushedArrayHeader.push(this.mergedArray);
+        // });
+        this.inputData = data?.ok?.headerdata;
         let GRN_linedata = data?.ok?.linedata;
        if(this.dataService.isEditGRN){
         let po_lines = this.dataService.po_lines;
@@ -973,6 +971,7 @@ export class Comparision3WayComponent
             this.createTimeSheetDisplayData('old');
           }
         }
+        this.SpinnerService.hide();
         this.get_PO_GRN_Lines();
         // let inv_num_data: any = this.inputData.filter((val) => {
         //   return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
@@ -1050,6 +1049,7 @@ export class Comparision3WayComponent
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
+        console.log(this.costAllocation)
         this.inputData = response?.headerdata;
         // this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
@@ -4160,10 +4160,9 @@ export class Comparision3WayComponent
       let totalinvCost = 0;
       for (let i = 0; i < unitPriceData?.length; i++) {
         const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-        const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-
+        const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
         const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
         if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
           totalpoCost += pounitPrice * poquantity;

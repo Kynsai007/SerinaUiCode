@@ -195,7 +195,7 @@ export class CreateGRNComponent implements OnInit {
     this.sharedService.readReadyGRNData(this.api_route,query).subscribe((data:any)=>{
       let array = [];
       data?.forEach(ele=>{
-        let mergedArray = {...ele.DocumentINV};
+        let mergedArray = {...ele.DocumentGRN};
         mergedArray.EntityName = ele.EntityName;
         mergedArray.VendorName = ele.VendorName;
         array.push(mergedArray);

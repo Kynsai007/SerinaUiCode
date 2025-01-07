@@ -5,7 +5,7 @@ import { ToastModule } from 'primeng/toast';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ChipsModule} from 'primeng/chips';
 import { CronEditorModule } from 'ngx-cron-editor';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
+// import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsPageComponent } from './settings-page/settings-page.component';
@@ -30,7 +30,7 @@ import { OpenaiComponent } from './openai/openai.component';
     AutoCompleteModule,
     ChipsModule,
     CronEditorModule,
-    PdfViewerModule
+    // PdfViewerModule
   ]
 })
 export class SettingsModule { }
