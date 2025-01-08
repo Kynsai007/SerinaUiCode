@@ -422,6 +422,7 @@ export class Comparision3WayComponent
   grnTooltip: string;
   isDraft: boolean;
   decimal_count:number;
+  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price, for the line item.';
 
   constructor(
     fb: FormBuilder,
@@ -815,7 +816,7 @@ export class Comparision3WayComponent
               amount = (unitPrice * ele.PurchQty).toFixed(this.decimal_count);
             }
             this.GRN_line_total += Number(amount);
-            if(this.client_name == 'Cenomi'){
+            if(this.client_name == 'Cenomi' && !this.dataService.isEditGRN){
               amount = null;
             }
             return Number(amount);
@@ -878,7 +879,7 @@ export class Comparision3WayComponent
     const timeSheetTag = this.GRN_PO_tags.find(item => item.TagName === 'Is Timesheets');
     if (timeSheetTag) {
       this.GRN_PO_tags.forEach(item => {
-        if (item.TagName == 'GRN - Quantity') {
+        if (item.TagName == 'GRN - Quantity' || item.TagName == 'AmountExcTax') {
           item.linedata.forEach(el => {
             timeSheetTag.linedata.forEach(item => {
               if (el.LineNumber == item.LineNumber && item.Value == true || item.Value == 'Yes') {
@@ -2795,7 +2796,8 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     let inv_param = '';
     if (this.invoiceNumber) {
-      inv_param += `&inv_num=${this.invoiceNumber}`;
+      const encodedInvoiceNumber = encodeURIComponent(this.invoiceNumber);
+      inv_param += `&inv_num=${encodedInvoiceNumber}`;
     }
     if (this.invoiceDescription) {
       inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
@@ -2807,6 +2809,8 @@ export class Comparision3WayComponent
       manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}`;
     } else if(!this.manpowerHeaderId && this.dataService.isEditGRN){
       manPower = `&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
+    } else if(!this.manpowerHeaderId && this.isDraft){
+      manPower = `&isdraft=${this.isDraft}`;
     }
     if(this.isManpowerTags && !this.manpowerHeaderId && this.manPowerAPI_request){
       this.SpinnerService.hide();
@@ -2843,6 +2847,7 @@ export class Comparision3WayComponent
 
   grnDuplicateCheck(boolean) {
     if (this.GRNObjectDuplicate.length > 0) {
+      this.SpinnerService.show();
       let arr = [];
       this.GRNObjectDuplicate.forEach((ele) => {
         ele.Value = ele?.Value?.toString()
@@ -2908,20 +2913,21 @@ export class Comparision3WayComponent
       }, err => {
         this.error('Server error')
       })
+      this.SpinnerService.hide();
     } else {
       alert('There are no lines to create GRN, if you are able to see the lines then please check the quantity');
       this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.client_name !== 'SRG' || this.invoiceDescription) {
+    // if (this.client_name !== 'SRG' || this.invoiceDescription) {
       if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
         return;
       }
       this.grnAPICall(boolean, txt);
-    } else {
-      this.error('Please add the invoice description');
-    }
+    // } else {
+    //   this.error('Please add the invoice description');
+    // }
       
   }
 
