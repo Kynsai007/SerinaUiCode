@@ -610,7 +610,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             })
           } else {
             this.displayResponsivepopup = true;
-            this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;
+            this.confirmText = `Sorry, "${data?.result?.firstName} ${data.result?.lastName}" is doing changes for this invoice.`;
           }
         }, err => {
           this.SpinnerService.hide();

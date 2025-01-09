@@ -1016,12 +1016,12 @@
               <table *ngIf="Itype == 'Invoice'" class="f-13 total_table">
                 <tr class="mb-1">
                   <td></td>
-                  <td class="total_txt">Invoice Total (Line Total)</td>
+                  <td class="total_txt">Invoice Lines Total </td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ invoice_subTotal }} ({{totalInvCost}})</td>
+                  <td class="total_count" [pTooltip]="lineTooltip" tooltipPosition="top">{{totalInvCost}}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
                 <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">
@@ -1126,6 +1126,27 @@
                                    class="form-control inputHeight w-sm" 
                                    [title]="item[header.field]?.Value">
                           </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
+                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
+                            <div>
+                              <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                              [name]="line1.idDocumentLineItems" [value]="line1.Value"
+                              (change)="onChangeGrnAmount(line1, inputval.value)" [readonly]="line1.is_timesheets"
+                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                            </div>  
+                          </ng-container>
+                          <!-- <ng-container *ngSwitchDefault>
+                            <div>
+                              <input #inputval type="text"
+                              [name]="line1.idDocumentLineItems" [value]="line1.Value" 
+                              [readonly]="line1.is_timesheets"
+                              [disabled]="line1.Value" [ngModelOptions]="{standalone: true}"
+                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                            </div>  
+                          </ng-container> -->
+                         
                         </ng-container>
               
                         <!-- Comments -->
@@ -1232,6 +1253,7 @@
             </div>
             <table
               class="total"
+              style="bottom: 0px;"
               *ngIf="
                 router.url.includes('Inv_vs_GRN_details') ||
                 router.url.includes('GRN_approvals')

@@ -514,7 +514,7 @@ export class SharedService {
   
   // SupportDocumnet
   uploadSupportDoc(id,data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${id}`, data, {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/${id}`, data, {
       reportProgress: true,
       observe: 'events',
     }).pipe(retry(3));
@@ -656,28 +656,28 @@ export class SharedService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?u_id=${this.userId}&inv_id=${this.invoiceID}&adv_perc=${data}`,data).pipe(retry(3));
   }
   getTemplateGroup(){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/template-groups`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/template_groups`).pipe(retry(3));
   }
   getEmailTemplate(tempgropid){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getTemplates/${tempgropid}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/templates/${tempgropid}`).pipe(retry(3));
   }
   getEmailTemplateSpec(tempnameid){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getTemplateData/${tempnameid}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/get_template_datas/${tempnameid}`).pipe(retry(3));
   }
   createNewEmailTemplate(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/createTemplate`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/create_template`, data).pipe(retry(3));
   }
   editEmailTemplate(data,tempgropid,tempnameid){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/updateTemplate/${tempgropid}/${tempnameid}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/update_template/${tempgropid}/${tempnameid}`, data).pipe(retry(3));
   }
   deleteEmailTemplate(tempgropid,tempnameid){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/delete_template/${tempgropid}/${tempnameid}`, {}).pipe(retry(3));
   }
   getEmailRecipients(){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/get_Recipients`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/get_recipients`).pipe(retry(3));
   }
   setEmailRecipients(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/createRecipientsGroup`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/create_recipients_group`, data).pipe(retry(3));
   }
   getEmailRecipientsSpec(tempnameid){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/getRecipientsGroup/${tempnameid}`).pipe(retry(3));

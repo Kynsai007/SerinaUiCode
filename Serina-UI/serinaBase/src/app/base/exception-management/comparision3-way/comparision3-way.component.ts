@@ -234,7 +234,7 @@ export class Comparision3WayComponent
   item_code: any;
   GRN_line_total: number = 0;
   invoice_subTotal: any;
-  po_total: number;
+  po_total: any;
   enable_create_grn: boolean;
   uploadCompleted: boolean = true;
   activeGRNId: string;
@@ -1035,9 +1035,9 @@ export class Comparision3WayComponent
         }
 
         this.getInvTypes();
-        // if (this.pageType == "mapping") {
-        //   this.calculateCost();
-        // }
+        if (this.pageType == "mapping") {
+          this.calculateCost();
+        }
         this.po_total = response.po_total;
         response?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
@@ -4147,36 +4147,42 @@ export class Comparision3WayComponent
 
   }
   calculateCost() {
-
-    const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
-    const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
-    // console.log(unitPriceObject)
-    if (unitPriceObject && quantityObject) {
-
-      const unitPriceData = unitPriceObject?.items;
-      const quantityData = quantityObject?.items;
-
-      let totalpoCost = 0;
-      let totalinvCost = 0;
-      for (let i = 0; i < unitPriceData?.length; i++) {
-        const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-        const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-        const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-
-        if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
-          totalpoCost += pounitPrice * poquantity;
-        }
-        if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
-          totalinvCost += invunitPrice * invquantity;
-        }
+    console.log(this.lineData)
+    let totalpoCost = 0;
+    let totalinvCost = 0;
+    this.lineData?.forEach(el=>{
+      const pounitPrice = parseFloat(el?.lines?.UnitPrice?.po_line?.Value);
+      const poquantity = parseFloat(el?.lines?.Quantity?.po_line?.Value);
+      const invunitPrice = parseFloat(el?.lines?.UnitPrice?.Value);
+      const invquantity = parseFloat(el?.lines?.Quantity?.Value);
+      console.log(pounitPrice, poquantity, invunitPrice, invquantity)
+      if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
+        totalpoCost += pounitPrice * poquantity;
       }
-      this.po_total = totalpoCost;
+      if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
+        totalinvCost += invunitPrice * invquantity;
+      }
+    })
+      this.po_total = totalpoCost.toFixed(2);
       this.totalInvCost = totalinvCost.toFixed(2);
-      // console.log("Total Cost:", totalpoCost);
-    } else {
-      console.log("UnitPrice or Quantity data not found.");
-    }
+    // console.log(unitPriceObject)
+    // if (unitPriceObject && quantityObject) {
+
+    //   const unitPriceData = unitPriceObject?.items;
+    //   const quantityData = quantityObject?.items;
+
+
+    //   for (let i = 0; i < unitPriceData?.length; i++) {
+       
+
+
+    //   }
+    //   this.po_total = totalpoCost;
+    //   this.totalInvCost = totalinvCost.toFixed(2);
+    //   // console.log("Total Cost:", totalpoCost);
+    // } else {
+    //   console.log("UnitPrice or Quantity data not found.");
+    // }
   }
   getRejectionComments() {
     this.exceptionService.rejectCommentsList().subscribe((data: any) => {

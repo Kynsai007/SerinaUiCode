@@ -1759,6 +1759,7 @@ export class RolesComponent implements OnInit {
           ...element.User,
           ...element.Vendor,
         };
+        mergerdObject.VendorName = element?.User?.vendor_data?.VendorName;
         // mergerdObject.idVendorUserAccess = element.idVendorUserAccess;
         mergerdObject.LogName = element.LogName;
         if(mergerdObject.vendor_data?.VendorCode == ''){

@@ -256,6 +256,12 @@ td{
         max-height: 100%;
         margin: 0 !important;
     }
+    .p-multiselect:focus,
+    .p-multiselect {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
 }
 
 
