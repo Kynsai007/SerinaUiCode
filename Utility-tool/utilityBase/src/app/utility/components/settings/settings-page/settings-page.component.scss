@@ -22,6 +22,7 @@
 ul li {
     list-style: none;
     position: relative;
+    padding-bottom: 15px;
 }
 
 ul li a {
@@ -43,11 +44,11 @@ ul li a {
         height: 0;
         border-style: solid;
         border-width: 5px 0 5px 10px; /* Arrow size */
-        border-color: transparent transparent transparent #358dc0;
+        border-color: transparent transparent transparent #3543C0;
     }
 }
 
 .active_in {
-    background-color: rgb(53, 141, 192);
+    background-color: #3543C0;
     color: #ffffff !important;
 }

@@ -16,10 +16,10 @@ const routes: Routes = [
   {
     path: '',
     component:HomeComponent , children :[
-      {
-        path: 'home',
-        component:UtilityHomeComponent
-      },
+      // {
+      //   path: 'home',
+      //   component:UtilityHomeComponent
+      // }
       {
         path: 'vendors',
         component:VendorsComponent
@@ -43,7 +43,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo:'home',
+        redirectTo:'vendors',
         pathMatch:'full'
       }
     ]

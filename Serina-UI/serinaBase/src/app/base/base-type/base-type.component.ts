@@ -629,7 +629,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.subscription.unsubscribe();
     }
     this.DisplayMode.unsubscribe();
-    this.dialog.closeAll();
+    this.dialog.closeAll();    
+
+
   }
   @HostListener('window:beforeunload', ['$event'])
   clearSessionStorage(event: Event): void {
@@ -642,7 +644,23 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     }
     if (sessionStorage.getItem('GRN')) {
       sessionStorage.removeItem('GRN');
+    }    
+    if (sessionStorage.getItem('GRN Creation')) {
+      sessionStorage.removeItem('GRN Creation');
+    }
+    if (sessionStorage.getItem('editException')) {
+      sessionStorage.removeItem('editException');
+    }    
+    if (sessionStorage.getItem('Archived')) {
+      sessionStorage.removeItem('Archived');
+    }    
+    if (sessionStorage.getItem('rejected')) {
+      sessionStorage.removeItem('rejected');
+    }
+
+    if (sessionStorage.getItem('Service')) {
+      sessionStorage.removeItem('Service');
     }
   }
-
+  
 }

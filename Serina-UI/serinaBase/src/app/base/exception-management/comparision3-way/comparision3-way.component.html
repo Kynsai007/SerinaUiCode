@@ -80,7 +80,7 @@
       class="primary_btn mr-2 f-12"
       (click)="viewPdf()"
     >
-      {{ btnText }} {{isPdfAvailable ? 'View' : 'PDF'}}
+      {{ btnText }}
     </button>
   </div>
   
@@ -353,7 +353,7 @@
                     <label class="label-head" style="margin-bottom: -5px" (click)="labelHighlight(value?.TagLabel)"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value?.isError == 1 || value?.IsUpdated > 0"
+                        *ngIf="value?.isError == 1"
                         [pTooltip]="value?.ErrorDesc"
                         tooltipPosition="top"
                         ><i
@@ -662,7 +662,7 @@
                             </span>
                             <span
                               *ngIf="
-                              item.lines[header]?.isError >= 1 || item.lines[header]?.updates
+                              item.lines[header]?.isError >= 1
                               "
                               [pTooltip]="
                               item.lines[header]?.ErrorDesc
@@ -1132,10 +1132,26 @@
                           <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
                             <div>
                               <input #inputval type="text" style="border: 0.2px solid #358dc0" 
-                              [name]="line1.idDocumentLineItems" [value]="line1.Value"
-                              (change)="onChangeGrnAmount(line1, inputval.value)" [readonly]="line1.is_timesheets"
-                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                                   [name]="item[header.field]?.Value" 
+                                   [(ngModel)]="item[header.field].Value" 
+                                   (change)="onChangeGrnAmount(item, inputval.value)"
+                                   [readonly]="item[header.field]?.is_timesheets"
+                                   class="form-control inputHeight w-sm" 
+                                   [title]="item[header.field]?.Value">
                             </div>  
+                          </ng-container>
+                          <ng-container *ngSwitchDefault>
+                            <div>
+                              <input type="text" 
+                                     [ngClass]="{'w-des': header.header === 'Description', 'w-sm': item.TagName !== 'Description'}"
+                                     [ngStyle]="{'border': item[header.field]?.is_mapped === 1 ? '2px solid #f2be42' : ''}"
+                                     [value]="item[header.field]?.Value ? item[header.field]?.Value : 'NA'" 
+                                     [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
+                                     class="form-control inputHeight" 
+                                     [name]="item[header.field]?.Value"
+                                     [disabled]="item[header.field]?.Value || !GRN_PO_Bool" 
+                                     [ngModelOptions]="{standalone: true}">
+                            </div>
                           </ng-container>
                           <!-- <ng-container *ngSwitchDefault>
                             <div>

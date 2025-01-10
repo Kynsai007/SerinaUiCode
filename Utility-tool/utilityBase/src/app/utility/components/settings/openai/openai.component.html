@@ -2,30 +2,46 @@
     <h6>Global Level</h6>
     <div class="main_div" *ngIf="!testingMode">
         <div class="d-flex justify-content-between">
-            <div><input type="text" class="form-control f-12" (keyup)="searchGlobalTags($event.target.value)" placeholder="Search By Tag Name..."></div>
+            <div class="relative">
+              <input type="text" class="form-control global f-12" (keyup)="searchGlobalTags($event.target.value)" placeholder="Search By Tag Name...">
+              <div class="search_box">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </div>
+            </div>
             <div class="d-flex f-12 justify-content-between">
-                <div class="mr-3">Edit Tail Prompt </div>
-                <div class="mr-3"> Vendor        <span class="slider_span">
+                
+                <div class="mr-3 textSwitch"> Vendor        
+                  <span class="slider_span mr-1">
                     <label class="switch">
                       <input
                         type="checkbox"
+                        [(ngModel)]="isServiceProvider"
+                        (change)="changeServiceProvider()"
                       />
                       <span class="slider round"></span>
                     </label>
-                  </span>Service provider</div>
-                <div class="mr-3"> line        <span class="slider_span">
+                  </span>
+                  Service provider
+                </div>
+                <div class="mr-3 textSwitch"> line        
+                  <span class="slider_span mr-1">
                     <label class="switch">
                       <input
                         type="checkbox"
+                        [(ngModel)]="isHeader"
+                        (change)="changeHeader()"
                       />
                       <span class="slider round"></span>
                     </label>
-                  </span>header</div>
-                <div><Button class="primaryButton f-12" (click)="openFilterDialog($event)">+ Add More Tags</Button></div>
+                  </span>
+                  header
+                </div>
+                <div class="mr-3" style="cursor: pointer;" (click)="openFilterDialog($event,'prompt')"><img src="assets/Group 350.svg" alt="Edit prompt"> </div>
+                <div><Button class="primaryButton bg_btn f-12" (click)="openFilterDialog($event,'tags')">+ Add More Tags</Button></div>
             </div>
         </div>
         <div class="tableDiv">
-            <table class="table f-12 table-striped">
+            <table class="table f-13 table-striped">
                 <thead>
                     <tr>
                         <th>Tag Name</th>
@@ -37,10 +53,10 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let tag of tags">
-                        <td>{{tag.name}}</td>
-                        <td>{{tag.description}}</td>
-                        <td><input type="checkbox"  [name]="tag.name" [id]="tag.name" [checked]="tag.isMandatory" (change)="checkTag($event.target.checked,tag.name)"></td>
-                        <td><input type="checkbox"  [name]="tag.name" [id]="tag.name" [checked]="tag.isActive" (change)="checkTag($event.target.checked,tag.name)"></td>
+                        <td>{{tag.Name}}</td>
+                        <td>{{tag.Description}}</td>
+                        <td><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag.Name)"></td>
+                        <td><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag.Name)"></td>
                         <td><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
                     </tr>
                 </tbody>
@@ -137,7 +153,7 @@
                     <div> <i class="fa fa-upload" aria-hidden="true"></i></div>
                     <p class="f-13 mb-2">Drag & Drop your files here  <br> <span style="font-weight: 400;">OR</span> <br></p>
                     <button class="primaryButton f-12 browse-button" (click)="fileInput.click()">Browse Files</button>
-                    <input type="file" id="file" name="file" accept=".pdf, .jpeg,.jpg,.png" multiple (change)="onFileChange($event)" #fileInput style="display: none;"> <br>
+                    <input type="file" id="file" Name="file" accept=".pdf, .jpeg,.jpg,.png" multiple (change)="onFileChange($event)" #fileInput style="display: none;"> <br>
                     <button class="primaryButton mt-2 f-12 browse-button">Test Modal</button> <br>
                 </div>
             </div>
@@ -146,18 +162,69 @@
 </div>
 
 <dialog #tagDialog class="dialog"> 
-    <div class="inp_div">
-        <input type="text" class="form-control" name="tag_name" id="tag_name" placeholder="Search By Tag Name" (keyup)="searchTags($event.target.value)">
+  <form *ngIf="isTagDialog">
+    <div>
+      <label for="tag_name" class="f-13 mb-1">Tag Name</label><br>
+      <input type="text" class="form-control f-12" Name="tag_name" id="tag_name" placeholder="Type Tag Name.." >
     </div>
-    <ul class="tagList">
-        <li *ngFor="let item of dialogList" class="f-12">
-            <label class="m-0" [for]="item.name">
-                <input type="checkbox"  [name]="item.name" [id]="item.name" [checked]="item.isActive" (change)="checkTag($event.target.checked,item.name)"> <span class="tag">{{item.name}}</span>
-            </label>
-        </li>
-    </ul>
+    <div class="mt-2">
+      <label class="f-13 mb-1" for="description">Description</label><br>
+      <textarea class="form-control f-12" Name="description" id="description" rows="5"></textarea>
+    </div>
+    <div class="d-flex justify-content-between f-12 mt-2">
+
+      <div class=" d-flex">
+        <div class="f-13 mr-2">Is Mandatory? - </div>
+         No        
+        <span class="slider_span mr-1 ml-1">
+          <label class="switch">
+            <input
+              type="checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
+        </span>
+        Yes
+      </div>
+
+      <div class="d-flex">
+        <div  class="f-13 mr-2">Is Active? - </div>
+         No        
+        <span class="slider_span mr-1 ml-1">
+          <label class="switch">
+            <input
+              type="checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
+        </span>
+        Yes
+      </div>
+    </div>
     <footer class="d-flex justify-content-end mt-2">
-        <button class="secondaryButton f-12 mr-3" (click)="closeDialog()">Close</button>
-        <button class="primaryButton f-12" (click)="saveTags()">Save</button>
-    </footer>
+      <button class="secondary_action_button f-12 mr-3" (click)="closeDialog()">Close</button>
+      <button class="primary_action_button f-12" (click)="saveTags()">Save</button>
+   </footer>
+  </form>
+
+  <div *ngIf="!isTagDialog">
+    <label for="tag_name" class="f-13 mb-1">Write your prompt here</label><br>
+    <textarea class="form-control f-12" [(ngModel)]="prompt" Name="prompt" id="prompt" rows="5" style="height: 150px;" (input)="updateCharacterCount($event)"></textarea>
+
+    <div class="mt-3">
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" [style.width.%]="(prompt?.length / 250) * 100" aria-valuenow="{{ prompt?.length }}" aria-valuemin="0" aria-valuemax="250"></div>
+      </div>
+      <div class="d-flex justify-content-between f-10 mt-1">
+        <div>Allow only 250 characters</div>
+        <div>{{ 250 - prompt?.length }} characters left</div>
+      </div>
+    </div>
+
+    <footer class="d-flex justify-content-end mt-2">
+      <button class="secondary_action_button f-12 mr-3" (click)="closeDialog()">Close</button>
+      <button class="primary_action_button f-12" (click)="savePrompt()">Save</button>
+   </footer>
+  </div>
+
 </dialog>

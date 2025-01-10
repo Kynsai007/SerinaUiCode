@@ -1482,6 +1482,7 @@ export class Comparision3WayComponent
   }
 
   readGRNInvData() {
+    this.SpinnerService.show();
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
         this.lineDisplayData = [];
@@ -1606,7 +1607,7 @@ export class Comparision3WayComponent
         //     }
         //   }, 10);
         // });
-        this.lineDisplayData = dummyLineArray;
+        // this.lineDisplayData = dummyLineArray;
         this.getInvTypes();
         // setTimeout(() => {
         //   this.lineDisplayData = this.lineDisplayData.filter((v) => {
@@ -1669,15 +1670,16 @@ export class Comparision3WayComponent
         this.vendorId = this.vendorData['idVendor'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-        if (this.router.url.includes('GRN_approvals')) {
-          let index = this.lineDisplayData.findIndex(tag => tag.TagName == 'Inv - Quantity');
-          this.lineDisplayData.splice(index, 1)
-        }
+        // if (this.router.url.includes('GRN_approvals')) {
+        //   let index = this.lineDisplayData.findIndex(tag => tag.TagName == 'Inv - Quantity');
+        //   this.lineDisplayData.splice(index, 1)
+        // }
         this.isGRNDataLoaded = true;
+        // console.log(this.lineDisplayData)
         setTimeout(() => {
           // document.getElementById('grnTable').style.display = 'block';
           this.SpinnerService.hide();
-        }, 4000);
+        }, 2000);
 
       },
       (error) => {

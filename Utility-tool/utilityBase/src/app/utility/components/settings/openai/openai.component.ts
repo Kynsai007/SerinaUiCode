@@ -1,4 +1,6 @@
+import { Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { OpenAIService } from 'src/app/services/openAI/open-ai.service';
 
 @Component({
   selector: 'app-openai',
@@ -7,26 +9,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 })
 export class OpenaiComponent implements OnInit {
   tags = [
-    { name: 'Tag 1', description: 'tag1 description', isMandatory: true, isActive: true },
-    { name: 'Tag 2', description: 'tag2 description', isMandatory: true, isActive: true },
-    { name: 'Tag 3', description: 'tag3 description', isMandatory: true, isActive: true },
-    { name: 'Tag 4', description: 'tag4 description', isMandatory: false, isActive: false },
-    { name: 'Tag 5', description: 'tag5 description', isMandatory: true, isActive: false },
-    { name: 'Tag 6', description: 'tag6 description', isMandatory: false, isActive: true },
-    { name: 'Tag 7', description: 'tag7 description', isMandatory: false, isActive: true },
-    { name: 'Tag 8', description: 'tag8 description', isMandatory: true, isActive: true },
-    { name: 'Tag 9', description: 'tag9 description', isMandatory: false, isActive: true },
-    { name: 'Tag 10', description: 'tag10 description', isMandatory: true, isActive: true },
-    { name: 'Tag 11', description: 'tag11 description', isMandatory: false, isActive: false },
-    { name: 'Tag 12', description: 'tag12 description', isMandatory: true, isActive: false },
-    { name: 'Tag 13', description: 'tag13 description', isMandatory: true, isActive: true },
-    { name: 'Tag 14', description: 'tag14 description', isMandatory: true, isActive: true },
-    { name: 'Tag 15', description: 'tag15 description', isMandatory: false, isActive: true },
-    { name: 'Tag 16', description: 'tag16 description', isMandatory: true, isActive: true },
-    { name: 'Tag 17', description: 'tag17 description', isMandatory: true, isActive: true },
-    { name: 'Tag 18', description: 'tag18 description', isMandatory: true, isActive: false },
-    { name: 'Tag 19', description: 'tag19 description', isMandatory: true, isActive: true },
-    { name: 'Tag 20', description: 'tag20 description', isMandatory: true, isActive: true },
+    { Name: 'Tag 1', Description: 'tag1 Description', Ismandatory: true, isUsed: true }
   ];
   filterTags:any[];
   dialogList: any[];
@@ -52,17 +35,39 @@ export class OpenaiComponent implements OnInit {
   file: File;
   file_url: string;
   dragging: boolean;
-  constructor() { }
+  isServiceProvider = false;
+  isHeader = false;
+  isTagDialog: boolean;
+  prompt:string = '';
+  constructor(private router: Router,
+    private openAIService : OpenAIService
+  ) { }
 
   ngOnInit(): void {
-    this.filterTags = this.tags;
-    this.dialogList = this.tags;
+    this.applyFilters();
+    // this.filterTags = this.tags;
+    // this.dialogList = this.tags;
+    this.readAllTags();
   }
-  openFilterDialog(event){
+  applyFilters() {
+    this.router.navigate([], {
+      queryParams: {
+        isServiceProvider: this.isServiceProvider || null, 
+        isHeader: this.isHeader || null,
+      },
+      queryParamsHandling: 'merge', 
+    });
+  }
+  openFilterDialog(event,text){
     let top = event.clientY + 10 + "px";
     let left;
+    if(text == 'tags'){
+      this.isTagDialog = true;
       left = "calc(55% + 100px)";
-
+    } else {
+      this.isTagDialog = false;
+      left = "calc(38% + 100px)";
+    }
     const dialog = document.querySelector('dialog');
     dialog.style.top = top;
     dialog.style.left = left;
@@ -82,16 +87,16 @@ export class OpenaiComponent implements OnInit {
   }
   searchTags(key){
     this.dialogList = this.filterTags;
-    this.dialogList = this.dialogList.filter(el=> el.name.toLowerCase().includes(key.toLowerCase()));
+    this.dialogList = this.dialogList.filter(el=> el.Name.toLowerCase().includes(key.toLowerCase()));
   }
   searchGlobalTags(key){
     this.tags = this.filterTags;
-    this.tags = this.tags.filter(el=> el.name.toLowerCase().includes(key.toLowerCase()));
+    this.tags = this.tags.filter(el=> el.Name.toLowerCase().includes(key.toLowerCase()));
   }
-  checktag(isChecked,name){
+  checktag(isChecked,Name){
     this.tags.forEach(el=>{
-      if(el.name == name){
-        el.isActive = isChecked;
+      if(el.Name == Name){
+        el.isUsed = isChecked;
       }
     })
     // this.sharedService.saveTags(this.tags);
@@ -283,5 +288,39 @@ export class OpenaiComponent implements OnInit {
   loadPDFtest(fileUrl: string): void {
     // Implement the logic to load and display the PDF
     // console.log('Loading PDF from URL:', fileUrl);
+  }
+  updateCharacterCount(event){
+    this.prompt = event.target.value;
+    if (this.prompt.length > 250) {
+      this.prompt = this.prompt.substring(0, 250);
+      event.target.value = this.prompt;
+    }
+  }
+  savePrompt(){
+    let context = 'vendor';
+    if(this.isServiceProvider){
+      context = 'sp';
+    }
+    this.openAIService.updatePrompt(null,context,this.prompt).subscribe((data)=>{
+      console.log(data);
+      this.closeDialog();
+    });
+  }
+  readAllTags(){
+    let context = 'vendor';
+    if(this.isServiceProvider){
+      context = 'sp';
+    }
+    this.openAIService.readAllTags(null,context,!this.isHeader).subscribe((data)=>{
+      this.tags = data.fields;
+      this.prompt = data.tail_prompt;
+      this.filterTags = this.tags;
+    })
+  }
+  changeServiceProvider(){
+    this.readAllTags();
+  }
+  changeHeader(){
+    this.readAllTags();
   }
 }
