@@ -4146,7 +4146,7 @@ export class Comparision3WayComponent
     const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
     const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
     const unitPriceDiscountObject = this.lineData?.Result?.find(obj => obj?.tagname === "Discount");
-    const unitPriceDiscPercentageObject = this.lineData?.Result?.find(obj => obj?.tagname === "DiscountPercentage");
+    const unitPriceDiscPercentageObject = this.lineData?.Result?.find(obj => obj?.tagname === "DiscPercent");
     // console.log(unitPriceObject)
     if (unitPriceObject && quantityObject) {
 
@@ -4263,7 +4263,7 @@ export class Comparision3WayComponent
     this.exceptionService.getInvTypes().subscribe((data: any) => {
       this.invTypeList = data.data;
       data.data.forEach(el => {
-        if (el.toLowerCase() == this.docType) {
+        if (el?.toLowerCase() == this.docType) {
           this.docType = el;
         } if (this.docType == 'credit') {
           this.docType = 'Invoice'
@@ -4281,7 +4281,7 @@ export class Comparision3WayComponent
     })
   }
   onSelectInvType(event) {
-    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data: any) => {
+    this.exceptionService.changeInvType(event?.value?.toLowerCase()).subscribe((data: any) => {
       if (data.status == 'success') {
         this.success("Invoice type changed successfully, and sent to batch.");
         this.syncBatch();
@@ -4426,7 +4426,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < arr?.length; i++) {
       let str = arr[i];
       if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+        str?.toLowerCase()?.indexOf(query?.toLowerCase()) == 0
       ) {
         filtered.push(str);
       }
@@ -4466,7 +4466,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < arr?.length; i++) {
       let str = arr[i];
       if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+        str?.toLowerCase()?.indexOf(query?.toLowerCase()) == 0
       ) {
         filtered.push(str);
       }

@@ -175,6 +175,17 @@ export class PopupComponent implements OnInit {
       this.spin.hide();
     })
   }
+  calaculateAmount(data){
+    let lineTotal;
+    if (data?.DiscPercent) {
+      lineTotal = data?.Quantity * data?.UnitPrice * (1 - data?.DiscPercent / 100);
+    } else if (data?.DiscAmount) {
+      lineTotal = data?.Quantity * (data?.UnitPrice - data?.DiscAmount);
+    } else {
+      lineTotal = data?.Quantity * data?.UnitPrice;
+    }
+    return lineTotal;
+  }
   onSelect(bool, data, field) {
     let id = data[field];
     data.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
@@ -182,14 +193,14 @@ export class PopupComponent implements OnInit {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (boolean) {
         this.selectedPOLines.push(data);
-        let lineTotal = data?.DiscAmount ? (data?.Quantity * (data?.UnitPrice - data?.DiscAmount)) : (data?.Quantity * data?.UnitPrice);
+        let lineTotal = this.calaculateAmount(data);
         this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
-        let lineTotal = data?.DiscAmount ? (data?.Quantity * (data?.UnitPrice - data?.DiscAmount)) : (data?.Quantity * data?.UnitPrice);
+        let lineTotal= this.calaculateAmount(data);
         this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
@@ -206,7 +217,8 @@ export class PopupComponent implements OnInit {
         val.isSelected = true;
         let id = val[field];
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
-        let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice);
+        let lineTotal = this.calaculateAmount(val);
+        // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
         this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
         // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
@@ -233,7 +245,7 @@ export class PopupComponent implements OnInit {
       if (el[field] == lineid) {
         el[el_flied] = qty;
       }
-      let lineTotal = el?.DiscAmount ? (el?.Quantity * (el?.UnitPrice - el?.DiscAmount)) : (el?.Quantity * el?.UnitPrice);
+      let lineTotal = this.calaculateAmount(el);
       this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
       // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
