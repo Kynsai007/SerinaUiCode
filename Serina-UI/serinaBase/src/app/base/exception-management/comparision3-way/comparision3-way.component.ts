@@ -423,6 +423,7 @@ export class Comparision3WayComponent
   isDraft: boolean;
   decimal_count:number;
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price, for the line item.';
+  configData: any;
 
   constructor(
     fb: FormBuilder,
@@ -450,9 +451,10 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
-    this.ERP = this.dataService?.configData?.erpname;
-    this.client_name = this.dataService?.configData?.client_name;
-    this.decimal_count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
+    this.configData = this.dataService?.configData;
+    this.ERP = this.configData?.erpname;
+    this.client_name = this.configData?.client_name;
+    this.decimal_count = this.configData?.miscellaneous?.No_of_Decimals;
     if(!this.decimal_count){
       this.decimal_count = 2;
      }
@@ -2749,7 +2751,7 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if(this.client_name == 'SRG'){
+            if(this.configData?.miscellaneous?.grn_match_with_invoice_no){
               if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
