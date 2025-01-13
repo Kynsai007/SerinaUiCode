@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { OpenAIService } from 'src/app/services/openAI/open-ai.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-openai',
@@ -20,11 +21,12 @@ export class OpenaiComponent implements OnInit {
   zoomX = 1;
   orgX = '0px';
   orgY = '0px';
-  showInvoice: any;
+  showInvoice: string | null = null;
   content_type: any;
   imageCanvas: HTMLImageElement;
   isPdfAvailable: boolean;
   zoomVal: number = 0.8;
+  zoom: number = 1;
   rotation = 0;
   page: number = 1;
   totalPages: number;
@@ -40,7 +42,8 @@ export class OpenaiComponent implements OnInit {
   isTagDialog: boolean;
   prompt:string = '';
   constructor(private router: Router,
-    private openAIService : OpenAIService
+    private openAIService : OpenAIService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -93,15 +96,32 @@ export class OpenaiComponent implements OnInit {
     this.tags = this.filterTags;
     this.tags = this.tags.filter(el=> el.Name.toLowerCase().includes(key.toLowerCase()));
   }
-  checktag(isChecked,Name){
-    this.tags.forEach(el=>{
-      if(el.Name == Name){
-        el.isUsed = isChecked;
-      }
-    })
-    // this.sharedService.saveTags(this.tags);
-  }
+  checkTag(isChecked,tagData,tagName){
+    console.log(tagData,tagName);
+    let apiParams = {
+      "tagid": 0,
+      "isMandatory": true,
+      "isActive": true,
+      "isglobal": true,
+      "description": "string"
+    }
 
+    apiParams.tagid = tagData.idDefaultFields;
+    apiParams.isMandatory = tagData.Ismandatory || false;
+    apiParams.isActive = tagData.isUsed || false;
+    apiParams.isglobal = true;
+    apiParams.description = tagData.Description|| '';
+    if(tagName == 'Ismandatory'){
+      apiParams.isMandatory = isChecked;
+    } else if(tagName == 'isActive'){
+      apiParams.isActive = isChecked;
+    }
+    console.log(apiParams);
+    this.openAIService.updateTags(apiParams).subscribe((data)=>{
+      console.log(data);
+      this.readAllTags();
+    }); 
+  }
   loadImage() {
     if (this.isImgBoolean == true) {
       setTimeout(() => {
@@ -122,7 +142,7 @@ export class OpenaiComponent implements OnInit {
 
   drawImagein() {
     this.imageCanvas = new Image();
-    this.imageCanvas.src = this.showInvoice;
+    // this.imageCanvas.src = this.showInvoice;
     let imageWidth, imageHeight;
     this.imageCanvas.onload = () => {
       const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
@@ -263,27 +283,65 @@ export class OpenaiComponent implements OnInit {
     }
   }
   onFileChange(event: any) {
-    console.log(event);
-    const files = event.target.files;
-    if (files.length > 0) {
-      this.file = files[0];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.showInvoice = e.target.result;
-        if (this.file.type === 'application/pdf') {
+    // const files = event.target.files;
+    // if (files.length > 0) {
+    //   this.file = files[0];
+    //   const reader = new FileReader();
+    //   reader.onload = (e: any) => {
+    //     this.showInvoice = e.target.result;
+    //     if (this.file.type === 'application/pdf') {
+    //       this.isImgBoolean = false;
+    //       this.loadPDFtest(this.showInvoice);
+    //     } else if (this.file.type === 'text/html') {
+    //       // this.loadHTML(this.showInvoice);
+    //     } else {
+    //       console.log(this.file.type)
+    //       this.isImgBoolean = true;
+    //       this.loadImage();
+    //     }
+    //   };
+    //   reader.readAsDataURL(this.file);
+    // }
+    this.clearPreview();
+    const fileInput = event.target.files || event;
+    if (fileInput && fileInput?.length > 0) {
+      const file = fileInput[0];
+
+      // Validate file type
+      if (!['application/pdf', 'image/png', 'image/jpeg'].includes(file.type)) {
+        alert('Unsupported file type. Please upload a PDF or an image.');
+        return;
+      }
+
+       if (file?.type === 'application/pdf') {
           this.isImgBoolean = false;
-          this.loadPDFtest(this.showInvoice);
-        } else if (this.file.type === 'text/html') {
-          // this.loadHTML(this.showInvoice);
-        } else {
-          console.log(this.file.type)
-          this.isImgBoolean = true;
-          this.loadImage();
+          // this.loadPDFtest(this.showInvoice);
+                // Read the file as a data URL
+          const blob = new Blob([file], { type: file.type });
+          this.showInvoice = URL.createObjectURL(blob);
+        } else{
+          const reader = new FileReader();
+          reader.onload = (e: any) => {
+            this.showInvoice = e.target.result;
+            
+            this.isImgBoolean = true;
+            this.loadImage();
+          };
+          reader.readAsDataURL(this.file);
+
         }
-      };
-      reader.readAsDataURL(this.file);
+
+
     }
   }
+
+    // Clean up the blob URL to avoid memory leaks
+    clearPreview() {
+      if (this.showInvoice) {
+        URL.revokeObjectURL(this.showInvoice);
+        this.showInvoice = null;
+      }
+    }
 
   loadPDFtest(fileUrl: string): void {
     // Implement the logic to load and display the PDF

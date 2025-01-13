@@ -26,6 +26,10 @@ export class OpenAIService {
     if(ven_ser_id){
       param = `?tail_prompt=${encodPrompt}&context=${context}&ven_ser_id=${ven_ser_id}`;
     }
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/updateprompt${param}`, null);
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/updatetailprompt${param}`, null);
+  }
+
+  updateTags(data) {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/updatelineitemprompt`, data);
   }
 }

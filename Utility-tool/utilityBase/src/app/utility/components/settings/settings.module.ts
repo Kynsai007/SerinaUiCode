@@ -1,3 +1,4 @@
+import { SafeUrlPipe } from './../../../services/Interceptors/safe-url.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +21,7 @@ import { OpenaiComponent } from './openai/openai.component';
 
 
 @NgModule({
-  declarations: [SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
+  declarations: [SafeUrlPipe,SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,
@@ -31,6 +32,7 @@ import { OpenaiComponent } from './openai/openai.component';
     ChipsModule,
     CronEditorModule,
     // PdfViewerModule
-  ]
+  ],
+  // exports: [SafeUrlPipe]
 })
 export class SettingsModule { }
