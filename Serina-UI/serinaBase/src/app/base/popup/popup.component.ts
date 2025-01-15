@@ -62,6 +62,7 @@ export class PopupComponent implements OnInit {
   endDate: Date;
   isEditGRN: boolean = false;
   createdDates = [];
+  disabledSaveMetadata: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -142,6 +143,7 @@ export class PopupComponent implements OnInit {
     this.POLineData.forEach(val => {
       val.isSelected = false;
       val.Quantity = val.PurchQty;
+      val.AmountExcTax = this.calculateAmount(val);
     })
   }
   onSubmit(value) {
@@ -175,12 +177,13 @@ export class PopupComponent implements OnInit {
       this.spin.hide();
     })
   }
-  calaculateAmount(data){
+  calculateAmount(data){
+    console.log(data)
     let lineTotal;
-    if (data?.DiscPercent) {
+    if (data?.DiscPercent && data?.DiscPercent != '0') {
       lineTotal = data?.Quantity * data?.UnitPrice * (1 - data?.DiscPercent / 100);
-    } else if (data?.DiscAmount) {
-      lineTotal = data?.Quantity * (data?.UnitPrice - data?.DiscAmount);
+    } else if (data?.DiscAmount && data?.DiscAmount != '0') {
+      lineTotal = (data?.Quantity * data?.UnitPrice) - data?.DiscAmount;
     } else {
       lineTotal = data?.Quantity * data?.UnitPrice;
     }
@@ -193,14 +196,14 @@ export class PopupComponent implements OnInit {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (boolean) {
         this.selectedPOLines.push(data);
-        let lineTotal = this.calaculateAmount(data);
+        let lineTotal = this.calculateAmount(data);
         this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
-        let lineTotal= this.calaculateAmount(data);
+        let lineTotal= this.calculateAmount(data);
         this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
@@ -217,7 +220,7 @@ export class PopupComponent implements OnInit {
         val.isSelected = true;
         let id = val[field];
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
-        let lineTotal = this.calaculateAmount(val);
+        let lineTotal = this.calculateAmount(val);
         // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
         this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
         // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
@@ -245,7 +248,7 @@ export class PopupComponent implements OnInit {
       if (el[field] == lineid) {
         el[el_flied] = qty;
       }
-      let lineTotal = this.calaculateAmount(el);
+      let lineTotal = this.calculateAmount(el);
       this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
       // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
@@ -610,6 +613,13 @@ export class PopupComponent implements OnInit {
         [field]: value
       });
     }
+    this.ds.grn_manpower_metadata.headerFields.forEach(el=>{
+      if(Object.keys(el).length <= 3){
+        this.disabledSaveMetadata = true;
+      } else {
+        this.disabledSaveMetadata = false;
+      }
+    })
     // this.ds.grn_manpower_metadata.headerFields[index][field] = value;
   }
   saveManpowerMetadata() {
@@ -736,7 +746,7 @@ export class PopupComponent implements OnInit {
             // Check for valid shiftCount and totalValue before dividing
             if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
 
-              const calculatedGRNQuantity = totalValue / (numberOfDays * shiftCount);
+              const calculatedGRNQuantity = totalValue / (numberOfDays);
               line.Value = calculatedGRNQuantity.toFixed(2); 
             } else {
               line.Value = "0"; // Default to 0 if something is missing

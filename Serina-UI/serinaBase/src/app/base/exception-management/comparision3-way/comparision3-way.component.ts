@@ -422,7 +422,7 @@ export class Comparision3WayComponent
   grnTooltip: string;
   isDraft: boolean;
   decimal_count:number;
-  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price, for the line item.';
+  lineTooltip: string = 'Shows the total amount, calculated as [(Quantity × Unit Price) - Discount], for the line item.';
   configData: any;
 
   constructor(
@@ -955,7 +955,7 @@ export class Comparision3WayComponent
       //  }
         this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
         if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
-          if (this.manpower_metadata?.length < 1) {
+          if (this.manpower_metadata?.length < 1 && !this.dataService.isEditGRN) {
             this.manpowerMetadataFunction();
           } else {
             this.createTimeSheetDisplayData('old');
@@ -2677,7 +2677,7 @@ export class Comparision3WayComponent
     }
     const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
     let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
-    if (validationBool) {
+    if (validationBool && !this.isDraft) {
       this.error('Please add a valid GRN Quantity');
       return;
     }
@@ -3123,10 +3123,12 @@ export class Comparision3WayComponent
             }
 
             // Add the date and quantity to the correct shift
-            quantitiesByLineNumberAndShift[lineNumber][shift].push({
-              date: date,
-              quantity: value
-            });
+            if(value){
+              quantitiesByLineNumberAndShift[lineNumber][shift].push({
+                date: date,
+                quantity: value
+              });
+            }
           } 
         });
       }
