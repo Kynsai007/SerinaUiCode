@@ -498,10 +498,10 @@ export class CreateGRNComponent implements OnInit {
           if(data.message == 'success' && data.data.length == 1){
             this.EntityName = data.data[0].Entity.EntityName;
             this.vendorName = data.data[0].Vendor.VendorName;
-            this.sharedService.po_doc_id = data.data[0].Document.idDocument;
+            this.sharedService.po_doc_id = data.data[0]?.DocumentPO?.idDocument;
             this.sharedService.po_num = po_num;
             this.success("We found the match!");
-            this.checkPOData(data.data[0].Document);
+            this.checkPOData(data?.data[0]?.DocumentPO);
             this.ngxSpinner.hide();
           } else if(data.data.length > 1){
             let arr = []
