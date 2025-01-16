@@ -13,7 +13,7 @@
     <!-- <h6 class="f-14" *ngIf="approveBool">
       <span></span>
     </h6> -->
-    <div *ngIf="type != 'manpower'">
+    <div *ngIf="!type.includes('manpower')">
       <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
     </div>
   </div>
@@ -46,6 +46,7 @@
             <th>Quantity</th>
             <th>Unit price</th>
             <th>Disc Amount</th>
+            <th>Disc Percent</th>
             <th>AmountExcTax</th>
           </tr>
           <tr *ngFor="let line of POLineData">
@@ -74,7 +75,8 @@
             </td>
             <td>{{ line.UnitPrice }}</td>
             <td>{{ line.DiscAmount }}</td>
-            <td><span>{{ (line.Quantity * line.UnitPrice).toFixed(2)}}</span></td>
+            <td>{{ line.DiscPercent }}</td>
+            <td><span>{{ line.AmountExcTax}}</span></td>
           </tr>
         </table>
         <table
@@ -141,16 +143,16 @@
         class="mt-5 d-flex justify-content-end footer mb-3"
         *ngIf="POLineData[0]?.Name"
       >
-        <button
-          class="secondary_btn f-12 mr-3"
-          type="button"
-          mat-dialog-close
-        >
-          Cancel
-        </button>
+      <button
+        class="secondary_btn f-12"
+        type="button"
+        mat-dialog-close
+      >
+        Cancel
+      </button>
         <button
           *ngIf="!uploadBool"
-          class="primary_btn f-12"
+          class="primary_btn f-12 ml-3"
           type="submit"
           [disabled]="selectedPOLines.length == 0"
         >
@@ -158,7 +160,7 @@
         </button>
         <button
           *ngIf="uploadBool"
-          class="primary_btn f-12"
+          class="primary_btn f-12 ml-3"
           type="button"
           [disabled]="selectedPOLines.length == 0"
           (click)="validateFlip()"
@@ -319,13 +321,12 @@
   <div *ngIf="type == 'manpower'">
  
     <div class="d-flex justify-content-end">
-      <div class="calender_div">
+      <div class="calender_div" *ngIf="!isEditGRN">
         <p-calendar
           #datePicker
           [(ngModel)]="rangeDates"
           selectionMode="range"
           [minDate]="minDate"
-          [maxDate]="maxiDate"
           placeholder=""
           [readonlyInput]="true"
           [showIcon]="true"
@@ -416,7 +417,7 @@
       
       <div class="f-11">
         <div class="f-13">Notes:</div>
-        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of shifts * number of days in the month)" <br>
+        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of days in the month)" <br>
         2. Disabled input field indicates that the data is already available or overlapping dates have been added <br>
       </div>
       <div
@@ -477,6 +478,7 @@
       <button
         class="primary_btn f-12"
         type="button"
+        [disabled]="disabledSaveMetadata"
         (click)="saveManpowerMetadata()"
       >
         Save

@@ -427,6 +427,8 @@ export class Comparision3WayComponent
   serverError: boolean;
   fieldName: any;
   decimal_count:number;
+  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
+  configData: any;
 
   constructor(
     fb: FormBuilder,
@@ -454,9 +456,10 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
-    this.ERP = this.dataService?.configData?.erpname;
-    this.client_name = this.dataService?.configData?.client_name;
-    this.decimal_count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
+    this.configData = this.dataService?.configData;
+    this.ERP = this.configData?.erpname;
+    this.client_name = this.configData?.client_name;
+    this.decimal_count = this.configData?.miscellaneous?.No_of_Decimals;
     if(!this.decimal_count){
       this.decimal_count = 2;
      }
@@ -2711,7 +2714,7 @@ export class Comparision3WayComponent
       label = 'GRNQty'
     }
     let validationBool = this.lineDisplayData?.some(el=> el[label]?.Value == '' ||  el[label]?.Value == undefined);
-    if (validationBool) {
+    if (validationBool && !this.isDraft) {
       this.error('Please add a valid GRN Quantity');
       return;
     }
@@ -2785,7 +2788,7 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if(this.client_name == 'SRG'){
+            if(this.configData?.miscellaneous?.grn_match_with_invoice_no){
               if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
@@ -2829,7 +2832,8 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     let inv_param = '';
     if (this.invoiceNumber) {
-      inv_param += `&inv_num=${this.invoiceNumber}`;
+      const encodedInvoiceNumber = encodeURIComponent(this.invoiceNumber);
+      inv_param += `&inv_num=${encodedInvoiceNumber}`;
     }
     if (this.invoiceDescription) {
       inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
@@ -2841,6 +2845,8 @@ export class Comparision3WayComponent
       manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}`;
     } else if(!this.manpowerHeaderId && this.dataService.isEditGRN){
       manPower = `&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
+    } else if(!this.manpowerHeaderId && this.isDraft){
+      manPower = `&isdraft=${this.isDraft}`;
     }
     if(this.isManpowerTags && !this.manpowerHeaderId && this.manPowerAPI_request){
       this.SpinnerService.hide();
@@ -2877,6 +2883,7 @@ export class Comparision3WayComponent
 
   grnDuplicateCheck(boolean) {
     if (this.lineDisplayData.length > 0) {
+    this.SpinnerService.show();
       let arr = [];
       let grnWithPOPayload = [];
       this.lineDisplayData.forEach((objV) => {
@@ -2954,20 +2961,22 @@ export class Comparision3WayComponent
       }, err => {
         this.error('Server error')
       })
+      this.SpinnerService.hide();
     } else {
       alert('There are no lines to create GRN, if you are able to see the lines then please check the quantity');
       this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.client_name !== 'SRG' || this.invoiceDescription) {
+    // if (this.client_name !== 'SRG' || this.invoiceDescription) {
       if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
         return;
       }
       this.grnAPICall(boolean, txt);
-    } else {
-      this.error('Please add the invoice description');
-    }
+    // } else {
+    //   this.error('Please add the invoice description');
+    // }
+      
   }
 
   grnAPICall(boolean, txt) {
@@ -4152,6 +4161,8 @@ export class Comparision3WayComponent
     console.log(this.lineData)
     let totalpoCost = 0;
     let totalinvCost = 0;
+    let totalPoDiscount = 0;
+      let totalInvDiscount = 0;
     this.lineData?.forEach(el=>{
       const pounitPrice = parseFloat(el?.lines?.UnitPrice?.po_line?.Value);
       const poquantity = parseFloat(el?.lines?.Quantity?.po_line?.Value);
@@ -4164,6 +4175,12 @@ export class Comparision3WayComponent
       if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
         totalinvCost += invunitPrice * invquantity;
       }
+      // if(!isNaN(po_discount)){
+      //     totalPoDiscount += po_discount;
+      // }
+      // if(!isNaN(inv_discount)){
+      //     totalInvDiscount += inv_discount;
+      // }
     })
       this.po_total = totalpoCost.toFixed(2);
       this.totalInvCost = totalinvCost.toFixed(2);
