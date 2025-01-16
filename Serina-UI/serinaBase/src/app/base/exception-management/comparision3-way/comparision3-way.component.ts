@@ -422,7 +422,7 @@ export class Comparision3WayComponent
   grnTooltip: string;
   isDraft: boolean;
   decimal_count:number;
-  lineTooltip: string = 'Shows the total amount, calculated as [(Quantity × Unit Price) - Discount], for the line item.';
+  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
 
   constructor(
