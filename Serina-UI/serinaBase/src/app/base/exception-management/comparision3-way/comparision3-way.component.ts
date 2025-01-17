@@ -966,11 +966,11 @@ export class Comparision3WayComponent
         //   return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         // });
         // this.invoiceNumber = inv_num_data[0]?.Value;
-        // let po_num_data = this.inputData.filter((val) => {
-        //   return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
-        // });
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
+        });
         this.headerDataOrder();
-        // this.po_num = po_num_data[0]?.Value;
+        this.po_num = po_num_data[0]?.Value;
         if (data?.ok?.vendordata) {
           this.vendorData = {
             ...data?.ok?.vendordata[0].Vendor,
@@ -1086,6 +1086,7 @@ export class Comparision3WayComponent
         if(!this.po_num){
           poNum = this.exceptionService.po_num;
         }
+        this.po_num = poNum;
         this.getPODocId(poNum);
         this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
@@ -1390,7 +1391,7 @@ export class Comparision3WayComponent
           ele.order = 2
         } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
           ele.order = 3
-          this.po_num = ele?.Value;
+          // this.po_num = ele?.Value;
         } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
           this.invoiceNumber = ele?.Value;
           ele.order = 4
@@ -1443,6 +1444,7 @@ export class Comparision3WayComponent
   }
 
   readGRNInvData() {
+    this.SpinnerService.show();
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
         this.lineDisplayData = data.ok?.linedata;
@@ -1598,21 +1600,18 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
-        let inv_num_data: any = this.inputData.filter(val => {
-          return val.TagLabel == 'InvoiceId';
-        })
-        this.invoiceNumber = inv_num_data[0]?.Value;
-        let po_num_data = this.inputData.filter((val) => {
-          return (val.TagLabel == 'PurchaseOrder');
-        });
+        // let inv_num_data: any = this.inputData.filter(val => {
+        //   return val.TagLabel == 'InvoiceId';
+        // })
+        // this.invoiceNumber = inv_num_data[0]?.Value;
         this.headerDataOrder();
-        this.po_num = po_num_data[0]?.Value;
-        let poNum = this.po_num;
-        if(!this.po_num){
-          poNum = this.exceptionService.po_num;
-        }
-        this.getPODocId(poNum);
-        this.getGRNnumbers(poNum);
+        // let po_num_data = this.inputData.filter((val) => {
+        //   return (val.TagLabel == 'PurchaseOrder');
+        // });
+        
+        this.po_num = this.exceptionService.po_num;
+        this.getPODocId(this.po_num);
+        this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -4590,6 +4589,7 @@ export class Comparision3WayComponent
     delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
+    delete this.tagService?.headerName
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }

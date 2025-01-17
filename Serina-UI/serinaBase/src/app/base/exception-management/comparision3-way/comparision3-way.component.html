@@ -256,7 +256,7 @@
         class="nav-item ml-2"
         pTooltip="Supporting documents"
         tooltipPosition="top"
-        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('Create GRN')"
+        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('GRN')"
         (click)="changeTab('support')"
       >
         <a
@@ -551,7 +551,7 @@
               <div class="tabContent">
                 <div *ngIf="activeTab === 'percentage'" class="tabBg">
                   <label for="percentageInput" class="boxHead">Add Percentage:</label>
-                  <input type="text" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
+                  <input type="text" name="percentageInput" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
                   <label>Amount: {{ resultAmount }}</label>
                   <!-- <input type="text" [value]="resultAmount" readonly> -->
                   <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
@@ -564,7 +564,7 @@
               
                 <div *ngIf="activeTab === 'amount'" class="tabBg">
                   <label for="amountInput" class="boxHead">Add Amount:</label>
-                  <input type="text" id="amountInput" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
+                  <input type="text" id="amountInput" name="amountInput" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
               
                   <!-- <button (click)="saveAmount()">Submit Amount</button> -->
                   <div class="subButton">
@@ -823,7 +823,6 @@
                         >
                           <input
                             *ngIf="
-                              tagName.tagname != 'AmountExcTax' &&
                               (tagName.tagname != 'Description' ||
                                 !submitBtn_boolean || fin_boolean)
                             "
@@ -845,7 +844,7 @@
                                   : 'center'
                             }"
                           />
-                          <input
+                          <!-- <input
                             *ngIf="tagName.tagname == 'AmountExcTax'"
                             type="text"
                             [title]="data2.poline[0]?.Value"
@@ -871,7 +870,7 @@
                                   ? 'left'
                                   : 'center'
                             }"
-                          />
+                          /> -->
                           <div
                             class="mapping"
                             *ngIf="
@@ -1023,7 +1022,7 @@
                     </div>
                 </div>
 
-                <div [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
                     <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
@@ -1496,6 +1495,7 @@
                       id="d_name_{{ i }}"
                       type="text"
                       class="form-control mb-1 inputHeight"
+                      name="driver_name"
                       [(ngModel)]="row.driver_name"
                       (input)="reqDataValidation()"
                     />
@@ -1514,6 +1514,7 @@
                       [(ngModel)]="row.company_name"
                       required
                       (change)="reqDataValidation()"
+                      name="company_name"
                     >
                       <option value=""></option>
                       <option value="FASTLINK">FAST LINK</option>
