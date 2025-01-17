@@ -90,6 +90,13 @@ $themeColor: #3543C0;
     width: clamp(80%,70%,90%);
     margin: auto;
 }
+dialog {
+  box-shadow: 0px 3px 10px #0F123F29;
+}
+dialog::backdrop {
+  background-color: rgb(255 255 255 / 93%);
+  opacity: 0.9;
+}
 
 .loader {
     border: 16px solid #f3f3f3;
