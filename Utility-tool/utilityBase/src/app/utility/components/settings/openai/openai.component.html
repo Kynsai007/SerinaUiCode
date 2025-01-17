@@ -37,7 +37,7 @@
                   header
                 </div>
                 <div class="mr-3" style="cursor: pointer;" (click)="openFilterDialog($event,'prompt')"><img src="assets/Group 350.svg" alt="Edit prompt"> </div>
-                <div><Button class="primaryButton bg_btn f-12" (click)="openFilterDialog($event,'tags')">+ Add More Tags</Button></div>
+                <div><Button class="primaryButton bg_btn f-12" (click)="openFilterDialog($event,'tags')">Add More Tags +</Button></div>
             </div>
         </div>
         <div class="tableDiv">
@@ -55,9 +55,9 @@
                     <tr *ngFor="let tag of tags">
                         <td>{{tag.Name}}</td>
                         <td>{{tag.Description}}</td>
-                        <td><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag,'Ismandatory')"></td>
-                        <td><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag,'isActive')"></td>
-                        <td><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
+                        <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag,'Ismandatory')"></td>
+                        <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag,'isActive')"></td>
+                        <td class="text-center"><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
                     </tr>
                 </tbody>
             </table>
@@ -146,10 +146,11 @@
                   (dragleave)="onDragLeave($event)" 
                   [class.highlight]="isDragOver">
                     <div> <i class="fa fa-upload uploadIcon" aria-hidden="true"></i></div>
-                    <p class="f-13 mb-2">Drag & Drop your files here  <br> <span style="font-weight: 400;">OR</span> <br></p>
-                    <button class="primaryButton f-12 browse-button" (click)="fileInput.click()">Browse Files</button>
+                    <div class="f-13 mt-3">Drag & Drop your files here</div>
+                    <div class="mt-3 f-11" style="font-weight: 400;">OR</div>
+                    <button class="primaryButton mt-3 f-12 browse-button" (click)="fileInput.click()">Browse Files</button>
                     <input type="file" id="file" Name="file" accept=".pdf, .jpeg,.jpg,.png" multiple (change)="onFileChange($event)" #fileInput style="display: none;"> <br>
-                    <button class="primaryButton mt-2 f-12 browse-button">Test Modal</button> <br>
+                    <button class="primaryButton mt-3 f-12 browse-button">Test Modal</button> <br>
                 </div>
             </div>
         </div>
@@ -166,7 +167,7 @@
       <label class="f-13 mb-1" for="description">Description</label><br>
       <textarea class="form-control f-12" Name="description" id="description" rows="5"></textarea>
     </div>
-    <div class="d-flex justify-content-between f-12 mt-2">
+    <div class="d-flex justify-content-between f-12 mt-3">
 
       <div class=" d-flex">
         <div class="f-13 mr-2">Is Mandatory? - </div>

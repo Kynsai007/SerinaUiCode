@@ -29,7 +29,7 @@ tbody > tr >td {
 }
 table {
     // width: 95%;
-    margin: 10px 0px;
+    margin: 15px 0px;
     // box-shadow: 1px 0px 10px gray;
     border-radius: 6px;
 }
@@ -99,7 +99,7 @@ dialog {
     padding: 10px 10px 0px; 
   }
   .main_div {
-    padding: 0px 25px;
+    padding: 0px 23px;
   }
   .switch {
     position: relative;
@@ -116,15 +116,15 @@ dialog {
     width: 16px;
     left: 0px;
     bottom: -4px;
-    background-color: #2196f3;
+    background-color: #3442bd;
     transition: 0.4s;
 }
 input:checked + .slider:before {
-    background-color: #2196f3;
+    background-color: #3442bd;
 }
 input:checked + .slider {
     background-color: #e9ecef;
-    border: 1px solid #358cd0;
+    border: 1px solid #3442bd;
 }
 .slider_span {
     position: relative;
@@ -191,7 +191,7 @@ input:checked + .slider {
 
 
 .preBtn {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   border-radius: 5px;
   background: white;
@@ -199,7 +199,7 @@ input:checked + .slider {
   border: 0 !important;
 }
 .totalPages {
-  font-size: 13px;
+  font-size: 0.8125rem;
   margin: 5px;
 }
 .maxPage {
@@ -311,4 +311,7 @@ textarea {
   height: 70px;
   width: 70px;
   text-align: center;
+}
+.browse-button{
+  background-color: #0F123F;
 }

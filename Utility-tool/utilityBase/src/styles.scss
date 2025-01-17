@@ -31,7 +31,8 @@ $themeColor: #3543C0;
   padding: 0px 20px;
   border-radius: 30px;
   border: 0;
-  height: 25px;
+  height: 32px;
+  width: 90px;
 }
 .secondary_action_button{
   background-color: white;
@@ -39,7 +40,8 @@ $themeColor: #3543C0;
   padding: 0px 20px;
   border-radius: 30px;
   border: 1px solid $themeColor;
-  height: 25px;
+  height: 32px;
+  width: 90px;
 }
 .secondaryButton{
   background-color: white;
@@ -55,20 +57,29 @@ $themeColor: #3543C0;
     color: #ffffff;
     border: 0;
 }
+// Font size classes using rem units
 .f-18 {
-    font-size: clamp(16px, 1.32vw, 30px);
+    font-size: 1.125rem; // 18px / 16px (default root font size)
     font-weight: 600;
 }
+
 .f-12 {
-  font-size: clamp(10px, 0.9vw, 16px);
-  font-weight: 600;
-}
-.f-13 {
-    font-size: clamp(10px, 0.952vw, 17px);
+    font-size: 0.75rem; // 12px / 16px
     font-weight: 600;
 }
+
+.f-11 {
+    font-size: 0.6875rem; // 11px / 16px
+    font-weight: 600;
+}
+
+.f-13 {
+    font-size: 0.8125rem; // 13px / 16px
+    font-weight: 600;
+}
+
 .f-14 {
-    font-size: clamp(11px, 1.05vw, 18px);
+    font-size: 0.875rem; // 14px / 16px
     font-weight: 600;
 }
 
