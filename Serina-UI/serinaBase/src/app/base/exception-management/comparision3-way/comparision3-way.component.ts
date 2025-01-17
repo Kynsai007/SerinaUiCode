@@ -972,7 +972,11 @@ export class Comparision3WayComponent
           return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
         });
         this.headerDataOrder();
-        this.po_num = po_num_data[0]?.Value;
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.po_num = poNum;
         if (data?.ok?.vendordata) {
           this.vendorData = {
             ...data?.ok?.vendordata[0].Vendor,
@@ -1393,7 +1397,7 @@ export class Comparision3WayComponent
           ele.order = 2
         } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
           ele.order = 3
-          // this.po_num = ele?.Value;
+          this.po_num = ele?.Value;
         } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
           this.invoiceNumber = ele?.Value;
           ele.order = 4
@@ -1608,11 +1612,11 @@ export class Comparision3WayComponent
         // })
         // this.invoiceNumber = inv_num_data[0]?.Value;
         this.headerDataOrder();
-        // let po_num_data = this.inputData.filter((val) => {
-        //   return (val.TagLabel == 'PurchaseOrder');
-        // });
-        
-        this.po_num = this.exceptionService.po_num;
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.po_num = poNum;
         this.getPODocId(this.po_num);
         this.getGRNnumbers(this.po_num);
         this.vendorData = {
