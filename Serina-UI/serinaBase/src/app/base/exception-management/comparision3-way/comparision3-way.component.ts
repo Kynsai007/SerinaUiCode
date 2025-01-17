@@ -4167,43 +4167,34 @@ export class Comparision3WayComponent
 
       let totalpoCost = 0;
       let totalinvCost = 0;
-      let totalPoDiscount = 0;
-      let totalInvDiscount = 0;
       for (let i = 0; i < unitPriceData?.length; i++) {
-        let po_discount;
-        let inv_discount;
+        let po_discount = 0;
+        let inv_discount = 0;
+        let pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
+        let invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
         if(unitPriceDiscountObject){
           unitPriceDiscountData = unitPriceDiscountObject?.items;
           if(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value != 0){
             po_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value);
+            pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value) - po_discount;
           }
           if(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value && unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
             inv_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+            invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value) - inv_discount
           }
         }
         if(unitPriceDiscPercentageObject){
           unitPriceDiscPercentageData = unitPriceDiscPercentageObject?.items;
           if(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value != 0){
             po_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value));
+            pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value) - po_discount;
           }
           if(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value &&unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
             inv_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value));
+            invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value) - inv_discount;
           }
         }
-        // if(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value){
-        //   po_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value));
-
-        // } else if(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value){
-        //   po_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value);
-        // }
-        // if(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value){
-        //   inv_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value));
-        // } else if(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value){
-        //   inv_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        // }
-        const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
         const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-        const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
         const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
         if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
@@ -4212,15 +4203,10 @@ export class Comparision3WayComponent
         if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
           totalinvCost += invunitPrice * invquantity;
         }
-        if(!isNaN(po_discount)){
-          totalPoDiscount += po_discount;
-        }
-        if(!isNaN(inv_discount)){
-          totalInvDiscount += inv_discount;
-        }
+
       }
-      this.po_total = totalpoCost - totalPoDiscount;
-      this.totalInvCost = (totalinvCost - totalInvDiscount).toFixed(2) ;  
+      this.po_total = totalpoCost;
+      this.totalInvCost = totalinvCost.toFixed(2);  
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");
