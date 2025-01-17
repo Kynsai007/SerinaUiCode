@@ -730,8 +730,8 @@
                             >
                               <p-autoComplete
                                 (onSelect)="
-                                  lineMapping(item.lines?.invoice_itemcode,
-                                    item.lines?.ItemCode
+                                  lineMapping(item?.invoice_itemcode,
+                                  $event.itemCode
                                   )
                                 "
                                 [(ngModel)]="item.lines[header].po_line"
