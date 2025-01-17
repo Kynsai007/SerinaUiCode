@@ -1020,6 +1020,21 @@
                         [(ngModel)]="invoiceDescription"
                       />
                     </div>
+
+                    <div class="ml-5 grn" *ngIf="client_name == 'SRG'">
+                      <label class="f-12">GRN Date:</label>
+                      <p-calendar
+                        #grnDate
+                        [(ngModel)]="invoiceDate"
+                        [minDate]="minDate"
+                        [maxDate]="maxDate"
+                        placeholder=""
+                        [readonlyInput]="true"
+                        [showIcon]="true"
+                        name="grnDate"
+                        inputId="GRN_Date"
+                      ></p-calendar>
+                    </div>
                 </div>
 
                 <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">

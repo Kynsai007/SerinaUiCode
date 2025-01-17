@@ -416,6 +416,22 @@ $theme_color: var(--themeColor);
       top: -3px;
       z-index: 1;
     }
+    .grn .p-calendar .p-inputtext {
+      width: 120px !important;
+      background: inherit;
+      font-size: 12px !important;
+      font-weight: 600;
+      padding-left: 10px;
+      position: relative;
+      top: -3px;
+      z-index: 1;
+      border-bottom: 1px solid lightgray !important;
+    }
+    .grn .p-button.p-button-icon-only {
+      position: relative;
+      left: -25px;
+      top: -5px;
+    }
     .selection .p-button.p-button-icon-only {
       background-color: #ffffff;
       top: -15px;

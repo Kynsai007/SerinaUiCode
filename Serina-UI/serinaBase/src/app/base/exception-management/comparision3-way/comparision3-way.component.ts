@@ -424,6 +424,7 @@ export class Comparision3WayComponent
   decimal_count:number;
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
+  invoiceDate: Date | null = null;
 
   constructor(
     fb: FormBuilder,
@@ -502,6 +503,7 @@ export class Comparision3WayComponent
     this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
+    this.getDate();
 
     this.isAdmin = this.dataService.isAdmin;
 
@@ -1399,6 +1401,7 @@ export class Comparision3WayComponent
           ele.order = 5
         } else if (ele.TagLabel == 'InvoiceDate') {
           ele.order = 6
+          this.invoiceDate = new Date(ele?.Value);
         } else if (ele.TagLabel == 'TotalTax') {
           ele.order = 7
         } else if (ele.TagLabel == 'SubTotal') {
@@ -4167,19 +4170,19 @@ export class Comparision3WayComponent
         let inv_discount;
         if(unitPriceDiscountObject){
           unitPriceDiscountData = unitPriceDiscountObject?.items;
-          if(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value){
+          if(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value != 0){
             po_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value);
           }
-          if(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value){
+          if(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value && unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
             inv_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
           }
         }
         if(unitPriceDiscPercentageObject){
           unitPriceDiscPercentageData = unitPriceDiscPercentageObject?.items;
-          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value){
+          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value != 0){
             po_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value));
           }
-          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value){
+          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value &&unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
             inv_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value));
           }
         }
