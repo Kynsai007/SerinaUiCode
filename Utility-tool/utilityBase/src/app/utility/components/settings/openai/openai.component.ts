@@ -327,7 +327,7 @@ export class OpenaiComponent implements OnInit {
             this.isImgBoolean = true;
             this.loadImage();
           };
-          reader.readAsDataURL(this.file);
+          reader.readAsDataURL(file);
 
         }
 
