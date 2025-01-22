@@ -570,14 +570,15 @@
                     <div class="represent_color invoice_color"></div>
                     <div class="f-12">Invoice</div>
                   </div> -->
-                  <button
+                    <button
                     *ngIf="editable && !fin_boolean"
                     id="addLine"
                     class="level_3_btn f-12 mr-4"
                     (click)="open_dialog('AddLine')"
-                  >
+                    type="button"
+                    >
                     <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-                  </button>
+                    </button>
                   <!-- <div class="d-flex mr-3">
                     <div
                       class="represent_color"
@@ -686,6 +687,7 @@
                         <td *ngIf="editable">
                           <button
                             class="trash_btn f-14"
+                            type="button"
                             (click)="
                               delete_confirmation(item.ItemCode)
                             "
@@ -1122,7 +1124,7 @@
                                    [name]="item[header.field]?.Value" 
                                    [(ngModel)]="item[header.field].Value" 
                                    (change)="onChangeGrn(header.field, inputval.value,item)" 
-                                   [readonly]="item[header.field]?.is_timesheets"
+                                   [readonly]="item['isTimesheets']?.Value"
                                    class="form-control inputHeight w-sm" 
                                    [title]="item[header.field]?.Value">
                           </div>
@@ -1135,7 +1137,7 @@
                                    [name]="item[header.field]?.Value" 
                                    [(ngModel)]="item[header.field].Value" 
                                    (change)="onChangeGrnAmount(item, inputval.value)"
-                                   [readonly]="item[header.field]?.is_timesheets"
+                                   [readonly]="item['isTimesheets']?.Value"
                                    class="form-control inputHeight w-sm" 
                                    [title]="item[header.field]?.Value">
                             </div>  
@@ -2221,6 +2223,7 @@
             <button
               *ngIf="submitBtn_boolean && editable &&  !isMoreRequired "
               class="level_3_btn f-12 mr-3"
+              type="button"
               (click)="open_dialog('reject')"
             >
               Reject
@@ -2241,6 +2244,7 @@
             && ![29,32,80]?.includes(subStatusId)
             && !router.url.includes('uploadtime')"
             class="primary_btn f-12 mr-3"
+            type="button"
             (click)="
               approval_selection_boolean && isLCMCompleted
                 ? onSubmitApprovers()
@@ -2253,6 +2257,7 @@
             <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
+              type="button"
               (click)="
                 approval_selection_boolean && isLCMCompleted
                   ? onSubmitApprovers()
@@ -2272,6 +2277,7 @@
             <button
               *ngIf="fin_boolean && !isMoreRequired"
               class="primary_btn f-12"
+              type="button"
               (click)="batch_id ? bulk_confirm() :open_dialog('approve')"
             >
               Approve

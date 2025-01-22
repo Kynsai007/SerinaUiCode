@@ -313,7 +313,7 @@ export class PDFviewComponent implements OnInit {
     const textToHighlight = this.fieldToPDFMapping[fieldName]?.Value;
     const textElements = document.querySelectorAll('.textLayer span');
   
-    const normalizeText = (text: string) => text.trim().replace(/\s+/g, ' ').replace(/[^a-zA-Z0-9.]/g, '');
+    const normalizeText = (text: string) => text?.trim().replace(/\s+/g, ' ').replace(/[^a-zA-Z0-9.]/g, '');
 
     const normalizedLeftText = normalizeText(textToHighlight);
 
@@ -355,10 +355,10 @@ export class PDFviewComponent implements OnInit {
         }
       },600)
       } else {
-        console.error('Left field not found:', fieldName);
+        console.warn('Left field not found:', fieldName);
       }
     } else {
-      console.error('No matching text found for:', textToHighlight);
+      console.warn('No matching text found for:', textToHighlight);
     }
   }
   
@@ -367,7 +367,7 @@ export class PDFviewComponent implements OnInit {
     const textElements = Array.from(document.querySelectorAll('.textLayer span'));
   
     // Normalize text to remove unnecessary characters (e.g., currency symbols, extra spaces)
-    const normalizeText = (text: string) => text.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9.]/g, '');
+    const normalizeText = (text: string) => text?.trim().replace(/\s+/g, '').replace(/[^a-zA-Z0-9.]/g, '');
   
     const normalizedLeftText = normalizeText(textToHighlight);
   
@@ -410,7 +410,7 @@ export class PDFviewComponent implements OnInit {
   
             // this.activeLines[fieldName] = line;
           } else {
-            console.error('Left field not found:', fieldName);
+            console.warn('Left field not found:', fieldName);
           }
         }
       }
@@ -423,7 +423,7 @@ export class PDFviewComponent implements OnInit {
     });
   
     if (!pdfElementFound) {
-      console.error('No matching text found for:', textToHighlight);
+      console.warn('No matching text found for:', textToHighlight);
     }
   }
   
