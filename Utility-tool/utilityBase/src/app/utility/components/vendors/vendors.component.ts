@@ -23,6 +23,7 @@ export class VendorsComponent implements OnInit {
   submitted: boolean = false;
   entity: any;
   selectedEntityId: any = 'ALL';
+  selectedVendorId: any = 'ALL';
   onboardedVendorList: any[];
   onboard_status: any = 'ALL';
   onBoardArray = [
@@ -31,13 +32,22 @@ export class VendorsComponent implements OnInit {
     { name: 'Not-Onboarded', value: false },
     { name: 'In-Progress', value: false },
   ];
+  statusItems = [
+    { label: 'Onboarded', checked: true },
+    { label: 'Not Onboarded', checked: true },
+    { label: 'In Progress', checked: true }
+  ];
   throttle = 300;
   scrollDistance = 7;
   offsetCount = 1;
   APIParams: string;
-  vendorNameForSearch= 'ALL';selected_Vendor: any;
+  vendorNameForSearch: any = 'ALL';
+  selected_Vendor: any;
   selected_ent: any;
-;
+  Vendors: any[];
+  vendorList: any[];
+  activeFilterCount: number;
+  selectedValue = '1';
   filteredEnt: any[];
   vendorAccount = [];
   filteredVendors = [];
@@ -51,6 +61,8 @@ export class VendorsComponent implements OnInit {
     return this.vendorForm.controls;
   }
   ngOnInit(): void {
+    // this.selected_Vendor = this.filteredVendors[0];
+    console.log(this.selected_Vendor)
     this.vendorForm = this.formBuilder.group({
       VendorName: ['', Validators.required],
       Email: ['', [Validators.required, Validators.email]],
@@ -95,7 +107,8 @@ export class VendorsComponent implements OnInit {
     this.onboard_status = this.sharedService.onboard_status;
     this.vendorNameForSearch = this.sharedService.vendorNameForSearch;
     this.getEntitySummary();
-  }
+    console.log(this.selected_ent)
+}
 
   readOnboardedVendorsList() {
     this.sharedService.getOnboardedData().subscribe((data: any) => {
@@ -142,13 +155,14 @@ export class VendorsComponent implements OnInit {
   selectEntity(value) {
     this.selectedEntityId = value.idEntity;
     this.sharedService.selectedEntityId = value.idEntity;
-    console.log(value)
     this.sharedService.selected_ent = value;
     this.getCustomerVendors();
+    this.updateFilterCount();
   }
   selectedType(val) {
     this.onboard_status = val;
     this.sharedService.onboard_status = val;
+    this.updateFilterCount();
   }
 
   frUpdate(vendor) {
@@ -213,16 +227,23 @@ export class VendorsComponent implements OnInit {
   getVendorsData(data): void {
     this.sharedService.getVendors(data).subscribe((data) => {
       let pushArray = [];
+      
       let onboardBoolean: boolean;
       data.forEach((ele) => {
         let mergedData = { ...ele.Entity, ...ele.Vendor };
         mergedData.OnboardedStatus = ele.OnboardedStatus;
+        mergedData.ocrEngine = ele.ocrEngine;
         pushArray.push(mergedData);
-      });
+      })
+      console.log(pushArray)
+      // pushArray.unshift({ VendorName: 'ALL', idVendor: "ALL"})
       this.vendorsListDispaly = this.vendorsList.concat(pushArray);
+      
       this.listLoading = true;
       this.sharedService.storeVendorsList.next(this.vendorsListDispaly);
+      this.vendorList = this.vendorsListDispaly;
     });
+    
   }
 
   filter() {
@@ -256,6 +277,7 @@ export class VendorsComponent implements OnInit {
   }
 
   filtersForAPI() {
+    console.log(this.APIParams)
     if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch == 'ALL' && this.onboard_status == 'ALL' ) {
       this.APIParams = `?partyType=vendor&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
@@ -307,6 +329,7 @@ export class VendorsComponent implements OnInit {
       }
     }
     this.filteredEnt = filtered;
+    console.log(this.filteredEnt)
   }
   getCustomerVendors() {
     let param = ''
@@ -329,9 +352,12 @@ export class VendorsComponent implements OnInit {
     if(this.selectedEntityId != 'ALL'){
       param = `&ent_id=${this.selectedEntityId}`
     }
+    // this.filteredVendors = this.vendorAccount;
     // if (query != '') {
       this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&${param}&ven_name=${query}`).subscribe((data: any) => {
         this.filteredVendors = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()];
+        this.filteredVendors.unshift({ VendorName: 'ALL', idVendor: "ALL" })
+        console.log(this.filteredVendors)
       });
     // } else {
     //   this.filteredVendors = this.vendorAccount;
@@ -341,6 +367,32 @@ export class VendorsComponent implements OnInit {
     this.vendorNameForSearch = event.VendorName;
     this.sharedService.vendorNameForSearch = event.VendorName;
     this.sharedService.selected_Vendor = event;
+    this.updateFilterCount();
   }
-
+  searchVendordata(event: Event): void {
+    const query = (event.target as HTMLInputElement).value.toLowerCase();
+  
+    // Reset to the original list if the query is empty
+    if (query === '') {
+      this.vendorsListDispaly = [...this.vendorList];
+      return;
+    }
+  
+    // Filter the vendorsListDisplay based on the query
+    this.vendorsListDispaly = this.vendorList.filter(vendor =>
+      vendor.VendorName.toLowerCase().includes(query) ||
+      vendor.VendorCode.toLowerCase().includes(query) ||
+      vendor.EntityName.toLowerCase().includes(query)
+    );
+  }
+  onStatusChange(): void {
+    console.log(this.vendorList)
+  }
+  updateFilterCount() {
+    let count = 0;
+    if (this.selected_Vendor) count++;
+    if (this.selected_ent) count++;
+    if (this.onboard_status) count++;
+    this.activeFilterCount = count;
+  }
 }
