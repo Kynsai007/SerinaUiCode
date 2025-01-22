@@ -6,7 +6,7 @@ import {DialogModule} from 'primeng/dialog';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {ChipsModule} from 'primeng/chips';
 import {CdkStepperModule} from '@angular/cdk/stepper';
-import {NgStepperModule} from 'angular-ng-stepper';
+// import {NgStepperModule} from 'angular-ng-stepper';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ToastModule } from 'primeng/toast';
@@ -40,7 +40,7 @@ import { CustomersComponent } from './components/customers/customers.component';
     DialogModule,
     FileUploadModule,
     CdkStepperModule,
-    NgStepperModule,
+    // NgStepperModule,
     ReactiveFormsModule,
     ToastModule,
     NgxJsonViewerModule,

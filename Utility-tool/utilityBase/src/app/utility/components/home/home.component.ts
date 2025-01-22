@@ -56,6 +56,16 @@ export class HomeComponent implements OnInit {
     }
     this.isAdmin = this.sharedService.isAdmin;
   }
+  get userInitials(): string {
+    const { firstName, lastName } = this.userDetails.userdetails;
+    const firstInitial = firstName?.charAt(0) || '';
+    const lastInitial = lastName?.charAt(0) || '';
+    return `${firstInitial}${lastInitial}`;
+  }
+  get fullName(): string {
+    const { firstName, lastName } = this.userDetails.userdetails;
+    return `${firstName} ${lastName}`.trim();
+  }
   addActiveClass(){
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

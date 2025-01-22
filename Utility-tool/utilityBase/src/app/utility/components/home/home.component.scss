@@ -114,22 +114,34 @@ ul {
     // padding: clamp(30px,54px,80px);
   }
   .layout nav {
-    gap: 70px;
+    // gap: 30px;
     height: 60px;
-    padding: 0px 18px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 0px 2px 4px #00000029;
     opacity: 1;
     // position: sticky;
     top: 0;
     z-index: 2;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 16px #0F123F14;
+    opacity: 1;
   }
   .navLinks{
     align-items: center;
-    gap: 30px;
+    gap: 40px;
+    display: flex;
+    padding-left: 25px;
+    position: fixed;
+    left: 182px;
     // margin-left: 600px;
-    padding-left: 20px;
+    // padding-left: 20px;
     // margin-left: 850px;
+  }
+  .acc-details{
+    // border-right: solid #0F123F14 1px;
+    width: fit-content;
+    display: flex;
+    gap: 40px;
   }
   .navLinks .nav_Link {
     text-align: left;
@@ -141,4 +153,91 @@ ul {
     height: 60px;
     display: flex;
     align-items: center;
+    font: normal normal 600 13.5px Segoe UI;
+    // height: 18px;
+    width: max-content;
+    padding-top: 21px;
+    padding-bottom: 21px;
+  }
+  .nav_Link{
+    padding-top: 21px;
+    padding-bottom: 21px;
+  }
+  .nav-logo{
+    width: 182px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 19px;
+    padding-bottom: 19px;
+    border-right: solid #0F123F14 1px;
+  }
+  .nav-logo img{
+    width: 82px;
+    height: 22px;
+    // position: relative;
+    // top: 28%;
+    // left: 5%;
+  }
+  .circle {
+    width: 34px;
+    height: 34px;
+    background-color: #358DC0;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    text-transform: uppercase;
+    top: 13px;
+    position: relative;
+    background: #358DC0 0% 0% no-repeat padding-box;
+    opacity: 1;
+    font: normal normal bold 12px/16px Segoe UI;
+  }
+  .logout-butn{
+    position: relative;
+    // left: 40px;
+    width: 70px;
+    height: 34px;
+    top: -7px;
+    // left: 19px;
+    // position: relative;
+    left: 25px;
+    border-left: solid #0F123F14 1px;
+    display: flex;
+    justify-content: left;
+  }
+  .usr-det{
+    width: fit-content;
+    justify-content: right;
+    display: flex;
+
+    position: relative;
+    left: 20px;
+    span{
+      font: normal normal 650 11px/15px Segoe UI;
+      text-align: right;
+      position: relative;
+      top: 15px;
+      bottom: 15px;
+      height: fit-content;
+      width: fit-content;
+    }
+  }
+  .log-div{
+    width: 219px;
+    display: flex;
+    border-left: solid #0F123F14 1px;
+    height: 100%;
+  }
+  nav.d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    // padding: 0 20px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }

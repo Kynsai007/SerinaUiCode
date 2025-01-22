@@ -22,17 +22,19 @@
 ul li {
     list-style: none;
     position: relative;
+    padding-bottom: 15px;
 }
 
 ul li a {
     text-decoration: none;
     color: gray;
-    padding: 8px 30px;
+    padding: 10px 30px;
     display: block;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
     position: relative;
-    border-radius: 5px;
+    border-radius: 0px 5px 5px 0px;
+    height: 42px;
     &.active_in::after{
         content: "";
         position: absolute;
@@ -43,11 +45,11 @@ ul li a {
         height: 0;
         border-style: solid;
         border-width: 5px 0 5px 10px; /* Arrow size */
-        border-color: transparent transparent transparent #358dc0;
+        border-color: transparent transparent transparent #3543C0;
     }
 }
 
 .active_in {
-    background-color: rgb(53, 141, 192);
+    background-color: #3543C0;
     color: #ffffff !important;
 }

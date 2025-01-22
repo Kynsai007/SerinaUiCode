@@ -88,8 +88,8 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             return;
           }
           this.previoustrainingres = JSON.parse(this.previoustraining[this.previoustraining.length - 1]);
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
-            if(this.previoustrainingres.modelInfo.status == "creating"){
+          if(ocr_engine_version == "v2.1"){
+            if(this.previoustrainingres?.modelInfo.status == "creating"){
               this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
               this.nottrained = false;
               return;

@@ -42,9 +42,9 @@ h1 {
     height: 20px !important;
 
   }
-  .msb {
-    border-right: 1px solid lightgray;
-  }
+//   .msb {
+//     border-right: 1px solid lightgray;
+//   }
   
 .opaque{
     opacity: 0.5;
@@ -129,6 +129,7 @@ font-size: 14px;
 }
 .log-head{
     font-weight: 700;
+    cursor: pointer;
 }
 .nameHead{
     position: absolute;

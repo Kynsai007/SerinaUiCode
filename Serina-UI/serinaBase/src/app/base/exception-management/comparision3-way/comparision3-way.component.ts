@@ -100,7 +100,7 @@ export class Comparision3WayComponent
   GRNObject = [];
   GRNObjectDuplicate = [];
 
-  isPdfAvailable: boolean;
+  isPdfAvailable: boolean = true;
   userDetails: any;
   showPdf: boolean = true;
   btnText = 'Close';
@@ -234,7 +234,7 @@ export class Comparision3WayComponent
   item_code: any;
   GRN_line_total: number = 0;
   invoice_subTotal: any;
-  po_total: number;
+  po_total: any;
   enable_create_grn: boolean;
   uploadCompleted: boolean = true;
   activeGRNId: string;
@@ -374,7 +374,7 @@ export class Comparision3WayComponent
   lineData: any;
   priceData: any;
   totalPoCost: any;
-  totalInvCost: number;
+  totalInvCost: any;
   invTypeList: any[];
   isBoxOpen: boolean = false;
   activeTab: string = 'percentage';
@@ -426,6 +426,9 @@ export class Comparision3WayComponent
   isDraft: boolean;
   serverError: boolean;
   fieldName: any;
+  decimal_count:number;
+  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
+  configData: any;
 
   constructor(
     fb: FormBuilder,
@@ -453,8 +456,13 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
-    this.ERP = this.dataService?.configData?.erpname;
-    this.client_name = this.dataService?.configData?.client_name;
+    this.configData = this.dataService?.configData;
+    this.ERP = this.configData?.erpname;
+    this.client_name = this.configData?.client_name;
+    this.decimal_count = this.configData?.miscellaneous?.No_of_Decimals;
+    if(!this.decimal_count){
+      this.decimal_count = 2;
+     }
     if (this.client_name == 'SRG') {
       this.mappingForCredit = true;
     } 
@@ -469,9 +477,11 @@ export class Comparision3WayComponent
     ];
 
     this.GRN_PO_tags = [...commonTags];
-    // if (this.client_name === 'Cenomi') {
-    //   this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
-    // }
+
+    if (this.client_name === 'Cenomi') {
+      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
+      this.GRN_PO_tags.splice(6, 0, { TagName: 'PO Remaining %', linedata: [] });
+    }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
@@ -497,17 +507,15 @@ export class Comparision3WayComponent
     }
     this.getEntity();
     this.initialData();
-    
     this.ERPCostAllocation();
     this.AddPermission();
     if(this.GRN_PO_Bool){
       this.lineTable = commonTags;
-    } else {
+    } 
+    else {
       if(this.Itype == 'Invoice'){
         this.readFilePath();
-      } else {
-        this.isPdfAvailable = true;
-      }
+      } 
     }
     this.isAdmin = this.dataService.isAdmin;
 
@@ -715,7 +723,7 @@ export class Comparision3WayComponent
         { header: 'Object Code', field: 'mainAccount' },
         { header: 'Element Factor', field: 'elementFactor' },
       ]
-    } else if (this.ERP == 'Dynamics') {
+    } else if (this.ERP == 'Dynamics' || this.ERP == 'Oracle') {
       this.allocationFileds = [
         { header: 'Element', field: 'Element' },
         { header: 'Cost Center', field: 'costCenter' },
@@ -814,7 +822,7 @@ export class Comparision3WayComponent
         linesData[i][line] = {Value: ele[line]}
       }
       linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical']}
-      const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+      const unitPrice = parseFloat(ele?.UnitPrice?.replace(/,/g, ''));
       let amount;
       if(this.dataService.isEditGRN){
         amount = (unitPrice * ele.GRNQty).toFixed(2);
@@ -931,15 +939,15 @@ export class Comparision3WayComponent
     this.SharedService.getInvoiceInfo(false,'po').subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
-        data.ok.headerdata.forEach((element) => {
-          this.mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
-          pushedArrayHeader.push(this.mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
+        // data.ok.headerdata.forEach((element) => {
+        //   this.mergedArray = {
+        //     ...element.DocumentData,
+        //     ...element.DocumentTagDef,
+        //   };
+        //   this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+        //   pushedArrayHeader.push(this.mergedArray);
+        // });
+        this.inputData = data?.ok?.headerdata;
         let GRN_linedata = data?.ok?.linedata;
        if(this.dataService.isEditGRN){
         let po_lines = this.dataService.po_lines;
@@ -966,6 +974,7 @@ export class Comparision3WayComponent
             this.createTimeSheetDisplayData('old');
           }
         }
+        this.SpinnerService.hide();
         this.get_PO_GRN_Lines();
         // let inv_num_data: any = this.inputData.filter((val) => {
         //   return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
@@ -1029,9 +1038,9 @@ export class Comparision3WayComponent
         }
 
         this.getInvTypes();
-        // if (this.pageType == "mapping") {
-        //   this.calculateCost();
-        // }
+        if (this.pageType == "mapping") {
+          this.calculateCost();
+        }
         this.po_total = response.po_total;
         response?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
@@ -1043,6 +1052,7 @@ export class Comparision3WayComponent
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
+        console.log(this.costAllocation)
         this.inputData = response?.headerdata;
         // this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
@@ -1053,7 +1063,7 @@ export class Comparision3WayComponent
             this.isAprUser = true;
           }
         }
-
+        this.invoiceNumber = this.dataService.invoiceNumber;
         // let inv_num_data: any = this.inputData.filter(val => {
         //   return val.TagLabel == 'InvoiceId';
         // })
@@ -1260,7 +1270,9 @@ export class Comparision3WayComponent
           this.support_doc_list = []
         }
         if (str != 'batch') {
-          this.SpinnerService.hide();
+          setTimeout(() => {
+            this.SpinnerService.hide();
+          }, 2000);
         }
       },
       (error) => {
@@ -1473,6 +1485,7 @@ export class Comparision3WayComponent
   }
 
   readGRNInvData() {
+    this.SpinnerService.show();
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
         this.lineDisplayData = [];
@@ -1597,7 +1610,7 @@ export class Comparision3WayComponent
         //     }
         //   }, 10);
         // });
-        this.lineDisplayData = dummyLineArray;
+        // this.lineDisplayData = dummyLineArray;
         this.getInvTypes();
         // setTimeout(() => {
         //   this.lineDisplayData = this.lineDisplayData.filter((v) => {
@@ -1660,15 +1673,16 @@ export class Comparision3WayComponent
         this.vendorId = this.vendorData['idVendor'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-        if (this.router.url.includes('GRN_approvals')) {
-          let index = this.lineDisplayData.findIndex(tag => tag.TagName == 'Inv - Quantity');
-          this.lineDisplayData.splice(index, 1)
-        }
+        // if (this.router.url.includes('GRN_approvals')) {
+        //   let index = this.lineDisplayData.findIndex(tag => tag.TagName == 'Inv - Quantity');
+        //   this.lineDisplayData.splice(index, 1)
+        // }
         this.isGRNDataLoaded = true;
+        // console.log(this.lineDisplayData)
         setTimeout(() => {
           // document.getElementById('grnTable').style.display = 'block';
           this.SpinnerService.hide();
-        }, 4000);
+        }, 2000);
 
       },
       (error) => {
@@ -1687,7 +1701,7 @@ export class Comparision3WayComponent
   }
   readFilePath() {
     this.showInvoice = '';
-    this.SpinnerService.show();
+    // this.SpinnerService.show();
     this.SharedService.getInvoiceFilePath().subscribe(
       (data: any) => {
         this.content_type = data?.content_type;
@@ -1721,7 +1735,7 @@ export class Comparision3WayComponent
         // this.SpinnerService.hide();
       },
       (error) => {
-        this.SpinnerService.hide();
+        // this.SpinnerService.hide();
         this.error("Server error");
       }
     );
@@ -1873,7 +1887,7 @@ export class Comparision3WayComponent
     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
 
-  approveChangesBatch() {
+  proceedToBatch(bool) {
     this.getInvoiceFulldata('batch');
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
@@ -1977,7 +1991,7 @@ export class Comparision3WayComponent
         if (!this.isServiceData) {
           this.vendorSubmit();
         } else {
-          this.serviceSubmit();
+          this.serviceSubmit(bool);
         }
       } else {
         this.SpinnerService.hide();
@@ -2038,7 +2052,7 @@ export class Comparision3WayComponent
       }
     );
   }
-  serviceSubmit() {
+  serviceSubmit(bool) {
     // if(!this.normalCostAllocation){
     //   if(this.reqServiceprovider){
     //     this.exceptionService.submitAllocationDetails(this.rows)
@@ -2077,7 +2091,7 @@ export class Comparision3WayComponent
     //   }
     // else{
     this.SpinnerService.show();
-    this.SharedService.serviceSubmit().subscribe((data: any) => {
+    this.SharedService.serviceSubmit(`&skip_rule=${bool}`).subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       this.dataService.serviceinvoiceLoadedData = [];
       setTimeout(() => {
@@ -2548,6 +2562,46 @@ export class Comparision3WayComponent
       this.update("Please add comments as well")
     }
   }
+  onChangeGrnAmount(lineItem, val) {
+    const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
+    .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(this.decimal_count);
+    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+
+    let checking_value;
+    let error_msg;
+    if(po_balance_qty_value){
+      checking_value = po_balance_qty_value;
+      error_msg = 'PO Balance Quantity';
+    } 
+    this.disable_save_btn = false;
+    if(Number(checking_value) < Number(grnQty)){
+      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+      this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
+      this.disable_save_btn = true;
+      return;
+    }
+
+    const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
+      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    
+    if (grnQuantityItem) {
+      grnQuantityItem.Value = grnQty;
+      grnQuantityItem.ErrorDesc = "Quantity changed";
+    }
+    this.GRN_line_total = 0;
+    this.lineDisplayData.forEach(ele => {
+      if (ele.TagName == 'AmountExcTax') {
+        ele.linedata.forEach(v =>{
+          if(v.idDocumentLineItems === lineItem.idDocumentLineItems){
+            v.Value = val;
+          }
+          this.GRN_line_total = this.GRN_line_total + Number(v.Value);
+        } )
+      }
+    })
+  }
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice;
@@ -2660,7 +2714,7 @@ export class Comparision3WayComponent
       label = 'GRNQty'
     }
     let validationBool = this.lineDisplayData?.some(el=> el[label]?.Value == '' ||  el[label]?.Value == undefined);
-    if (validationBool) {
+    if (validationBool && !this.isDraft) {
       this.error('Please add a valid GRN Quantity');
       return;
     }
@@ -2734,15 +2788,15 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if(this.client_name == 'SRG'){
-              if (this.invoiceNumber && this.invoiceDescription) {
+            if(this.configData?.miscellaneous?.grn_match_with_invoice_no){
+              if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
-                  if(this.invoiceNumber){
-                    this.error("Dear user, please add the invoice description.");
-                  } else {
+                  // if(this.invoiceNumber){
+                  //   this.error("Dear user, please add the invoice description.");
+                  // } else {
                     this.error("Dear user, please add the invoice number.");
-                  }
+                  // }
                 }
             } else {
               this.grnDuplicateCheck(boolean);
@@ -2776,23 +2830,29 @@ export class Comparision3WayComponent
   createGRNWithPO(bool,payLoad) {
     // bool = bool ? 'false' : 'true';
     this.SpinnerService.show();
-    let inv_number = '';
+    let inv_param = '';
     if (this.invoiceNumber) {
-      inv_number = `&inv_num=${this.invoiceNumber}`;
+      const encodedInvoiceNumber = encodeURIComponent(this.invoiceNumber);
+      inv_param += `&inv_num=${encodedInvoiceNumber}`;
+    }
+    if (this.invoiceDescription) {
+      inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
     }
     let manPower = '';
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id=${this.invoiceID}`;
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
     } else if(this.manpowerHeaderId && !this.dataService.isEditGRN){
       manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}`;
     } else if(!this.manpowerHeaderId && this.dataService.isEditGRN){
       manPower = `&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
+    } else if(!this.manpowerHeaderId && this.isDraft){
+      manPower = `&isdraft=${this.isDraft}`;
     }
     if(this.isManpowerTags && !this.manpowerHeaderId && this.manPowerAPI_request){
       this.SpinnerService.hide();
       return;
     }
-    this.SharedService.createGRNWithPO(inv_number, manPower,payLoad).subscribe((data: any) => {
+    this.SharedService.createGRNWithPO(inv_param, manPower,payLoad).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2823,6 +2883,7 @@ export class Comparision3WayComponent
 
   grnDuplicateCheck(boolean) {
     if (this.lineDisplayData.length > 0) {
+    this.SpinnerService.show();
       let arr = [];
       let grnWithPOPayload = [];
       this.lineDisplayData.forEach((objV) => {
@@ -2900,20 +2961,22 @@ export class Comparision3WayComponent
       }, err => {
         this.error('Server error')
       })
+      this.SpinnerService.hide();
     } else {
       alert('There are no lines to create GRN, if you are able to see the lines then please check the quantity');
       this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.client_name !== 'SRG' || this.invoiceDescription) {
+    // if (this.client_name !== 'SRG' || this.invoiceDescription) {
       if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
         return;
       }
       this.grnAPICall(boolean, txt);
-    } else {
-      this.error('Please add the invoice description');
-    }
+    // } else {
+    //   this.error('Please add the invoice description');
+    // }
+      
   }
 
   grnAPICall(boolean, txt) {
@@ -3163,7 +3226,7 @@ export class Comparision3WayComponent
     })
   }
   create_GRN_PO_tags() {
-    this.lineTable.splice(6, 0, { header: 'Duration in months', field: 'durationMonth' }, { header: 'Monthly quantity', field: 'monthlyQuantity' }, { header: 'Is Timesheets', field: 'isTimesheets' }, { header: 'Number of Shifts', field: 'shifts' })
+    this.lineTable.splice(7, 0, { header: 'Duration in months', field: 'durationMonth' }, { header: 'Monthly quantity', field: 'monthlyQuantity' }, { header: 'Is Timesheets', field: 'isTimesheets' }, { header: 'Number of Shifts', field: 'shifts' })
   }
   open_dialog(str) {
     if (str == 'reject') {
@@ -3420,6 +3483,7 @@ export class Comparision3WayComponent
     this.saveChanges();
     this.progressDailogBool = false;
     setTimeout(() => {
+      this.readLineItems();
       this.getInvoiceFulldata('');
     }, 1000);
   }
@@ -4038,9 +4102,9 @@ export class Comparision3WayComponent
       const sum = this.LCMDataTable.reduce((accumulator, object) => {
         return accumulator + Number(object.Allocate);
       }, 0);
-      this.allocateTotal = sum.toFixed(2);
+      this.allocateTotal = sum.toFixed(this.decimal_count);
       let bal: any = Number(this.invoiceTotal) - this.allocateTotal;
-      this.balanceAmount = parseFloat(bal).toFixed(2);
+      this.balanceAmount = parseFloat(bal).toFixed(this.decimal_count);
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
@@ -4094,37 +4158,50 @@ export class Comparision3WayComponent
 
   }
   calculateCost() {
-
-    const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
-    const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
-    // console.log(unitPriceObject)
-    if (unitPriceObject && quantityObject) {
-
-      const unitPriceData = unitPriceObject?.items;
-      const quantityData = quantityObject?.items;
-
-      let totalpoCost = 0;
-      let totalinvCost = 0;
-      for (let i = 0; i < unitPriceData?.length; i++) {
-        const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-        const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-
-        const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-
-        if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
-          totalpoCost += pounitPrice * poquantity;
-        }
-        if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
-          totalinvCost += invunitPrice * invquantity;
-        }
+    console.log(this.lineData)
+    let totalpoCost = 0;
+    let totalinvCost = 0;
+    let totalPoDiscount = 0;
+      let totalInvDiscount = 0;
+    this.lineData?.forEach(el=>{
+      const pounitPrice = parseFloat(el?.lines?.UnitPrice?.po_line?.Value);
+      const poquantity = parseFloat(el?.lines?.Quantity?.po_line?.Value);
+      const invunitPrice = parseFloat(el?.lines?.UnitPrice?.Value);
+      const invquantity = parseFloat(el?.lines?.Quantity?.Value);
+      console.log(pounitPrice, poquantity, invunitPrice, invquantity)
+      if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
+        totalpoCost += pounitPrice * poquantity;
       }
-      this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost;
-      // console.log("Total Cost:", totalpoCost);
-    } else {
-      console.log("UnitPrice or Quantity data not found.");
-    }
+      if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
+        totalinvCost += invunitPrice * invquantity;
+      }
+      // if(!isNaN(po_discount)){
+      //     totalPoDiscount += po_discount;
+      // }
+      // if(!isNaN(inv_discount)){
+      //     totalInvDiscount += inv_discount;
+      // }
+    })
+      this.po_total = totalpoCost.toFixed(2);
+      this.totalInvCost = totalinvCost.toFixed(2);
+    // console.log(unitPriceObject)
+    // if (unitPriceObject && quantityObject) {
+
+    //   const unitPriceData = unitPriceObject?.items;
+    //   const quantityData = quantityObject?.items;
+
+
+    //   for (let i = 0; i < unitPriceData?.length; i++) {
+       
+
+
+    //   }
+    //   this.po_total = totalpoCost;
+    //   this.totalInvCost = totalinvCost.toFixed(2);
+    //   // console.log("Total Cost:", totalpoCost);
+    // } else {
+    //   console.log("UnitPrice or Quantity data not found.");
+    // }
   }
   getRejectionComments() {
     this.exceptionService.rejectCommentsList().subscribe((data: any) => {

@@ -109,7 +109,7 @@
                   </div>
                 </div>
   
-                <div *ngIf="error" class="alert alert-danger f-13 mt-3 mb-0">
+                <div *ngIf="error" class="alert-danger p-1 f-13 mt-3 mb-0">
                   {{ error }}
                 </div>
                 <div class="d-flex justify-content-end">
@@ -130,9 +130,9 @@
                 <button class="microsoft-login-button f-14 msb" (click)="loginMS()">
                   <img class="mr-2 ms" src="assets/microsoft-logo.png" alt="Microsoft Logo" /> Microsoft
                 </button>
-                <button class="microsoft-login-button f-14" (click)="signInWithGoogle()">
+                <!-- <button class="microsoft-login-button f-14" (click)="signInWithGoogle()">
                   <img class="mr-2" src="assets/google-logo.png" alt="Google Logo" /> Google
-                </button>
+                </button> -->
               </div>
               <div class="t-center mt-3">
                 <!-- <input class=" mr-2" type="checkbox" name="keep" (change)="storeUser($event)" id="keeplogin">
@@ -140,7 +140,7 @@
   
                 <div>
                   
-                  <div class="mt-2 f-14 color2">If you are a vendor and don't have an account? <br><a style="color:royalblue" (click)="signUpLink()">Please click me</a> </div>
+                  <div class="mt-2 f-14 color2">If you are a vendor and don't have an account? <br><a class="log-head" style="color:royalblue" (click)="signUpLink()">Please click me</a> </div>
                 </div>
               </div>
             </div>
@@ -212,7 +212,7 @@
                 placeholder="Enter your mail Id"
               /><br />
   
-              <div *ngIf="errorMail" class="alert alert-danger f-13 mt-3 mb-0">
+              <div *ngIf="errorMail" class="alert-danger p-1 f-13 mt-3 mb-0">
                 {{ errorMailText }}
               </div>
               <button
@@ -310,7 +310,7 @@
                   (click)="toggleFieldTextTypeReset1()"
                 ></i>
               </div>
-              <div class="alert alert-danger f-12" *ngIf="passwordMatchBoolean">
+              <div class="alert-danger p-1 f-12" *ngIf="passwordMatchBoolean">
                 Password doesn't match.
               </div>
               <button

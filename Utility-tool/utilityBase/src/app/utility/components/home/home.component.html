@@ -52,14 +52,14 @@
 </div> -->
 
 <div class="layout">
-  <nav class="desktop d-flex justify-content-between w-100" >
-      <div class="title">Serina Configuration Portal</div>
-      <div class="navLinks d-flex justify-content-between">
-        <div
+  <nav class="d-flex" >
+      <div class="nav-logo"><img src="assets/serlogo.png"></div>
+      <div class="navLinks">
+        <!-- <div
           class="nav_Link f-14"
           routerLinkActive="active"
           [routerLink]="'home'">Home
-        </div>
+        </div> -->
         <div
          *ngIf="showGPTTab"
          class="nav_Link f-14"
@@ -90,17 +90,36 @@
          [ngClass]="router.url.includes('settings') ? 'active':''"
          [routerLink]="'settings/mail-listener'">Settings
         </div>
-        <div
+        <!-- <div
          class="nav_Link f-14"
          routerLinkActive="active"
          [routerLink]="'/IT_Utility/guide'"
          [routerLinkActiveOptions]="{exact: true}">Guide
-        </div>
-        <div
+        </div> -->
+        <!-- <div
          class="nav_Link f-14"
          title="Sign Out" (click)="openPopup()"
          ><img src="assets/logout_ic.svg" style="width: 20px; cursor: pointer;">
+        </div> -->
+      </div>
+      <div class="log-div">
+        <div class="acc-details">
+          <div class="usr-det">
+            <span>Hello,<br>{{ fullName }}</span>
+          </div>
+          <div class="circle">
+            {{ userInitials }}
+          </div>
         </div>
+        <div
+           class="nav_Link">
+           <div class="f-14 logout-butn"
+            title="Sign Out" (click)="openPopup()"
+            ><img src="assets/logout-svgrepo-com.svg" style="width: 17px; height: 18px; cursor: pointer; position: relative; left: 22px;top: 8px;">
+          </div>
+        </div>
+        
+
       </div>
   </nav>
   <div class="pl-4 router_body">

@@ -363,7 +363,7 @@ export class PDFviewComponent implements OnInit {
   }
   
   linkFieldToPDF(fieldName: string) {
-    const textToHighlight = this.fieldToPDFMapping[fieldName].Value;
+    const textToHighlight = this.fieldToPDFMapping[fieldName]?.Value;
     const textElements = Array.from(document.querySelectorAll('.textLayer span'));
   
     // Normalize text to remove unnecessary characters (e.g., currency symbols, extra spaces)

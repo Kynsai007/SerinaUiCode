@@ -1,3 +1,4 @@
+import { SafeUrlPipe } from './../../../services/Interceptors/safe-url.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -5,6 +6,7 @@ import { ToastModule } from 'primeng/toast';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ChipsModule} from 'primeng/chips';
 import { CronEditorModule } from 'ngx-cron-editor';
+// import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsPageComponent } from './settings-page/settings-page.component';
@@ -19,7 +21,7 @@ import { OpenaiComponent } from './openai/openai.component';
 
 
 @NgModule({
-  declarations: [SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
+  declarations: [SafeUrlPipe,SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,
@@ -28,7 +30,9 @@ import { OpenaiComponent } from './openai/openai.component';
     ToastModule,
     AutoCompleteModule,
     ChipsModule,
-    CronEditorModule
-  ]
+    CronEditorModule,
+    // PdfViewerModule
+  ],
+  // exports: [SafeUrlPipe]
 })
 export class SettingsModule { }

@@ -14,7 +14,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || router.url.includes('Inv_vs_GRN_details')
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -130,12 +130,12 @@
         >
       </li>
 
-      <!-- <li
+      <li
         class="nav-item ml-2"
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice'"
+        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
       >
         <a
           class="nav-link"
@@ -145,15 +145,16 @@
           role="tab"
           aria-controls="POline"
           aria-selected="false"
+          [ngClass]="currentTab == 'poline' ? 'active' : ''"
           >PO Lines</a
         >
-      </li> -->
+      </li>
 
       <li
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice'"
+        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
         (click)="changeTab('grn')"
       >
         <a
@@ -352,7 +353,7 @@
                     <label class="label-head" style="margin-bottom: -5px" (click)="labelHighlight(value?.TagLabel)"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value?.isError == 1 || value?.IsUpdated > 0"
+                        *ngIf="value?.isError == 1"
                         [pTooltip]="value?.ErrorDesc"
                         tooltipPosition="top"
                         ><i
@@ -469,7 +470,7 @@
               <div class="tabContent">
                 <div *ngIf="activeTab === 'percentage'" class="tabBg">
                   <label for="percentageInput" class="boxHead">Add Percentage:</label>
-                  <input type="text" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
+                  <input type="text" name="percent" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
                   <label>Amount: {{ resultAmount }}</label>
                   <!-- <input type="text" [value]="resultAmount" readonly> -->
                   <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
@@ -482,7 +483,7 @@
               
                 <div *ngIf="activeTab === 'amount'" class="tabBg">
                   <label for="amountInput" class="boxHead">Add Amount:</label>
-                  <input type="text" id="amountInput" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
+                  <input type="text" id="amountInput" name="amount" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
               
                   <!-- <button (click)="saveAmount()">Submit Amount</button> -->
                   <div class="subButton">
@@ -661,7 +662,7 @@
                             </span>
                             <span
                               *ngIf="
-                              item.lines[header]?.isError >= 1 || item.lines[header]?.updates
+                              item.lines[header]?.isError >= 1
                               "
                               [pTooltip]="
                               item.lines[header]?.ErrorDesc
@@ -729,8 +730,8 @@
                             >
                               <p-autoComplete
                                 (onSelect)="
-                                  lineMapping(item.lines?.invoice_itemcode,
-                                    item.lines?.ItemCode
+                                  lineMapping(item?.invoice_itemcode,
+                                  $event.itemCode
                                   )
                                 "
                                 [(ngModel)]="item.lines[header].po_line"
@@ -1015,12 +1016,12 @@
               <table *ngIf="Itype == 'Invoice'" class="f-13 total_table">
                 <tr class="mb-1">
                   <td></td>
-                  <td class="total_txt">Invoice Total</td>
+                  <td class="total_txt">Invoice Lines Total </td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ invoice_subTotal }}</td>
+                  <td class="total_count" [pTooltip]="lineTooltip" tooltipPosition="top">{{totalInvCost}}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
                 <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">
@@ -1125,6 +1126,43 @@
                                    class="form-control inputHeight w-sm" 
                                    [title]="item[header.field]?.Value">
                           </div>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
+                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
+                            <div>
+                              <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                                   [name]="item[header.field]?.Value" 
+                                   [(ngModel)]="item[header.field].Value" 
+                                   (change)="onChangeGrnAmount(item, inputval.value)"
+                                   [readonly]="item[header.field]?.is_timesheets"
+                                   class="form-control inputHeight w-sm" 
+                                   [title]="item[header.field]?.Value">
+                            </div>  
+                          </ng-container>
+                          <ng-container *ngSwitchDefault>
+                            <div>
+                              <input type="text" 
+                                     [ngClass]="{'w-des': header.header === 'Description', 'w-sm': item.TagName !== 'Description'}"
+                                     [ngStyle]="{'border': item[header.field]?.is_mapped === 1 ? '2px solid #f2be42' : ''}"
+                                     [value]="item[header.field]?.Value ? item[header.field]?.Value : 'NA'" 
+                                     [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
+                                     class="form-control inputHeight" 
+                                     [name]="item[header.field]?.Value"
+                                     [disabled]="item[header.field]?.Value || !GRN_PO_Bool" 
+                                     [ngModelOptions]="{standalone: true}">
+                            </div>
+                          </ng-container>
+                          <!-- <ng-container *ngSwitchDefault>
+                            <div>
+                              <input #inputval type="text"
+                              [name]="line1.idDocumentLineItems" [value]="line1.Value" 
+                              [readonly]="line1.is_timesheets"
+                              [disabled]="line1.Value" [ngModelOptions]="{standalone: true}"
+                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                            </div>  
+                          </ng-container> -->
+                         
                         </ng-container>
               
                         <!-- Comments -->
@@ -1231,6 +1269,7 @@
             </div>
             <table
               class="total"
+              style="bottom: 0px;"
               *ngIf="
                 router.url.includes('Inv_vs_GRN_details') ||
                 router.url.includes('GRN_approvals')
@@ -1596,6 +1635,7 @@
                       type="text"
                       class="form-control mb-1 inputHeight"
                       [(ngModel)]="row.driver_name"
+                      name="driver_name_{{i}}"
                       (input)="reqDataValidation()"
                     />
                   </div>
@@ -1611,6 +1651,7 @@
                     <select
                       class="form-control mb-1 inputHeight"
                       [(ngModel)]="row.company_name"
+                      name="company_name_{{i}}"
                       required
                       (change)="reqDataValidation()"
                     >
@@ -1754,6 +1795,7 @@
           <div
             *ngIf="currentTab == 'poline'"
             class="tab-pane fade"
+            [ngClass]="currentTab == 'poline' ? 'show active' : ''"
             id="POline"
             role="tabpanel"
             aria-labelledby="POline-tab"
@@ -2192,12 +2234,29 @@
             </button>
 
             <button
+            *ngIf="submitBtn_boolean 
+            && editable 
+            && !fin_boolean 
+            && isServiceData 
+            && ![29,32,80]?.includes(subStatusId)
+            && !router.url.includes('uploadtime')"
+            class="primary_btn f-12 mr-3"
+            (click)="
+              approval_selection_boolean && isLCMCompleted
+                ? onSubmitApprovers()
+                : proceedToBatch('true')
+            "
+          >
+            Skip
+          </button>
+
+            <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
               (click)="
                 approval_selection_boolean && isLCMCompleted
                   ? onSubmitApprovers()
-                  : approveChangesBatch()
+                  : proceedToBatch('false')
               "
             >
               Next
@@ -2429,6 +2488,7 @@
           <p-calendar
             #datePicker
             [(ngModel)]="rangeDates"
+            name="range"
             selectionMode="range"
             [minDate]="minDate"
             [maxDate]="maxDate"
