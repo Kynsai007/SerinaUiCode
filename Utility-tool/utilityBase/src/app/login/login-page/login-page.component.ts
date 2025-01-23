@@ -75,6 +75,7 @@ export class LoginPageComponent implements OnInit {
   tokenOTP: any;
   instanceInfo:any;
   isVendorPortalRequired: boolean;
+  current_year: number;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -94,6 +95,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.current_year = new Date().getFullYear();
     this.getInstancedata();
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
