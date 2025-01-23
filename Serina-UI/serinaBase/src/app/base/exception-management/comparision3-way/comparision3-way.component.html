@@ -1068,19 +1068,19 @@
                       <ng-container [ngSwitch]="item.TagName">
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
                           <div>
-                            <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                            <input #inputval type="number" style="border: 0.2px solid #358dc0" 
                                  [name]="line1.idDocumentLineItems" [value]="line1.Value" [(ngModel)]="line1.Value"
                                  (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
-                                 class="form-control inputHeight w-sm" [title]="line1.Value" >
+                                 class="form-control pl-1 inputHeight w-sm" step="0.01" [title]="line1.Value" >
                           </div>
                         </ng-container>
                         <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
                           <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
                             <div>
-                              <input #inputval type="text" style="border: 0.2px solid #358dc0" 
+                              <input #inputval type="number" style="border: 0.2px solid #358dc0" 
                               [name]="line1.idDocumentLineItems" [value]="line1.Value"
                               (change)="onChangeGrnAmount(line1, inputval.value)" [readonly]="line1.is_timesheets"
-                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                              class="form-control pl-1 inputHeight w-sm"  [title]="line1.Value" >
                             </div>  
                           </ng-container>
                           <ng-container *ngSwitchDefault>
@@ -1089,7 +1089,7 @@
                               [name]="line1.idDocumentLineItems" [value]="line1.Value" 
                               [readonly]="line1.is_timesheets"
                               [disabled]="line1.Value" [ngModelOptions]="{standalone: true}"
-                              class="form-control inputHeight w-sm" [title]="line1.Value" >
+                              class="form-control pl-1 inputHeight w-sm" [title]="line1.Value" >
                             </div>  
                           </ng-container>
                          
@@ -1099,7 +1099,7 @@
                             <div>
                               <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorDesc">
+                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control pl-1 inputHeight" [title]="line1.ErrorDesc">
                             </div>
                           </ng-container>
                         </ng-container>

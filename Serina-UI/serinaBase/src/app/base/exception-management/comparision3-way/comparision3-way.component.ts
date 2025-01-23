@@ -1648,7 +1648,7 @@ export class Comparision3WayComponent
         setTimeout(() => {
           // document.getElementById('grnTable').style.display = 'block';
           this.SpinnerService.hide();
-        }, 4000);
+        }, 2000);
 
       },
       (error) => {
@@ -2817,7 +2817,11 @@ export class Comparision3WayComponent
       inv_param += `&inv_num=${encodedInvoiceNumber}`;
     }
     if (this.invoiceDescription) {
-      inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
+      inv_param += `&document_description=${encodeURIComponent(this.invoiceDescription)}`;
+    }
+    if(this.invoiceDate){ 
+      let date = this.invoiceDate.toISOString()
+      inv_param += `&grn_date=${date}`;
     }
     let manPower = '';
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
@@ -2951,7 +2955,11 @@ export class Comparision3WayComponent
   grnAPICall(boolean, txt) {
     let inv_des = '';
     if(this.invoiceDescription !== ''){
-      inv_des = `&document_description=${this.invoiceDescription}`;
+      inv_des += `&document_description=${this.invoiceDescription}`;
+    }
+    if(this.invoiceDate){
+      let date = this.invoiceDate.toISOString()
+      inv_des += `&grn_date=${date}`;
     }
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
