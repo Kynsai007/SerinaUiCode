@@ -1122,7 +1122,7 @@
                           <div>
                             <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                                    [name]="item[header.field]?.Value" 
-                                   [(ngModel)]="item[header.field].Value" 
+                                   [value]="item[header.field].Value" 
                                    (change)="onChangeGrn(header.field, inputval.value,item)" 
                                    [readonly]="item['isTimesheets']?.Value"
                                    class="form-control inputHeight w-sm" 
@@ -1135,7 +1135,7 @@
                             <div>
                               <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                                    [name]="item[header.field]?.Value" 
-                                   [(ngModel)]="item[header.field].Value" 
+                                   [value]="item[header.field].Value"
                                    (change)="onChangeGrnAmount(item, inputval.value)"
                                    [readonly]="item['isTimesheets']?.Value"
                                    class="form-control inputHeight w-sm" 

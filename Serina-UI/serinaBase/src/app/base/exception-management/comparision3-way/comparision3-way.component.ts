@@ -2521,6 +2521,7 @@ export class Comparision3WayComponent
     this.rejectionUserId = event;
   }
   onChangeGrn(fieldName, val,linedata) {
+    console.log()
     // const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_qty_value = linedata?.PurchQty?.Value;
@@ -2594,7 +2595,6 @@ export class Comparision3WayComponent
             if(ele?.LineNumber?.Value == lineItem.LineNumber?.Value){
               ele[label].Value = val;
             }
-            console.log(ele[label].Value,val);
             this.GRN_line_total = this.GRN_line_total + Number(ele[label].Value);
         } else if(label === 'GRNQty'){
           if(ele?.LineNumber?.Value == lineItem.LineNumber?.Value){
@@ -2609,7 +2609,7 @@ export class Comparision3WayComponent
   }
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
-      const unitPrice = linedata.GRNUnitPrice;
+      const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
       console.log(unitPrice,newQuantity)
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
       // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
@@ -2631,7 +2631,7 @@ export class Comparision3WayComponent
           if(label === 'GRNAmountExcTax'){
             this.GRN_line_total = this.GRN_line_total + Number(item[label].Value);
           }
-          if(linedata.itemCode == item['itemCode']){
+          if(linedata?.LineNumber?.Value == item?.LineNumber?.Value){
             
             item['GRNAmountExcTax'].Value = amountExcTax;
           }
