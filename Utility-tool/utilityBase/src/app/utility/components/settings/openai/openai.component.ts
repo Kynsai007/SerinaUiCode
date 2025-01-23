@@ -124,6 +124,7 @@ export class OpenaiComponent implements OnInit {
   }
   loadImage() {
     if (this.isImgBoolean == true) {
+      console.log('image');
       setTimeout(() => {
         this.zoomVal = 1;
         this.panX = 0;
@@ -142,7 +143,7 @@ export class OpenaiComponent implements OnInit {
 
   drawImagein() {
     this.imageCanvas = new Image();
-    // this.imageCanvas.src = this.showInvoice;
+    this.imageCanvas.src = this.showInvoice;
     let imageWidth, imageHeight;
     this.imageCanvas.onload = () => {
       const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
@@ -283,27 +284,9 @@ export class OpenaiComponent implements OnInit {
     }
   }
   onFileChange(event: any) {
-    // const files = event.target.files;
-    // if (files.length > 0) {
-    //   this.file = files[0];
-    //   const reader = new FileReader();
-    //   reader.onload = (e: any) => {
-    //     this.showInvoice = e.target.result;
-    //     if (this.file.type === 'application/pdf') {
-    //       this.isImgBoolean = false;
-    //       this.loadPDFtest(this.showInvoice);
-    //     } else if (this.file.type === 'text/html') {
-    //       // this.loadHTML(this.showInvoice);
-    //     } else {
-    //       console.log(this.file.type)
-    //       this.isImgBoolean = true;
-    //       this.loadImage();
-    //     }
-    //   };
-    //   reader.readAsDataURL(this.file);
-    // }
+    console.log(event);
     this.clearPreview();
-    const fileInput = event.target.files || event;
+    const fileInput = event?.target?.files || event;
     if (fileInput && fileInput?.length > 0) {
       const file = fileInput[0];
 

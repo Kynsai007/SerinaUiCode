@@ -1,16 +1,16 @@
 <div>
     <h6>Global Level</h6>
     <div class="main_div" *ngIf="!testingMode">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-center">
             <div class="relative">
               <input type="text" class="form-control global f-12" (keyup)="searchGlobalTags($event.target.value)" placeholder="Search By Tag Name...">
               <div class="search_box">
                 <i class="fa fa-search" aria-hidden="true"></i>
               </div>
             </div>
-            <div class="d-flex f-12 justify-content-between">
+            <div class="d-flex f-12 justify-content-between align-items-center">
                 
-                <div class="mr-3 textSwitch"> Vendor        
+                <div class="mr-3 "> Vendor        
                   <span class="slider_span mr-1">
                     <label class="switch">
                       <input
@@ -23,7 +23,7 @@
                   </span>
                   Service provider
                 </div>
-                <div class="mr-3 textSwitch"> line        
+                <div class="mr-3 "> line        
                   <span class="slider_span mr-1">
                     <label class="switch">
                       <input
@@ -102,7 +102,7 @@
             <div></div>
       
           </div>
-            <section class="maxPage">
+            <section class="maxPage" [ngClass]="isImgBoolean ? 'img_height' : 'pdf_height'">
                 <div *ngIf="isImgBoolean" class="canvasConatiner_height">
                   <div id="parentDiv" class="docContainer">
                     <canvas #canvas id="canvas1" ></canvas>
@@ -116,21 +116,6 @@
                   [style.width]="100 / zoom + '%'"
                   class="preview-frame"
                 ></iframe>
-                  <!-- <pdf-viewer
-                    #pdfviewer
-                    [src]="showInvoice"
-                    style="width: 100%; overflow: auto"
-                    [show-all]="true"
-                    [zoom]="zoomdata"
-                    [original-size]="false"
-                    [fit-to-page]="true"
-                    [page]="page"
-                    [rotation]="rotation"
-                    [render-text]="true"
-                    [render-text-mode]="2"
-                    (after-load-complete)="afterLoadComplete($event)"
-                >
-                </pdf-viewer> -->
                 </div>
               </section>
 
@@ -145,7 +130,7 @@
                   (dragover)="onDragOver($event)" 
                   (dragleave)="onDragLeave($event)" 
                   [class.highlight]="isDragOver">
-                    <div> <i class="fa fa-upload uploadIcon" aria-hidden="true"></i></div>
+                    <div> <img src="assets/upload_ai.svg" alt="upload_ai"></div>
                     <div class="f-13 mt-3">Drag & Drop your files here</div>
                     <div class="mt-3 f-11" style="font-weight: 400;">OR</div>
                     <button class="primaryButton mt-3 f-12 browse-button" (click)="fileInput.click()">Browse Files</button>

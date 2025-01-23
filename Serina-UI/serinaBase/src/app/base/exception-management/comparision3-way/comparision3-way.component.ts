@@ -28,7 +28,7 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, map, take, filter } from 'rxjs/operators';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CanUploadComponentDeactivate } from '../UnsavedChanges.guard';
@@ -193,8 +193,8 @@ export class Comparision3WayComponent
     { header: 'PO quantity', field: 'PurchQty'},
     { header: 'Inv - Quantity', field: 'Quantity' },
     { header: 'GRN - Quantity', field: 'GRNQuantity' },
-    { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
     { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
+    { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
     { header: 'Comments', field: '' }
   ];
   documentViewBool: boolean;
@@ -471,22 +471,19 @@ export class Comparision3WayComponent
       { header: 'Description', field: 'Name' },
       { header: 'PO quantity', field: 'PurchQty'},
       { header: 'GRN - Quantity', field: 'GRNQty' },
-      { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
       { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
+      { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
       { header: 'Actions', field:''}
     ];
 
     this.GRN_PO_tags = [...commonTags];
 
     if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
-      this.GRN_PO_tags.splice(6, 0, { TagName: 'PO Remaining %', linedata: [] });
+      this.GRN_PO_tags.splice(6, 0, { header: 'PO Remaining %', field: 'RemainPurchPhysical'});
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
-
-    console.log(this.lineTable)
     this.ent_code = this.dataService.ent_code;
     this.flipEnabled = true;
     // this.flipEnabled = this.dataService.configData.flipBool;
@@ -1701,22 +1698,23 @@ export class Comparision3WayComponent
   }
   readFilePath() {
     this.showInvoice = '';
+    this.isPdfAvailable = true;
     // this.SpinnerService.show();
     this.SharedService.getInvoiceFilePath().subscribe(
       (data: any) => {
-        this.content_type = data?.content_type;
-        if (data.filepath && data.content_type == 'application/pdf') {
+        this.content_type = data?.result?.content_type;
+        if (data?.result?.filepath && data?.result?.content_type == 'application/pdf') {
           this.isPdfAvailable = false;
           this.isImgBoolean = false;
           this.byteArray = new Uint8Array(
-            atob(data.filepath)
+            atob(data?.result?.filepath)
               .split('')
               .map((char) => char.charCodeAt(0))
           );
           this.showInvoice = window.URL.createObjectURL(
             new Blob([this.byteArray], { type: 'application/pdf' })
           );
-        } else if (data.content_type == 'image/jpg' || data.content_type == 'image/png') {
+        } else if (['image/jpg', 'image/png', 'image/jpeg'].includes(data?.result?.content_type?.toLowerCase())) {
           this.isPdfAvailable = false;
           this.isImgBoolean = true;
           this.byteArray = new Uint8Array(
@@ -1728,10 +1726,7 @@ export class Comparision3WayComponent
             new Blob([this.byteArray], { type: data.content_type })
           );
           // this.loadImage();
-        } else {
-          this.isPdfAvailable = true;
-          this.showInvoice = '';
-        }
+        } 
         // this.SpinnerService.hide();
       },
       (error) => {
@@ -2526,6 +2521,7 @@ export class Comparision3WayComponent
     this.rejectionUserId = event;
   }
   onChangeGrn(fieldName, val,linedata) {
+    console.log()
     // const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_qty_value = linedata?.PurchQty?.Value;
@@ -2563,10 +2559,11 @@ export class Comparision3WayComponent
     }
   }
   onChangeGrnAmount(lineItem, val) {
-    const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
-    .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
-    const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(this.decimal_count);
-    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    console.log(lineItem);
+    // const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
+    // .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    const grnQty = (Number(val) / Number(lineItem?.UnitPrice?.Value)).toFixed(this.decimal_count);
+    const po_balance_qty_value = lineItem?.RemainPurchPhysical?.Value;
 
     let checking_value;
     let error_msg;
@@ -2576,35 +2573,43 @@ export class Comparision3WayComponent
     } 
     this.disable_save_btn = false;
     if(Number(checking_value) < Number(grnQty)){
-      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      // this
+      // this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
       this.error(`GRN Quantity cannot be greater than ${error_msg}`);
       this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
       this.disable_save_btn = true;
       return;
     }
 
-    const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
-      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    // const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
+    //   .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     
-    if (grnQuantityItem) {
-      grnQuantityItem.Value = grnQty;
-      grnQuantityItem.ErrorDesc = "Quantity changed";
-    }
+    // if (grnQuantityItem) {
+    //   grnQuantityItem.Value = grnQty;
+    //   grnQuantityItem.ErrorDesc = "Quantity changed";
+    // }
     this.GRN_line_total = 0;
     this.lineDisplayData.forEach(ele => {
-      if (ele.TagName == 'AmountExcTax') {
-        ele.linedata.forEach(v =>{
-          if(v.idDocumentLineItems === lineItem.idDocumentLineItems){
-            v.Value = val;
+      Object.keys(ele).forEach((label:any)=> {
+        if (label === 'GRNAmountExcTax') {
+            if(ele?.LineNumber?.Value == lineItem.LineNumber?.Value){
+              ele[label].Value = val;
+            }
+            this.GRN_line_total = this.GRN_line_total + Number(ele[label].Value);
+        } else if(label === 'GRNQty'){
+          if(ele?.LineNumber?.Value == lineItem.LineNumber?.Value){
+            console.log(ele[label].Value,grnQty);
+            ele[label].Value = grnQty;
+            ele[label].ErrorDesc = "Quantity changed";
           }
-          this.GRN_line_total = this.GRN_line_total + Number(v.Value);
-        } )
-      }
+        }
+      })
     })
+    console.log(this.lineDisplayData)
   }
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
-      const unitPrice = linedata.GRNUnitPrice;
+      const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
       console.log(unitPrice,newQuantity)
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
       // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
@@ -2622,16 +2627,13 @@ export class Comparision3WayComponent
       //   }
       // })
       this.lineDisplayData.forEach(item=>{
-        console.log(item)
         Object.keys(item).forEach(label=>{
           if(label === 'GRNAmountExcTax'){
-            console.log(this.GRN_line_total, Number(item[label].Value))
             this.GRN_line_total = this.GRN_line_total + Number(item[label].Value);
           }
-          if(linedata.itemCode == item['itemCode']){
+          if(linedata?.LineNumber?.Value == item?.LineNumber?.Value){
             
             item['GRNAmountExcTax'].Value = amountExcTax;
-            console.log(item['GRNAmountExcTax'])
           }
         })
       })
@@ -2641,23 +2643,26 @@ export class Comparision3WayComponent
   deleteGrnLine(id) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool:boolean) => {
-
+      console.log(id)
       if (bool) {
         this.SpinnerService.show();
-        this.lineDisplayData = this.lineDisplayData.map(record => {
-          const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
-          return { ...record, linedata: newLinedata };
+        this.lineDisplayData = this.lineDisplayData.filter(record => {
+          console.log(record)
+          return record?.LineNumber?.Value !== id?.LineNumber?.Value;
         });
         this.GRN_line_total = 0;
         this.lineDisplayData.forEach(ele => {
-          if (ele.TagName == "AmountExcTax") {
-            ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
-          }
+          Object.keys(ele).forEach(label=>{
+            if(label === 'GRNAmountExcTax'){
+              this.GRN_line_total = this.GRN_line_total + Number(ele[label].Value);
+            }
+          })
         })
-        this.GRNObject = this.GRNObject.filter(val => {
-          return val?.idDocumentLineItems != id
-        })
-        this.grnLineCount = this.lineDisplayData[0]?.linedata;
+        console.log(this.GRNObject)
+        // this.GRNObject = this.GRNObject.filter(val => {
+        //   return val?.idDocumentLineItems != id
+        // })
+        // this.grnLineCount = this.lineDisplayData[0]?.linedata;
         this.SpinnerService.hide();
       }
     })
@@ -3019,7 +3024,7 @@ export class Comparision3WayComponent
     })
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
-      boolean, this.GRNObject,inv_des
+      boolean, grnWithInvPayload,inv_des
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
@@ -4161,14 +4166,28 @@ export class Comparision3WayComponent
     console.log(this.lineData)
     let totalpoCost = 0;
     let totalinvCost = 0;
-    let totalPoDiscount = 0;
-      let totalInvDiscount = 0;
     this.lineData?.forEach(el=>{
-      const pounitPrice = parseFloat(el?.lines?.UnitPrice?.po_line?.Value);
+      let pounitPrice = parseFloat(el?.lines?.UnitPrice?.po_line?.Value);
       const poquantity = parseFloat(el?.lines?.Quantity?.po_line?.Value);
-      const invunitPrice = parseFloat(el?.lines?.UnitPrice?.Value);
+      let invunitPrice = parseFloat(el?.lines?.UnitPrice?.Value);
       const invquantity = parseFloat(el?.lines?.Quantity?.Value);
-      console.log(pounitPrice, poquantity, invunitPrice, invquantity)
+      const po_discount = parseFloat(el?.lines?.Discount?.po_line?.Value);
+      const inv_discount = parseFloat(el?.lines?.Discount?.Value);
+      const po_discountPercent = parseFloat(el?.lines?.DiscPercent?.po_line?.Value);
+      const inv_discountPercent = parseFloat(el?.lines?.DiscPercent?.Value);
+      if(po_discount && po_discount != 0){
+        pounitPrice = pounitPrice - po_discount;
+      }
+      if(inv_discount && inv_discount != 0){
+        invunitPrice = invunitPrice - inv_discount;
+      }
+      if(po_discountPercent && po_discountPercent != 0){
+        pounitPrice = pounitPrice - (pounitPrice * po_discountPercent / 100);
+      }
+      if(inv_discountPercent && inv_discountPercent != 0){
+        invunitPrice = invunitPrice - (invunitPrice * inv_discountPercent / 100);
+      }
+    
       if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
         totalpoCost += pounitPrice * poquantity;
       }

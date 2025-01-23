@@ -58,7 +58,7 @@ export class SharedService {
   vendorNameForSearch = 'ALL';
   customerNameForSearch:any;
   spNameForSearch = 'ALL';
-  selected_Vendor: any;
+  selected_Vendor = {VendorName: 'ALL', idVendor: "ALL"};
   selected_ent = {EntityName: 'ALL', idEntity: 'ALL'};
   selected_sp: any;
   currencies = [ 

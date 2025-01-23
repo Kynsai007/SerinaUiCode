@@ -102,13 +102,13 @@
                 <span
                   class="statusType status_color"
                   *ngIf="
-                    e_data.docstatus.trim() == color.name.trim() 
+                    e_data.docstatus?.trim() == color.name?.trim() 
                   "
                   [ngStyle]="{
                     'background-color':
-                      e_data.docstatus.trim() == color.name.trim() ? color.bgcolor : '',
+                      e_data.docstatus?.trim() == color.name?.trim() ? color.bgcolor : '',
                     color:
-                      e_data.docstatus.trim() == color.name.trim() ? color.textColor : ''
+                      e_data.docstatus?.trim() == color.name?.trim() ? color.textColor : ''
                   }"
                   >{{ e_data?.docstatus }}</span
                 >
