@@ -10,6 +10,7 @@ import { MobmainComponent } from './components/fr-update/mob/mobmain/mobmain.com
 import { ServiceProvidersComponent } from './components/service-providers/service-providers.component';
 import { FrUpdateSpComponent } from './components/fr-update-sp/fr-update-sp.component';
 import { CustomersComponent } from './components/customers/customers.component';
+import { OpenaiComponent } from './components/settings/openai/openai.component';
 
 
 const routes: Routes = [
@@ -29,6 +30,7 @@ const routes: Routes = [
       { path:'vendors/Fr_update', component:FrUpdateComponent },
       {path:'service-providers/Fr_update',component:FrUpdateSpComponent},
       { path:'vendors/modal_on_board', component:MobComponent },
+      { path:'vendors/open_ai_vendor/:id/:vendorName/:type',component:OpenaiComponent},
       {
         path: 'guide',
         component:GuideComponent

@@ -33,6 +33,6 @@ import { OpenaiComponent } from './openai/openai.component';
     CronEditorModule,
     // PdfViewerModule
   ],
-  // exports: [SafeUrlPipe]
+  exports: [OpenaiComponent]
 })
 export class SettingsModule { }

@@ -1,5 +1,31 @@
-<div>
-    <h6>Global Level</h6>
+<div [ngClass]="isVendorLevel || isServiceLevel ? 'vendorLevel' : ''">
+    <h6 *ngIf="isVendorLevel || isServiceLevel" class="d-flex justify-content-between align-items-center">
+      {{isVendorLevel ? 'Vendor' : 'Service Provider'}} Level - ({{name}})
+      <div class="radio-input">
+        <label>
+          <input
+            type="radio"
+            id="value-1"
+            name="value-radio-{{i}}" 
+            value="1"
+            [checked]="!isGlobal ? true : false"
+          />
+          <span>Custom</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            id="value-2"
+            name="value-radio-{{i}}" 
+            value="2"
+            [checked]="!isGlobal ? false : true"
+          />
+          <span>Global</span>
+        </label>
+        <span class="selection"></span>
+      </div>
+    </h6>
+    <h6 *ngIf="!isVendorLevel && !isServiceLevel">Global Level</h6>
     <div class="main_div" *ngIf="!testingMode">
         <div class="d-flex justify-content-between align-items-center">
             <div class="relative">
@@ -10,7 +36,7 @@
             </div>
             <div class="d-flex f-12 justify-content-between align-items-center">
                 
-                <div class="mr-3 "> Vendor        
+                <div *ngIf="!isVendorLevel && !isServiceLevel" class="mr-3 "> Vendor        
                   <span class="slider_span mr-1">
                     <label class="switch">
                       <input
@@ -36,19 +62,19 @@
                   </span>
                   header
                 </div>
-                <div class="mr-3" style="cursor: pointer;" (click)="openFilterDialog($event,'prompt')"><img src="assets/Group 350.svg" alt="Edit prompt"> </div>
-                <div><Button class="primaryButton bg_btn f-12" (click)="openFilterDialog($event,'tags')">Add More Tags +</Button></div>
+                <div style="cursor: pointer;" (click)="openFilterDialog($event,'prompt')"><img src="assets/Group 350.svg" alt="Edit prompt"> </div>
+                <div *ngIf="!isVendorLevel && !isServiceLevel"  class="ml-3" ><Button class="primaryButton bg_btn f-12" (click)="openFilterDialog($event,'tags')">Add More Tags +</Button></div>
             </div>
         </div>
-        <div class="tableDiv">
+        <div class="tableDiv mt-3" [ngClass]="isVendorLevel || isServiceLevel ? 'vendorTable' : ''">
             <table class="table f-13 table-striped">
                 <thead>
                     <tr>
                         <th>Tag Name</th>
                         <th>Description</th>
-                        <th>Is Mandatory</th>
-                        <th>Is Active</th>
-                        <th>Action</th>
+                        <th class="text-center">Is Mandatory</th>
+                        <th class="text-center">Is Active</th>
+                        <th *ngIf="!isVendorLevel && !isServiceLevel" class="text-center" >Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,12 +83,12 @@
                         <td>{{tag.Description}}</td>
                         <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag,'Ismandatory')"></td>
                         <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag,'isActive')"></td>
-                        <td class="text-center"><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
+                        <td class="text-center" *ngIf="!isVendorLevel && !isServiceLevel" ><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="d-flex justify-content-end mt-3">
+        <div class="d-flex justify-content-end mt-3 mb-3">
             <button class="primaryButton f-12" (click)="testingMode = true">Test Now</button>
         </div>
     </div>
@@ -102,7 +128,7 @@
             <div></div>
       
           </div>
-            <section class="maxPage" [ngClass]="isImgBoolean ? 'img_height' : 'pdf_height'">
+            <section class="maxPage" [ngClass]="{'img_height':isImgBoolean, 'pdf_height':!isImgBoolean, 'max_vendorPage':isVendorLevel||isServiceLevel}">
                 <div *ngIf="isImgBoolean" class="canvasConatiner_height">
                   <div id="parentDiv" class="docContainer">
                     <canvas #canvas id="canvas1" ></canvas>
@@ -123,7 +149,7 @@
               <!-- <img [src]="imageUrl" style="width: 100%;height: 80vh;"><br/> -->
 
         </div>
-        <div class="upload_div">
+        <div class="upload_div" [ngClass]="isVendorLevel || isServiceLevel ? 'upload_div_vendor' : ''">
             <div>
                 <div class="drag-drop-container" 
                   (drop)="onDrop($event)" 

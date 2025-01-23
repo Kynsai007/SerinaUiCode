@@ -395,4 +395,9 @@ export class VendorsComponent implements OnInit {
     if (this.onboard_status) count++;
     this.activeFilterCount = count;
   }
+  open_ai_vendor(id,vendorName,engine){
+    console.log(id,engine)
+    let type = engine == 'OpenAI(Global)' ? 'Global' : 'Custom'
+    this.router.navigate([`IT_Utility/vendors/open_ai_vendor/${id}/${vendorName}/${type}`]);
+  }
 }

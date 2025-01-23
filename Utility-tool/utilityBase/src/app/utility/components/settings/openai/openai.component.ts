@@ -41,16 +41,30 @@ export class OpenaiComponent implements OnInit {
   isHeader = false;
   isTagDialog: boolean;
   prompt:string = '';
+  isVendorLevel: boolean;
+  isServiceLevel: boolean;
+  ven_ser_id:any;
+  name: string;
+  isGlobal: boolean;
   constructor(private router: Router,
     private openAIService : OpenAIService,
     private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
+    this.ven_ser_id = this.router?.url?.split('/')[4];
+    this.name = decodeURIComponent(this.router?.url?.split('/')[5]);
+    this.isGlobal = this.router?.url?.split('/')[6] == 'Global';
     this.applyFilters();
     // this.filterTags = this.tags;
     // this.dialogList = this.tags;
     this.readAllTags();
+    if(this.router.url.includes('vendors')){
+      this.isVendorLevel = true;
+    } else if(this.router.url.includes('service-providers')){
+      this.isServiceLevel = true;
+    }
+    
   }
   applyFilters() {
     this.router.navigate([], {
@@ -116,9 +130,7 @@ export class OpenaiComponent implements OnInit {
     } else if(tagName == 'isActive'){
       apiParams.isActive = isChecked;
     }
-    console.log(apiParams);
     this.openAIService.updateTags(apiParams).subscribe((data)=>{
-      console.log(data);
       this.readAllTags();
     }); 
   }
@@ -284,7 +296,6 @@ export class OpenaiComponent implements OnInit {
     }
   }
   onFileChange(event: any) {
-    console.log(event);
     this.clearPreview();
     const fileInput = event?.target?.files || event;
     if (fileInput && fileInput?.length > 0) {
@@ -352,7 +363,12 @@ export class OpenaiComponent implements OnInit {
     if(this.isServiceProvider){
       context = 'sp';
     }
-    this.openAIService.readAllTags(null,context,!this.isHeader).subscribe((data)=>{
+    let id = null;
+    if(this.ven_ser_id){
+      id = this.ven_ser_id;
+    }
+    console.log(id)
+    this.openAIService.readAllTags(id,context,!this.isHeader).subscribe((data)=>{
       this.tags = data.fields;
       this.prompt = data.tail_prompt;
       this.filterTags = this.tags;
