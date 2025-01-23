@@ -1096,12 +1096,24 @@ export class Comparision3WayComponent
         this.getPODocId(poNum);
         this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
-          this.getProjectData();
-          this.getProjectCatData();
+          // this.getProjectData();
+          // this.getProjectCatData();
           this.getPOs();
           this.getVendorInvoices(this.po_num)
           this.projectCArr = this.dataService.projectCArr;
           this.projectIdArr = this.dataService.projectIdArr;
+          if(this.client_name == 'Emaar Hospitality'){
+            const obj = {
+                Value: response.CostAccount,
+                idDocumentData: 0,
+                isError: 0,
+                IsUpdated: 0,
+                ErrorDesc: '',
+                TagLabel: 'Cost Account'
+            }
+            this.inputData.push(obj);
+          }
+          
         }
         let vendorData;
         if (this.pageType == 'normal') {
