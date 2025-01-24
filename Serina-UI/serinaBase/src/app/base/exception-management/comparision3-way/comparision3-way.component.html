@@ -1130,12 +1130,12 @@
                           </div>
                         </ng-container>
 
-                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
-                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
+                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="shouldRenderInput()">
+                          <ng-container *ngSwitchCase="true">
                             <div>
                               <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                                    [name]="item[header.field]?.Value" 
-                                   [value]="item[header.field].Value"
+                                   [value]="item[header.field]?.Value"
                                    (change)="onChangeGrnAmount(item, inputval.value)"
                                    [readonly]="item['isTimesheets']?.Value"
                                    class="form-control inputHeight w-sm" 
@@ -1151,19 +1151,10 @@
                                      [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
                                      class="form-control inputHeight" 
                                      [name]="item[header.field]?.Value"
-                                     [disabled]="item[header.field]?.Value || !GRN_PO_Bool" 
+                                     disabled 
                                      [ngModelOptions]="{standalone: true}">
                             </div>
                           </ng-container>
-                          <!-- <ng-container *ngSwitchDefault>
-                            <div>
-                              <input #inputval type="text"
-                              [name]="line1.idDocumentLineItems" [value]="line1.Value" 
-                              [readonly]="line1.is_timesheets"
-                              [disabled]="line1.Value" [ngModelOptions]="{standalone: true}"
-                              class="form-control inputHeight w-sm" [title]="line1.Value" >
-                            </div>  
-                          </ng-container> -->
                          
                         </ng-container>
               
@@ -1196,7 +1187,7 @@
                                    [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
                                    class="form-control inputHeight" 
                                    [name]="item[header.field]?.Value"
-                                   [disabled]="item[header.field]?.Value || !GRN_PO_Bool" 
+                                   disabled
                                    [ngModelOptions]="{standalone: true}">
                           </div>
                         </ng-container>

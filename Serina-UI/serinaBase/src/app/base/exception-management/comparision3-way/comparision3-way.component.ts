@@ -4554,6 +4554,9 @@ export class Comparision3WayComponent
     },err=>{
     })
   }
+  shouldRenderInput(){
+    return this.client_name === 'Cenomi' && this.GRN_PO_Bool;
+  }
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
