@@ -732,7 +732,7 @@
                             >
                               <p-autoComplete
                                 (onSelect)="
-                                  lineMapping(item?.invoice_itemcode,
+                                  lineMapping(item?.ItemCode,
                                   $event.itemCode
                                   )
                                 "
@@ -1040,7 +1040,7 @@
             </div>
 
             <!-- Create GRN screen Line details -->
-            <div *ngIf="grnCreateBoolean" style="overflow: auto;">
+            <div *ngIf="grnCreateBoolean">
               <!--GRN Creation With Invoice-->
               <div
                 class="d-flex justify-content-between flex-wrap"

@@ -237,21 +237,19 @@ export class ExceptionsService {
     const output = [];
     
     // Helper function to find value by tag name
-    const findValueByTagName = (tagName: string,index): string | null => {
-      const item = inputData.find(tag => tag.TagName === tagName);
-      return item ? item.linedata[index].DocumentLineItems.Value : null;
-    };
+    // const findValueByTagName = (tagName: string,index): string | null => {
+    //   const item = inputData.find(tag => tag.TagName === tagName);
+    //   return item ? item.linedata[index].DocumentLineItems.Value : null;
+    // };
   
     // Iterate through each name (Description) tag
-    inputData.forEach(tag => {
-      if (tag.TagName === 'Description') {
-        tag.linedata.forEach((line,i)=>{
-          const name = line.DocumentLineItems.Value;
-          const poLinenumber = findValueByTagName('POLineNumber',i);
-          const lineNumber = findValueByTagName('LineNumber',i);
-          const quantity = findValueByTagName('Quantity',i);
-          const remainInventPhysical = findValueByTagName('PackingSlip',i);
-          const unitPrice = findValueByTagName('UnitPrice',i);
+    inputData?.forEach(tag => {
+          const name = tag?.lines?.Description?.Value;
+          const poLinenumber = tag?.lines?.POLineNumber?.Value;
+          const lineNumber = tag?.lines?.LineNumber?.Value;
+          const quantity = tag?.lines?.Quantity?.Value || tag?.lines?.GRNQty?.Value;
+          const remainInventPhysical = tag?.lines?.RemainInventPhysical?.Value;
+          const unitPrice = tag?.lines?.UnitPrice?.Value;
     
           output.push({
             PurchId: purchId,
@@ -262,10 +260,8 @@ export class ExceptionsService {
             RemainInventPhysical: remainInventPhysical || '',
             UnitPrice: unitPrice || ''
           });
-        })
-      }
     });
-  
+    console.log('output',output);
     return output;
   }
 }

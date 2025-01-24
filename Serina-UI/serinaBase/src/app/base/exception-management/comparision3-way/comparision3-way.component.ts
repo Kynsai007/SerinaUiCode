@@ -597,7 +597,6 @@ export class Comparision3WayComponent
     } else if (this.router.url.includes('serviceDetails')) {
       this.Itype = 'Service';
     }
-    console.log(this.showPdf)
 
     if (this.router.url.includes('Create_GRN_inv_list') || this.router.url.includes('GRN_approvals') || this.GRN_PO_Bool) {
       if (this.permissionService.GRNPageAccess == true) {
@@ -607,11 +606,13 @@ export class Comparision3WayComponent
         this.currentTab = 'line';
         if (this.GRN_PO_Bool) {
           if(this.dataService.isEditGRN){
-            this.tagService.headerName = 'Update GRN'
+            this.tagService.headerName = 'Update GRN';
+            this.Itype = 'GRN';
           } else {
             this.tagService.headerName = 'Create GRN with PO';
+            this.Itype = 'PO';
           }
-          this.Itype = 'PO';
+          
           this.getInvoiceFulldata_po();
         } else {
           if (this.router.url.includes('GRN_approvals')) {
@@ -818,7 +819,13 @@ export class Comparision3WayComponent
       for(const line in ele){
         linesData[i][line] = {Value: ele[line]}
       }
-      linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical']}
+      if (this.client_name === 'Cenomi' && !this.dataService.isEditGRN) {
+        linesData[i]['GRNQty'] = { Value: '' };
+      } else if(this.client_name === 'Cenomi' && this.dataService.isEditGRN) {
+        linesData[i]['GRNQty'] = { Value: ele['GRNQty'] };
+      } else {
+        linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical'] };
+      }
       const unitPrice = parseFloat(ele?.UnitPrice?.replace(/,/g, ''));
       let amount;
       if(this.dataService.isEditGRN){
@@ -827,9 +834,13 @@ export class Comparision3WayComponent
         amount = (unitPrice * ele.PurchQty).toFixed(2);
       }
       this.GRN_line_total += Number(amount);
-      linesData[i]['GRNAmountExcTax'] = {Value: amount}
+      if(this.client_name === 'Cenomi' && !this.dataService.isEditGRN){  
+        linesData[i]['GRNAmountExcTax'] = {Value: ''}
+      } else {
+        linesData[i]['GRNAmountExcTax'] = {Value: amount}
+      }
+      
     })
-    console.log(linesData)
     // this.dataService.GRN_PO_Data.forEach((ele, i) => {
     //   const tagMappings = {
     //     'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
@@ -906,7 +917,6 @@ export class Comparision3WayComponent
     this.po_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Qty');
     this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
     this.lineDisplayData = linesData;
-    console.log(this.lineDisplayData)
     let arr = linesData;
     setTimeout(() => {
       // arr.forEach((ele1) => {
@@ -933,7 +943,11 @@ export class Comparision3WayComponent
   getInvoiceFulldata_po() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.SharedService.getInvoiceInfo(false,'po').subscribe(
+    let doc_type = 'po';
+    if(this.Itype == 'GRN'){
+      doc_type = 'grn'
+    }
+    this.SharedService.getInvoiceInfo(false,doc_type).subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
         // data.ok.headerdata.forEach((element) => {
@@ -965,7 +979,7 @@ export class Comparision3WayComponent
       //  }
         this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
         if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
-          if (this.manpower_metadata?.length < 1) {
+          if (this.manpower_metadata?.length < 1 && !this.dataService.isEditGRN) {
             this.manpowerMetadataFunction();
           } else {
             this.createTimeSheetDisplayData('old');
@@ -1020,7 +1034,6 @@ export class Comparision3WayComponent
     if(this.Itype == 'Service'){
       doc_type = 'invoice'
     }
-
     this.SharedService?.getInvoiceInfo(bool,doc_type.toLowerCase()).subscribe(
       (data: any) => {
         let response = data.ok;
@@ -1049,7 +1062,6 @@ export class Comparision3WayComponent
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
-        console.log(this.costAllocation)
         this.inputData = response?.headerdata;
         // this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
@@ -1131,6 +1143,16 @@ export class Comparision3WayComponent
         }
 
         if (this.lineDisplayData.length > 0) {
+            this.lineDisplayData.forEach((element) => {
+            if(this.client_name == 'Cenomi'){
+                this.lineItems?.forEach(item=>{
+                  if(item?.itemCode == element?.invoice_itemcode){
+                    element.lines.Description.po_line.Value = `${item?.itemCode}-${item?.Name}-${item?.UnitPrice}-${item?.SHIP_TO_ORG}-${item?.Qty}`
+                  }
+                })
+            }
+          })
+
           this.lineTableHeaders = Object.keys(this.lineDisplayData[0].lines)
             .sort((a, b) => (fieldOrder[a] || 100) - (fieldOrder[b] || 100));
         }
@@ -1833,7 +1855,6 @@ export class Comparision3WayComponent
   }
 
   saveChanges() {
-    console.log(this.updateInvoiceData)
     if (!this.isAmtStr && !this.isEmpty) {
       if (this.updateInvoiceData) {
         this.SharedService.updateInvoiceDetails(this.updateInvoiceData
@@ -2521,7 +2542,6 @@ export class Comparision3WayComponent
     this.rejectionUserId = event;
   }
   onChangeGrn(fieldName, val,linedata) {
-    console.log()
     // const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_qty_value = linedata?.PurchQty?.Value;
@@ -2559,7 +2579,6 @@ export class Comparision3WayComponent
     }
   }
   onChangeGrnAmount(lineItem, val) {
-    console.log(lineItem);
     // const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
     // .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     const grnQty = (Number(val) / Number(lineItem?.UnitPrice?.Value)).toFixed(this.decimal_count);
@@ -2598,19 +2617,16 @@ export class Comparision3WayComponent
             this.GRN_line_total = this.GRN_line_total + Number(ele[label].Value);
         } else if(label === 'GRNQty'){
           if(ele?.LineNumber?.Value == lineItem.LineNumber?.Value){
-            console.log(ele[label].Value,grnQty);
             ele[label].Value = grnQty;
             ele[label].ErrorDesc = "Quantity changed";
           }
         }
       })
     })
-    console.log(this.lineDisplayData)
   }
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
-      console.log(unitPrice,newQuantity)
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
       // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
       //   .linedata.find(data => data[field] === lineItem[field]);
@@ -2643,11 +2659,9 @@ export class Comparision3WayComponent
   deleteGrnLine(id) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool:boolean) => {
-      console.log(id)
       if (bool) {
         this.SpinnerService.show();
         this.lineDisplayData = this.lineDisplayData.filter(record => {
-          console.log(record)
           return record?.LineNumber?.Value !== id?.LineNumber?.Value;
         });
         this.GRN_line_total = 0;
@@ -2658,7 +2672,6 @@ export class Comparision3WayComponent
             }
           })
         })
-        console.log(this.GRNObject)
         // this.GRNObject = this.GRNObject.filter(val => {
         //   return val?.idDocumentLineItems != id
         // })
@@ -2896,7 +2909,7 @@ export class Comparision3WayComponent
             if (this.router.url.includes("GRN_approvals")) {
               if (ele == 'Quantity') {
                 let obj = {
-                  line_id: objV?.invoice_itemcode?.Value,
+                  line_id: objV?.ItemCode,
                   quantity: objV[ele]?.Value,
                 }
                 arr.push(obj)
@@ -2922,7 +2935,6 @@ export class Comparision3WayComponent
         grnWithPOPayload.push(objData)
 
       })
-      console.log(grnWithPOPayload)
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
       let extra_param = '';
@@ -3063,7 +3075,7 @@ export class Comparision3WayComponent
   validateInvPOUnitPrice() {
     let arr = []
     this.lineDisplayData.forEach(el=>{
-      arr.push({"invoice_itemcode": el.invoice_itemcode.Value});
+      arr.push({"invoice_itemcode": el.ItemCode});
     })
     this.SharedService.validateUnitprice(arr).subscribe((data: any) => {
       if (data.result.length > 0) {
@@ -3158,7 +3170,6 @@ export class Comparision3WayComponent
             }
             return el;
           })
-          console.log(this.lineDisplayData)
           this.SpinnerService.hide();
         }
         this.SpinnerService.hide();
@@ -3677,10 +3688,8 @@ export class Comparision3WayComponent
         this.support_doc_list = [];
         this.SpinnerService.show();
         this.SharedService.deleteSupport(file).subscribe((data:any)=>{
-          console.log(data)
           if(data.status == 'success'){
             this.support_doc_list = data.files;
-            console.log(this.support_doc_list)
             this.success("Deleted successfully.");
             this.SpinnerService.hide();
           }
@@ -4163,7 +4172,6 @@ export class Comparision3WayComponent
 
   }
   calculateCost() {
-    console.log(this.lineData)
     let totalpoCost = 0;
     let totalinvCost = 0;
     this.lineData?.forEach(el=>{
@@ -4515,7 +4523,6 @@ export class Comparision3WayComponent
     })
   }
   onHighlight(data) {
-    console.log(data)
     this.rectData = data;
   }
   onChecked(value) {

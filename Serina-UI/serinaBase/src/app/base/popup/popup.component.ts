@@ -71,6 +71,7 @@ export class PopupComponent implements OnInit {
     { header: 'Shift', field: 'shiftName'}
   ];
   disabledSaveMetadata: boolean = true;
+  decimal_count: any;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -93,6 +94,8 @@ export class PopupComponent implements OnInit {
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
     this.isEditGRN = this.ds?.isEditGRN;
+    this.decimal_count = this.ds?.configData?.miscellaneous?.No_of_Decimals;
+
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -186,7 +189,6 @@ export class PopupComponent implements OnInit {
     })
   }
   calculateAmount(data){
-    console.log(data)
     let lineTotal;
     if (data?.DiscPercent && data?.DiscPercent != '0') {
       lineTotal = data?.Quantity * data?.UnitPrice * (1 - data?.DiscPercent / 100);
@@ -205,14 +207,14 @@ export class PopupComponent implements OnInit {
       if (boolean) {
         this.selectedPOLines.push(data);
         let lineTotal = this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(this.decimal_count));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
         let lineTotal= this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(this.decimal_count));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     }
@@ -230,7 +232,7 @@ export class PopupComponent implements OnInit {
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
         let lineTotal = this.calculateAmount(val);
         // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(this.decimal_count));
         // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
       const allData = [...this.POLineData]
@@ -257,7 +259,7 @@ export class PopupComponent implements OnInit {
         el[el_flied] = qty;
       }
       let lineTotal = this.calculateAmount(el);
-      this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+      this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(this.decimal_count));
       // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
     // this.linesTotal = 0;
@@ -491,7 +493,6 @@ export class PopupComponent implements OnInit {
             })
           }
           this.timeSheet = []
-          console.log(sampleData)
           if(date && date1){
             this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
           }
@@ -721,7 +722,7 @@ export class PopupComponent implements OnInit {
   manpowerCreateFunction() {
     this.replicaSheetData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
     // Step 1: Filter out the entries where "isTimesheet" value is false
-    const isTimesheetsItems = this.replicaSheetData.filter((item:any) => item['isTimesheets'].Value == true);
+    const isTimesheetsItems = this.replicaSheetData.filter((item:any) => item['isTimesheets']?.Value == true);
     let tableData = [];
     isTimesheetsItems.forEach((s, index) => {
       const s_count: number = s['shifts']?.Value;
@@ -753,7 +754,7 @@ export class PopupComponent implements OnInit {
     this.manPowerData.forEach(ele=>{
       if(ele.LineNumber.Value == lineNumber){
         for(const tag in ele){
-          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
             if(ele[tag].Value){
               totalShiftsData = totalShiftsData + Number(ele[tag].Value)
             }
@@ -765,10 +766,10 @@ export class PopupComponent implements OnInit {
       }
     });
     if(shiftsCount > 0){
-      const grnQty = totalShiftsData / (shiftsCount * Number(numberOfDays));
+      const grnQty = totalShiftsData / (Number(numberOfDays));
       this.manPowerData.forEach(ele=>{
         if(ele.LineNumber.Value == lineNumber){
-          ele.GRNQty.Value = grnQty.toFixed(3);
+          ele.GRNQty.Value = grnQty.toFixed(this.decimal_count);
         }
       });
     }

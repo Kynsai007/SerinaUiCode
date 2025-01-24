@@ -341,10 +341,12 @@
 
     <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
        
-      <table class=" mt-2 w-100" id="grnTable">
+      <table class=" mt-2 w-100" id="manPowerTable">
         <!-- <tr class="invert_tr" style="width: 50px"> -->
           <tr >
-            <th class="lineName" *ngFor="let tag of manPowerTable">{{tag.header}}</th>
+            <th class="lineName" *ngFor="let tag of manPowerTable">
+              <div [ngStyle]="{'max-width': tag.header == 'S.No' ? '50px':''}">{{tag.header}}</div>
+            </th>
           </tr>
           <!-- <td
             class="lineName invert_th_td text-center"

@@ -140,7 +140,7 @@ $theme_color: var(--themeColor);
   align-items: center;
   width: 50px;
   background: white;
-  border: 1px solid lightgray;
+  // border: 1px solid lightgray;
 }
 .count-h {
   min-height: 56px;
@@ -168,4 +168,8 @@ $theme_color: var(--themeColor);
   position: absolute;
     bottom: -26px;
     right: 30px;
+}
+#manPowerTable th, td {
+  vertical-align: middle;
+  border: 1px solid lightgray;
 }
