@@ -173,3 +173,7 @@ $theme_color: var(--themeColor);
   vertical-align: middle;
   border: 1px solid lightgray;
 }
+.manpower_t_meta {
+  max-height: 189px;
+  overflow: auto;
+}

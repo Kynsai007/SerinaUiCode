@@ -476,11 +476,12 @@ export class Comparision3WayComponent
       { header: 'Actions', field:''}
     ];
 
+
+    if (this.client_name == 'Cenomi') {
+      commonTags.splice(6, 0, { header: 'PO Remaining %', field: 'percentage_po'});
+    }
     this.GRN_PO_tags = [...commonTags];
 
-    if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(6, 0, { header: 'PO Remaining %', field: 'RemainPurchPhysical'});
-    }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
@@ -838,6 +839,17 @@ export class Comparision3WayComponent
         linesData[i]['GRNAmountExcTax'] = {Value: ''}
       } else {
         linesData[i]['GRNAmountExcTax'] = {Value: amount}
+      }
+
+      if(this.client_name === 'Cenomi' && this.GRN_PO_Bool){
+        const POQty = ele?.PurchQty ? parseFloat(ele.PurchQty.replace(/,/g, '')) : 0;
+        const POBalanceQty = ele?.RemainPurchPhysical ? parseFloat(ele.RemainPurchPhysical.replace(/,/g, '')) : 0;
+        let percentage = '0.00';
+        if (POQty !== 0) {
+          // const PORemaining =  (POQty - POBalanceQty) * 100;
+          percentage = ((POBalanceQty / POQty) * 100).toFixed(2);
+        }
+        linesData[i]['percentage_po'] = {Value: percentage}
       }
       
     })

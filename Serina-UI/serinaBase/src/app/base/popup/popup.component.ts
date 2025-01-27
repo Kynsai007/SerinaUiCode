@@ -671,6 +671,10 @@ export class PopupComponent implements OnInit {
     })
   }
   updateManpowerMetadata(index: number, field: string, value: any, row: any) {
+    if(!value){
+      this.disabledSaveMetadata = false;
+      return;
+    }
     this.manPowerMetadata[index][field] = value;
     let existingRecord = this.ds.grn_manpower_metadata.headerFields.find(el => el.itemCode == row);
     if (existingRecord) {

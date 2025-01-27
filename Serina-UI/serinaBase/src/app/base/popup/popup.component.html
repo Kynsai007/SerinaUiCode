@@ -1,4 +1,4 @@
-<section class="p-4" cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="position: relative;">
+<section class="p-4 resizable-dialog" cdkDragResize   style="position: relative;">
   <div class="d-flex justify-content-between">
     <h6 class="f-14">
       <span *ngIf="type.includes('flip')"
@@ -446,30 +446,32 @@
 
   <div *ngIf="type == 'manpower_metadata'">
     <!-- {{manPowerMetadata | json}} -->
-    <table *ngIf="manPowerMetadata.length > 0"           
-      style="border-collapse: collapse"
-      class="table table-bordered f-11">
-      <thead >
-        <tr class="f-12 tb_head">
-          <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of manPowerMetadata; let i = index">
-          <td>{{row.description}}</td>
-          <td>
-            <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
-          </td>
-          <td>
-            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
-          </td>
-
-          <td>
-            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="manpower_t_meta">
+      <table *ngIf="manPowerMetadata.length > 0"           
+        style="border-collapse: collapse"
+        class="table table-bordered f-11">
+        <thead >
+          <tr class="f-12 tb_head">
+            <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of manPowerMetadata; let i = index">
+            <td>{{row.description}}</td>
+            <td>
+              <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
+            </td>
+            <td>
+              <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
+            </td>
+  
+            <td>
+              <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="f-11">
       <div class="f-13">Instructions:</div>
       1. Check the "is Timesheets" box if you want to add manpower data for a specific line. <br>

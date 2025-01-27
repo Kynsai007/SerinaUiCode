@@ -1259,6 +1259,8 @@ export class UploadSectionComponent implements OnInit {
     this.minutes = "00";
     this.progress = null;
     this.progressbar = 0;
+    this.progressText = "";
+    delete this.progressEvent;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
       this.selectedSAccount = [];
@@ -1300,6 +1302,7 @@ export class UploadSectionComponent implements OnInit {
     this.showFunFactsComponent = true;
     this.isError = false;
     this.progress = 1;
+    delete this.progressWidth;
     delete this.progressEvent;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);

@@ -1372,6 +1372,7 @@ dialog::backdrop {
 }
 .mat-dialog-container {
   padding: 0px 0px 20px 0px !important;
+  resize: both;
 }
 @media screen and (max-width: 576px) {
   .d_mobile {
