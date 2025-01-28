@@ -1860,7 +1860,8 @@ export class Comparision3WayComponent
       } else if (this.isEmpty) {
         err = "'Description' field cannot be empty";
       }
-      this.error(err)
+      this.error(err);
+      this.isEmpty = false;
       // this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
   }

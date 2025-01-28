@@ -210,10 +210,10 @@
                 [(ngModel)]="sendMail"
                 class="form-control mt-4 h-55"
                 placeholder="Enter your mail Id"
-              /><br />
+              />
   
-              <div *ngIf="errorMail" class="alert alert-danger f-13 mt-3 mb-0">
-                {{ errorMailText }}
+              <div *ngIf="errorMail" class="alert alert-danger f-13 mb-0">
+                Please enter a valid registered email Id
               </div>
               <button
                 *ngIf="showSendbtn"
@@ -245,7 +245,7 @@
             <!-- Reset password -->
             <div *ngIf="resetPassword">
               <h5 class="log-head mt-2 mb-3">Reset your Password</h5>
-  
+              <label class="f-12 mb-2" for="otp">Please enter the OTP sent to your registered email Id</label><br>
               <div class="otp">
                 <ng-otp-input
                   #ngOtpInput
