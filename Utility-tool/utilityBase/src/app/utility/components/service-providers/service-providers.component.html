@@ -1,101 +1,6 @@
-<div class="d-flex justify-content-between pageHeader">
-    <h6 class="font_weight ml-3">Service Providers List</h6>
-    <div class="mr-4" style="display: flex">
-      <!-- <button
-        type="button"
-        class="btn btnadd btn-sm"
-        style="flex: 68%; font-size: small;"
-        data-toggle="modal"
-        data-target="#exampleModalCenter"
-      >
-        <i class="fa fa-plus"></i> New Service Provider</button> -->
-      <div class="selectFilter mr-2">
-        <select
-          class="form-control inputField f-12"
-          [(ngModel)]="onboard_status"
-          (change)="selectedType($event.target.value)"
-        >
-          <option value="" style="font-weight: 500" disabled selected>
-            Select status
-          </option>
-          <option *ngFor="let element of onBoardArray" [value]="element.name">
-            {{ element.name }}
-          </option>
-        </select>
-      </div>
-      <div class="selectFilter mr-2">
-        <!-- <select
-          class="form-control inputField f-12"
-          [(ngModel)]="selectedEntityId"
-          (change)="selectEntity($event.target.value)"
-        >
-          <option value="" style="font-weight: 500" disabled selected>
-            Select Entity
-          </option>
-          <option value="ALL" style="font-weight: 500">ALL</option>
-          <option *ngFor="let entity of entity" [value]="entity.idEntity">
-            {{ entity.EntityName }}
-          </option>
-        </select> -->
-        <p-autoComplete
-          placeholder="Search or select from dropdown"
-          id="entity_v"
-          (onSelect)="selectEntity($event)"
-          [group]="false"
-          [suggestions]="filteredEnt"
-          (completeMethod)="filterEntity($event)"
-          field="EntityName"
-          [dropdown]="true"
-          [completeOnFocus]="true"
-          [autofocus]="true"
-          name="EntityName"
-          [(ngModel)]="selected_ent"
-        >
-        </p-autoComplete>
-      </div>
-  
-      <p-autoComplete
-        placeholder="Search or select from dropdown"
-        id="vendr_ci"
-        (onSelect)="selectService($event)"
-        [group]="false"
-        [suggestions]="filteredService"
-        (completeMethod)="filterServices($event)"
-        field="ServiceProviderName"
-        [dropdown]="true"
-        name="vendor"
-        [(ngModel)]="selected_sp"
-      >
-      </p-autoComplete>
 
-      <button
-        type="button"
-        class="btn btnadd btn-sm f-12 ml-2"
-        style="width: 120px;font-size: 12px;"
-        (click)="filter()"
-      >
-        Filter
-      </button>
-      <!-- <input
-        class="inputField form-control"
-        style="margin-left: 1rem"
-        type="text"
-        name="search"
-        [(ngModel)]="spNameForSearch"
-        placeholder=" Search Service Provider...."
-      />
-      <button
-        type="button"
-        class="btn btnadd btn-sm ml-1"
-        style="flex: 68%; font-size: small"
-        (click)="filteSP()"
-      >
-        Filter
-      </button> -->
-    </div>
-  </div>
   
-  <div class="d-flex justify-content-center h-ele" style="margin-top: -18px">
+  <!-- <div class="d-flex justify-content-center h-ele" style="margin-top: -18px;display: none;">
     <div
       *ngIf="listLoading; else spinner"
       class="scroller"
@@ -119,10 +24,7 @@
               <h6 class="card-subtitle mb-2">
                 <small>{{ sp.EntityName }}</small>
               </h6>
-              <!-- <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a> -->
               <div class="btn_position">
-                <!-- <button class="btn btnbg f-13 mr-40">New Template</button> -->
                 <div class="d-flex justify-content-between">
                   <div
                     *ngIf="sp.OnboardedStatus == 'Onboarded'"
@@ -160,7 +62,237 @@
     <ng-template #spinner>
       <div class="loader"></div>
     </ng-template>
+  </div> -->
+
+  <div class="venbody">
+    <div class="fil-part">
+      <!-- Add content for the left side -->
+      <div class="head-part">
+        <h3>Filters({{activeFilterCount}})</h3>
+        <div class="icon">
+          <span class="material-icons fil-icon">filter_list</span>
+        </div>
+      </div>
+      <!-- <div class="search-box">
+        <input
+          type="text"
+          placeholder="Vendor search"
+          id="vendr_c"
+          [(ngModel)]="selected_Vendor"
+          (input)="searchVendordata($event)"
+          name="vendor"
+          style="border: none; outline: none; flex: 1;"
+        />
+        <button (click)="selectedVendor(selected_Vendor)" class="srch-button">
+          <span class="material-icons search-icon">search</span>
+        </button>
+      </div> -->
+      <!-- <div class="fil-checkb">
+        <h4>Status</h4>
+        <div class="checkbox-group">
+          <label class="custom-checkbox" *ngFor="let item of statusItems">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="item.checked"
+              (change)="onStatusChange(item)"
+            />
+            <div class="status-container">
+              <span
+                class="status-indicator"
+                [ngClass]="
+                  item.label === 'Onboarded'
+                    ? 'indicate_success'
+                    : item.label === 'Not Onboarded'
+                    ? 'indicate_failure'
+                    : 'indicate_warning'
+                ">
+              </span>
+              <span>{{ item.label }}</span>
+            </div>
+          </label>
+        </div>
+      </div> -->
+      <div class="fil-proj">
+        <div>
+          <h4>Service Provider</h4>
+          <p-autoComplete
+            placeholder="Service Provider search"
+            id="vendr_c"
+            (onSelect)="selectService($event)"
+            [group]="false"
+            [suggestions]="filteredService"
+            (completeMethod)="filterServices($event)"
+            field="ServiceProviderName"
+            [dropdown]="true"
+            [completeOnFocus]="true"
+            [autofocus]="true"
+            name="ServiceProviderName"
+            [(ngModel)]="selected_sp"
+          >
+          </p-autoComplete>
+        </div>
+        <div class="entity-drop">
+          <h4>Entity</h4>
+          <p-autoComplete
+            placeholder="Entity search"
+            id="entity_v"
+            (onSelect)="selectEntity($event)"
+            [group]="false"
+            [suggestions]="filteredEnt"
+            (completeMethod)="filterEntity($event)"
+            field="EntityName"
+            [dropdown]="true"
+            [completeOnFocus]="true"
+            [autofocus]="true"
+            name="EntityName"
+            [(ngModel)]="selected_ent"
+          >
+          </p-autoComplete>
+        </div>
+        <div class="status-drop">
+          <h4>Status</h4>
+          <select
+            class="form-control inputField f-12"
+            [(ngModel)]="onboard_status"
+            (change)="selectedType($event.target.value)"
+          >
+            <option value="" style="font-weight: 500" disabled selected>
+              Select status
+            </option>
+            <option *ngFor="let element of onBoardArray" [value]="element.name">
+              {{ element.name }}
+            </option>
+          </select>
+        </div>
+        <div class="butn-div">
+          <button
+            type="button"
+            class="btn btnadd btn-sm f-12 ml-2"
+            (click)="filter()"
+            >
+            Apply Filter
+          </button>
+        </div>
+      </div>
   </div>
+  <div class="d-flex justify-content-center">
+      <!-- Main content area -->
+          <div
+            *ngIf="listLoading; else spinner"
+            class="scroller"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [scrollWindow]="false"
+            (scrolled)="onScroll()"
+            >
+            <div class="animate-bottom">
+            <div
+              *ngIf="SPListDispaly.length != 0"
+              class="d_flex vendor_div"
+            >
+              <div
+                *ngFor="let vendor of SPListDispaly; let i = index"
+                class="card  box_shadow card_shape"
+                >
+                <div
+                  class="status-badge"
+                  [ngClass]="vendor.OnboardedStatus == 'Onboarded' ? 'sb_color' : 'rb_color'"
+                >
+                  <span
+                    class="status-indicator"
+                    [ngClass]="vendor.OnboardedStatus == 'Onboarded' ? 'indicate_success' : 'indicate_failure'"
+                  ></span>
+                  {{vendor.OnboardedStatus}}
+                </div>
+                <!-- <div class="card-body"> -->
+                  <div class="typ-dis">
+                    <div class="card-typ">
+                      <img src="assets/Group 145@2x.png" *ngIf="!vendor?.ocrEngine?.includes('OpenAI')">
+                      <img src="assets/Group 300@2x.png" *ngIf="vendor?.ocrEngine?.includes('OpenAI')">
+                      <span>{{ vendor.ocrEngine }}</span>
+                    </div>
+                    <div class="edt-button"  (click)="vendor?.ocrEngine?.includes('OpenAI') ? open_ai_vendor(vendor.idVendor,vendor.VendorName,vendor?.ocrEngine ): frUpdate(vendor)">
+                      <img src="assets/Group 146@2x.png">
+                    </div>
+                  </div>
+                  <div class="full-title">
+                    <div class="vendor-det">
+                      <span class="card-subtitle">{{ vendor.ServiceProviderName }} </span><br>
+                      <span class="card-subcode">{{vendor.ServiceProviderCode}}</span>
+                    </div>
+                    <div class="title-icon">
+                      <img src="assets/Group 86@2x.png">
+                    </div>
+                  </div>
+                  <div class="full-ent">
+                    <div class="entity-det">
+                      <span class="card-subtitle">{{ vendor.EntityName }} </span><br>
+                      <span class="card-subcode">{{vendor.EntityCode}}</span>
+                    </div>
+                    <div class="title-icon">
+                      <img src="assets/Group 87@2x.png">
+                    </div>
+                  </div>
+                  <div class="radio-input">
+                    <label>
+                      <input
+                        type="radio"
+                        id="value-1"
+                        name="value-radio-{{i}}" 
+                        value="1"
+                        [checked]="vendor.ocrEngine !== 'OpenAI(Global)'"
+                      />
+                      <span>DI</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        id="value-2"
+                        name="value-radio-{{i}}" 
+                        value="2"
+                        [checked]="vendor.ocrEngine === 'OpenAI(Global)'"
+                      />
+                      <span>Open AI</span>
+                    </label>
+                    <span class="selection"></span>
+                  </div>
+  
+                  <!-- <h5 class="card-subtitle f-14">
+                    {{ vendor.VendorName }} - {{vendor.VendorCode}}
+                  </h5> -->
+                  <!-- <h6 class="card-subtitle mb-2">
+                    <small>{{ vendor.EntityName }} - {{ vendor.EntityCode }}</small>
+                  </h6> -->
+                  <!-- <div class="btn_position">
+                    <div class="d-flex justify-content-between">
+                      <div>
+                        FR Update
+                        <button
+                          class="btn btnbg f-13 ml-3"
+                          (click)="frUpdate(vendor)"
+                        >
+                          <i
+                            class="fa fa-arrow-right"
+                            style="color: #ffffff"
+                          ></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div> -->
+                <!-- </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="SPListDispaly.length == 0" class="f-13 error-msg">
+          No Data found.
+        </div>
+        <ng-template #spinner>
+          <div class="loader"></div>
+        </ng-template>
+    </div>
+  </div>
+
   <div
     class="modal fade bd-example-modal-lg"
     id="exampleModalCenter"

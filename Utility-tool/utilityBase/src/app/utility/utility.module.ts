@@ -30,9 +30,13 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ServiceProvidersComponent } from './components/service-providers/service-providers.component';
 import { FrUpdateSpComponent } from './components/fr-update-sp/fr-update-sp.component';
 import { CustomersComponent } from './components/customers/customers.component';
+import { ConfirmationComponent } from './components/confirmation/confirmation.component';
+import { AppNotificationComponent } from './components/app-notification/app-notification.component';
+
+import { ImportModules } from '../import-modules';
 
 @NgModule({
-  declarations: [HomeComponent, VendorsComponent, UtilityHomeComponent, GuideComponent, FrUpdateComponent, ModalOnBoardComponent, MobComponent, TaggingtoolComponent, TrainingtoolComponent, ComposingtoolComponent, TestingtoolComponent, MobmainComponent, ServiceProvidersComponent, FrUpdateSpComponent, CustomersComponent],
+  declarations: [HomeComponent, VendorsComponent, UtilityHomeComponent, GuideComponent, FrUpdateComponent, ModalOnBoardComponent, MobComponent, TaggingtoolComponent, TrainingtoolComponent, ComposingtoolComponent, TestingtoolComponent, MobmainComponent, ServiceProvidersComponent, FrUpdateSpComponent, CustomersComponent, ConfirmationComponent, AppNotificationComponent],
   imports: [
     CommonModule,
     UtilityRoutingModule,
@@ -48,7 +52,8 @@ import { CustomersComponent } from './components/customers/customers.component';
     ChipsModule,
     MultiSelectModule,
     InfiniteScrollModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    ImportModules
   ],
   providers:[MessageService]
 })

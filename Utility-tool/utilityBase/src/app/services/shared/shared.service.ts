@@ -29,7 +29,7 @@ export class SharedService {
   private customerData: Observable<any>; 
   private SPData: Observable<any>;
   finalJsonData = new Subject();
-
+  snackBarRef: any;
   modelData: any;
   modelObsevable: Observable<any>
   configDataSubject: BehaviorSubject<any>;
@@ -60,7 +60,7 @@ export class SharedService {
   spNameForSearch = 'ALL';
   selected_Vendor = {VendorName: 'ALL', idVendor: "ALL"};
   selected_ent = {EntityName: 'ALL', idEntity: 'ALL'};
-  selected_sp: any;
+  selected_sp = {ServiceProviderName: 'ALL', idServiceProvider: "ALL"};
   currencies = [ 
     {"currency":"AED",
     "description":"United Arab Emirates Dirham"},
@@ -756,5 +756,13 @@ export class SharedService {
     }
     readCategory() {
       return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntityCategory/${this.userId}?ent_id=${this.selectedEntityId}`).pipe(retry(3));
+    }
+
+
+
+    closeSnackbar():void {
+      if (this.snackBarRef) {
+        this.snackBarRef.dismiss();
+      }
     }
 }

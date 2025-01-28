@@ -1,156 +1,592 @@
-$theme_color: rgb(53, 141, 192);
 .d_flex {
-    display: flex;
-    flex-wrap: wrap;
-    // justify-content: space-evenly;
+  display: flex;
+  flex-wrap: wrap;
+  // justify-content: space-evenly;
+}
+// .scroller{
+//   height: 86vh;
+//   overflow-y:scroll;
+//   position: relative;
+//   left: 15px;
+//   // display: initial;
+// }
+.scroller {
+  // right: 0; 
+  // width: calc(100% - 255px); 
+  height: calc(100vh - 100px); 
+  overflow: auto; 
+  // overflow-x: hidden; 
+  // scrollbar-width: auto;
+  // -ms-overflow-style: auto; 
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+// .scroller::-webkit-scrollbar {
+//   display: none;
+// }
+.search-results{
+  height: 100%;
+  overflow: scroll;
+}
+.inputField {
+  height: 32px;
+  font-size: 13px;
+  font-weight: 600;
+  width: 194px;
+}
+.box_shadow {
+  border: 0;
+  // box-shadow: 1px 1px 7px rgb(206 200 183 / 77%);
+}
+.btncancel{
+  background-color: #ffffff;
+  color: #273c75;
+  border: 1px solid #273c75;
+}
+.modal-title{
+  color: #273c75;
+}
+.btncancel:hover{
+  background-color: #273c75;
+  color: #ffffff;
+  border: none;
+}
+.btnadd{
+  background-color: #273c75;
+  color: #ffffff;
+  width: 101px;
+  font: normal normal bold 13px/15px Calibri;
+  // position: relative;
+  // top: 60px;
+  // left: 84px;
+  height: 32px;
+}
+.card{
+  width: 345px;
+  height: 254px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #E9EAF2;
+  border-radius: 0px 18px 18px;
+  opacity: 1;
+  margin-bottom: 30px;
+}
+.card-body{
+  background-color: #ffffff;
+  width: 345px;
+  height: 254px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #E9EAF2;
+  border-radius: 0px 18px 18px;
+  opacity: 1;
+}
+.loader{
+  zoom: 0.3;
+  margin-top: 100px;
+  position: relative;
+  left: 100px;
+}
+.card-title{
+  color: #192a56;
+  font-weight:600px;
+}
+small{
+  color: #d98691;
+  font-weight: bolder;
+}
+.m3{
+  margin: 1.2rem;
+}
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  margin-top: -10px;
+}
+.card-text{
+  font-size:x-small;
+}
+// .card_shape {
+//   min-height: 170px;
+//   max-height: 170px;
+//   width: 18rem;
+// }
+.btn_position {
+  position: absolute;
+  bottom: 10px;
+  /* right: 10px; */
+  color: #192a56;
+  font-size: small;
+  font-weight: bolder;
+  width: 100%;
+  left: 0;
+  padding: 0px 10px;
+}
+.mr-40 {
+  margin-right: 40px !important;
+}
+.pageHeader {
+  padding: 10px;
+  background: #fafafa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s;
+}
+
+@-webkit-keyframes animatebottom {
+  from {
+    bottom: -100px;
+    opacity: 0;
   }
-  .scroller{
-    height: 86vh;
-    overflow-y:scroll;
-  }
-  .search-results{
-    height: 100%;
-    overflow: scroll;
-  }
-  .inputField {
-    height: 35px;
-    font-size: 13px;
-    font-weight: 600;
-    width: 200px;
-  }
-  .box_shadow {
-    border: 0;
-    box-shadow: 1px 1px 7px rgb(206 200 183 / 77%);
-  }
-  .btncancel{
-    background-color: #ffffff;
-    color: #273c75;
-    border: 1px solid #273c75;
-  }
-  .modal-title{
-    color: #273c75;
-  }
-  .btncancel:hover{
-    background-color: #273c75;
-    color: #ffffff;
-    border: none;
-  }
-  .btnadd{
-    background-color: $theme_color;
-    color: #ffffff;
-    font-size:large;
-  }
-  .card-body{
-    background-color: #ffffff;
-  }
-  // .card-body:hover {
-  //   background-color: #193b68;
-  //   color: #ffffff !important;
-  //   transform: scale(1.05);
-  // }
-  .loader{
-    zoom: 0.3;
-    margin-top: 100px;
-  }
-  .card-title{
-    color: #192a56;
-    font-weight:600px;
-  }
-  small{
-    color: #d98691;
-    font-weight: bolder;
-  }
-  .m3{
-    margin: 1.2rem;
-  }
-  .search-icon {
-    position: absolute;
-    top: 50%;
-    right: 25px;
-    margin-top: -10px;
-  }
-  .card-text{
-    font-size:x-small;
-  }
-  .card_shape {
-    min-height: 200px;
-    max-height: 200px;
-    width: 18rem;
-  }
-  .btn_position {
-    position: absolute;
-    bottom: 10px;
-    /* right: 10px; */
-    color: #192a56;
-    font-size: small;
-    font-weight: bolder;
-    width: 100%;
-    left: 0;
-    padding: 0px 10px;
-  }
-  .mr-40 {
-    margin-right: 40px !important;
-  }
-  .pageHeader {
-    padding: 10px;
-    background: #fafafa;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  
-  /* Add animation to "page content" */
-  .animate-bottom {
-    position: relative;
-    -webkit-animation-name: animatebottom;
-    -webkit-animation-duration: 1s;
-    animation-name: animatebottom;
-    animation-duration: 1s;
-  }
-  
-  @-webkit-keyframes animatebottom {
-    from {
-      bottom: -100px;
-      opacity: 0;
-    }
-    to {
-      bottom: 0px;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes animatebottom {
-    from {
-      bottom: -100px;
-      opacity: 0;
-    }
-    to {
-      bottom: 0;
-      opacity: 1;
-    }
-  }
-  :host ::ng-deep {
-    .p-autocomplete {
-      height: 35px;
-    }
-    .p-autocomplete-dd .p-autocomplete-input {
-      font-size: 12px;
-      font-weight: 500;
-      border-right: 0;
-    }
-    .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
-      font-size: 12px;
-      font-weight: 500;
-      color: #272727;
-    }
-    .p-button.p-button-icon-only {
-      background: white;
-      color: black;
-      border-left: 0 !important;
-      border: 1px solid lightgray;
-    }
-    .p-button:enabled:hover {
-      background: #ffffff;
-      color: #000000;
+  to {
+    bottom: 0px;
+    opacity: 1;
   }
 }
+
+@keyframes animatebottom {
+  from {
+    bottom: -100px;
+    opacity: 0;
+  }
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+:host ::ng-deep {
+  .p-autocomplete {
+    height: 32px;
+    width: 194px;
+  }
+  .p-autocomplete-panel .p-autocomplete-items {
+    padding: 0.5rem 0;
+    width: 176px;
+  }
+  .p-autocomplete-dd .p-autocomplete-input {
+    font-size: 12px;
+    font-weight: 500;
+    border-right: 0;
+  }
+  .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+    font: normal normal normal 10px/14px Segoe UI;
+    font-weight: 500;
+    color: #272727;
+  }
+  .p-button.p-button-icon-only {
+    background: white;
+    color: black;
+    border-left: 0 !important;
+    border: 1px solid lightgray;
+  }
+  .p-button:enabled:hover {
+    background: #ffffff;
+    color: #000000;
+}
+.p-autocomplete .p-autocomplete-panel {
+  min-width: 100%;
+}
+}
+.p-autoComplete .p-autocomplete-dropdown {
+  /* Basic button styling */
+  background: transparent;
+  border: none;
+}
+.p-autoComplete .p-autocomplete-dropdown .p-icon {
+  /* You can customize the color, size, etc */
+  color: #000000;
+  font-size: 14px;
+}
+.p-autoComplete .p-autocomplete-dropdown .p-icon:before {
+  content: "\25BC"; /* Unicode for downward triangle */
+  /* Or use a custom icon font */
+}
+
+.status-badge {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  color: black;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 12px 0px 0px 0px;
+  display: flex;
+  align-items: center;
+  min-width: 170px;
+  width: -webkit-max-content;
+  width: max-content;
+  height: 30px;
+  clip-path: polygon(0 0, 69% 0, 86% 100%, 0 100%);
+}
+.sb_color {
+  background-color: #D2FFDC;;
+}
+.rb_color {
+  background-color: #FFE1E1;
+}
+.indicate_success {
+  background:transparent linear-gradient(180deg, #06DB38 0%, #016B1A 100%) 0% 0% no-repeat padding-box;
+}
+.indicate_failure {
+  background:transparent linear-gradient(180deg, #F61212 0%, #A50808 100%) 0% 0% no-repeat padding-box;
+}
+.indicate_warning{
+  background:transparent linear-gradient(180deg, #F6A20D 0%, #A0690A 100%) 0% 0% no-repeat padding-box;
+}
+
+/* Status Indicator (Green Dot) */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.vendor_div {
+  margin-left: 15px;
+  margin-top: 30px;
+  gap: 15px;
+}
+// .fil-part{
+//   background-color: #fafafa;
+//   height: 100%;
+//   width: 238px;
+//   padding-left: 25px;
+// }
+.fil-part {
+  width: 238px;
+  height: calc(100vh - 100px); /* Full viewport height */
+  background-color: white; /* White background */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  z-index: 1; /* Ensure it stays above other content */
+  // padding: 20px; /* Add padding for content inside the filter panel */
+  border-radius: 10px;
+}
+
+.venbody {
+  display: flex;
+  padding: 25px 0px 20px 25px;
+}
+
+
+.head-part{
+  align-items: center;
+  height: 71px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #0F123F14;
+}
+.head-part h3{
+  font: normal normal 600 16px / 21px Segoe UI;
+  letter-spacing: 0px;
+  color: #000000;
+  opacity: 1;
+  font-size: 16px;
+  padding-left: 23px;
+  margin: 0;
+}
+.icon{
+  height: 38px;
+  width: 38px;
+  border: solid 1px #EFEFEF;
+  position: relative;
+  border-radius: 5px;
+  margin-right: 21px;
+}
+.fil-icon{
+  left: 13%;
+  position: relative;
+  top: 21%;
+}
+.search-box{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #ccc;
+  padding-left: 5px;
+  width: 196px;
+  left: 8%;
+  position: relative;
+  top: 5%;
+  padding-bottom: 5px;
+}
+.srch-button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  left: -22%;
+  top: 37%;
+}
+.search-icon{
+  position: relative;
+  right: 170%;
+  top: 31% !important;
+  left: 0px;
+}
+.fil-checkb{
+  position: relative;
+  top: 9%;
+  left: 10%;
+}
+h4{
+  // margin-left: 23px;
+  font: normal normal 700 13px/17px Segoe UI;
+}
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  // left: 9%;
+  padding-top: 10px;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    background-color: #fff;
+    transition: border-color 0.2s ease;
+
+    &:checked {
+      background-color: #1976d2;
+      border-color: #1976d2;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    &:hover {
+      border-color: #1976d2;
+    }
+  }
+
+  span {
+    font-size: 14px;
+    color: #333;
+  }
+}
+.status-container{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.fil-proj{
+  // position: fixed;
+  width: fit-content;
+  margin-left: 23px;
+  margin-right: 21px;
+  margin-top: 18px;
+}
+.entity-drop{
+  position: relative;
+  top: 12px;
+}
+.status-drop{
+  position: relative;
+  top: 24px;
+}
+.butn-div{
+  // position: relative;
+  // top: 80px;
+  display: flex;
+  justify-content: right;
+  margin-top: 130px;
+}
+.error-msg{
+  position: fixed;
+  left: 350px;
+  overflow: initial;
+  bottom: 450px;
+}
+.typ-dis{
+  background: #E6F4FF 0% 0% no-repeat padding-box;
+  height: 44px;
+  width: 100%;
+  border: 1px solid #BADFFC;
+  border-radius: 0px 10px 0px 0px;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-typ{
+  display: flex;
+  position: relative;
+  left: 15px;
+  img{
+    width: 24px;
+    height: 24px;
+  }
+  span{
+    position: relative;
+    left: 8px;
+    text-align: left;
+    font: normal normal 600 12px/16px Segoe UI;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+    top: 3px;
+  }
+}
+// .vendor-det{
+  
+// }
+.card-subtitle{
+  font: normal normal normal 13px/17px Segoe UI;
+  letter-spacing: 0px;
+  color: #000000;
+  opacity: 0.7;
+}
+.card-subcode{
+  font: normal normal 600 13px/17px Segoe UI;
+  letter-spacing: 0px;
+  color: #000000;
+  opacity: 1;
+}
+.full-title{
+  display: flex;
+  min-height: 74px;
+  height: max-content;
+  border-bottom: solid #0F123F14 2px;
+  position: relative;
+  top: 10px;
+  left: 13px;
+  // right: -25px;
+  width: 308px;
+  justify-content: space-between;
+  align-items: center; /* Aligns items vertically */
+}
+.title-icon{
+  width: 35px;
+  height: 42px;
+  flex: 0;
+  img{
+    width: 35px;
+    height: 42px;
+  }
+}
+.full-ent{
+  display: flex;
+  height: max-content;
+  position: relative;
+  top: 20px;
+  left: 13px;
+  // right: -25px;
+  width: 308px;
+  justify-content: space-between;
+  align-items: center; /* Aligns items vertically */
+}
+/* From Uiverse.io by halitgurpinar */ 
+.radio-input input {
+  display: none;
+}
+
+.radio-input {
+  --container_width: 144px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  border-radius: 140px;
+  // background-color: #212121;
+  color: #000;
+  width: var(--container_width);
+  overflow: hidden;
+  border: 1px solid #3543C0;
+  // top: 20px;
+  // left: 180px;
+  bottom: 20px;
+  right: 20px;
+  height: 30px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+}
+
+.radio-input label {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+  letter-spacing: 0px;
+  font: normal normal bold 11px/15px Segoe UI;
+  position: relative;
+  left: 0px;
+  top: 2px;
+}
+
+.selection {
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: calc(var(--container_width) / 2);
+  z-index: 0;
+  left: 0;
+  top: 0;
+  transition: 0.15s ease;
+}
+
+.radio-input label:has(input:checked) {
+  color: #fff;
+  background: #3543C0;
+}
+.edt-button{
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+
+  img{
+    width: 43px;
+    height: 43px;
+  }
+}
+// .radio-input label:nth-child(2):has(input:checked) {
+//   color: #212121;
+// }
+// .radio-input label:nth-child(1):has(input:checked) ~ .selection {
+//   background-color: #080;
+//   display: inline-block;
+// }
+// .radio-input label:nth-child(2):has(input:checked) ~ .selection {
+//   background-color: #fd0;
+//   display: inline-block;
+// }
+// .radio-input label:nth-child(1):has(input:checked) ~ .selection {
+//   transform: translateX(calc(var(--container_width) * 0 / 2));
+// }
+
+// .radio-input label:nth-child(2):has(input:checked) ~ .selection {
+//   transform: translateX(calc(var(--container_width) * 1 / 2));
+// }

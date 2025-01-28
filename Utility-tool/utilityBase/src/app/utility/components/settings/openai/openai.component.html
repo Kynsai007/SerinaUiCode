@@ -79,11 +79,13 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let tag of tags">
-                        <td>{{tag.Name}}</td>
-                        <td>{{tag.Description}}</td>
-                        <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag,'Ismandatory')"></td>
-                        <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag,'isActive')"></td>
-                        <td class="text-center" *ngIf="!isVendorLevel && !isServiceLevel" ><Button class="del_btn"><i class="fa fa-trash-o"></i></Button></td>
+                      <td>{{tag.Name}}</td>
+                      <td><textarea class="form-control desc_field f-13" (blur)="updateTag($event.target.value, tag, 'Description')" 
+                        [style.height]="tag.Description && tag.Description.length>50 ? (tag.Description.length * 0.0395) + 'em' : '20px'">{{tag.Description}}</textarea>
+                      </td>
+                      <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.Ismandatory" (change)="checkTag($event.target.checked,tag,'Ismandatory')"></td>
+                      <td class="text-center"><input type="checkbox"  [Name]="tag.Name" [id]="tag.Name" [checked]="tag.isUsed" (change)="checkTag($event.target.checked,tag,'isActive')"></td>
+                      <td class="text-center" *ngIf="!isVendorLevel && !isServiceLevel" ><Button class="del_btn" (click)="delete_tag(tag)"><i class="fa fa-trash-o"></i></Button></td>
                     </tr>
                 </tbody>
             </table>

@@ -1,7 +1,10 @@
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { OpenAIService } from 'src/app/services/openAI/open-ai.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ConfirmationComponent } from '../../confirmation/confirmation.component';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 @Component({
   selector: 'app-openai',
@@ -48,7 +51,9 @@ export class OpenaiComponent implements OnInit {
   isGlobal: boolean;
   constructor(private router: Router,
     private openAIService : OpenAIService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private mat_dlg: MatDialog,
+    private alertService: AlertService,
   ) { }
 
   ngOnInit(): void {
@@ -111,19 +116,18 @@ export class OpenaiComponent implements OnInit {
     this.tags = this.tags.filter(el=> el.Name.toLowerCase().includes(key.toLowerCase()));
   }
   checkTag(isChecked,tagData,tagName){
-    console.log(tagData,tagName);
+    console.log(tagData,tagName)
     let apiParams = {
       "tagid": 0,
       "isMandatory": true,
       "isActive": true,
-      "isglobal": true,
+      "isglobal": this.isVendorLevel || this.isServiceLevel ? false : true,
       "description": "string"
     }
 
-    apiParams.tagid = tagData.idDefaultFields;
+    apiParams.tagid = tagData.idDefaultFields || tagData.idOpenaiFields;
     apiParams.isMandatory = tagData.Ismandatory || false;
     apiParams.isActive = tagData.isUsed || false;
-    apiParams.isglobal = true;
     apiParams.description = tagData.Description|| '';
     if(tagName == 'Ismandatory'){
       apiParams.isMandatory = isChecked;
@@ -131,9 +135,32 @@ export class OpenaiComponent implements OnInit {
       apiParams.isActive = isChecked;
     }
     this.openAIService.updateTags(apiParams).subscribe((data)=>{
+      this.alertService.success_alert("Tag info updated successfully");
       this.readAllTags();
-    }); 
+    }, err=>{
+      this.alertService.error_alert("Server error");
+    });
   }
+  updateTag(value,tagData,tagName){
+    if(value == '' || tagData.Description == value.trim()){
+      return;
+    }
+    let apiParams = {
+      "tagid": tagData.idDefaultFields || tagData.idOpenaiFields,
+      "isMandatory": tagData.Ismandatory || false,
+      "isActive": tagData.isUsed || false,
+      "isglobal": this.isVendorLevel || this.isServiceLevel ? false : true,
+      "description": value
+    }
+
+    this.openAIService.updateTags(apiParams).subscribe((data)=>{
+      this.alertService.success_alert("Tag info updated successfully");
+      this.readAllTags();
+    }, err=>{
+      this.alertService.error_alert("Server error");
+    });
+  }
+ 
   loadImage() {
     if (this.isImgBoolean == true) {
       console.log('image');
@@ -354,8 +381,10 @@ export class OpenaiComponent implements OnInit {
       context = 'sp';
     }
     this.openAIService.updatePrompt(null,context,this.prompt).subscribe((data)=>{
-      console.log(data);
+      this.alertService.success_alert("Prompt updated successfully");
       this.closeDialog();
+    }, err=>{
+      this.alertService.error_alert("Server error");
     });
   }
   readAllTags(){
@@ -367,7 +396,6 @@ export class OpenaiComponent implements OnInit {
     if(this.ven_ser_id){
       id = this.ven_ser_id;
     }
-    console.log(id)
     this.openAIService.readAllTags(id,context,!this.isHeader).subscribe((data)=>{
       this.tags = data.fields;
       this.prompt = data.tail_prompt;
@@ -379,5 +407,26 @@ export class OpenaiComponent implements OnInit {
   }
   changeHeader(){
     this.readAllTags();
+  }
+  confirmFun(body, type, head) {
+    return this.mat_dlg.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body: body, type: type, heading: head, icon: 'assets/Group 1336.svg' }
+    })
+  }
+
+  delete_tag(tagData){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this tag?', 'confirmation', 'Confirmation')
+    drf.afterClosed().subscribe((bool:boolean)=>{
+      if(bool){
+        this.openAIService.deleteTags(tagData.idDefaultFields).subscribe((data:any)=>{
+          if(data.status == 'success'){
+            this.readAllTags();
+          }
+        })
+      }
+    })
   }
 }

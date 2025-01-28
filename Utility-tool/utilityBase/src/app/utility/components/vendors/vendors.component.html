@@ -1,65 +1,4 @@
-<!-- <div class="d-flex justify-content-between pageHeader">
-  <h6 class="font_weight ml-3">Vendors List</h6>
-  <div class="mr-4" style="display: flex">
-    
-    <div class="selectFilter mr-2">
-      <select
-        class="form-control inputField f-12"
-        [(ngModel)]="onboard_status"
-        (change)="selectedType($event.target.value)"
-      >
-        <option value="" style="font-weight: 500" disabled selected>
-          Select status
-        </option>
-        <option *ngFor="let element of onBoardArray" [value]="element.name">
-          {{ element.name }}
-        </option>
-      </select>
-    </div>
-    <div class="selectFilter mr-2">
-      
-      <p-autoComplete
-        placeholder="Entity search"
-        id="entity_v"
-        (onSelect)="selectEntity($event)"
-        [group]="false"
-        [suggestions]="filteredEnt"
-        (completeMethod)="filterEntity($event)"
-        field="EntityName"
-        [dropdown]="true"
-        [completeOnFocus]="true"
-        [autofocus]="true"
-        name="EntityName"
-        [(ngModel)]="selected_ent"
-      >
-      </p-autoComplete>
-    </div>
 
-    <p-autoComplete
-      placeholder="Vendor search"
-      id="vendr_c"
-      (onSelect)="selectedVendor($event)"
-      [group]="false"
-      [suggestions]="filteredVendors"
-      (completeMethod)="filterVendor($event)"
-      field="VendorName"
-      [dropdown]="true"
-      name="vendor"
-      [(ngModel)]="selected_Vendor"
-    >
-    </p-autoComplete>
-
-    <button
-      type="button"
-      class="btn btnadd btn-sm f-12 ml-2"
-      style="width: 120px;font-size: 12px;"
-      (click)="filter()"
-    >
-      Filter
-    </button>
-    
-  </div>
-</div> -->
 <div class="venbody">
   <div class="fil-part">
     <!-- Add content for the left side -->
@@ -171,9 +110,8 @@
       </div>
     </div>
 </div>
-<div class="d-flex justify-content-center h-ele">
+<div class="d-flex justify-content-center">
     <!-- Main content area -->
-    <div>
         <div
           *ngIf="listLoading; else spinner"
           class="scroller"
@@ -182,11 +120,8 @@
           [scrollWindow]="false"
           (scrolled)="onScroll()"
           >
-          <div class="animate-bottom">
-          <div
-            *ngIf="vendorsListDispaly.length != 0"
-            class="d_flex vendor_div"
-          >
+          <div class="animate-bottom d_flex vendor_div" *ngIf="vendorsListDispaly.length != 0">
+ 
             <div
               *ngFor="let vendor of vendorsListDispaly; let i = index"
               class="card  box_shadow card_shape"
@@ -278,7 +213,6 @@
                 </div> -->
               <!-- </div> -->
             </div>
-          </div>
         </div>
       </div>
       <div *ngIf="vendorsListDispaly.length == 0" class="f-13 error-msg">
@@ -287,7 +221,6 @@
       <ng-template #spinner>
         <div class="loader"></div>
       </ng-template>
-    </div>
   </div>
 </div>
 <div

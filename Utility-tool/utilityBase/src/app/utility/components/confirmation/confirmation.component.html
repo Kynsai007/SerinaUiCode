@@ -1,0 +1,38 @@
+<div>
+    <div class="backg">
+      <img src="assets/OD4FW00.png" alt="theme" />
+      <div class="secondary_icon">
+        <img [src]="data?.icon" alt="close" />
+      </div>
+    </div>
+    <div class="dialog_text f-16">
+      <h6 class="f-16">{{ data?.heading }}</h6>
+      <div class="f-14">Dear User,</div>
+      <div class="f-12 shade_color">{{ componentTxt }}</div>
+    </div>
+  
+    <div class="mr-3 d-flex justify-content-start">
+      <button
+        class="secondaryButton f-12 mr-3"
+        type="button"
+        (click)="closedialog(false)"
+      >
+        <span *ngIf="typeOfDialog != 'poStatus'">{{
+          typeOfDialog == "confirmation" ? "No" : "Ok"
+        }}</span>
+        <span *ngIf="typeOfDialog == 'poStatus'"> Close </span>
+      </button>
+      <button
+        *ngIf="typeOfDialog == 'confirmation' || typeOfDialog == 'poStatus'"
+        class="primaryButton f-12"
+        type="button"
+        (click)="closedialog(true)"
+      >
+        <span *ngIf="typeOfDialog != 'poStatus'">{{
+          typeOfDialog == "confirmation" ? "Yes" : "Ok"
+        }}</span>
+        <span *ngIf="typeOfDialog == 'poStatus'"> View Details </span>
+      </button>
+    </div>
+  </div>
+  

@@ -11,29 +11,13 @@
 //   // display: initial;
 // }
 .scroller {
-  position: fixed; 
-  top: 85px; 
-  right: 0; 
-  width: calc(100% - 255px); 
+  // right: 0; 
+  // width: calc(100% - 255px); 
   height: calc(100vh - 100px); 
-  overflow-y: scroll; 
-  overflow-x: hidden; 
-  scrollbar-width: auto;
-  -ms-overflow-style: auto; 
-}
-
-
-.scroller::-webkit-scrollbar {
-  width: 8px; 
-}
-
-.scroller::-webkit-scrollbar-thumb {
-  background-color: #888; 
-  border-radius: 4px; 
-}
-
-.scroller::-webkit-scrollbar-thumb:hover {
-  background-color: #555; 
+  overflow: auto; 
+  // overflow-x: hidden; 
+  // scrollbar-width: auto;
+  // -ms-overflow-style: auto; 
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -268,14 +252,9 @@ small{
   margin-right: 8px;
 }
 .vendor_div {
-  margin-left: 2%;
+  margin-left: 15px;
   margin-top: 30px;
-  margin-bottom: -20.5%;
-  margin-bottom: 39px;
-  gap: 11px;
-  position: relative;
-  bottom: 0px;
-  // padding-top: 30px;
+  gap: 15px;
 }
 // .fil-part{
 //   background-color: #fafafa;
@@ -287,31 +266,18 @@ small{
   width: 238px;
   height: calc(100vh - 100px); /* Full viewport height */
   background-color: white; /* White background */
-  position: fixed; /* Fixed to the left of the viewport */
-  top: 85px;
-  left: 25px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   z-index: 1; /* Ensure it stays above other content */
   // padding: 20px; /* Add padding for content inside the filter panel */
-  overflow-y: auto; /* Enable scrolling if content overflows */
   border-radius: 10px;
 }
 
 .venbody {
   display: flex;
-  margin-left: 238px; /* Account for the width of the left panel */
+  padding: 25px 0px 20px 25px;
 }
 
-.h-ele {
-  flex: 1; /* Take up the remaining space */
-  display: flex;
-  position: fixed; /* Fixed to the left of the viewport */
-  top: 85px;
-  
-  justify-content: center;
-  align-items: flex-start; /* Align content at the top */
-  // padding: 20px; /* Optional padding for the main content area */
-}
+
 .head-part{
   align-items: center;
   height: 71px;
@@ -375,8 +341,6 @@ small{
 h4{
   // margin-left: 23px;
   font: normal normal 700 13px/17px Segoe UI;
-  width: 36px;
-  height: 17px;
 }
 .checkbox-group {
   display: flex;
@@ -440,7 +404,7 @@ h4{
   gap: 5px;
 }
 .fil-proj{
-  position: fixed;
+  // position: fixed;
   width: fit-content;
   margin-left: 23px;
   margin-right: 21px;

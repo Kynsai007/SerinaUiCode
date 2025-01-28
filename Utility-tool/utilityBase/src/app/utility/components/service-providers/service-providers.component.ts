@@ -36,6 +36,7 @@ export class ServiceProvidersComponent implements OnInit {
   selected_sp: any;
   filteredService: any;
   serviceData: any;
+  activeFilterCount: number;
 
   constructor(
     private sharedService: SharedService,
@@ -289,7 +290,7 @@ export class ServiceProvidersComponent implements OnInit {
         this.serviceData = data.map(element => element.ServiceProvider);
         this.filteredService = [...new Map(service.map(v => [v.ServiceProviderCode, v])).values()];
         this.serviceData = this.filteredService;
-
+        // this.serviceData.unshift({ServiceProviderName: 'ALL', idServiceProvider: "ALL"})
       });
   }
 
@@ -298,11 +299,23 @@ export class ServiceProvidersComponent implements OnInit {
     this.filteredService = this.serviceData.filter(
       (service) => service.ServiceProviderName.toLowerCase().includes(query)
     );
+    this.filteredService.unshift({ServiceProviderName: 'ALL', idServiceProvider: "ALL"})
   }
   selectService(value) {
     this.spNameForSearch = value.ServiceProviderName;
     this.sharedService.spNameForSearch =  value.ServiceProviderName;
     this.sharedService.selected_sp = value;
+  }
+  updateFilterCount() {
+    let count = 0;
+    if (this.selected_sp) count++;
+    if (this.selected_ent) count++;
+    if (this.onboard_status) count++;
+    this.activeFilterCount = count;
+  }
+  open_ai_vendor(id,vendorName,engine){
+    let type = engine == 'OpenAI(Global)' ? 'Global' : 'Custom'
+    this.router.navigate([`IT_Utility/service-providers/open_ai_service_provider/${id}/${vendorName}/${type}`]);
   }
 
 }

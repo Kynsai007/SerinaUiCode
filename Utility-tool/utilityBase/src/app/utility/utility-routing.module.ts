@@ -31,6 +31,7 @@ const routes: Routes = [
       {path:'service-providers/Fr_update',component:FrUpdateSpComponent},
       { path:'vendors/modal_on_board', component:MobComponent },
       { path:'vendors/open_ai_vendor/:id/:vendorName/:type',component:OpenaiComponent},
+      { path:'service-providers/open_ai_service_provider/:id/:serviceProviderName/:type',component:OpenaiComponent},
       {
         path: 'guide',
         component:GuideComponent

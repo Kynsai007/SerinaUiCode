@@ -2,6 +2,8 @@ import { SharedService } from 'src/app/services/shared/shared.service';
 import { AuthenticationService } from 'src/app/services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +20,9 @@ export class HomeComponent implements OnInit {
   showGPTTab:boolean=false;
   isSettingsActive: boolean;
   constructor(private authService : AuthenticationService,
-    private sharedService : SharedService,public router:Router) { }
+    private sharedService : SharedService,public router:Router,
+    private mat_dlg: MatDialog
+    ) { }
 
   ngOnInit(): void {
     this.addActiveClass();
@@ -78,7 +82,19 @@ export class HomeComponent implements OnInit {
     this.authService.logout();
   }
   openPopup(){
-    this.displaypopup = true;
+    const dialogRef = this.confirmFun('Are you sure you want to sign out?', 'confirmation', 'Sign Out');
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.signOut();
+      }
+    });
   }
-
+  confirmFun(body, type, head) {
+    return this.mat_dlg.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body: body, type: type, heading: head, icon: 'assets/Group 1336.svg' }
+    })
+  }
 }

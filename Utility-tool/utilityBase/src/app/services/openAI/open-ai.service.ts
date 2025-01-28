@@ -32,4 +32,7 @@ export class OpenAIService {
   updateTags(data) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/updatelineitemprompt`, data);
   }
+  deleteTags(id) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/deletetags/${id}`);
+  }
 }

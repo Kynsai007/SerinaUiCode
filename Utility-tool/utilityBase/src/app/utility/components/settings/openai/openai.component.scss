@@ -24,12 +24,13 @@ h6 {
 tbody > tr > td {
   font-weight: 400;
 }
+
 .vendorTable {
   max-height: calc(100vh - 270px) !important;
 }
 .tableDiv {
   overflow: auto;
-  max-height: calc(100vh - 260px);
+  max-height: calc(100vh - 278px);
   box-shadow: 0px 3px 16px #0F123F14;
     border: 1px solid #F2F0F0;
     border-radius: 5px;
@@ -345,7 +346,15 @@ textarea {
 .radio-input input {
   display: none;
 }
-
+.desc_field {
+    padding: 0;
+    // height: 20px;
+    border: 0;
+    background: inherit;
+    font-weight: 400;
+    color: #212529;
+    resize: none;
+}
 .radio-input {
   --container_width: 144px;
   // position: absolute;

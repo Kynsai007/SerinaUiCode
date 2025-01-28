@@ -52,6 +52,9 @@ $themeColor: #3543C0;
   height: 35px;
   min-width: 100px;
 }
+.shade_color {
+  opacity: 0.5;
+}
 .btnbg {
     background: rgb(53, 141, 192);
     color: #ffffff;
@@ -248,6 +251,27 @@ input:checked + .slider:before {
     cursor: pointer;
 }
   
+.mat-dialog-container {
+  padding: 0px 0px 20px 0px !important;
+}
+.custom_snackbar {
+  width: 254px;
+  height: 233px;
+  overflow: hidden;
+  background-color: white;
+}
+.mat-snack-bar-container {
+  padding: 0;
+  min-width: 254px !important;
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 5px;
+  margin-bottom: 60px !important;
+}
+::ng-deep .ui-tooltip {
+  background-color: #3498db; // Your desired background color
+  border: 2px solid #2980b9; // Your desired border color
+  color: #fff; // Your desired text color
+}
   /* Safari */
   @-webkit-keyframes spin {
     0% {

@@ -19,6 +19,8 @@ import { ApprovalSettingsComponent } from './configuration/approval-settings/app
 import { TriggerSettingsComponent } from './configuration/trigger-settings/trigger-settings.component';
 import { OpenaiComponent } from './openai/openai.component';
 
+import { ImportModules } from '../../../import-modules';
+
 
 @NgModule({
   declarations: [SafeUrlPipe,SettingsPageComponent, ConfigurationComponent, ChangePasswordComponent, UplaodListenerComponent, SharepointListenerComponent, EntityRoutingComponent, ApprovalSettingsComponent, TriggerSettingsComponent, OpenaiComponent],
@@ -31,7 +33,7 @@ import { OpenaiComponent } from './openai/openai.component';
     AutoCompleteModule,
     ChipsModule,
     CronEditorModule,
-    // PdfViewerModule
+    ImportModules
   ],
   exports: [OpenaiComponent]
 })

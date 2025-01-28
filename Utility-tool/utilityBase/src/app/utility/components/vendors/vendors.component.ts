@@ -61,8 +61,6 @@ export class VendorsComponent implements OnInit {
     return this.vendorForm.controls;
   }
   ngOnInit(): void {
-    // this.selected_Vendor = this.filteredVendors[0];
-    console.log(this.selected_Vendor)
     this.vendorForm = this.formBuilder.group({
       VendorName: ['', Validators.required],
       Email: ['', [Validators.required, Validators.email]],
@@ -107,7 +105,6 @@ export class VendorsComponent implements OnInit {
     this.onboard_status = this.sharedService.onboard_status;
     this.vendorNameForSearch = this.sharedService.vendorNameForSearch;
     this.getEntitySummary();
-    console.log(this.selected_ent)
 }
 
   readOnboardedVendorsList() {
@@ -235,7 +232,6 @@ export class VendorsComponent implements OnInit {
         mergedData.ocrEngine = ele.ocrEngine;
         pushArray.push(mergedData);
       })
-      console.log(pushArray)
       // pushArray.unshift({ VendorName: 'ALL', idVendor: "ALL"})
       this.vendorsListDispaly = this.vendorsList.concat(pushArray);
       
@@ -277,7 +273,6 @@ export class VendorsComponent implements OnInit {
   }
 
   filtersForAPI() {
-    console.log(this.APIParams)
     if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch == 'ALL' && this.onboard_status == 'ALL' ) {
       this.APIParams = `?partyType=vendor&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
@@ -329,7 +324,6 @@ export class VendorsComponent implements OnInit {
       }
     }
     this.filteredEnt = filtered;
-    console.log(this.filteredEnt)
   }
   getCustomerVendors() {
     let param = ''
@@ -357,7 +351,6 @@ export class VendorsComponent implements OnInit {
       this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&${param}&ven_name=${query}`).subscribe((data: any) => {
         this.filteredVendors = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()];
         this.filteredVendors.unshift({ VendorName: 'ALL', idVendor: "ALL" })
-        console.log(this.filteredVendors)
       });
     // } else {
     //   this.filteredVendors = this.vendorAccount;
@@ -386,7 +379,6 @@ export class VendorsComponent implements OnInit {
     );
   }
   onStatusChange(): void {
-    console.log(this.vendorList)
   }
   updateFilterCount() {
     let count = 0;
@@ -396,7 +388,6 @@ export class VendorsComponent implements OnInit {
     this.activeFilterCount = count;
   }
   open_ai_vendor(id,vendorName,engine){
-    console.log(id,engine)
     let type = engine == 'OpenAI(Global)' ? 'Global' : 'Custom'
     this.router.navigate([`IT_Utility/vendors/open_ai_vendor/${id}/${vendorName}/${type}`]);
   }
