@@ -1096,7 +1096,7 @@ export class Comparision3WayComponent
         if (str != 'batch') {
           setTimeout(() => {
             this.SpinnerService.hide();
-          }, 1000);
+          }, 300);
         }
       },
       (error) => {
