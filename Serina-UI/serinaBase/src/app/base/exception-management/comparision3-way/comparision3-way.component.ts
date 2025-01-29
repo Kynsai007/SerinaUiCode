@@ -1043,6 +1043,7 @@ export class Comparision3WayComponent
             ...response?.Vendordata[0].VendorAccount,
             ...response?.Vendordata[0].VendorUser,
           };
+          this.vendorAcId = this.vendorData['idVendorAccount'];
           this.vendorName = this.vendorData['VendorName'];
           this.vendorId = this.vendorData['idVendor'];
         }
@@ -2789,6 +2790,7 @@ export class Comparision3WayComponent
           this.displayErrorDialog = false;
           this.success("Line item updated successfully");
           // this.getInvoiceFulldata('');
+          this.readLinedata('');
           this.readMappingData();
         },
         (error) => {
@@ -3632,6 +3634,11 @@ export class Comparision3WayComponent
         this.success("Line item deleted")
 
         this.displayrejectDialog = false;
+        if(this.pageType == 'normal'){
+          this.getInvoicedata('');
+        } else{
+          this.readLinedata('');
+        }
         // this.getInvoiceFulldata('');
       }
     }, err => {
@@ -3649,7 +3656,11 @@ export class Comparision3WayComponent
         };
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
           this.success("Line item Added")
-
+          if(this.pageType == 'normal'){
+            this.getInvoicedata('');
+          } else{
+            this.readLinedata('');
+          }
           // this.getInvoiceFulldata('');
         });
         this.displayrejectDialog = false;
