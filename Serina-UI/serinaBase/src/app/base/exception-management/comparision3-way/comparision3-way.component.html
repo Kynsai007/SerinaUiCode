@@ -897,7 +897,7 @@
                               (completeMethod)="filterPOLine($event)"
                               field="Value"
                               [id]="data2?.poline[0]?.idDocumentLineItems"
-                              name="poline{{i}}"
+                              name="poline{{data2?.poline[0]}}-{{data2?.poline[0]?.idDocumentLineItems}}"
                               styleClass="f-11 input_disabled sel_drp"
                               [dropdown]="true"
                               appendTo="body"
