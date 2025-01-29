@@ -100,7 +100,7 @@ export class Comparision3WayComponent
   GRNObject = [];
   GRNObjectDuplicate = [];
 
-  isPdfAvailable: boolean;
+  isPdfAvailable: boolean = true;
   userDetails: any;
   showPdf: boolean = true;
   btnText = 'Close';
@@ -446,7 +446,9 @@ export class Comparision3WayComponent
     super();
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
       if (msg == 'mapping') {
-        this.getInvoiceFulldata('');
+        // this.getInvoiceFulldata('');
+        this.readHeaderDetails('');
+        this.readLinedata('');
       }
     })
   }
@@ -500,7 +502,7 @@ export class Comparision3WayComponent
     }
     this.getEntity();
     this.initialData();
-    this.readFilePath();
+    // this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
     this.getDate();
@@ -583,8 +585,10 @@ export class Comparision3WayComponent
       }
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
+      this.showPdf = false;
     } else if (this.router.url.includes('GRNDetails')) {
       this.Itype = 'GRN';
+      this.showPdf = false;
     } else if (this.router.url.includes('serviceDetails')) {
       this.Itype = 'Service';
     }
@@ -622,16 +626,22 @@ export class Comparision3WayComponent
         this.router.navigate(['customer/invoice/allInvoices']);
       }
     } else {
-      this.getInvoiceFulldata('');
+      if(!(this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit)) {
+        this.readHeaderDetails('');
+        this.pageType = 'mapping';
+      } else {
+        this.getInvoicedata('');
+        this.pageType = 'normal';
+      }
       // this.getRulesData();
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
       if (!['advance invoice'].includes(this.documentType)) {
-        this.getGRNtabData();
-        if(this.client_name != 'SRG'){
-          this.getGrnAttachment();
-        }
+        // this.getGRNtabData();
+        // if(this.client_name != 'SRG'){
+        //   this.getGrnAttachment();
+        // }
       }
 
 
@@ -792,6 +802,18 @@ export class Comparision3WayComponent
       this.costTabBoolean = true;
     } else {
       this.costTabBoolean = false;
+    }
+    if(val == 'grn'){
+      if(!this.GRNTabData){
+        this.getGRNtabData();
+      }
+      // if(this.client_name != 'SRG'){
+      //   this.getGrnAttachment();
+      // }
+    } else if(val == 'line'){
+      if(!this.lineDisplayData){
+        this.readLinedata('');
+      }
     }
     // if (val == 'line') {
     //   this.lineTabBoolean = true;
@@ -994,7 +1016,328 @@ export class Comparision3WayComponent
       }
     );
   }
+  readHeaderDetails(str) {
+    this.SpinnerService.show();
+    this.vendorData = [];
+    this.inputData = [];
+    // if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    //   this.pageType = "normal";
+    // } else {
+    //   this.pageType = "mapping";
+    // }
+    this.getInvTypes();
+    this.exceptionService.getHeaderDetails().subscribe(
+      (response:any) => {
+        const pushedArrayHeader = [];
+        if (response?.uploadtime) {
+          this.uploadtime = response?.uploadtime;
+        }
+        if (response.doc_type) {
+          this.docType = response?.doc_type?.toLowerCase();
+          this.documentType = response?.doc_type?.toLowerCase();
+        }
+        if (response?.Vendordata) {
+          this.isServiceData = false;
+          this.vendorData = {
+            ...response?.Vendordata[0].Vendor,
+            ...response?.Vendordata[0].VendorAccount,
+            ...response?.Vendordata[0].VendorUser,
+          };
+          this.vendorName = this.vendorData['VendorName'];
+          this.vendorId = this.vendorData['idVendor'];
+        }
+        response?.headerdata?.forEach((element) => {
+          this.mergedArray = {
+            ...element.DocumentData,
+            ...element.DocumentTagDef,
+          };
+          this.mergedArray.DocumentUpdates = element?.DocumentUpdates;
+          pushedArrayHeader.push(this.mergedArray);
+        });
+        this.inputData = pushedArrayHeader;
+        this.temp_header_data = response?.headerdata?.slice();
+        this.isMoreRequired = response?.approverData?.more_info_required;
 
+        if (response?.approverData?.to_approve_by) {
+          let ap_id = response?.approverData?.to_approve_by[0];
+          if (ap_id == this.SharedService.userId) {
+            this.isAprUser = true;
+          }
+        }
+        this.invoiceNumber = this.dataService.invoiceNumber;
+        this.headerDataOrder();
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.po_num = poNum;
+        // this.getPODocId(poNum);
+        // this.getGRNnumbers(poNum);
+        if (this.documentType == 'credit note') {
+          // this.getProjectData();
+          // this.getProjectCatData();
+          this.getPOs();
+          this.getVendorInvoices(this.po_num)
+          this.projectCArr = this.dataService.projectCArr;
+          this.projectIdArr = this.dataService.projectIdArr;
+          if(this.client_name == 'Emaar Hospitality'){
+            const obj = {
+                Value: response.CostAccount,
+                idDocumentData: 0,
+                isError: 0,
+                IsUpdated: 0,
+                ErrorDesc: '',
+                TagLabel: 'Cost Account'
+            }
+            this.inputData.push(obj);
+          }
+          
+        }
+        if (str != 'batch') {
+          setTimeout(() => {
+            this.SpinnerService.hide();
+          }, 1000);
+        }
+      },
+      (error) => {
+        this.SpinnerService.hide();
+        this.error("Server error");
+      }
+    );
+  }
+  getInvoicedata(str) {
+    this.SpinnerService.show();
+    this.inputDisplayArray = [];
+    this.lineData = [];
+    // if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    //   this.pageType = "normal";
+    // } else {
+    //   this.pageType = "mapping";
+    // }
+    this.SharedService.getInvoiceInfo().subscribe(
+      (data: any) => {
+        const pushedArrayHeader = [];
+        data?.ok?.cost_alloc?.forEach(cost => {
+          let merge = { ...cost.AccountCostAllocation }
+          this.costAllocation.push(merge);
+        })
+        this.normalCostAllocation = false;
+        data?.ok?.dynamic_cost_alloc?.forEach(dynamic => {
+          this.dynamicdata.push(dynamic);
+          this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
+          this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
+        })
+        if (data?.ok?.doc_type) {
+          this.docType = data?.ok?.doc_type?.toLowerCase();
+          this.documentType = data?.ok?.doc_type?.toLowerCase();
+        }
+        if (data?.ok?.uploadtime) {
+          this.uploadtime = data.ok.uploadtime;
+        }
+        data.ok.headerdata.forEach((element) => {
+          this.mergedArray = {
+            ...element.DocumentData,
+            ...element.DocumentTagDef,
+          };
+          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+          pushedArrayHeader.push(this.mergedArray);
+        });
+        this.inputData = pushedArrayHeader;
+        let inv_num_data: any = this.inputData.filter((val) => {
+          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
+        });
+        this.invoiceNumber = inv_num_data[0]?.Value;
+        let inv_total: any = this.inputData.filter((val) => {
+          return (val.TagLabel == 'InvoiceTotal');
+        });
+        this.invoiceTotal = inv_total[0]?.Value;
+        if (this.tagService.documentType == 'lcm') {
+          this.readSavedLCMLineData();
+        }
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder');
+        });
+        this.po_num = po_num_data[0]?.Value;
+        if (this.po_num && this.ap_boolean) {
+          // this.getPODocId(this.po_num);
+        }
+        // this.getGRNnumbers(this.po_num);
+        if (data.ok.vendordata) {
+          this.isServiceData = false;
+          this.vendorData = {
+            ...data.ok.vendordata[0].Vendor,
+            ...data.ok.vendordata[0].VendorAccount,
+            ...data.ok.vendordata[0].VendorUser,
+          };
+          this.vendorName = this.vendorData['VendorName'];
+          this.vendorId = this.vendorData['idVendor'];
+        }
+        if (data.ok.servicedata) {
+          this.isServiceData = true;
+          this.vendorData = {
+            ...data.ok.servicedata[0].ServiceAccount,
+            ...data.ok.servicedata[0].ServiceProvider,
+          };
+          this.vendorName = this.vendorData['ServiceProviderName'];
+        }
+        // if(!this.isServiceData && this.Itype == 'Invoice' ){
+        //   this.readPOLines();
+        // }
+        if (this.Itype == 'PO') {
+          let count = 0;
+          let array = data.ok.linedata;
+          array.forEach((val) => {
+            if (val.TagName == 'LineNumber') {
+              val.id = 1;
+            } else if (val.TagName == 'ItemId') {
+              val.id = 2;
+            } else if (val.TagName == 'Name') {
+              val.id = 3;
+            } else if (val.TagName == 'ProcurementCategory') {
+              val.id = 4;
+            } else if (val.TagName == 'PurchQty') {
+              val.id = 5;
+            } else if (val.TagName == 'UnitPrice') {
+              val.id = 6;
+            } else if (val.TagName == 'DiscAmount') {
+              val.id = 7;
+            } else if (val.TagName == 'DiscPercent') {
+              val.id = 8;
+            } else {
+              count = count + 9;
+              val.id = count;
+            }
+            // this.lineCount = val.linedata;
+            this.getInvTypes();
+          });
+          this.lineDisplayData = array.sort((a, b) => a.id - b.id);
+        } else {
+          this.lineDisplayData = data.ok.linedata;
+          // this.lineCount = this.lineDisplayData[0].linedata;
+          // console.log(this.lineCount)
+          if (this.isDesktop) {
+            this.lineDisplayData.unshift({
+              TagName: 'S.No',
+              idDocumentLineItemTags: 1,
+            });
+
+          } else {
+            // Get the maximum number of linedata entries across all tags
+            const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
+
+            // Iterate through the index of linedata entries
+            for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
+              const transformedData:any = [];
+              let hasError = false;
+              let hasUpdated = false;
+
+              // Iterate through the received data
+              this.lineDisplayData.forEach(tag => {
+                const tagName = tag.TagName;
+                const linedata = tag.linedata[dataIndex];
+                const itemData = linedata.DocumentLineItems;
+
+                // Check if any isError is 1
+                if (itemData.isError === 1) {
+                  hasError = true;
+                }
+                if (itemData.IsUpdated === 1) {
+                  hasUpdated = true;
+                }
+
+                // Create an object with the TagName and linedata for the current index
+                const tagObject = {
+                  TagName: tagName,
+                  linedata: linedata
+                };
+
+                // Add the tagObject to the transformedData array
+                transformedData.push(tagObject);
+              });
+              transformedData.hasError = hasError;
+              transformedData.hasUpdated = hasUpdated;
+              // Add the transformedData array for the current index to the main array
+              this.linedata_mobile.push(transformedData);
+            }
+          }
+          if (this.editable) {
+            this.lineDisplayData.push({
+              TagName: 'Actions',
+              idDocumentLineItemTags: 1,
+            });
+          }
+          this.lineDisplayData.forEach((ele) => {
+            if (ele.TagName == 'S.No') {
+              ele.linedata = this.lineDisplayData[1]?.linedata;
+            } else if (ele.TagName == 'Actions') {
+              ele.linedata = this.lineDisplayData[1]?.linedata;
+            }
+          });
+        }
+        this.support_doc_list = data.ok.support_doc?.files;
+        if (this.support_doc_list == null) {
+          this.support_doc_list = []
+        }
+        if (str != 'batch') {
+          setTimeout(() => {
+            this.SpinnerService.hide();
+          }, 2000);
+        }
+      },
+      (error) => {
+        this.SpinnerService.hide();
+        this.error('Server error');
+      }
+    );
+  }
+
+  readLinedata(str){
+    this.SpinnerService.show();
+    // this.lineDisplayData = [];
+    this.exceptionService.getInvoiceInfo().subscribe((response:any)=>{
+      this.lineDisplayData = response.linedata.Result;
+      this.lineData = response?.linedata;
+      this.temp_line_data = JSON.parse(JSON.stringify(response.linedata.Result));
+      this.lineDisplayData.forEach((element, index, arr) => {
+        this.lineCount = arr[0].items
+        if (element.tagname == 'Description') {
+          if(this.client_name == 'Cenomi'){
+            element?.items?.forEach(el=>{
+              this.lineItems?.forEach(item=>{
+                if(item?.itemCode == el?.itemcode){
+                  el.linedetails[0].poline[0].Value = `${item?.itemCode}-${item?.Name}-${item?.UnitPrice}-${item?.SHIP_TO_ORG}-${item?.Qty}`  
+                }
+              })
+            })
+          }
+          
+          element.order = 1;
+        } else if (element.tagname == 'Quantity') {
+          element.order = 2;
+        } else if (element.tagname == 'UnitPrice') {
+          element.order = 3;
+        } else if (element.tagname == 'Unit') {
+          element.order = 4;
+        } else if (element.tagname == 'Discount') {
+          element.order = 5;
+        } else if (element.tagname == 'AmountExcTax') {
+          element.order = 6;
+        }
+      });
+      if (this.pageType == "mapping") {
+        this.calculateCost();
+      }
+      this.lineDisplayData = this.lineDisplayData.sort((a, b) => a.order - b.order);
+      if (str != 'batch') {
+        setTimeout(() => {
+          this.SpinnerService.hide();
+        }, 2000);
+      }
+    },err=>{
+      this.SpinnerService.hide();
+      this.error('Server error');
+    })
+  }
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
     this.lineDisplayData = [];
@@ -1022,7 +1365,7 @@ export class Comparision3WayComponent
         if (response?.uploadtime) {
           this.uploadtime = response?.uploadtime;
         }
-        if (response.doc_type) {
+        if (response?.doc_type) {
           this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
@@ -1093,12 +1436,12 @@ export class Comparision3WayComponent
           poNum = this.exceptionService.po_num;
         }
         this.po_num = poNum;
-        this.getPODocId(poNum);
-        this.getGRNnumbers(poNum);
+        // this.getPODocId(poNum);
+        // this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
           // this.getProjectData();
           // this.getProjectCatData();
-          this.getPOs();
+          // this.getPOs();
           this.getVendorInvoices(this.po_num)
           this.projectCArr = this.dataService.projectCArr;
           this.projectIdArr = this.dataService.projectIdArr;
@@ -1581,7 +1924,7 @@ export class Comparision3WayComponent
           }, 10);
         });
         this.lineDisplayData = dummyLineArray;
-        this.getInvTypes();
+        // this.getInvTypes();
         setTimeout(() => {
           this.lineDisplayData = this.lineDisplayData.filter((v) => {
             return !(
@@ -1630,7 +1973,7 @@ export class Comparision3WayComponent
         }
         this.po_num = poNum;
         this.getPODocId(this.po_num);
-        this.getGRNnumbers(this.po_num);
+        // this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1888,7 +2231,14 @@ export class Comparision3WayComponent
   }
 
   proceedToBatch(bool) {
-    this.getInvoiceFulldata('batch');
+    // this.getInvoiceFulldata('batch');
+    if(this.pageType == 'normal'){
+      this.getInvoicedata('batch');
+    } else{
+      this.readHeaderDetails('');
+      this.readLinedata('batch');
+    }
+
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
       this.reuploadBoolean = true;
@@ -1980,7 +2330,7 @@ export class Comparision3WayComponent
         });
       }
       
-    }, 3000);
+    }, 1500);
   }
 
   sendToBatch() {
@@ -1998,6 +2348,7 @@ export class Comparision3WayComponent
     );
   }
   vendorSubmit() {
+    this.SpinnerService.show();
     this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
@@ -2088,7 +2439,8 @@ export class Comparision3WayComponent
         this.isBatchFailed = false;
         this.batchData.forEach(el => {
           if (el.msg.includes('Tax')) {
-            this.getInvoiceFulldata('');
+            this.readHeaderDetails('');
+            this.readLinedata('');
           }
         })
         if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
@@ -2177,9 +2529,11 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      this.getInvoiceFulldata('');
+      // this.getInvoiceFulldata('');
+      // this.readHeaderDetails();
+      // this.readLinedata();
       this.update("Please check the values in invoice.");
-      this.getGRNtabData();
+      // this.getGRNtabData();
     }
 
   }
@@ -2346,7 +2700,13 @@ export class Comparision3WayComponent
       this.exceptionService.updatePONumber(value.PODocumentID).subscribe(
         (data: any) => {
           this.success("PO Number updated successfully")
-          this.getInvoiceFulldata('');
+          // this.getInvoiceFulldata('');
+          if(this.pageType == 'normal'){
+            this.getInvoicedata('');
+          } else{
+            this.readHeaderDetails('');
+            this.readLinedata('');
+          }
         },
         (error) => {
           this.error("Server error");
@@ -2428,7 +2788,7 @@ export class Comparision3WayComponent
         (data: any) => {
           this.displayErrorDialog = false;
           this.success("Line item updated successfully");
-          this.getInvoiceFulldata('');
+          // this.getInvoiceFulldata('');
           this.readMappingData();
         },
         (error) => {
@@ -3272,7 +3632,7 @@ export class Comparision3WayComponent
         this.success("Line item deleted")
 
         this.displayrejectDialog = false;
-        this.getInvoiceFulldata('');
+        // this.getInvoiceFulldata('');
       }
     }, err => {
       this.error("Server error");
@@ -3290,7 +3650,7 @@ export class Comparision3WayComponent
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
           this.success("Line item Added")
 
-          this.getInvoiceFulldata('');
+          // this.getInvoiceFulldata('');
         });
         this.displayrejectDialog = false;
       } else {
@@ -3335,9 +3695,14 @@ export class Comparision3WayComponent
   }
 
   getGRNtabData() {
+    this.SpinnerService.show();
     this.SharedService.getGRNTabData().subscribe((data: any) => {
       this.GRNTabData = data?.result;
       this.grnTabDatalength = Object.keys(this.GRNTabData).length;
+      this.SpinnerService.hide();
+    }, err => {
+      this.error("Server error");
+      this.SpinnerService.hide();
     })
   }
 
@@ -3352,6 +3717,7 @@ export class Comparision3WayComponent
   }
 
   opengrnDailog() {
+    this.getGRNnumbers(this.po_num);
     this.GRNDialogBool = true;
     this.progressDailogBool = true;
     this.headerpop = 'Select GRN';
@@ -3498,7 +3864,13 @@ export class Comparision3WayComponent
     this.progressDailogBool = false;
     setTimeout(() => {
       this.readLineItems();
-      this.getInvoiceFulldata('');
+      // this.getInvoiceFulldata('');
+      // this.readHeaderDetails();
+      if(this.pageType == 'normal'){
+        this.getInvoicedata('');
+      } else{
+        this.readLinedata('');
+      }
     }, 1000);
   }
   getDate() {
@@ -4154,7 +4526,7 @@ export class Comparision3WayComponent
         this.isLCMInvoice = false;
         this.readDepartment();
         this.readCategoryData();
-        this.getInvoiceFulldata('');
+        // this.getInvoiceFulldata('');
         this.currentTab = 'approver_selection';
       } else {
         this.success('LCM Lines created');

@@ -734,6 +734,7 @@
                             [title]="data2.invline[0]?.DocumentLineItems.Value"
                             [value]="data2.invline[0]?.DocumentLineItems.Value"
                             class="f-12 input_disabled w-fill"
+                            name="lineInput"
                             style="text-transform: lowercase"
                             [disabled]="!editable || fin_boolean"
                             (change)="
@@ -833,6 +834,7 @@
                             class="f-12 input_disabled w-fill"
                             style="text-transform: lowercase"
                             disabled
+                            name="lineInput"
                             [ngClass]="!editable ? 'input_disabled' : ''"
                             [ngStyle]="{
                               width:
@@ -895,7 +897,7 @@
                               (completeMethod)="filterPOLine($event)"
                               field="Value"
                               [id]="data2?.poline[0]?.idDocumentLineItems"
-                              [name]="data2?.poline[0]?.Value"
+                              name="poline{{i}}"
                               styleClass="f-11 input_disabled sel_drp"
                               [dropdown]="true"
                               appendTo="body"
@@ -1002,7 +1004,6 @@
                       *ngIf="GRN_PO_Bool"
                       type="text"
                       name="inv_number"
-                      [ngModelOptions]="{standalone: true}"
                       class="inv_number f-12 text_color"
                       placeholder="Please add invoice number"
                       [(ngModel)]="invoiceNumber"
@@ -1015,7 +1016,6 @@
                       <input
                         type="text"
                         name="inv_description"
-                        [ngModelOptions]="{standalone: true}"
                         class="inv_number f-12 text_color"
                         placeholder="Please add invoice description"
                         [(ngModel)]="invoiceDescription"
@@ -1069,7 +1069,7 @@
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
                           <div>
                             <input #inputval type="number" style="border: 0.2px solid #358dc0" 
-                                 [name]="line1.idDocumentLineItems" [value]="line1.Value" [(ngModel)]="line1.Value"
+                                 name="grnQuantity{{i}}" [value]="line1.Value" [(ngModel)]="line1.Value"
                                  (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
                                  class="form-control pl-1 inputHeight w-sm" step="0.01" [title]="line1.Value" >
                           </div>
@@ -1078,7 +1078,7 @@
                           <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
                             <div>
                               <input #inputval type="number" style="border: 0.2px solid #358dc0" 
-                              [name]="line1.idDocumentLineItems" [value]="line1.Value"
+                              name="grnAmount{{i}}" [value]="line1.Value"
                               (change)="onChangeGrnAmount(line1, inputval.value)" [readonly]="line1.is_timesheets"
                               class="form-control pl-1 inputHeight w-sm"  [title]="line1.Value" >
                             </div>  
@@ -1099,7 +1099,7 @@
                             <div>
                               <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control pl-1 inputHeight" [title]="line1.ErrorDesc">
+                                   [(ngModel)]="line1.ErrorDesc" name="comments{{i}}" class="form-control pl-1 inputHeight" [title]="line1.ErrorDesc">
                             </div>
                           </ng-container>
                         </ng-container>
@@ -2423,6 +2423,7 @@
             [readonlyInput]="true"
             [showIcon]="true"
             showButtonBar="true"
+            name="dateRange"
             (onClearClick)="clearDates($event)"
             (onSelect)="filterByDate(rangeDates, $event)"
             inputId="range"

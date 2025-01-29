@@ -62,9 +62,9 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_mappeditem/${this.invoiceID}`).pipe(retry(3))
   }
 
-  getInvoiceInfo(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
-  }
+  // getInvoiceInfo(): Observable<any> {
+  //   return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
+  // }
 
   getInvoicePOs():Observable<any> {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/allpos/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
@@ -175,6 +175,13 @@ export class ExceptionsService {
   }
   getMsg(){
     return this.popupmsg.asObservable();
+  }
+
+  getHeaderDetails(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/headerdata/${this.userId}/invoiceid/${this.invoiceID}`)
+  }
+  getInvoiceInfo(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/linedata/${this.userId}/invoiceid/${this.invoiceID}`)
   }
 
   getDocumentDetails(){
