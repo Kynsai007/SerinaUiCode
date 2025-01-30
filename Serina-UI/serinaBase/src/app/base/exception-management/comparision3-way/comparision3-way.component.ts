@@ -28,7 +28,7 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, map, take, filter } from 'rxjs/operators';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CanUploadComponentDeactivate } from '../UnsavedChanges.guard';
@@ -3041,12 +3041,12 @@ export class Comparision3WayComponent
       dialog.close();
     }
   }
-  delete_confirmation(id) {
+  delete_confirmation(id,po_itemcode) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
 
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
-        this.removeLine(id)
+        this.removeLine(id,po_itemcode)
       }
     })
   }
@@ -3628,17 +3628,21 @@ export class Comparision3WayComponent
       this.commentsBool = true;
     }
   }
-  removeLine(itemCode) {
+  removeLine(itemCode,po_itemcode) {
+    this.SpinnerService.show();
     this.exceptionService.removeLineData(itemCode).subscribe((data: any) => {
       if (data.status == "deleted") {
         this.success("Line item deleted")
 
         this.displayrejectDialog = false;
-        if(this.pageType == 'normal'){
-          this.getInvoicedata('');
-        } else{
-          this.readLinedata('');
-        }
+        this.lineDisplayData = this.removelineLocally(itemCode,po_itemcode);
+        this.calculateCost();
+        this.SpinnerService.hide();
+        // if(this.pageType == 'normal'){
+        //   this.getInvoicedata('');
+        // } else{
+        //   this.readLinedata('');
+        // }
         // this.getInvoiceFulldata('');
       }
     }, err => {
@@ -3647,6 +3651,13 @@ export class Comparision3WayComponent
     })
   };
 
+  removelineLocally(itemCode,po_itemcode){
+  return this.lineDisplayData.map(tag => {
+    tag.items = tag.items.filter(line => line?.itemcode !== po_itemcode);
+    return tag;
+  });
+  }
+  
   CheckItemStatus(item) {
     this.exceptionService.checkItemCode(item).subscribe((data: any) => {
       if (data.status == "not exists") {
@@ -3654,14 +3665,21 @@ export class Comparision3WayComponent
           "documentID": this.invoiceID,
           "itemCode": item
         };
+        this.SpinnerService.show();
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
           this.success("Line item Added")
           if(this.pageType == 'normal'){
             this.getInvoicedata('');
           } else{
-            this.readLinedata('');
+            // this.readLinedata('');
+            this.addNewLine(data?.linedata?.Result);
           }
+          this.SpinnerService.hide();
+
           // this.getInvoiceFulldata('');
+        },err=>{
+          this.SpinnerService.hide();
+          this.error("Server error");
         });
         this.displayrejectDialog = false;
       } else {
@@ -3671,6 +3689,16 @@ export class Comparision3WayComponent
       this.error("Server error");
       this.displayrejectDialog = false;
     })
+  }
+
+  addNewLine(data) {
+    this.lineDisplayData.forEach(ele => {
+      data?.forEach(item => {
+        if (ele.tagname == item.tagname) {
+          ele.items.push(item?.items[0]);
+        }
+      })
+    });
   }
   // getPO_lines(str) {
   //   this.exceptionService.getPOLines().subscribe((data: any) => {

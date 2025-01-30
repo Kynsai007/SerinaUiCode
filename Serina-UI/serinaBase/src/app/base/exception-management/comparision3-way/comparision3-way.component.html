@@ -670,7 +670,7 @@
                 </div>
               </div>
 
-              <table class="w-100 mt-2">
+              <table class="w-100 mt-2" *ngIf="lineDisplayData">
                 <tr>
                   <td class="count_line">
                     <span class="f-13 p-2" style="margin-top: -6px">S.No</span>
@@ -678,7 +678,7 @@
                       class="f-12 mb-1 "
                       [ngClass]="(documentType == 'advance invoice' || documentType == 'non-po')? 'count-h_normal':'count-h' "
 
-                      *ngFor="let tagName of lineCount; let i = index"
+                      *ngFor="let tagName of lineDisplayData[0]?.items; let i = index"
                     >
                       {{ i + 1 }}
                       <!-- <div class="f-12 td_padding invoice_color doc_height">
@@ -914,10 +914,10 @@
                     </ng-container>
                   </td>
 
-                  <td *ngIf="editable && !fin_boolean">
+                  <td *ngIf="editable && !fin_boolean && lineDisplayData">
                     <span class="f-13 p-2 mapping_line hide">Act</span>
                     <div style="margin-top: -5px">
-                      <div *ngFor="let data of lineCount">
+                      <div *ngFor="let data of lineDisplayData[0]?.items">
                         <div *ngFor="let data2 of data.linedetails" class="mb1">
                           <div class="f-12 td_padding invoice_color doc_height"
                           [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non-po')? '1px solid lightgray':'' }">
@@ -926,7 +926,8 @@
                               (click)="
                                 delete_confirmation(
                                   data.linedetails[0].invline[0]
-                                    ?.DocumentLineItems?.itemCode
+                                    ?.DocumentLineItems?.itemCode,
+                                    data?.itemcode
                                 )
                               "
                             >
@@ -1278,7 +1279,7 @@
                           <div class="linevalue invert_thtd">
                             <button
                               class="trash_btn"
-                              (click)="delete_confirmation(line.value.itemCode)"
+                              (click)="delete_confirmation(line.value.itemCode, item?.itemcode)"
                             >
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
@@ -1377,7 +1378,7 @@
                                 <button
                                   class="trash_btn"
                                   (click)="
-                                    delete_confirmation(line.value.itemCode)
+                                    delete_confirmation(line.value.itemCode, item?.itemcode)
                                   "
                                 >
                                   <i
