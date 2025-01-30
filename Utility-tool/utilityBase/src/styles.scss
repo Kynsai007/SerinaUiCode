@@ -180,7 +180,9 @@ input:checked + .slider:before {
   height: 35px !important;
   margin-bottom: 5px !important;
 }
-
+.btn {
+  height: 35px;
+}
 .btnbg-s{
   color: #ffffff;
   background-color: #273c75;

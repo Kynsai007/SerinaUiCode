@@ -125,6 +125,10 @@ export class FrUpdateSpComponent implements OnInit {
     this.getAccuracyScore();
     this.getfrConfig();
     this.getModalList();
+    this.serviceRules = this.sharedService.serviceRules;
+    if(!this.serviceRules){
+      this.getServiceRules();
+    }
   }
   
   ngAfterContentInit() : void {
@@ -200,7 +204,7 @@ export class FrUpdateSpComponent implements OnInit {
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
     this.getAllTags();
-    this.getServiceRules();
+    // this.getServiceRules();
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
@@ -602,6 +606,10 @@ export class FrUpdateSpComponent implements OnInit {
      alert('Please add required fields.');
    }
  }
+
+ routeToTag(){
+    this.router.navigate(['IT_Utility/training']);
+ }
  
  changeActiveTab(){
    if((<HTMLAnchorElement>document.getElementById("mob-tab")).classList.contains("active")){
@@ -829,15 +837,7 @@ export class FrUpdateSpComponent implements OnInit {
   getServiceRules(){
     this.mandatoryServiceRules = [];
     this.sharedService.readServiceRules().subscribe((data:any)=>{
-      console.log(data);
       this.serviceRules = data?.result;
-      // this.serviceRules.forEach(el=>{
-      //   if(el.mandatory == 1) {
-      //     el.isSelected = true;
-      //     this.mandatoryServiceRules.push(el)
-      //   }
-      // })
-      // this.mandatoryServiceRules = [...new Set(this.mandatoryServiceRules)];
     })
   }
   selectServiceRules(bool,val1){

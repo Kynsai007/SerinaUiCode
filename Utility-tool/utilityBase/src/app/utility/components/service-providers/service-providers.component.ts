@@ -89,6 +89,7 @@ export class ServiceProvidersComponent implements OnInit {
     this.spNameForSearch = this.sharedService.spNameForSearch;
     this.getEntitySummary();
     this.getServiceList();
+    this.getServiceRules();
   }
 
   readOnboardedSPList() {
@@ -276,7 +277,13 @@ export class ServiceProvidersComponent implements OnInit {
     }
     this.filteredEnt = filtered;
   }
-
+  getServiceRules(){
+    // this.mandatoryServiceRules = [];
+    this.sharedService.readServiceRules().subscribe((data:any)=>{
+      console.log(data);
+      this.sharedService.serviceRules = data?.result;
+    })
+  }
   getServiceList() {
     let param = ''
     if(this.selectedEntityId != 'ALL'){
@@ -289,7 +296,6 @@ export class ServiceProvidersComponent implements OnInit {
         // this.serviceData = data.map(element => element.ServiceProvider);
         this.filteredService = [...new Map(service.map(v => [v.ServiceProviderName, v])).values()];
         this.serviceData = this.filteredService;
-        console.log(this.serviceData)
       });
   }
 
