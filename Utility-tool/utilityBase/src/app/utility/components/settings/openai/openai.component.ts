@@ -60,15 +60,16 @@ export class OpenaiComponent implements OnInit {
     this.ven_ser_id = this.router?.url?.split('/')[4];
     this.name = decodeURIComponent(this.router?.url?.split('/')[5]);
     this.isGlobal = this.router?.url?.split('/')[6] == 'Global';
+    if(this.router.url.includes('vendors')){
+      this.isVendorLevel = true;
+    } else if(this.router.url.includes('open_ai_service_provider')){
+      this.isServiceLevel = true;
+    }
     this.applyFilters();
     // this.filterTags = this.tags;
     // this.dialogList = this.tags;
     this.readAllTags();
-    if(this.router.url.includes('vendors')){
-      this.isVendorLevel = true;
-    } else if(this.router.url.includes('service-providers')){
-      this.isServiceLevel = true;
-    }
+
     
   }
   applyFilters() {
@@ -377,7 +378,7 @@ export class OpenaiComponent implements OnInit {
   }
   savePrompt(){
     let context = 'vendor';
-    if(this.isServiceProvider){
+    if(this.isServiceProvider || this.isServiceLevel){
       context = 'sp';
     }
     this.openAIService.updatePrompt(null,context,this.prompt).subscribe((data)=>{
@@ -389,7 +390,7 @@ export class OpenaiComponent implements OnInit {
   }
   readAllTags(){
     let context = 'vendor';
-    if(this.isServiceProvider){
+    if(this.isServiceProvider || this.isServiceLevel){
       context = 'sp';
     }
     let id = null;
