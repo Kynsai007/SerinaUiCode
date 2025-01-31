@@ -211,7 +211,7 @@
                       <img src="assets/Group 300@2x.png" *ngIf="vendor?.ocrEngine?.includes('OpenAI')">
                       <span>{{ vendor.ocrEngine }}</span>
                     </div>
-                    <div class="edt-button"  (click)="vendor?.ocrEngine?.includes('OpenAI') ? open_ai_vendor(vendor.idVendor,vendor.VendorName,vendor?.ocrEngine ): frUpdate(vendor)">
+                    <div class="edt-button"  (click)="vendor?.ocrEngine?.includes('OpenAI') ? open_ai_vendor(vendor.idServiceProvider,vendor.ServiceProviderName,vendor?.ocrEngine ): frUpdate(vendor)">
                       <img src="assets/Group 146@2x.png">
                     </div>
                   </div>
