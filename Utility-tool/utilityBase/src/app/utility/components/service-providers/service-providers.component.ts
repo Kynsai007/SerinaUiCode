@@ -210,6 +210,7 @@ export class ServiceProvidersComponent implements OnInit {
       data.forEach((ele) => {
         let mergedData = { ...ele.Entity, ...ele.ServiceProvider };
         mergedData.OnboardedStatus = ele.OnboardedStatus;
+        mergedData.ocrEngine = ele.ocrEngine;
         pushArray.push(mergedData);
       });
       this.SPListDispaly = this.SPList.concat(pushArray);
