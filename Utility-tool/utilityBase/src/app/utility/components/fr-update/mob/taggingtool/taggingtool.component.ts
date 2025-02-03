@@ -239,8 +239,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     Object.keys(file).forEach(key => {
       const link = document.createElement('a');
       link.href = file[key];
-      link.setAttribute('download', key);
-      link.download = key; // Use the key as the filename
+      const filename = key.split(".")[0];
+      link.setAttribute('download', filename);
+      link.download = filename; // Use the key as the filename
       link.click();
     });
   }

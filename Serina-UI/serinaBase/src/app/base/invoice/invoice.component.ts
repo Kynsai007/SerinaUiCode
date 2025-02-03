@@ -852,12 +852,13 @@ isMobile:boolean;
 
   menuChange(value) {
     this.updateColumns = [];
-
+    
     this.activeMenuName = value;
     // this.getInvoiceData();
     this.ds.allPaginationFirst = 0;
     this.ds.allPaginationRowLength = 10;
     if (value == 'invoice') {
+      this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
       this.route.navigate([this.invoiceTab]);
       this.ds.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
@@ -886,6 +887,7 @@ isMobile:boolean;
       this.allSearchInvoiceString = [];
       this.searchStr = this.ds.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
+      this.search_placeholder = 'Ex : By Service provider. By Account, Select Date range from the Calendar icon';
       if (!this.serviceColumns) {
         this.getServiceColumns();
       }
