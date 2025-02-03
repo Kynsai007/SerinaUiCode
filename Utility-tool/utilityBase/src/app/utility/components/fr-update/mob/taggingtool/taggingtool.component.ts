@@ -235,15 +235,14 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     })
   }
 
-  downloadBlob(file) {
-    Object.keys(file).forEach(key => {
+  downloadBlob(filename) {
       const link = document.createElement('a');
-      link.href = file[key];
-      const filename = key.split(".")[0];
+      link.href = this.fileurl;
       link.setAttribute('download', filename);
-      link.download = filename; // Use the key as the filename
+      link.setAttribute('target', '_blank');
+      document.body.appendChild(link);
       link.click();
-    });
+      document.body.removeChild(link);
   }
   ngAfterViewInit(): void {
     sessionStorage.setItem("configData",JSON.stringify(this.frConfigData));

@@ -39,7 +39,6 @@
                 <div *ngFor="let t of thumbnails;let i = index" class="asset-item" id="thumb{{i}}">
                     <div>
                         <button class="btn-delete" title="Delete file" (click)="deleteBlob(i)"><i class="fa fa-trash"></i></button>
-                        <button class="btn-delete mr-1" title="Download file" (click)="downloadBlob(t)"> <i class="fa fa-download"></i></button>
                     </div>
                 <div *ngFor="let obj of t | keyvalue"  (click)="SelectDoc(i)">
                     <div class="asset-item-image" style="height: 120px;">
@@ -66,6 +65,9 @@
                 <div class="root-61">
                     <div class="primarySet-65"></div>
                     <div class="primarySet-65 p-2">{{p_name}} <span *ngIf="currentfile != ''">[{{this.currentfile}}]</span></div>
+                    <div class="primarySet-65 p-2" *ngIf="currentfile != ''">
+                        <button class="btn-delete mr-1" title="Download file" (click)="downloadBlob(currentfile)"> <i class="fa fa-download"></i></button>
+                    </div>
                     <div class="secondarySet-72">
                         <!-- <div class="item-66" id="drawdiv" (click)="activateDraw()"><i class="fa fa-pencil-square-o" aria-hidden="true"> Draw Region</i></div> -->
                         <!-- auto tagging menu options start -->
