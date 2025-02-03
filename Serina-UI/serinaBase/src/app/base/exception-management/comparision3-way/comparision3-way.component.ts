@@ -2151,11 +2151,11 @@ export class Comparision3WayComponent
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
-      // if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
-      //   this.processAlert(sub_status);
-      // } else {
+      if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
+        this.processAlert(sub_status);
+      } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
-      // }
+      }
     } else {
       if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
         this.processAlert(sub_status);
