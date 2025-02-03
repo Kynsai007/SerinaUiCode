@@ -627,6 +627,7 @@ export class Comparision3WayComponent
       }
     } else {
       this.getInvoiceFulldata('');
+      this.getInvTypes();
       // this.getRulesData();
       // this.readPOLines();
       // this.readErrorTypes();
@@ -1014,7 +1015,7 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
-    this.lineDisplayData = [];
+    // this.lineDisplayData = [];
     this.inputDisplayArray = [];
     this.vendorData = [];
     this.inputData = [];
@@ -1044,7 +1045,6 @@ export class Comparision3WayComponent
           this.documentType = response?.doc_type?.toLowerCase();
         }
 
-        this.getInvTypes();
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
@@ -1279,7 +1279,7 @@ export class Comparision3WayComponent
         if (str != 'batch') {
           setTimeout(() => {
             this.SpinnerService.hide();
-          }, 2000);
+          }, 100);
         }
       },
       (error) => {
@@ -2449,10 +2449,10 @@ export class Comparision3WayComponent
         (data: any) => {
           this.displayErrorDialog = false;
           this.success("Line item updated successfully");
-          // this.getInvoiceFulldata('');
+          this.getInvoiceFulldata('');
           // this.readLinedata('');
           // this.readMappingData();
-          this.lineDisplayData = this.replaceData(this.lineDisplayData,data?.linedata?.Result);
+          // this.lineDisplayData = this.replaceData(this.lineDisplayData,data?.linedata?.Result);
           this.SpinnerService.hide();
         },
         (error) => {
@@ -3383,12 +3383,12 @@ export class Comparision3WayComponent
         this.SpinnerService.show();
         this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
           this.success("Line item Added")
-          if(this.pageType == 'normal'){
+          // if(this.pageType == 'normal'){
             this.getInvoiceFulldata('');
-          } else{
-            // this.readLinedata('');
-            this.addNewLine(data?.linedata?.Result);
-          }
+          // } else{
+          //   // this.readLinedata('');
+          //   this.addNewLine(data?.linedata?.Result);
+          // }
           this.SpinnerService.hide();
 
           // 
