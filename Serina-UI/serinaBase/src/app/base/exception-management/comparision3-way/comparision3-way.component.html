@@ -335,13 +335,13 @@
                     "
                     [ngStyle]="{
                       border:
-                        value?.isError >= 1 && !value?.ErrorDesc?.includes('Low')
+                        value?.isError >= 1 && !value?.ErrorMsg?.includes('Low')
                           ? '1px solid #D81616'
                           :subStatusId == 110 && value?.TagLabel == 'Current Month VAT'
                           ? '1px solid #D81616'
                           :value?.TagLabel == 'Customer TRN Number' && value?.Value == ''
                           ? '1px solid #D81616'
-                          :value?.isError >= 1 && value?.ErrorDesc?.includes('Low')
+                          :value?.isError >= 1 && value?.ErrorMsg?.includes('Low')
                           ? '1px solid #f7c83e'
                           : value?.isError === 0 && value?.IsUpdated === 0
                           ? '0px solid lightgray'
@@ -354,7 +354,7 @@
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
                         *ngIf="value?.isError == 1"
-                        [pTooltip]="value?.ErrorDesc"
+                        [pTooltip]="value?.ErrorMsg"
                         tooltipPosition="top"
                         ><i
                           class="fa fa-info-circle info_icon"
@@ -615,9 +615,9 @@
                                 "
                                 [ngStyle]="{
                                   borderBottom:
-                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc?.includes('Low')
+                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg?.includes('Low')
                                       ? ' 2px solid red'
-                                      : item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc?.includes('Low')
+                                      : item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg?.includes('Low')
                                       ? ' 2px solid #f7c83e'
                                       : item.lines[header]?.updates || item.lines[header]?.isError == 0
                                       ? '2px solid #37dcc7'
@@ -666,15 +666,15 @@
                               item.lines[header]?.isError >= 1
                               "
                               [pTooltip]="
-                              item.lines[header]?.ErrorDesc
+                              item.lines[header]?.ErrorMsg
                               "
                               tooltipPosition="top"
                               ><i
                                 [ngStyle]="{
                                   color:
-                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc?.includes('Low')
+                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg?.includes('Low')
                                       ? '#D81616'
-                                      :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc?.includes('Low')
+                                      :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg?.includes('Low')
                                       ? '#f7c83e'
                                       : ''
                                 }"
@@ -826,9 +826,9 @@
                                   ? 'left'
                                   : 'center',
                               borderBottom:
-                                data2.invline[0]?.DocumentLineItems.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
+                                data2.invline[0]?.DocumentLineItems.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorMsg?.includes('Low')
                                   ? ' 2px solid red'
-                                  : data2.invline[0]?.DocumentLineItems.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
+                                  : data2.invline[0]?.DocumentLineItems.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorMsg?.includes('Low')
                                   ? ' 2px solid #f7c83e'
                                   : data2.invline[0]?.DocumentLineItems.IsUpdated > 0 && data2.invline[0]?.DocumentLineItems.isError == 0
                                   ? '2px solid #37dcc7'
@@ -866,15 +866,15 @@
                               data2?.invline[0]?.DocumentLineItems?.isError >= 1 || data2.invline[0]?.DocumentLineItems.IsUpdated > 0
                             "
                             [pTooltip]="
-                              data2?.invline[0]?.DocumentLineItems?.ErrorDesc
+                              data2?.invline[0]?.DocumentLineItems?.ErrorMsg
                             "
                             tooltipPosition="top"
                             ><i
                               [ngStyle]="{
                                 color:
-                                  data2?.invline[0]?.DocumentLineItems?.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorDesc.includes('Low')
+                                  data2?.invline[0]?.DocumentLineItems?.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorMsg.includes('Low')
                                     ? '#D81616'
-                                    :data2?.invline[0]?.DocumentLineItems?.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc.includes('Low')
+                                    :data2?.invline[0]?.DocumentLineItems?.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorMsg.includes('Low')
                                     ? '#f7c83e'
                                     : ''
                               }"
@@ -1163,7 +1163,7 @@
                           <div>
                             <input #inputComment type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    class="form-control inputHeight" 
-                                   [title]="item[header.field]?.ErrorDesc ? item[header.field]?.ErrorDesc : ''" 
+                                   [title]="item[header.field]?.ErrorMsg ? item[header.field]?.ErrorMsg : ''" 
                                    [ngModelOptions]="{standalone: true}">
                           </div>
                         </ng-container>
@@ -1230,7 +1230,7 @@
                             <div>
                               <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorDesc">
+                                   [(ngModel)]="line1.ErrorMsg" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorMsg">
                             </div>
                           </ng-container>
                         </ng-container>
@@ -1378,9 +1378,9 @@
                               "
                               [ngStyle]="{
                                 borderBottom:
-                                item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc?.includes('Low')
+                                item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg?.includes('Low')
                                     ? ' 2px solid red'
-                                    : item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc?.includes('Low')
+                                    : item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg?.includes('Low')
                                     ? ' 2px solid #f7c83e'
                                     : item.lines[header]?.updates || item.lines[header]?.isError == 0
                                     ? '2px solid #37dcc7'
@@ -1413,15 +1413,15 @@
                             item.lines[header]?.isError >= 1 || item.lines[header]?.updates
                             "
                             [pTooltip]="
-                            item.lines[header]?.ErrorDesc
+                            item.lines[header]?.ErrorMsg
                             "
                             tooltipPosition="top"
                             ><i
                               [ngStyle]="{
                                 color:
-                                item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorDesc.includes('Low')
+                                item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg.includes('Low')
                                     ? '#D81616'
-                                    :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorDesc.includes('Low')
+                                    :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg.includes('Low')
                                     ? '#f7c83e'
                                     : ''
                               }"
@@ -1564,7 +1564,7 @@
                                 item.TagName != 'Actions'
                               "
                               [pTooltip]="
-                                item.linedata.DocumentLineItems?.ErrorDesc
+                                item.linedata.DocumentLineItems?.ErrorMsg
                               "
                               tooltipPosition="top"
                             >

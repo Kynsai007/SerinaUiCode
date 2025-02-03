@@ -263,10 +263,10 @@ export class BatchProcessComponent implements OnInit {
             ...element.DocumentHistoryLogs,
           };
           mergeData['substatus'] = element.substatus;
-          if (element.Document?.documentsubstatusID == 70 && !this.userDetails['permissioninfo'].set_approval_enabled) {
+          if (element.DocumentINV?.documentsubstatusID == 70 && !this.userDetails['permissioninfo'].set_approval_enabled) {
             return;  // Skip this iteration
           }
-          if(element.Document?.UploadDocTypeCategory == 'credit'){
+          if(element.DocumentINV?.UploadDocTypeCategory == 'credit'){
             mergeData['UploadDocTypeCategory'] = 'invoice'
           }
           batchData.push(mergeData);
@@ -275,10 +275,10 @@ export class BatchProcessComponent implements OnInit {
           // })
           let status = element.DocumentSubStatus.status
           // vendorNameList.push(element.Vendor.VendorName)
-          if(element?.Document?.documentsubstatusID == 40 || element?.Document?.documentsubstatusID == 32){
+          if(element?.DocumentINV?.documentsubstatusID == 40 || element?.DocumentINV?.documentsubstatusID == 32){
             status = element.substatus;
           }
-          mergedStatus.push({id: element?.Document?.documentsubstatusID, name:status})
+          mergedStatus.push({id: element?.DocumentINV?.documentsubstatusID, name:status})
         });
         let statusData = mergedStatus.filter((obj,index)=>{
           return index == mergedStatus.findIndex(o=> obj.name === o.name )
