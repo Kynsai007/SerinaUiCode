@@ -920,6 +920,9 @@ option:hover {
   color: $hover_color !important;
   background: $theme_color !important;
 }
+.p-autocomplete.p-autocomplete-dd .p-autocomplete-loader {
+  display: none;
+}
 .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item::after {
   content: "";
   position: absolute;

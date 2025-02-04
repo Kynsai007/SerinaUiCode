@@ -2494,7 +2494,7 @@ export class Comparision3WayComponent
 
   grnAPICall(boolean, txt) {
     let inv_des = '';
-    if(this.invoiceDescription !== ''){
+    if(this.invoiceDescription){
       inv_des = `&document_description=${this.invoiceDescription}`;
     }
     // let arr = [];
@@ -2520,8 +2520,9 @@ export class Comparision3WayComponent
       //       }
       //     }
       // })
+      // console.log(objV)
       let objData = {
-        itemCode : objV?.LineNumber?.Value,
+        itemCode : objV?.invoice_itemcode?.Value,
         lineData: {
           'Quantity' : { Value : objV?.GRNQuantity?.Value },
           'UnitPrice' : { Value: objV?.GRNUnitPrice?.Value}
@@ -2571,7 +2572,7 @@ export class Comparision3WayComponent
   validateInvPOUnitPrice() {
     let arr = []
     this.lineDisplayData.forEach(el=>{
-      arr.push({"invoice_itemcode": el.ItemCode});
+      arr.push({"invoice_itemcode": el?.invoice_itemcode?.Value});
     })
     this.SharedService.validateUnitprice(arr).subscribe((data: any) => {
       if (data.result.length > 0) {

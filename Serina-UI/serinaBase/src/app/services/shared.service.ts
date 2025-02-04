@@ -369,7 +369,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3))
   }
   saveGRNData(boolean_value,value,inv_des):Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}${inv_des}`,value).pipe(retry(3))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/grn/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}${inv_des}`,value).pipe(retry(3))
   }
   getPo_numbers(idVen){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
