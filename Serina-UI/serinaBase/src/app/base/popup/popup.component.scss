@@ -29,6 +29,7 @@ $theme_color: var(--themeColor);
 }
 .total_table tr td {
   width: 10vw;
+  border: 0 !important;
 }
 .footer {
   height: 55px;
