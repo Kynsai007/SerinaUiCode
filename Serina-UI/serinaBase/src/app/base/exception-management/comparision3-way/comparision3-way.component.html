@@ -45,7 +45,7 @@
       <button
         *ngIf="
           portalName == 'customer' && 
-          (this.router.url.includes('Upload') || 
+          ((router.url.includes('Upload') && documentType == 'credit') || 
           [8,16,17,18,19,21,27,34,205].includes(subStatusId) || 
           (documentType == 'advance invoice' && 
           [29,108].includes(subStatusId)))
@@ -1284,6 +1284,7 @@
                           </div>
                         </div>
                         <span
+                        class="d-flex"
                           *ngIf="
                             item.TagName != 'S.No' && item.TagName != 'Actions'
                           "
@@ -1311,7 +1312,53 @@
                             )
                             "
                             (blur)="documentType == 'advance invoice' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?saveAdChanges():saveChanges()"
-                          />
+                            [ngStyle]="{
+                              width:
+                                item.TagName == 'Description'
+                                  ? '-webkit-fill-available'
+                                  : '150px',
+                              borderBottom:
+                              line.value.isError >= 1 && !line.value?.ErrorDesc?.includes('Low')
+                                  ? ' 2px solid red'
+                                  : line.value.isError >= 1 && line.value?.ErrorDesc?.includes('Low')
+                                  ? ' 2px solid #f7c83e'
+                                  : line.value?.IsUpdated > 0 && line.value.isError == 0
+                                  ? '2px solid #37dcc7'
+                                  : ''
+                            }"
+                            />
+                            <span
+                            *ngIf="line.value?.DocumentUpdates"
+                            class="prev_value"
+                            [title]="
+                            line.value?.DocumentUpdates?.OldValue
+                            "
+                            >prev:
+                            {{
+                              line.value?.DocumentUpdates.OldValue
+                            }}</span
+                          >
+                          <span
+                            *ngIf="
+                            line.value?.isError >= 1 
+                            "
+                            [pTooltip]="
+                            line.value?.ErrorDesc
+                            "
+                            tooltipPosition="top"
+                            ><i
+                              [ngStyle]="{
+                                color:
+                                line.value?.isError >= 1 && !line.value?.ErrorDesc.includes('Low')
+                                    ? '#D81616'
+                                    :line.value?.isError >= 1 && line.value?.ErrorDesc.includes('Low')
+                                    ? '#f7c83e'
+                                    : ''
+                              }"
+                              class="fa fa-info-circle info_icon"
+                              aria-hidden="true"
+                            ></i
+                          ></span>
                         </span>
                       </div>
                     </div>
