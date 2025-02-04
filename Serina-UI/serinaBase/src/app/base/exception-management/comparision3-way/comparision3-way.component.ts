@@ -1491,7 +1491,7 @@ export class Comparision3WayComponent
                   errors.line.add('Quantity');
                 }
           } else if (['Description'].includes(key)) {
-            if (this.inputData[key].Value === '') {
+            if (element.lines[key]?.Value == '') {
               count++;
               errors.line.add(key);
             }
