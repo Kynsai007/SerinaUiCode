@@ -1467,7 +1467,6 @@ export class Comparision3WayComponent
           if (isInvalidValue(this.inputData[key]?.Value)) {
             count++;
             errors.header.add(key);
-            console.log(key);
           }
         } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(key)) {
           if (this.inputData[key].Value === '') {
@@ -2418,12 +2417,10 @@ export class Comparision3WayComponent
                   line_id: objV?.LineNumber?.Value,
                   quantity: objV[ele]?.Value,
                 }
-                console.log(obj)
                 arr.push(obj)
               }
             }
         })
-        console.log(objV)
         let objData = {
           itemCode : objV?.LineNumber?.Value,
           lineData: {
@@ -2704,11 +2701,11 @@ export class Comparision3WayComponent
     this.dataService.GRN_PO_Data.forEach(ele => {
       this.manpower_metadata.forEach(meta => {
         if (ele.LineNumber == meta.itemCode) {
-          ele.durationMonth = meta.durationMonth || "NA";
           ele.isTimesheets = str == "new" ? meta.isTimesheets : true;
-          ele.shifts = meta.shifts || "NA";
+          ele.durationMonth = ele.isTimesheets ? meta.durationMonth || "NA" : "NA";
+          ele.shifts = ele.isTimesheets ? meta.shifts || "NA" : "NA";
           let monthlyQuantity = 0;
-          if (ele.durationMonth) {
+          if (ele.durationMonth && ele.isTimesheets) {
               monthlyQuantity = ele.PurchQty / ele.durationMonth;
             }
           ele.monthlyQuantity = monthlyQuantity.toFixed(2)
