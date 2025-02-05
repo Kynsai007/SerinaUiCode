@@ -64,7 +64,7 @@
             <!-- <td>{{ line.RemainPurchFinancial }}</td> -->
             <td>
               <input
-                [id]="line.LineNumber"
+                id="{{ line.LineNumber }}-qrnQty"
                 #qty
                 type="text"
                 value="{{ line.Quantity }}"

@@ -13,7 +13,7 @@ export class RegistrationService {
   constructor(private http: HttpClient) { }
 
   savenewUserPassword(data):Observable<any>{
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/newUserActivation`,data).pipe(retry(1));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/newUserActivation`,data);
   }
   resendVerificationLink(token,email){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetExpiredActivationLink/?activation_code=${token}&email=${email}`).pipe(retry(1));
@@ -23,10 +23,10 @@ export class RegistrationService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/newVendorUserOTP?email=${mail}`).pipe(retry(1));
   }
   verifyOTP(otp,data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/validateVendorUserOTP?otp_code=${otp}`,data).pipe(retry(1));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/validateVendorUserOTP?otp_code=${otp}`,data);
   }
   signup_vendoruser(otp,data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/preApproved/newVendorAdminUser/?form_token=${otp}`,data).pipe(retry(1));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/preApproved/newVendorAdminUser/?form_token=${otp}`,data);
   }
 
   vendorRegistration(data){

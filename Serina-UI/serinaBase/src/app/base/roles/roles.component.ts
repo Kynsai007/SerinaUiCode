@@ -1474,21 +1474,24 @@ export class RolesComponent implements OnInit {
       });
   }
   filterVendor(event,name) {
+    // this.SpinnerService.show();
     let query = event.query.toLowerCase();
     // if(name == ''){
-      if (query != '') {
+    // console.log(query,name,this.vendorList)
+      // if (query != '') {
         this.sharedService
           .getVendorUniqueData(`?offset=1&limit=100&ven_name=${query}`)
           .subscribe((data: any) => {
             this.filteredVendors = data;
           });
-      } else {
-        if(name == ''){
-          this.filteredVendors = this.vendorList;
-        } else {
-          this.filteredVendors = this.vendorMatchList;
-        }
-      }
+      // } else {
+      //   if(name == ''){
+      //     this.filteredVendors = this.vendorList;
+      //   } else {
+      //     this.filteredVendors = this.vendorMatchList;
+      //   }
+      // }
+      // this.SpinnerService.hide();
     // } else {
     //   if (query != '') {
     //         this.readVendorMatch(this.tempVendorName,`&ven_name_search=${query}&offset=0&limit=0`);

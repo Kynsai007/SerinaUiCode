@@ -146,7 +146,7 @@ export class PopupComponent implements OnInit {
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
     }
-    this.POLineData = this.data?.resp?.podata;
+    // this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
   }
 
@@ -200,7 +200,7 @@ export class PopupComponent implements OnInit {
     return lineTotal;
   }
   onSelect(bool, data, field) {
-    let id = data[field];
+    let id = `${data[field]}-qrnQty`;
     data.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
     if (bool) {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);

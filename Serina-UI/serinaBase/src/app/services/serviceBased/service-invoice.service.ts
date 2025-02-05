@@ -50,7 +50,7 @@ export class ServiceInvoiceService {
     return this.http.post(
       `${environment.apiUrl}/apiv1.1/updateServiceInvoiceData/${this.userId}/idInvoice${this.invoiceId}`,
       data
-    ).pipe(retry(3));;
+    );;
   }
   getSummaryData(stringDate: any) {
     // tslint:disable-next-line:triple-equals
@@ -121,7 +121,7 @@ export class ServiceInvoiceService {
       `${environment.apiUrl}/${environment.apiVersion}/SP/DownloadRejectedRecords`,
       '',
       { responseType: 'blob' }
-    ).pipe(retry(3));
+    );
   }
 
   saveTemplate(data,type,bool){
@@ -141,7 +141,7 @@ export class ServiceInvoiceService {
     return this.http.post(
       `${environment.apiUrl}/${environment.apiVersion}/ServiceProvider/triggerServiceBatch/${this.userId}`,
       data
-    ).pipe(retry(3));
+    );
   }
   triggerBatchHistory(): Observable<any> {
     return this.http
@@ -163,8 +163,7 @@ export class ServiceInvoiceService {
     return this.http
       .post(
         `${environment.apiUrl}/${environment.apiVersion}/ServiceProvider/ServiceCostAllocationFileUpload/${this.userId}`,data
-      )
-      .pipe(retry(2));
+      );
   }
 
   downloadFileAllocation(filename): Observable<any> {
