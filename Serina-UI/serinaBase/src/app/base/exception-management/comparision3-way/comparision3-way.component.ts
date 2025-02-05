@@ -829,7 +829,7 @@ export class Comparision3WayComponent
       } else {
         linesData[i]['GRNQty'] = { Value: ele['RemainPurchPhysical'] };
       }
-      const unitPrice = parseFloat(ele?.UnitPrice?.replace(/,/g, ''));
+      const unitPrice = typeof ele?.UnitPrice === 'string' ? parseFloat(ele.UnitPrice.replace(/,/g, '')) : ele?.UnitPrice;
       let amount;
       if(this.dataService.isEditGRN){
         amount = (unitPrice * ele.GRNQty).toFixed(2);
