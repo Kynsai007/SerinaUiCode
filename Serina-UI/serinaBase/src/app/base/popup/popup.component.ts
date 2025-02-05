@@ -758,8 +758,8 @@ export class PopupComponent implements OnInit {
     this.manPowerData.forEach(ele=>{
       if(ele.LineNumber.Value == lineNumber){
         for(const tag in ele){
-          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PurchQty','RemainInventPhysical','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
-            if(ele[tag].Value){
+          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PO Balance Qty','percentage_po','PurchQty','RemainInventPhysical','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+             if(ele[tag].Value){
               totalShiftsData = totalShiftsData + Number(ele[tag].Value)
             }
           }
