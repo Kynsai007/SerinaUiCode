@@ -200,7 +200,7 @@ export class PopupComponent implements OnInit {
     return lineTotal;
   }
   onSelect(bool, data, field) {
-    let id = `${data[field]}-qrnQty`;
+    let id = `${data[field]}-grnQty`;
     data.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
     if (bool) {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
@@ -228,7 +228,7 @@ export class PopupComponent implements OnInit {
     if (bool) {
       this.POLineData.forEach(val => {
         val.isSelected = true;
-        let id = val[field];
+        let id = `${val[field]}-grnQty`;
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
         let lineTotal = this.calculateAmount(val);
         // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
