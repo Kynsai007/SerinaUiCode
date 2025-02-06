@@ -383,8 +383,9 @@
                   required
                   (change)="onChange(item, item[tag.field]?.Value)"
                   [disabled]="['Description','PO Qty','PO Balance Qty','Shift','GRN - Qty'].includes(tag.header) || ['Monthly quantity','Number of Shifts'].includes(tag.header)"
+                  [min]="['Description','PO Qty','GRN - Qty','PO Balance Qty','Shift'].includes(tag.header)?0:null"
                 />
-              </div>
+                </div>
               <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
                 <input
                   #inputval
@@ -462,11 +463,11 @@
               <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
             </td>
             <td>
-              <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
+              <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" min="0" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
             </td>
   
             <td>
-              <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
+                <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" min="0" step="any" pattern="^\d*\.?\d+$" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
             </td>
           </tr>
         </tbody>

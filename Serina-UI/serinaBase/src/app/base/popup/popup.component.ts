@@ -67,7 +67,7 @@ export class PopupComponent implements OnInit {
     { header: 'Description', field: 'Name' },
     { header: 'PO Qty', field: 'PurchQty'},
     { header: 'GRN - Qty', field: 'GRNQty' },
-    { header: 'PO Balance Qty', field: 'RemainInventPhysical'},
+    { header: 'PO Balance Qty', field: 'RemainPurchPhysical'},
     { header: 'Shift', field: 'shiftName'}
   ];
   disabledSaveMetadata: boolean = true;
@@ -398,7 +398,7 @@ export class PopupComponent implements OnInit {
     }
 
   filterByDate(date_input) {
-      if(date_input != '') {
+      if(date_input != '' && date_input?.length >0) {
         if(this.isEditGRN){
           this.rangeDates = date_input
         }
@@ -431,71 +431,76 @@ export class PopupComponent implements OnInit {
 
           }
           let old_data = [];
-          this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
+            this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
             old_data =  data?.data?.timesheets;
-
             if(old_data.length > 0){
               let item_codes = [];
               old_data.filter(el=> {
-                if(!item_codes.includes(el.itemCode)){
-                  item_codes.push(el.itemCode)
-                }
+              if(!item_codes.includes(el.itemCode)){
+                item_codes.push(el.itemCode)
+              }
               })
               let va_bool:boolean;
               let lineArr = [];
               this.manPowerData.filter(id=>{
-                if(!lineArr.includes(id.LineNumber.Value)){
-                  lineArr.push(Number(id.LineNumber.Value))
-                }
+              if(!lineArr.includes(id.LineNumber.Value)){
+                lineArr.push(Number(id.LineNumber.Value))
+              }
               });
               va_bool = lineArr.every(e=> item_codes.includes(e))
               if(old_data.length > 0 && !this.isEditGRN && va_bool ){
-                const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
+              const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
 
-                matD.afterClosed().subscribe((bool) => {
-                  this.dialogRef.close();
-                })
+              matD.afterClosed().subscribe((bool) => {
+                this.dialogRef.close();
+              })
               }
               old_data.forEach(el => {
-                el.quantity.forEach(item => {
-                  item.itemCode = el.itemCode
-                  item.LineNumber = el.itemCode
-                  // if(el.shift == 'Shift 1'){
-                  //   item.tagName = 'timeSheet0'
-                  // }
-                  // if(el.shift == 'Shift 2'){
-                  //   item.tagName = 'timeSheet1'
-                  // }
-                  // if(el.shift == 'Shift 3'){
-                  //   item.tagName = 'timeSheet2'
-                  // }
-                  // if(el.shift == 'Shift 4'){
-                  //   item.tagName = 'timeSheet3'
-                  // }
-                })
+              el.quantity.forEach(item => {
+                item.itemCode = el.itemCode
+                item.LineNumber = el.itemCode
+                // if(el.shift == 'Shift 1'){
+                //   item.tagName = 'timeSheet0'
+                // }
+                // if(el.shift == 'Shift 2'){
+                //   item.tagName = 'timeSheet1'
+                // }
+                // if(el.shift == 'Shift 3'){
+                //   item.tagName = 'timeSheet2'
+                // }
+                // if(el.shift == 'Shift 4'){
+                //   item.tagName = 'timeSheet3'
+                // }
+              })
               })
             }
-          })
-          let month = frmDate?.split(',')[0]?.split(' ')[0];
-          let date: any = frmDate?.split(',')[0]?.split(' ')[1];
-          let date1: any = toDate?.split(',')[0]?.split(' ')[1];
-          let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
-          if(old_data.length>0){
-            sampleData.forEach(el=>{
+
+            let month = frmDate?.split(',')[0]?.split(' ')[0];
+            let date: any = frmDate?.split(',')[0]?.split(' ')[1];
+            let date1: any = toDate?.split(',')[0]?.split(' ')[1];
+            let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
+
+            if(old_data.length>0){
+              sampleData.forEach(el=>{
               old_data.forEach(old=>{
-                if(el.LineNumber == old.itemCode){
-                  old.quantity.forEach(qty=>{
-                    let tag = qty.date
-                    el[tag] = qty.quantity;
-                  })
+                if(el?.LineNumber?.Value == old?.itemCode){
+                old.quantity.forEach(qty=>{
+                  let tag = qty.date;
+                  el[tag] = {Value:qty.quantity}
+                })
                 }
               })
+              })
+            }
+            this.timeSheet = []
+            if(date && date1){
+              this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
+            }
             })
-          }
-          this.timeSheet = []
-          if(date && date1){
-            this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
-          }
+          // this.timeSheet = []
+          // if(date && date1){
+          //   this.manPowerData = this.addDatesToRecords(sampleData, s_Date, e_Date);
+          // }
           // if (this.manPowerData.length > 4) {
           //   this.manPowerData = [];
           //   sampleData = sampleData.filter(el => {
@@ -605,13 +610,13 @@ export class PopupComponent implements OnInit {
     records.forEach((record, recordIndex) => {
       dateRange.forEach((date, dateIndex) => {
         const formattedDate = formatDate(date, 'yyyy-MM-dd', 'en-US');
-        if (!this.manPowerTable.some(rec => rec.header === formattedDate)) {
+        if (!this.manPowerTable.some(rec => rec.header == formattedDate)) {
           let rec = { header: formattedDate, field: formattedDate};
           this.manPowerTable.push(rec);
         }
         record[`${formattedDate}`] = {
           Value: record[`${formattedDate}`]?.Value || '',
-          id: `date_${recordIndex}_${dateIndex}`
+          id: `date_${recordIndex}_${dateIndex}` || dateIndex
         };
       });
     });
@@ -758,7 +763,7 @@ export class PopupComponent implements OnInit {
     this.manPowerData.forEach(ele=>{
       if(ele.LineNumber.Value == lineNumber){
         for(const tag in ele){
-          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PO Balance Qty','percentage_po','PurchQty','RemainInventPhysical','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
+          if(!['GRNAmountExcTax','GRNQty','LineNumber','Name','PurchId','PO Balance Qty','percentage_po','RemainPurchPhysical','PurchQty','RemainInventPhysical','RemainPurchPhysical','UnitPrice','durationMonth','isTimesheets','monthlyQuantity','shiftName','shifts'].includes(tag)){
              if(ele[tag].Value){
               totalShiftsData = totalShiftsData + Number(ele[tag].Value)
             }

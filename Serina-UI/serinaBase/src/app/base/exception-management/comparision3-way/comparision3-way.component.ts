@@ -2422,7 +2422,7 @@ export class Comparision3WayComponent
             }
         })
         let objData = {
-          itemCode : objV?.LineNumber?.Value,
+          itemCode : objV?.LineNumber?.Value.toString(),
           lineData: {
             'Quantity' : { Value : objV?.GRNQty?.Value },
             'UnitPrice' : { Value: objV?.UnitPrice?.Value}
@@ -2522,7 +2522,7 @@ export class Comparision3WayComponent
       // })
       // console.log(objV)
       let objData = {
-        itemCode : objV?.invoice_itemcode?.Value,
+        itemCode : objV?.invoice_itemcode?.Value.toString(),
         lineData: {
           'Quantity' : { Value : objV?.GRNQuantity?.Value },
           'UnitPrice' : { Value: objV?.GRNUnitPrice?.Value}
