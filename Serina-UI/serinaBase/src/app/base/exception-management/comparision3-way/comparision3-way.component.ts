@@ -582,6 +582,7 @@ export class Comparision3WayComponent
       this.Itype = 'Invoice';
       if (this.editable && !['advance invoice', 'non-po', 'credit note'].includes(this.documentType) || this.mappingForCredit) {
         this.readLineItems();
+        
       }
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
@@ -1926,15 +1927,15 @@ export class Comparision3WayComponent
         line: new Set<string>(),
       };
       const errorMessages = {
-        InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is empty or invalid.",
-        SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is empty or invalid.",
-        PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty.",
-        InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date.",
-        InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty.",
-        Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero. ",
-        UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is empty or invalid.",
-        AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is empty or invalid.",
-        Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is empty or invalid.",
+        InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is not valid (empty/incorrect)",
+        SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is not valid (empty/incorrect)",
+        PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty",
+        InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date",
+        InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty",
+        Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero",
+        UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is not valid (empty/incorrect)",
+        AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is not valid (empty/incorrect)",
+        Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is not valid (empty/incorrect)",
       };
       
       
@@ -2157,7 +2158,7 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104,216].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -2194,6 +2195,8 @@ export class Comparision3WayComponent
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
+    } else if(subStatus == 216){
+      this.update("Qty x (UnitPrice - Discount) is not Equal to Amount Exclusive of Tax, please check")
     } else {
       this.getInvoiceFulldata('');
       // this.readHeaderDetails();

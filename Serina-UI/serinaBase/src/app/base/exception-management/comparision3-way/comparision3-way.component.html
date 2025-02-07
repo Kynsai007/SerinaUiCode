@@ -10,7 +10,7 @@
   </span>
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
 </div> -->
-<div class="row invoice-body">
+<div class="row invoice-body" [ngClass]="headerpop == 'Batch Progress' && progressDailogBool ? 'p_events_none' : 'p_events_all'">
   <div class="viewPdf d-flex">
     <!-- <button
       class="btnUpload  mr-2"
