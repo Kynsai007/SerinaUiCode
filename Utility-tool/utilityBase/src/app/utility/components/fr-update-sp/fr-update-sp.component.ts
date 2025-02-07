@@ -209,6 +209,7 @@ export class FrUpdateSpComponent implements OnInit {
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
+    this.mandatoryServiceRules = [];
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
@@ -311,6 +312,7 @@ export class FrUpdateSpComponent implements OnInit {
         this.selected_page_selection = JSON.stringify(data?.pagepreference);
       }
       if(this.FRMetaData?.service_rules_function){
+        this.mandatoryServiceRules = [];
         this.serviceRules?.forEach(el=>{
           if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
             el.isSelected = true;
