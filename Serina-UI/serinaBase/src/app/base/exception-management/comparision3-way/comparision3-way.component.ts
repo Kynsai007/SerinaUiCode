@@ -2886,7 +2886,7 @@ export class Comparision3WayComponent
   readGRNLines(grn_num, bool) {
     this.SpinnerService.show();
     this.SharedService.getGRN_Lines(grn_num).subscribe((data: any) => {
-      this.PO_GRN_Number_line = data.result;
+      this.PO_GRN_Number_line = data.result[0];
       this.SpinnerService.hide();
       if (bool) {
         let data = [...this.PO_GRN_Number_line]
