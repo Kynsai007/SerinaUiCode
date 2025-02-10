@@ -2636,6 +2636,7 @@ export class Comparision3WayComponent
       this.disable_save_btn = true;
       return;
     }
+    this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = val;
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
     } else {
@@ -3035,7 +3036,7 @@ export class Comparision3WayComponent
 
   grnAPICall(boolean, txt) {
     let inv_des = '';
-    if(this.invoiceDescription !== ''){
+    if(this.invoiceDescription &&this.invoiceDescription !== ''){
       inv_des += `&document_description=${this.invoiceDescription}`;
     }
     if(this.invoiceDate){

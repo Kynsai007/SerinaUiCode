@@ -1005,7 +1005,7 @@
                       type="text"
                       name="inv_number"
                       class="inv_number f-12 text_color"
-                      placeholder="Please add invoice number"
+                      placeholder="Add invoice number"
                       [(ngModel)]="invoiceNumber"
                     />
                   </div>
@@ -1017,7 +1017,7 @@
                         type="text"
                         name="inv_description"
                         class="inv_number f-12 text_color"
-                        placeholder="Please add invoice description"
+                        placeholder="Add invoice description"
                         [(ngModel)]="invoiceDescription"
                       />
                     </div>
@@ -1069,7 +1069,7 @@
                         <ng-container *ngSwitchCase="'GRN - Quantity'">
                           <div>
                             <input #inputval type="number" style="border: 0.2px solid #358dc0" 
-                                 name="grnQuantity{{i}}" [value]="line1.Value" [(ngModel)]="line1.Value"
+                                 name="grnQuantity{{i}}" [value]="line1.Value"
                                  (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
                                  class="form-control pl-1 inputHeight w-sm" step="0.01" [title]="line1.Value" >
                           </div>
