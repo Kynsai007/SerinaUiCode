@@ -423,7 +423,7 @@ $theme_color: var(--themeColor);
       font-weight: 600;
       padding-left: 10px;
       position: relative;
-      top: -3px;
+      top: 0px;
       z-index: 1;
       border-bottom: 1px solid lightgray !important;
     }
@@ -789,19 +789,19 @@ $theme_color: var(--themeColor);
   position: relative; 
   line-height: 1 !important;
 }
-dialog {
-  z-index: 10;
-  margin-top: 10px;
-  background: #ffffff;
-  box-shadow: 0px 6px 12px #00000029;
-  border: none;
-  border-radius: 5px;
-  height: 230px;
-  width: 450px;
-  position: absolute;
-  transform: translatey(100%);
-  overflow: visible;
-}
+// dialog {
+//   z-index: 10;
+//   margin-top: 10px;
+//   background: #ffffff;
+//   box-shadow: 0px 6px 12px #00000029;
+//   border: none;
+//   border-radius: 5px;
+//   // height: 230px;
+//   width: 450px;
+//   position: absolute;
+//   transform: translatey(100%);
+//   overflow: visible;
+// }
 dialog::backdrop {
   background-color: rgb(247 247 255 / 80%);
   opacity: 0;
@@ -817,7 +817,7 @@ dialog::backdrop {
   right: 495px !important;
 }
 .maxHDiv {
-  max-height: 65vh;
+  max-height: 56vh;
   overflow: auto;
 }
 .D_none {
@@ -828,4 +828,54 @@ dialog::backdrop {
 }
 .p_events_none {
   pointer-events: none;
+}
+.edit_btn{
+  border: 1px solid lightgray;
+  height: 25px;
+  border-radius: 5px;
+  background: white;
+  padding: 0px 4px 1px 5px;
+  margin-left: 6px;
+  position: relative;
+  top: 2px;
+}
+dialog {
+  z-index: 10;
+  margin-top: 10px;
+  background: #ffffff;
+  box-shadow: 0px 6px 12px #00000029;
+  border: none;
+  border-radius: 5px;
+  // height: 310px;
+  width: 450px;
+  position: absolute;
+  overflow: visible;
+  &::after {
+    content: "";
+    position: absolute;
+    top: -45px;
+    right: 35px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 25px 10px 25px 10px;
+    border-color: transparent transparent #fff transparent;
+  }
+}
+.progress {
+  height: 5px;
+}
+.progress-bar {
+  background-color: #009d14;
+}
+textarea {
+  background-color: #f8f9fd;
+  overflow: hidden;
+  white-space: wrap !important;
+  word-wrap: break-word;
+}
+.secondary_act_btn{
+  min-width: 70px;
+    height: 30px;
+    padding: 0;
 }

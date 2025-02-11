@@ -628,7 +628,7 @@ export class Comparision3WayComponent
       }
     } else {
       this.getInvoiceFulldata('');
-      this.getInvTypes();
+      // this.getInvTypes();
       // this.getRulesData();
       // this.readPOLines();
       // this.readErrorTypes();
@@ -1045,7 +1045,7 @@ export class Comparision3WayComponent
           this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
-
+        this.getInvTypes();
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
@@ -2760,6 +2760,24 @@ export class Comparision3WayComponent
       dialog.close();
     }
   }
+  openFilterDialog(event){
+    let top = event.clientY + 10 + "px";
+    let left;
+      left = "calc(29% + 100px)";
+    const dialog = document.querySelector('dialog');
+    dialog.style.top = top;
+    dialog.style.left = left;
+    if(dialog){
+      dialog.showModal();
+    }
+  }
+  updateCharacterCount(event){
+    this.invoiceDescription = event.target.value;
+    if (this.invoiceDescription.length > 250) {
+      this.invoiceDescription = this.invoiceDescription.substring(0, 250);
+      event.target.value = this.invoiceDescription;
+    }
+  }
   delete_confirmation(id,po_itemcode) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
 
@@ -3475,7 +3493,9 @@ export class Comparision3WayComponent
   }
 
   opengrnDailog() {
-    this.getGRNnumbers(this.po_num);
+    if(!this.grnList){
+      this.getGRNnumbers(this.po_num);
+    }
     this.GRNDialogBool = true;
     this.progressDailogBool = true;
     this.headerpop = 'Select GRN';
@@ -3499,10 +3519,20 @@ export class Comparision3WayComponent
       this.PO_GRN_Number_line = data.result;
       this.SpinnerService.hide();
       if (bool) {
+        this.grnList.forEach(el => {
+          if (el.GRNNumber == grn_num) {
+            el.checked = true;
+          }
+        });
         let data = [...this.PO_GRN_Number_line]
         this.selectedGRNList.push(grn_num);
         this.selectedGRNLines.push({ grnNumber: grn_num, linesData: data });
       } else {
+        this.grnList.forEach(el => {
+          if (el.GRNNumber == grn_num) {
+            el.checked = false;
+          }
+        });
         if (this.selectedGRNList.length > 0) {
           this.selectedGRNList = this.selectedGRNList.filter(grn => grn != grn_num);
           this.selectedGRNLines = this.selectedGRNLines.filter(grn => grn.grnNumber != grn_num);
@@ -4416,6 +4446,8 @@ export class Comparision3WayComponent
           this.docType = 'Credit Note'
         } else if (this.docType == 'retention invoice') {
           this.docType = 'Retention Invoice'
+        } else if (this.docType == 'progressive invoice') {
+          this.docType = 'Progressive Invoice'
         }
         this.d_type = this.docType;
       })
