@@ -429,6 +429,7 @@ export class Comparision3WayComponent
   decimal_count:number;
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
+  flipPOData: any;
 
   constructor(
     fb: FormBuilder,
@@ -2597,9 +2598,13 @@ export class Comparision3WayComponent
       h = '40vh';
     } else if (str == 'flip line') {
       try {
+        
         // let query = `/${this.invoiceID}`;
-        const data: any = await this.exceptionService.getPOLines('').toPromise();
-        response = { podata: data.Po_line_details, sub_total: this.invoice_subTotal };
+        if(!this.flipPOData){
+          const data: any = await this.exceptionService.getPOLines('').toPromise();
+           this.flipPOData = data.Po_line_details;
+        }
+        response = { podata: this.flipPOData, sub_total: this.invoice_subTotal };
       } catch (error) {
         console.error('Error fetching PO lines:', error);
         return;
@@ -2865,7 +2870,9 @@ export class Comparision3WayComponent
   }
 
   opengrnDailog() {
-    this.getGRNnumbers(this.po_num);
+    if(!(this.grnList?.length > 0)){
+      this.getGRNnumbers(this.po_num);
+    }
     this.GRNDialogBool = true;
     this.progressDailogBool = true;
     this.headerpop = 'Select GRN';
@@ -2889,10 +2896,20 @@ export class Comparision3WayComponent
       this.PO_GRN_Number_line = data.result[0];
       this.SpinnerService.hide();
       if (bool) {
+        this.grnList.forEach(grn=>{
+          if(grn.GRNNumber == grn_num){
+            grn.isChecked = true;
+          }
+        })
         let data = [...this.PO_GRN_Number_line]
         this.selectedGRNList.push(grn_num);
         this.selectedGRNLines.push({ grnNumber: grn_num, linesData: data });
       } else {
+        this.grnList.forEach(grn=>{
+          if(grn.GRNNumber == grn_num){
+            grn.isChecked = false;
+          }
+        })
         if (this.selectedGRNList.length > 0) {
           this.selectedGRNList = this.selectedGRNList.filter(grn => grn != grn_num);
           this.selectedGRNLines = this.selectedGRNLines.filter(grn => grn.grnNumber != grn_num);

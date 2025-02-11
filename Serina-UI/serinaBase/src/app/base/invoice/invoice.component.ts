@@ -358,6 +358,7 @@ isMobile:boolean;
       { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
       { dbColumnname: 'InvoiceNumber', columnName: 'Invoice Number' },
       { dbColumnname: 'JournalNumber', columnName: 'Invoice reference' },
+      { dbColumnname: 'documentDescription', columnName: 'Description' },
       { dbColumnname: 'grn_status', columnName: 'GRN Status' },
       { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
       { dbColumnname: 'firstName', columnName: 'Created By' },
@@ -410,14 +411,22 @@ isMobile:boolean;
     } else if (this.route.url == this.POTab) {
       this.pageNumber = this.ds.poTabPageNumber;
       if (this.ds.poLoadedData.length == 0) {
-        this.getDisplayPOData(this.APIParams);
+        if (this.ds.searchPOStr != '') {
+          this.getDisplayPOData(this.APIParams);
+        } else {
+          this.getDisplayPOData('?offset=1&limit=50');
+        }
       }
       this.routeName = 'PO';
       this.searchStr = this.ds.searchPOStr;
     } else if (this.route.url == this.archivedTab) {
       this.pageNumber = this.ds.arcTabPageNumber;
       if (this.ds.archivedDisplayData.length == 0) {
-        this.getDisplayARCData(this.APIParams);
+        if (this.ds.searchArcStr != '') {
+          this.getDisplayARCData(this.APIParams);
+        } else {
+          this.getDisplayARCData('?offset=1&limit=50');
+        }
       }
       this.routeName = 'archived';
       this.searchStr = this.ds.searchArcStr;
@@ -425,13 +434,21 @@ isMobile:boolean;
       this.pageNumber = this.ds.rejTabPageNumber;
       this.routeName = 'rejected';
       if (this.ds.rejectedDisplayData.length == 0) {
-        this.getDisplayRejectedData(this.APIParams);
+        if(this.ds.searchRejStr != ''){
+          this.getDisplayRejectedData(this.APIParams);
+        } else {
+          this.getDisplayRejectedData(`?offset=1&limit=50`);
+        }
       }
       this.searchStr = this.ds.searchRejStr;
     } else if( this.route.url == this.GRNTab){
       this.pageNumber = this.ds.grnTabPageNumber;
       if (this.ds.GRNLoadedData.length == 0) {
-        this.getDisplayGRNdata(this.APIParams);
+        if(this.ds.searchGRNStr != ''){
+          this.getDisplayGRNdata(this.APIParams);
+        } else {
+          this.getDisplayGRNdata(`?offset=1&limit=50`);
+        } 
       }
       this.routeName = 'GRN';
       this.searchStr = this.ds.searchGRNStr;
@@ -471,6 +488,7 @@ isMobile:boolean;
             invoiceData['User'] = element?.User;
             invoiceData['Department'] = element?.Department;
             invoiceData['InvoiceType'] = element?.InvoiceType;
+            invoiceData['approverData'] = element?.Document?.approverData?.to_approve_by;
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
@@ -824,6 +842,7 @@ isMobile:boolean;
     this.ds.allPaginationFirst = 0;
     this.ds.allPaginationRowLength = 10;
     if (value == 'invoice') {
+      this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
       this.route.navigate([this.invoiceTab]);
       this.ds.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
@@ -852,6 +871,7 @@ isMobile:boolean;
       this.allSearchInvoiceString = [];
       this.searchStr = this.ds.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
+      this.search_placeholder = 'Ex : By Service provider. By Account, Select Date range from the Calendar icon';
       if (!this.serviceColumns) {
         this.getServiceColumns();
       }

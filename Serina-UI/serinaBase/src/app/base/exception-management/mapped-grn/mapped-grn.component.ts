@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -6,15 +6,26 @@ import { SharedService } from 'src/app/services/shared.service';
   templateUrl: './mapped-grn.component.html',
   styleUrls: ['./mapped-grn.component.scss','../../invoice/view-invoice/view-invoice.component.scss']
 })
-export class MappedGRNComponent implements OnInit {
+export class MappedGRNComponent implements OnInit,OnChanges {
   @Input() grnTabDatalength:number;
-  @Input() GRNTabData: {};
+  @Input() GRNTabData: any;
   currentlyOpenedItemIndex = -1;
+  lineTableHeaders: string[];
 
   constructor(private SharedService: SharedService) { }
 
   ngOnInit(): void {
-    // this.getGRNtabData();
+    
+
+  }
+  ngOnChanges(changes:SimpleChanges): void {
+    if(changes.GRNTabData && changes.GRNTabData.currentValue) {
+      Object?.keys(this.GRNTabData)?.forEach((element:any) => {
+        this.GRNTabData[element]?.forEach(ele => {
+          this.lineTableHeaders = Object?.keys(ele);
+        })
+      })
+    }
   }
   // getGRNtabData() {
   //   this.SharedService.getGRNTabData().subscribe((data: any) => {
