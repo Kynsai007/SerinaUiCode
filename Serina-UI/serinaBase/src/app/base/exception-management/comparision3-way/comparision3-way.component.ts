@@ -3511,7 +3511,7 @@ export class Comparision3WayComponent
   }
 
   opengrnDailog() {
-    if(!this.grnList){
+    if(this.grnList.length == 0){
       this.getGRNnumbers(this.po_num);
     }
     this.GRNDialogBool = true;
