@@ -121,7 +121,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetPassword/?email=${email}`).pipe(retry(3));
   }
   updatepass(data: any,OTP): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/?otp_code=${OTP}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/?otp_code=${OTP}`,data);
   }
 
   // notifications
@@ -148,10 +148,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/readUserAccess/${this.userId}/?ua_id=${value}&skip=0`).pipe(retry(3));
   }
   updatecustomeruser(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/updateCustomer/${this.userId}/idUser/` + this.cuserID, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/updateCustomer/${this.userId}/idUser/` + this.cuserID, data);
   }
   createNewUser(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newCustomer/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newCustomer/${this.userId}`, data);
   }
 
   // getRoleinfo(): Observable<any> {
@@ -164,19 +164,19 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/readPermissionRoleInfo/${this.userId}/accessPermissionDefID/${this.ap_id}`).pipe(retry(3));
   }
   createRole(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAccessPermissionUser/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAccessPermissionUser/${this.userId}`, data);
   }
   updateRoleData(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data);
   }
   deleteRole() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/accessPermissionDefID/${this.ap_id}`).pipe(retry(3));
   }
   editRole(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/applyAccessPermission/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/applyAccessPermission/${this.userId}`, data);
   }
   newAmountApproval(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAmountApproval/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAmountApproval/${this.userId}`, data);
   }
   userCheck(name) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/userName?name=${name}`).pipe(retry(3));
@@ -192,7 +192,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/vendorEntityCodes/${this.userId}?ven_code=${id}`).pipe(retry(3));
   }
   createVendorSuperUser(data): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newVendorAdminUser/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newVendorAdminUser/${this.userId}`, data);
   }
   readVendorSuperUsersList() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/vendorUserlist/${this.userId}`).pipe(retry(3));
@@ -201,7 +201,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readVendorUserAccess/${uid}?ven_code=${id}`).pipe(retry(3));
   }
   updateVendorUserAccess(data, uu_id) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/updateVendorUser/${this.userId}/idUser/${uu_id}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/updateVendorUser/${this.userId}/idUser/${uu_id}`, data);
   }
   getVendorMatch(ven_name, data) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorNameCodeMatch/${this.userId}?ven_name=${ven_name}${data}`).pipe(retry(3));
@@ -210,13 +210,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/getVendorOnboardStatus/${this.userId}?ven_code=${ven_code}`).pipe(retry(3));
   }
   activate_vendor_signup(id) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newUserActivation/${this.userId}?au_id=${id}`, '').pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newUserActivation/${this.userId}?au_id=${id}`, '');
   }
   activate_deactivate(id) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/changeUserAccountStatus/${this.userId}?deactivate_uid=${id}`).pipe(retry(3));
   }
   checkPriority(bool, data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/validateHierarchyPriority/${this.userId}?validation_type=${bool}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/validateHierarchyPriority/${this.userId}?validation_type=${bool}`, data);
   }
 
 
@@ -233,10 +233,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendordetails/` + this.vendorID).pipe(retry(3));
   }
   createvendor(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/NewVendor/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/NewVendor/${this.userId}`, data);
   }
   updatevendor(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/updateVendor/${this.userId}/idVendor/` + this.vendorID, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/updateVendor/${this.userId}/idVendor/` + this.vendorID, data);
   }
   readvendoraccount() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorAccount/` + this.vendorID).pipe(retry(3));
@@ -251,7 +251,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readVendorColumnPos/${this.userId}/tabname/{tabtype}`).pipe(retry(3));
   }
   updateVendorInvoiceColumns(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateVendorColumnPos/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateVendorColumnPos/${this.userId}`, data);
   }
   getItemFileStatus(): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readItemMetaStatus/${this.userId}`).pipe(retry(3));
@@ -336,7 +336,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocumentApprovers/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
   }
   setApprovers(data, bool) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/setDocumentApproval/${this.userId}/idInvoice/${this.invoiceID}?pre_approve=${bool}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/setDocumentApproval/${this.userId}/idInvoice/${this.invoiceID}?pre_approve=${bool}`, data);
   }
 
   /* invoice Related */
@@ -353,7 +353,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${string}/${id}`).pipe(retry(3));
   }
   changeStatus(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/idDocument/${this.invoiceID}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/idDocument/${this.invoiceID}`,data);
   }
   updatePO(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(3));
@@ -372,7 +372,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3))
   }
   saveGRNData(boolean_value,value,inv_des):Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}${inv_des}`,value).pipe(retry(3))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}${inv_des}`,value)
   }
   getPo_numbers(idVen){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
@@ -393,16 +393,16 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`).pipe(retry(3));
   }
   createGRNWithPO(param,manpowerParam,value){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}${manpowerParam}`,value);
   }
   duplicateGRNCheck(value,param){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value)
   }
   validateUnitprice(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data)
   }
   updateGRNnumber(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceGrn/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceGrn/${this.userId}?inv_id=${this.invoiceID}`,data);
   }
   downloadGRN(api_param,data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadGRNList/${this.userId}${api_param}`,data).pipe(retry(2))
@@ -443,13 +443,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceFile/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))
   }
   updateInvoiceDetails(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   readColumnInvoice(value) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readColumnPos/${this.userId}/tabname/${value}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readColumnPos/${this.userId}/tabname/${value}`);
   }
   updateColumnPOs(data: any, value): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateColumnPos/${this.userId}/tabname/${value}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateColumnPos/${this.userId}/tabname/${value}`, data);
   }
   readEditedInvoiceData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/edited`).pipe(retry(3));
@@ -461,10 +461,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/assignInvoice/${this.userId}/idInvoice/${inv_id}`).pipe(retry(3));
   }
   submitChangesInvoice(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/submitInvoice/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/submitInvoice/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   approveInvoiceChanges(data: any) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/approveEditInvoice/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/approveEditInvoice/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   readApprovedInvoiceData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/approved`).pipe(retry(2));
@@ -473,13 +473,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceListService/${this.userId}/approved`).pipe(retry(2))
   }
   financeApprovalPermission(data): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/approveDocument/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/approveDocument/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   ITRejectInvoice(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectIT/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(2));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectIT/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   vendorRejectInvoice(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/idInvoice/${this.invoiceID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/idInvoice/${this.invoiceID}`, data);
   }
   rejectGRN(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectGRN/${this.invoiceID}/${this.userId}`).pipe(retry(3));
@@ -520,7 +520,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${id}`, data, {
       reportProgress: true,
       observe: 'events',
-    }).pipe(retry(3));
+    });
   }
   downloadSupportDoc(doc_name) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
@@ -587,13 +587,13 @@ export class SharedService {
 
   // OCR
   uploadInvoice(data: any, poNumber): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/uploadfile/${poNumber}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/uploadfile/${poNumber}`, data);
   }
   OcrProcess(OCRInput): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ocr/status/stream?file_path=${OCRInput}`, { responseType: 'text', observe: "events" }).pipe(retry(3));
   }
   mutliUpload(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/uploadMultiInvoice/${this.userId}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/VendorPortal/uploadMultiInvoice/${this.userId}`, data);
   }
   // multiple PO
   readPOnumbers(ent_id, ven_id, s_date, e_date) {
@@ -649,10 +649,10 @@ export class SharedService {
   }
   uploadPercentageAndAmountDetails(data,invtype,tab){
     if(tab === 'percentage'){
-      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_perc=${data}`,data).pipe(retry(3));
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_perc=${data}`,data);
     }
     else{
-      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_amt=${data}`,data).pipe(retry(3));
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_amt=${data}`,data);
     }
   }
   getAmountofPercentage(data){

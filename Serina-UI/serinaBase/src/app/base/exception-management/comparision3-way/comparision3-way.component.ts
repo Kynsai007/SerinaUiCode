@@ -1788,30 +1788,46 @@ export class Comparision3WayComponent
     this.updateInvoiceData.push(updateValue);
   }
   async onChangeLineValue(key, value, data) {
-    if(value.includes('=')){
-      const itemCode = data?.itemCode;
+    const itemCode = data?.itemCode;
       let unitPrice;  
       let amounExcTax;
       let new_value;
-      this.lineDisplayData.forEach(tag => {
-        if (tag.tagname == 'AmountExcTax') {
-        tag.items.forEach(item => {
-          if(item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode){
-           amounExcTax = item.linedetails[0].invline[0].DocumentLineItems.Value;
-          }
-        })
+      this.lineDisplayData?.forEach(tag => {
+        if (tag?.tagname == 'AmountExcTax') {
+          tag?.items?.forEach(item => {
+            if(item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode){
+              if(key == 'AmountExcTax'){
+                data.oldValue = item.linedetails[0].invline[0].DocumentLineItems.Value;
+                item.linedetails[0].invline[0].DocumentLineItems.Value = value;
+              }
+            amounExcTax = item.linedetails[0].invline[0].DocumentLineItems.Value;
+            }
+          })
         }
-        if (tag.tagname == 'UnitPrice') {
-        tag.items.forEach(item => {
-          if(item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode){
-          unitPrice = item.linedetails[0].invline[0].DocumentLineItems.Value;
-          }
-        })
+        if (tag?.tagname == 'UnitPrice') {
+          tag.items.forEach(item => {
+            if(item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode){
+              if(key == 'UnitPrice'){
+                data.oldValue = item.linedetails[0].invline[0].DocumentLineItems.Value;
+                item.linedetails[0].invline[0].DocumentLineItems.Value = value;
+              }
+              unitPrice = item.linedetails[0].invline[0].DocumentLineItems.Value;
+            }
+          })
+        }
+        if(tag?.tagname == 'Quantity'){
+          tag?.items?.forEach(item => {
+            if(item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode){
+              if(key == 'Quantity'){
+                data.oldValue = item.linedetails[0].invline[0].DocumentLineItems.Value;
+                item.linedetails[0].invline[0].DocumentLineItems.Value = value;
+              }
+            }
+          })
         }
       })
+    if(value.includes('=')){
       let count = this.decimal_count;
-
-
       if (key == 'Quantity' && value.includes('=')) {
         new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
         this.lineDisplayData.forEach(tag => {
@@ -1837,7 +1853,9 @@ export class Comparision3WayComponent
         this.isAmtStr = true;
       } else {
         this.isAmtStr = false;
+        this.calculateCost();
       }
+      
     } else if (key == 'Description') {
       if (value == '') {
         this.isEmpty = true;
@@ -1845,10 +1863,10 @@ export class Comparision3WayComponent
         this.isEmpty = false;
       }
     }
-    if(data.Value != value){  
+    if(data.oldValue != value){  
     let updateValue = {
       documentLineItemID: data?.idDocumentLineItems,
-      OldValue: data.Value || '',
+      OldValue: data.oldValue || '',
       NewValue: value,
     };
     this.updateInvoiceData.push(updateValue);
@@ -4381,7 +4399,7 @@ export class Comparision3WayComponent
 
       }
       this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost.toFixed(2);  
+      this.totalInvCost = totalinvCost.toFixed(this.decimal_count);  
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");
