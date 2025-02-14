@@ -425,6 +425,7 @@ export class Comparision3WayComponent
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
   invoiceDate: Date | null = null;
+  selectALL_grn_lines: boolean = false;
 
   constructor(
     fb: FormBuilder,
@@ -937,6 +938,9 @@ export class Comparision3WayComponent
       });
     }, 100);
     this.grnLineCount = this.lineDisplayData[0]?.linedata;
+    this.grnLineCount.forEach(el=>{
+      el.checked = false;
+    })
     this.isGRNDataLoaded = true;
   }
 
@@ -2035,24 +2039,29 @@ export class Comparision3WayComponent
   }
   vendorSubmit() {
     this.SpinnerService.show();
-    this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
-      (data: any) => {
-        this.dataService.invoiceLoadedData = [];
-        this.SpinnerService.hide();
-        if (this.router.url.includes('ExceptionManagement')) {
-          this.success("Sent to Batch Successfully!")
-        } else {
-          if (!this.GRNUploadID) {
-            this.success("Uploaded to Serina Successfully!")
+    if(this.router.url.includes('uploadInvoices')){
+      this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
+        (data: any) => {
+          this.dataService.invoiceLoadedData = [];
+          this.SpinnerService.hide();
+          if (this.router.url.includes('ExceptionManagement')) {
+            this.success("Sent to Batch Successfully!")
+          } else {
+            if (!this.GRNUploadID) {
+              this.success("Uploaded to Serina Successfully!")
+            }
           }
+          this.syncBatch();
+  
+        },
+        (error) => {
+          this.error("Server error");
         }
-        this.syncBatch();
-
-      },
-      (error) => {
-        this.error("Server error");
-      }
-    );
+      );
+    } else {
+      this.success("Sent to Batch Successfully!");
+      this.syncBatch();
+    }
   }
   serviceSubmit(bool) {
     // if(!this.normalCostAllocation){
@@ -2729,10 +2738,22 @@ export class Comparision3WayComponent
 
       if (bool) {
         this.SpinnerService.show();
-        this.lineDisplayData = this.lineDisplayData.map(record => {
-          const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
-          return { ...record, linedata: newLinedata };
-        });
+        if(this.selectALL_grn_lines){
+          this.grnLineCount.forEach(el => {
+            if (el.checked) {
+              this.lineDisplayData = this.lineDisplayData.map(record => {
+                const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== el.idDocumentLineItems);
+                return { ...record, linedata: newLinedata };
+              });
+            }
+          });
+        } else {
+          this.lineDisplayData = this.lineDisplayData.map(record => {
+            const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
+            return { ...record, linedata: newLinedata };
+          });
+        }
+
         this.GRN_line_total = 0;
         this.lineDisplayData.forEach(ele => {
           if (ele.TagName == "AmountExcTax") {
@@ -2744,6 +2765,7 @@ export class Comparision3WayComponent
         })
         this.grnLineCount = this.lineDisplayData[0]?.linedata;
         this.SpinnerService.hide();
+        this.selectALL_grn_lines = false;
       }
     })
   }
@@ -4350,7 +4372,7 @@ export class Comparision3WayComponent
     const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
     const unitPriceDiscountObject = this.lineData?.Result?.find(obj => obj?.tagname === "Discount");
     const unitPriceDiscPercentageObject = this.lineData?.Result?.find(obj => obj?.tagname === "DiscPercent");
-    // console.log(unitPriceObject)
+
     if (unitPriceObject && quantityObject) {
 
       const unitPriceData = unitPriceObject?.items;
@@ -4749,6 +4771,24 @@ export class Comparision3WayComponent
       this.projectCArr = data.result.value;
     },err=>{
     })
+  }
+
+
+  selectLine(bool,index,item){
+    let selctionIds = [];
+    this.grnLineCount.forEach(el=>{
+      if(el.checked && !selctionIds.includes(el.idDocumentLineItems)){
+        selctionIds.push(el.idDocumentLineItems);
+      } else if(!el.checked && selctionIds.includes(el.idDocumentLineItems)){
+        selctionIds = selctionIds.filter(id => id !== el.idDocumentLineItems);
+      }
+    })
+    if(selctionIds.length == 0){
+      this.selectALL_grn_lines = false;
+    } else {
+      this.selectALL_grn_lines = true;
+    }
+
   }
   ngOnDestroy() {
     let sessionData = {

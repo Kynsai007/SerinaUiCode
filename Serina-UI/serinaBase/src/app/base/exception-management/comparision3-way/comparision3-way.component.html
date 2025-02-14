@@ -1050,9 +1050,11 @@
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
                 <tr class="invert_tr" style="width: 50px">
-                  <th class="lineName invert_th_td text-center" style="min-width: 50px">S.No</th>
-                  <td *ngFor="let item of grnLineCount; let i = index" class="count_line">
-                    <div class="s-no">{{ i + 1 }}</div>
+                  <th class="lineName invert_th_td text-center d-flex" style="min-width: 50px">
+                    <div class="ml-1">S.No</div></th>
+                  <td *ngFor="let item of grnLineCount; let i = index" class="count_line d-flex">
+                    <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="select_line" id="check{{i}}" [(ngModel)]="item.checked"  (change)="selectLine($event.target.checked,index,item)"></div>
+                    <div class="s-no ml-1">{{ i + 1 }}</div>
                   </td>
                 </tr>
                 <ng-container *ngFor="let item of lineDisplayData; let i = index">
