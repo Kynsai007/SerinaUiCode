@@ -28,6 +28,7 @@ $theme_color: var(--themeColor);
     background-color: transparent;
     border:0;
   }
+
 }
 .input_disabled {
   background: inherit;
@@ -118,7 +119,7 @@ $theme_color: var(--themeColor);
   font-weight: 600;
   height: 34px;
   position: relative;
-  top: 6px;
+  top: 3px;
 }
 .m-l-neg{
   // margin-left: -20px;
@@ -145,8 +146,8 @@ $theme_color: var(--themeColor);
 }
 .count_line {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  // flex-direction: column;
+  justify-content: center;
   width: 50px;
 }
 .count-h {
