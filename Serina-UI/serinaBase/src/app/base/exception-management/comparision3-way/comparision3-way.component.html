@@ -23,11 +23,11 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' 
-          && (this.router.url.includes('Upload') || [8,16,17,18,19,21,27,34,205].includes(subStatusId))
-          || (documentType == 'advance invoice'
-          && [29,108].includes(subStatusId) 
-          && this.userDetails['permissioninfo'].is_fp)
+          portalName == 'customer' && 
+          ((router.url.includes('Upload') && (documentType == 'credit' || documentType == 'progressive invoice')) || 
+          [8,16,17,18,19,21,27,34,205].includes(subStatusId) || 
+          (documentType == 'advance invoice' && 
+          [29,108].includes(subStatusId)))
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -135,7 +135,7 @@
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
+        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
       >
         <a
           class="nav-link"
@@ -154,7 +154,7 @@
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
+        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
         (click)="changeTab('grn')"
       >
         <a
@@ -173,7 +173,7 @@
         class="nav-item ml-2"
         pTooltip="Supporting documents"
         tooltipPosition="top"
-        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('Create GRN')"
+        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('GRN')"
         (click)="changeTab('support')"
       >
         <a
@@ -767,7 +767,7 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ po_total?.toFixed(2) }}</td>
+                  <td class="total_count">{{ po_total?.toFixed(decimal_count) }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
@@ -809,26 +809,42 @@
                       name="inv_number"
                       [ngModelOptions]="{standalone: true}"
                       class="inv_number f-12 text_color"
-                      placeholder="Please add invoice number"
+                      placeholder="Add invoice number"
                       [(ngModel)]="invoiceNumber"
                     />
                   </div>
-
-
-                    <div class="ml-5" *ngIf="client_name == 'SRG'">
-                      <label class="f-12">Invoice Description:</label>
-                      <input
-                        type="text"
-                        name="inv_description"
-                        [ngModelOptions]="{standalone: true}"
-                        class="inv_number f-12 text_color"
-                        placeholder="Please add invoice description"
-                        [(ngModel)]="invoiceDescription"
-                      />
-                    </div>
                 </div>
 
-                <div [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                <div class="d-flex" *ngIf="client_name == 'SRG'">
+                  <div class="ml-1" *ngIf="client_name == 'SRG'">
+                    <label class="f-12">Invoice Description</label>
+                    <button class="edit_btn" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
+                    <!-- <input
+                      type="text"
+                      name="inv_description"
+                      class="inv_number f-12 text_color"
+                      placeholder="Add invoice description"
+                      [(ngModel)]="invoiceDescription"
+                    /> -->
+                  </div>
+
+                  <div class="ml-3 grn" *ngIf="client_name == 'SRG'">
+                    <label class="f-12">GRN Date:</label>
+                    <p-calendar
+                      #grnDate
+                      [(ngModel)]="invoiceDate"
+                      [minDate]="minDate"
+                      [maxDate]="maxDate"
+                      placeholder=""
+                      [readonlyInput]="true"
+                      [showIcon]="true"
+                      name="grnDate"
+                      inputId="GRN_Date"
+                    ></p-calendar>
+                  </div>
+                </div>
+
+                <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
                     <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
@@ -950,7 +966,7 @@
                   [ngClass]="GRN_PO_Bool ? 'text-center' : ''"
                   [ngStyle]="{ paddingLeft: GRN_PO_Bool ? '40px' : '' }"
                 >
-                  {{ GRN_line_total.toFixed(2) }}
+                  {{ GRN_line_total?.toFixed(decimal_count) }}
                 </td>
                 <td
                   class="w-st hide"
@@ -1107,7 +1123,7 @@
                 tooltipPosition="top">
                 <i class="fa fa-info-circle"></i>
               </span>
-              Total Calculated Tax - {{totalTaxDynamic.toFixed(2)}}
+              Total Calculated Tax - {{totalTaxDynamic?.toFixed(decimal_count)}}
             </div>
             <div>
 
@@ -1590,7 +1606,7 @@
               Back
             </button>
 
-            <button
+            <!-- <button
             *ngIf="submitBtn_boolean 
             && editable 
             && !fin_boolean 
@@ -1598,7 +1614,6 @@
             && ![29,32,80]?.includes(subStatusId)
             && !router.url.includes('uploadtime')"
             class="primary_btn f-12 mr-3"
-            type="button"
             (click)="
               approval_selection_boolean && isLCMCompleted
                 ? onSubmitApprovers()
@@ -1606,7 +1621,7 @@
             "
           >
             Skip
-          </button>
+          </button> -->
 
             <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
@@ -1618,7 +1633,7 @@
                   : proceedToBatch('false')
               "
             >
-              Next
+              {{subStatusId == 206 ? 'Approve' : 'Next'}}
             </button>
             <button
               *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired && !isServiceData"
@@ -1849,7 +1864,6 @@
           <p-calendar
             #datePicker
             [(ngModel)]="rangeDates"
-            name="range"
             selectionMode="range"
             [minDate]="minDate"
             [maxDate]="maxDate"
@@ -1857,6 +1871,7 @@
             [readonlyInput]="true"
             [showIcon]="true"
             showButtonBar="true"
+            name="dateRange"
             (onClearClick)="clearDates($event)"
             (onSelect)="filterByDate(rangeDates, $event)"
             inputId="range"
@@ -1909,36 +1924,38 @@
           <td>{{ item.Name }}</td>
           <td>{{ item.PurchQty }}</td>
           <td>{{ item.UnitPrice }}</td>
-          <td>{{ (item.PurchQty * item.UnitPrice).toFixed(2) }}</td>
+          <td>{{ (item.PurchQty * item.UnitPrice)?.toFixed(decimal_count) }}</td>
         </tr>
       </table>
       </div>
       <ng-container *ngIf="headerpop == 'Select GRN'">
         <div *ngFor="let grnLine of selectedGRNLines">
           <div class="f-13">GRN : {{ grnLine?.grnNumber }}</div>
-          <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
-            <tr>
-              <th style="width: 60px">S.No</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>UnitPrice</th>
-              <!-- <th>AmountExcTax</th> -->
-            </tr>
-            <tr *ngFor="let item of grnLine?.linesData; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ item.Description }}</td>
-              <td>{{ item.Quantity }}</td>
-              <td>{{ item.UnitPrice }}</td>
-              <!-- <td>{{ item.AmountExcTax }}</td> -->
-            </tr>
-          </table>
+          <div class="maxHDiv">
+            <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
+              <tr>
+                <th style="width: 60px">S.No</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>UnitPrice</th>
+                <!-- <th>AmountExcTax</th> -->
+              </tr>
+              <tr *ngFor="let item of grnLine?.linesData; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ item.Description }}</td>
+                <td>{{ item.Quantity }}</td>
+                <td>{{ item.UnitPrice }}</td>
+                <!-- <td>{{ item.AmountExcTax }}</td> -->
+              </tr>
+            </table>
+          </div>
         </div>
         <div
           *ngIf="selected_GRN_total"
           class="d-flex justify-content-between total_grn f-12"
         >
           <div>Total</div>
-          <div>{{ selected_GRN_total }}</div>
+          <div>{{ selected_GRN_total?.toFixed(decimal_count) }}</div>
         </div>
       </ng-container>
     </div>
@@ -2235,7 +2252,7 @@
   </ng-template>
 </p-dialog>
 
-<dialog>
+<!-- <dialog>
   
   <div *ngIf="!this.router.url.includes('Create_GRN_inv_list')">
     <div class="d-flex justify-content-between mb-2">
@@ -2245,9 +2262,6 @@
     <div>
       <div>
         <label class="label-head mt-2 mb-0">Comments</label> <br />
-        <!-- <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
-        >Desc: Add the Names of the Signatory is mandatory</small
-      > -->
     
         <textarea
           required
@@ -2277,5 +2291,28 @@
       </button>
     </div>
   </div>
+</dialog> -->
+
+<dialog #tagDialog class="dialog"> 
+  <div>
+    <label for="tag_name" class="f-13 mb-1">Add your description here</label><br>
+    <textarea class="form-control f-12" [(ngModel)]="invoiceDescription" Name="invoiceDescription" id="invoiceDescription" rows="5" style="height: 100px;" (input)="updateCharacterCount($event)"></textarea>
+
+    <div class="mt-3">
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" [style.width.%]="(invoiceDescription?.length / 250) * 100" [attr.aria-valuenow]="invoiceDescription?.length" aria-valuemin="0" aria-valuemax="250"></div>
+      </div>
+      <div class="d-flex justify-content-between f-10 mt-1">
+        <div>Allow only 250 characters</div>
+        <div>{{ 250 - invoiceDescription?.length }} characters left</div>
+      </div>
+    </div>
+
+    <footer class="d-flex justify-content-end mt-2">
+      <button class="secondary_btn secondary_act_btn f-12 mr-3" (click)="closeDialog()">Close</button>
+      <!-- <button class="primary_action_button f-12" (click)="savePrompt()">Save</button> -->
+   </footer>
+  </div>
+
 </dialog>
 <p-toast></p-toast>

@@ -430,6 +430,8 @@ export class Comparision3WayComponent
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
   flipPOData: any;
+  invoiceDate: Date | null = null;
+  selectALL_grn_lines: boolean = false;
 
   constructor(
     fb: FormBuilder,
@@ -833,9 +835,9 @@ export class Comparision3WayComponent
       const unitPrice = typeof ele?.UnitPrice === 'string' ? parseFloat(ele.UnitPrice.replace(/,/g, '')) : ele?.UnitPrice;
       let amount;
       if(this.dataService.isEditGRN){
-        amount = (unitPrice * ele.GRNQty).toFixed(2);
+        amount = (unitPrice * ele.GRNQty).toFixed(this.decimal_count);
       } else {
-        amount = (unitPrice * ele.PurchQty).toFixed(2);
+        amount = (unitPrice * ele.PurchQty).toFixed(this.decimal_count);
       }
       this.GRN_line_total += Number(amount);
       if(this.client_name === 'Cenomi' && !this.dataService.isEditGRN){  
@@ -850,7 +852,7 @@ export class Comparision3WayComponent
         let percentage = '0.00';
         if (POQty !== 0) {
           // const PORemaining =  (POQty - POBalanceQty) * 100;
-          percentage = ((POBalanceQty / POQty) * 100).toFixed(2);
+          percentage = ((POBalanceQty / POQty) * 100).toFixed(this.decimal_count);
         }
         linesData[i]['percentage_po'] = {Value: percentage}
       }
@@ -1147,6 +1149,8 @@ export class Comparision3WayComponent
             this.invoiceNumber = this.inputData[label]?.Value;
           } else if (label === 'SubTotal') {
             this.invoice_subTotal = this.inputData[label]?.Value;
+          } else if (label === 'invoiceDate') {
+            this.invoiceDate = this.inputData[label]?.Value;
           }
           this.headerData.push({TagLabel: label, ...this.inputData[label]})
         }
@@ -1447,15 +1451,15 @@ export class Comparision3WayComponent
         line: new Set<string>(),
       };
       const errorMessages = {
-        InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is empty or invalid.",
-        SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is empty or invalid.",
-        PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty.",
-        InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date.",
-        InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty.",
-        Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero. ",
-        UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is empty or invalid.",
-        AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is empty or invalid.",
-        Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is empty or invalid.",
+        InvoiceTotal: "Please review the 'Invoice Details' tab. 'Invoice Total' is not valid (empty/incorrect)",
+        SubTotal: "Please review the 'Invoice Details' tab. 'Sub Total' is not valid (empty/incorrect)",
+        PurchaseOrder: "Please review the 'Invoice Details' tab. 'Purchase Order' field is empty",
+        InvoiceDate: "Please review the 'Invoice Details' tab. 'Invoice Date' is empty. Please specify a valid date",
+        InvoiceId: "Please review the 'Invoice Details' tab. 'Invoice ID' is empty",
+        Quantity: "Please review the 'Line Details' tab. 'Quantity' in the Line details is empty or zero",
+        UnitPrice: "Please review the 'Line Details' tab. 'Unit Price' in the Line details is not valid (empty/incorrect)",
+        AmountExcTax: "Please review the 'Line Details' tab. 'Amount Excluding Tax' in the Line details is not valid (empty/incorrect)",
+        Amount: "Please review the 'Line Details' tab. 'Amount' in the Line details is not valid (empty/incorrect)",
       };
       
       
@@ -1541,24 +1545,29 @@ export class Comparision3WayComponent
   }
   vendorSubmit() {
     this.SpinnerService.show();
-    this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
-      (data: any) => {
-        this.dataService.invoiceLoadedData = [];
-        this.SpinnerService.hide();
-        if (this.router.url.includes('ExceptionManagement')) {
-          this.success("Sent to Batch Successfully!")
-        } else {
-          if (!this.GRNUploadID) {
-            this.success("Uploaded to Serina Successfully!")
+    if(this.router.url.includes('uploadInvoices')){
+      this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
+        (data: any) => {
+          this.dataService.invoiceLoadedData = [];
+          this.SpinnerService.hide();
+          if (this.router.url.includes('ExceptionManagement')) {
+            this.success("Sent to Batch Successfully!")
+          } else {
+            if (!this.GRNUploadID) {
+              this.success("Uploaded to Serina Successfully!")
+            }
           }
+          this.syncBatch();
+  
+        },
+        (error) => {
+          this.error("Server error");
         }
-        this.syncBatch();
-
-      },
-      (error) => {
-        this.error("Server error");
-      }
-    );
+      );
+    } else {
+      this.success("Sent to Batch Successfully!");
+      this.syncBatch();
+    }
   }
   serviceSubmit(bool) {
     // if(!this.normalCostAllocation){
@@ -2119,7 +2128,7 @@ export class Comparision3WayComponent
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
-      const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
+      const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(this.decimal_count);
       // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
       //   .linedata.find(data => data[field] === lineItem[field]);
 
@@ -2174,6 +2183,7 @@ export class Comparision3WayComponent
         // })
         // this.grnLineCount = this.lineDisplayData[0]?.linedata;
         this.SpinnerService.hide();
+        this.selectALL_grn_lines = false;
       }
     })
   }
@@ -2351,7 +2361,11 @@ export class Comparision3WayComponent
       inv_param += `&inv_num=${encodedInvoiceNumber}`;
     }
     if (this.invoiceDescription) {
-      inv_param += `&inv_desc=${encodeURIComponent(this.invoiceDescription)}`;
+      inv_param += `&document_description=${encodeURIComponent(this.invoiceDescription)}`;
+    }
+    if(this.invoiceDate){ 
+      let date = this.invoiceDate.toISOString()
+      inv_param += `&grn_date=${date}`;
     }
     let manPower = '';
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
@@ -2495,8 +2509,12 @@ export class Comparision3WayComponent
 
   grnAPICall(boolean, txt) {
     let inv_des = '';
-    if(this.invoiceDescription){
-      inv_des = `&document_description=${this.invoiceDescription}`;
+    if(this.invoiceDescription &&this.invoiceDescription !== ''){
+      inv_des += `&document_description=${this.invoiceDescription}`;
+    }
+    if(this.invoiceDate){
+      let date = this.invoiceDate.toISOString()
+      inv_des += `&grn_date=${date}`;
     }
     // let arr = [];
     let grnWithInvPayload = [];
@@ -2714,7 +2732,7 @@ export class Comparision3WayComponent
           if (ele.durationMonth && ele.isTimesheets) {
               monthlyQuantity = ele.PurchQty / ele.durationMonth;
             }
-          ele.monthlyQuantity = monthlyQuantity.toFixed(2)
+          ele.monthlyQuantity = monthlyQuantity.toFixed(this.decimal_count)
           if(ele.isTimesheets){
             this.isManpower = true;
           }
@@ -3729,8 +3747,8 @@ export class Comparision3WayComponent
       //     totalInvDiscount += inv_discount;
       // }
     })
-      this.po_total = totalpoCost.toFixed(2);
-      this.totalInvCost = totalinvCost.toFixed(2);
+      this.po_total = totalpoCost.toFixed(this.decimal_count);
+      this.totalInvCost = totalinvCost.toFixed(this.decimal_count);
     // console.log(unitPriceObject)
     // if (unitPriceObject && quantityObject) {
 
@@ -4077,6 +4095,7 @@ export class Comparision3WayComponent
   shouldRenderInput(){
     return this.client_name === 'Cenomi' && this.GRN_PO_Bool;
   }
+  
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
@@ -4104,6 +4123,7 @@ export class Comparision3WayComponent
     delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
+    delete this.tagService?.headerName
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }
