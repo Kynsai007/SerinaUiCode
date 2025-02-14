@@ -63,6 +63,7 @@
 }
 .card{
   width: 345px;
+  flex: 1 1 345px;
   height: 254px;
   background: #FFFFFF 0% 0% no-repeat padding-box;
   border: 1px solid #E9EAF2;
@@ -425,12 +426,7 @@ h4{
   justify-content: right;
   margin-top: 130px;
 }
-.error-msg{
-  position: fixed;
-  left: 350px;
-  overflow: initial;
-  bottom: 450px;
-}
+
 .typ-dis{
   background: #E6F4FF 0% 0% no-repeat padding-box;
   height: 44px;

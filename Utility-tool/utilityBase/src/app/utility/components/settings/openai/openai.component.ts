@@ -83,14 +83,7 @@ export class OpenaiComponent implements OnInit {
   }
   openFilterDialog(event,text){
     let top = event.clientY + 10 + "px";
-    let left;
-    if(text == 'tags'){
-      this.isTagDialog = true;
-      left = "calc(55% + 100px)";
-    } else {
-      this.isTagDialog = false;
-      left = "calc(38% + 100px)";
-    }
+    let left = event.clientX - 540 + "px";
     const dialog = document.querySelector('dialog');
     dialog.style.top = top;
     dialog.style.left = left;
@@ -137,7 +130,7 @@ export class OpenaiComponent implements OnInit {
     }
     this.openAIService.updateTags(apiParams).subscribe((data)=>{
       this.alertService.success_alert("Tag info updated successfully");
-      this.readAllTags();
+      // this.readAllTags();
     }, err=>{
       this.alertService.error_alert("Server error");
     });
@@ -156,7 +149,7 @@ export class OpenaiComponent implements OnInit {
 
     this.openAIService.updateTags(apiParams).subscribe((data)=>{
       this.alertService.success_alert("Tag info updated successfully");
-      this.readAllTags();
+      // this.readAllTags();
     }, err=>{
       this.alertService.error_alert("Server error");
     });

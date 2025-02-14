@@ -102,6 +102,8 @@ ul {
     height: 100vh;
     max-height: 100vh;
     flex-wrap: wrap;
+    max-width: 1440px;
+    margin: 0 auto; 
   }
   .navbar{
     display: flex;

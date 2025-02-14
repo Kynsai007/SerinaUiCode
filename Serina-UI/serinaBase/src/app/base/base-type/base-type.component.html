@@ -30,11 +30,10 @@
       <div class="navLinks d-flex justify-content-between" *ngIf="isDesktop">
         <div
           class="nav_Link f-14"
-          [ngClass]="
-          ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
-              ? 'cenomiNavlink'
-              : ''
-          "
+          [ngClass]="{
+            active_cls: router.url.includes('home'),
+            cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
+          }"
           [routerLink]="'dashboard'"
           routerLinkActive="active_cls"
           (click)="navClick()"

@@ -428,6 +428,22 @@ $theme_color: var(--themeColor);
       top: -3px;
       z-index: 1;
     }
+    .grn .p-calendar .p-inputtext {
+      width: 120px !important;
+      background: inherit;
+      font-size: 12px !important;
+      font-weight: 600;
+      padding-left: 10px;
+      position: relative;
+      top: 0px;
+      z-index: 1;
+      border-bottom: 1px solid lightgray !important;
+    }
+    .grn .p-button.p-button-icon-only {
+      position: relative;
+      left: -25px;
+      top: -5px;
+    }
     .selection .p-button.p-button-icon-only {
       background-color: #ffffff;
       top: -15px;
@@ -786,19 +802,19 @@ $theme_color: var(--themeColor);
   position: relative; 
   line-height: 1 !important;
 }
-dialog {
-  z-index: 10;
-  margin-top: 10px;
-  background: #ffffff;
-  box-shadow: 0px 6px 12px #00000029;
-  border: none;
-  border-radius: 5px;
-  height: 230px;
-  width: 450px;
-  position: absolute;
-  transform: translatey(100%);
-  overflow: visible;
-}
+// dialog {
+//   z-index: 10;
+//   margin-top: 10px;
+//   background: #ffffff;
+//   box-shadow: 0px 6px 12px #00000029;
+//   border: none;
+//   border-radius: 5px;
+//   // height: 230px;
+//   width: 450px;
+//   position: absolute;
+//   transform: translatey(100%);
+//   overflow: visible;
+// }
 dialog::backdrop {
   background-color: rgb(247 247 255 / 80%);
   opacity: 0;
@@ -819,4 +835,50 @@ dialog::backdrop {
 }
 .p-dialog .p-dialog-content {
   overflow: auto;
+}
+dialog {
+  z-index: 10;
+  margin-top: 10px;
+  background: #ffffff;
+  box-shadow: 0px 6px 12px #00000029;
+  border: none;
+  border-radius: 5px;
+  // height: 310px;
+  width: 450px;
+  position: absolute;
+  overflow: visible;
+  &::after {
+    content: "";
+    position: absolute;
+    top: -45px;
+    right: 35px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 25px 10px 25px 10px;
+    border-color: transparent transparent #fff transparent;
+  }
+}
+.progress {
+  height: 5px;
+}
+.progress-bar {
+  background-color: #009d14;
+}
+textarea {
+  background-color: #f8f9fd;
+  overflow: hidden;
+  white-space: wrap !important;
+  word-wrap: break-word;
+}
+.secondary_act_btn{
+  min-width: 70px;
+    height: 30px;
+    padding: 0;
+}
+.r-340 {
+  right: 340px !important;
+}
+.r-490 {
+  right: 495px !important;
 }

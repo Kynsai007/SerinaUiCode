@@ -1,4 +1,4 @@
-<section class="p-4 resizable-dialog" cdkDragResize   style="position: relative;">
+<section class="p-4 resizable-dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane"   style="position: relative;">
   <div class="d-flex justify-content-between">
     <h6 class="f-14">
       <span *ngIf="type.includes('flip')"
@@ -491,3 +491,5 @@
     </div>
   </div>
 </section>
+  <!-- Resizer Handle -->
+  <div class="resizer f-12" cdkDrag (mousedown)="enableResize($event)" >Resizer</div>

@@ -2,7 +2,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe, formatDate } from '@angular/common';
@@ -62,6 +62,7 @@ export class PopupComponent implements OnInit {
   endDate: Date;
   isEditGRN: boolean = false;
   createdDates = [];
+  decimal_count = 2;
   manPowerTable =[
     { header: 'S.No', field: '' },
     { header: 'Description', field: 'Name' },
@@ -71,7 +72,12 @@ export class PopupComponent implements OnInit {
     { header: 'Shift', field: 'shiftName'}
   ];
   disabledSaveMetadata: boolean = true;
-  decimal_count: any;
+
+  resizing: boolean = false;
+  startX: number;
+  startY: number;
+  startWidth: number;
+  startHeight: number;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -83,6 +89,8 @@ export class PopupComponent implements OnInit {
     private datePipe: DatePipe,
     private dateFilterService: DateFilterService,
     private sharedService: SharedService,
+    private el: ElementRef, 
+    private renderer: Renderer2,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -792,4 +800,44 @@ export class PopupComponent implements OnInit {
       data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
+  enableResize(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation(); // Prevent drag from triggering
+
+    this.resizing = true;
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+
+    const dialogElement = this.el.nativeElement.closest('.cdk-overlay-pane');
+    this.startWidth = dialogElement.offsetWidth;
+    this.startHeight = dialogElement.offsetHeight;
+
+    this.renderer.setStyle(document.body, 'cursor', 'nwse-resize');
+
+    // Listen to mousemove and mouseup events globally
+    document.addEventListener('mousemove', this.resizeDialog);
+    document.addEventListener('mouseup', this.stopResize);
+  }
+
+  resizeDialog = (event: MouseEvent) => {
+    if (!this.resizing) return;
+
+    const dialogElement = this.el.nativeElement.closest('.cdk-overlay-pane');
+
+    const newWidth = this.startWidth + (event.clientX - this.startX);
+    const newHeight = this.startHeight + (event.clientY - this.startY);
+
+    this.renderer.setStyle(dialogElement, 'width', `${newWidth}px`);
+    this.renderer.setStyle(dialogElement, 'height', `${newHeight}px`);
+  };
+
+  stopResize = () => {
+    this.resizing = false;
+    this.renderer.setStyle(document.body, 'cursor', 'default');
+
+    // Remove event listeners to prevent memory leaks
+    document.removeEventListener('mousemove', this.resizeDialog);
+    document.removeEventListener('mouseup', this.stopResize);
+  };
 }
+
