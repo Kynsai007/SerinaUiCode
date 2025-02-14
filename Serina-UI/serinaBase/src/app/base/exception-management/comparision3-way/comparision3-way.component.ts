@@ -2039,7 +2039,7 @@ export class Comparision3WayComponent
   }
   vendorSubmit() {
     this.SpinnerService.show();
-    if(this.router.url.includes('uploadInvoices')){
+    if(this.router.url.includes('uploadtime')){
       this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
         (data: any) => {
           this.dataService.invoiceLoadedData = [];
