@@ -2218,6 +2218,24 @@ export class Comparision3WayComponent
       dialog.close();
     }
   }
+  openFilterDialog(event){
+    let top = event.clientY + 10 + "px";
+    let left;
+      left = "calc(29% + 100px)";
+    const dialog = document.querySelector('dialog');
+    dialog.style.top = top;
+    dialog.style.left = left;
+    if(dialog){
+      dialog.showModal();
+    }
+  }
+  updateCharacterCount(event){
+    this.invoiceDescription = event.target.value;
+    if (this.invoiceDescription.length > 250) {
+      this.invoiceDescription = this.invoiceDescription.substring(0, 250);
+      event.target.value = this.invoiceDescription;
+    }
+  }
   delete_confirmation(id) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
 
