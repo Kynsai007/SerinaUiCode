@@ -1018,7 +1018,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex" *ngIf="client_name == 'SRG'">
+                <div class="d-flex">
                   <div class="ml-1" *ngIf="client_name == 'SRG'">
                     <label class="f-12">Invoice Description</label>
                     <button class="edit_btn" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
@@ -1045,6 +1045,9 @@
                       inputId="GRN_Date"
                     ></p-calendar>
                   </div>
+                  <div *ngIf="GRN_PO_Bool">
+                    <button class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
+                  </div>
                 </div>
 
                 <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
@@ -1054,10 +1057,12 @@
                     </label> -->
                     <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
+
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
                 <tr class="invert_tr" style="width: 50px">
                   <th class="lineName invert_th_td text-center d-flex" style="min-width: 50px">
+                    <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="selectAll" [(ngModel)]="selectALL_grn_lines"  (change)="selectAllLines($event.target.checked)"></div>
                     <div class="ml-1">S.No</div></th>
                   <td *ngFor="let item of grnLineCount; let i = index" class="withPOLine d-flex">
                     <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="select_line" id="check{{i}}" [(ngModel)]="item.checked"  (change)="selectLine($event.target.checked,index,item)"></div>
@@ -1114,7 +1119,7 @@
                             </div>
                           </ng-container>
                         </ng-container>
-                        <ng-container *ngSwitchCase="'Actions'" [ngSwitch]="GRN_PO_Bool">
+                        <!-- <ng-container *ngSwitchCase="'Actions'" [ngSwitch]="GRN_PO_Bool">
                           <ng-container *ngSwitchCase="true">
                             <span class="linevalue invert_thtd">
                               <button class="trash_btn" (click)="deleteGrnLine(line1.idDocumentLineItems)">
@@ -1122,7 +1127,7 @@
                               </button>
                             </span>
                           </ng-container>
-                        </ng-container>
+                        </ng-container> -->
                         <ng-container *ngSwitchDefault>
                          <div>
                           <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"

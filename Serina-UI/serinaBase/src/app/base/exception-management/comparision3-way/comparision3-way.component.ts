@@ -471,14 +471,14 @@ export class Comparision3WayComponent
       { TagName: 'AmountExcTax', linedata: [] },
       { TagName: 'GRN - Quantity', linedata: [] },
       { TagName: 'UnitPrice', linedata: [] },
-      { TagName: 'Actions', linedata: [] }
+      // { TagName: 'Actions', linedata: [] }
     ];
 
     this.GRN_PO_tags = [...commonTags];
 
     if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
-      this.GRN_PO_tags.splice(6, 0, { TagName: 'PO Remaining %', linedata: [] });
+      this.GRN_PO_tags.splice(4, 0, { TagName: 'PO Balance Qty', linedata: [] });
+      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Remaining %', linedata: [] });
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
@@ -863,7 +863,7 @@ export class Comparision3WayComponent
           isMapped: '',
           tagName: 'percentage'
         },
-        'Actions': { value: '', isMapped: '', tagName: 'Actions' }
+        // 'Actions': { value: '', isMapped: '', tagName: 'Actions' }
       };
       if (this.client_name == 'Cenomi' && this.isManpowerTags) {
         tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
@@ -2792,21 +2792,27 @@ export class Comparision3WayComponent
 
       if (bool) {
         this.SpinnerService.show();
-        if(this.selectALL_grn_lines){
+        // if(this.selectALL_grn_lines){
+        let selectedIds = [];
           this.grnLineCount.forEach(el => {
             if (el.checked) {
+              if(selectedIds.includes(el.idDocumentLineItems)){
+                selectedIds = selectedIds.filter(id => id !== el.idDocumentLineItems);
+              } else {
+                selectedIds.push(el.idDocumentLineItems);
+              }
               this.lineDisplayData = this.lineDisplayData.map(record => {
                 const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== el.idDocumentLineItems);
                 return { ...record, linedata: newLinedata };
               });
             }
           });
-        } else {
-          this.lineDisplayData = this.lineDisplayData.map(record => {
-            const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
-            return { ...record, linedata: newLinedata };
-          });
-        }
+        // } else {
+        //   this.lineDisplayData = this.lineDisplayData.map(record => {
+        //     const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
+        //     return { ...record, linedata: newLinedata };
+        //   });
+        // }
 
         this.GRN_line_total = 0;
         this.lineDisplayData.forEach(ele => {
@@ -2815,7 +2821,7 @@ export class Comparision3WayComponent
           }
         })
         this.GRNObject = this.GRNObject.filter(val => {
-          return val?.idDocumentLineItems != id
+          return !selectedIds.includes(val?.idDocumentLineItems)
         })
         this.grnLineCount = this.lineDisplayData[0]?.linedata;
         this.SpinnerService.hide();
@@ -4837,12 +4843,18 @@ export class Comparision3WayComponent
         selctionIds = selctionIds.filter(id => id !== el.idDocumentLineItems);
       }
     })
-    if(selctionIds.length == 0){
-      this.selectALL_grn_lines = false;
-    } else {
+    if(selctionIds.length == this.grnLineCount?.length){
       this.selectALL_grn_lines = true;
+    } else {
+      this.selectALL_grn_lines = false;
     }
 
+  }
+
+  selectAllLines(bool){
+    this.grnLineCount.forEach(el=>{
+      el.checked = bool;
+    })
   }
   ngOnDestroy() {
     let sessionData = {
