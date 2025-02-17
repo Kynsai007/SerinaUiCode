@@ -780,6 +780,15 @@
                             </p-autoComplete>
                           </div>
                           <span
+                            *ngIf="data2?.invline[0]?.DocumentLineItems?.isChanged"
+                            class="calc"
+                            ptooltip="
+                              Please click here to auto calculate the amount
+                            "
+                            tooltipPosition="top"
+                            (click)="calculateAmount(data2.invline[0]?.DocumentLineItems?.itemCode,data2.invline[0]?.DocumentLineItems)"
+                            ><i class="fa fa-calculator" aria-hidden="true"></i></span>
+                          <span
                             *ngIf="data2?.invline[0]?.DocumentUpdates"
                             class="prev_value"
                             [title]="
@@ -1052,7 +1061,7 @@
                 <tr class="invert_tr" style="width: 50px">
                   <th class="lineName invert_th_td text-center d-flex" style="min-width: 50px">
                     <div class="ml-1">S.No</div></th>
-                  <td *ngFor="let item of grnLineCount; let i = index" class="count_line d-flex">
+                  <td *ngFor="let item of grnLineCount; let i = index" class="withPOLine d-flex">
                     <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="select_line" id="check{{i}}" [(ngModel)]="item.checked"  (change)="selectLine($event.target.checked,index,item)"></div>
                     <div class="s-no ml-1">{{ i + 1 }}</div>
                   </td>

@@ -146,6 +146,12 @@ $theme_color: var(--themeColor);
 }
 .count_line {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50px;
+}
+.withPOLine{
+  display: flex;
   // flex-direction: column;
   justify-content: center;
   width: 50px;
@@ -879,4 +885,9 @@ textarea {
   min-width: 70px;
     height: 30px;
     padding: 0;
+}
+.calc {
+    position: relative;
+    top: 6px;
+    cursor: pointer;
 }

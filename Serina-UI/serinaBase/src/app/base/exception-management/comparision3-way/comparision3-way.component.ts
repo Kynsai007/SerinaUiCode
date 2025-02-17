@@ -1803,6 +1803,10 @@ export class Comparision3WayComponent
               if(key == 'AmountExcTax'){
                 data.oldValue = item.linedetails[0].invline[0].DocumentLineItems.Value;
                 item.linedetails[0].invline[0].DocumentLineItems.Value = value;
+                item.linedetails[0].invline[0].DocumentLineItems.isChanged = false;
+              }
+              if(key == 'Quantity' || key == 'UnitPrice'){
+                item.linedetails[0].invline[0].DocumentLineItems.isChanged = true;
               }
             amounExcTax = item.linedetails[0].invline[0].DocumentLineItems.Value;
             }
@@ -1830,7 +1834,7 @@ export class Comparision3WayComponent
           })
         }
       })
-    if(value.includes('=')){
+    if(value?.includes('=')){
       let count = this.decimal_count;
       if (key == 'Quantity' && value.includes('=')) {
         new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
@@ -1839,6 +1843,7 @@ export class Comparision3WayComponent
           tag.items.forEach(item => {
           if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
             item.linedetails[0].invline[0].DocumentLineItems.Value = new_value;
+            item.linedetails[0].invline[0].DocumentLineItems.isChanged = true;
           }
           });
         }
@@ -1852,6 +1857,7 @@ export class Comparision3WayComponent
       data.Value = new_value;
       value =  new_value;
     }
+
     if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
@@ -1875,6 +1881,54 @@ export class Comparision3WayComponent
     };
     this.updateInvoiceData.push(updateValue);
   }
+  }
+
+  calculateAmount(itemCode,data){
+    let UnitPrice, Quantity,discount,discPercentage;
+    this.lineDisplayData.forEach(tag => {
+      if (tag.tagname == 'Quantity') {
+        tag.items.forEach(item => {
+          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
+           Quantity = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+      } if (tag.tagname == 'UnitPrice') {
+        tag.items.forEach(item => {
+          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
+            UnitPrice = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+      } 
+      if (tag.tagname == 'Discount') {
+        tag.items.forEach(item => {
+          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
+            discount = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+      } 
+      if (tag.tagname == 'DiscPercent') {
+        tag.items.forEach(item => {
+          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
+            discPercentage = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+      } 
+    })
+    let amount;
+    if(discount || discPercentage){
+      amount = UnitPrice * Quantity;
+      if(discount){
+        amount = Quantity *( UnitPrice - discount);
+      } else if(discPercentage){
+        amount = Quantity *( UnitPrice - (UnitPrice * discPercentage / 100));
+      }
+    } else {
+      amount = UnitPrice * Quantity;
+    }
+    this.onChangeLineValue('AmountExcTax',amount.toString(),data);
+    setTimeout(() => {
+      this.saveChanges();
+    }, 1000);
   }
 
   saveChanges() {
