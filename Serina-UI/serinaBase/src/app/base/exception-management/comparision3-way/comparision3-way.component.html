@@ -782,9 +782,7 @@
                           <span
                             *ngIf="data2?.invline[0]?.DocumentLineItems?.isChanged"
                             class="calc"
-                            ptooltip="
-                              Please click here to auto calculate the amount
-                            "
+                            pTooltip="Please click here to auto calculate the amount"
                             tooltipPosition="top"
                             (click)="calculateAmount(data2.invline[0]?.DocumentLineItems?.itemCode,data2.invline[0]?.DocumentLineItems)"
                             ><i class="fa fa-calculator" aria-hidden="true"></i></span>

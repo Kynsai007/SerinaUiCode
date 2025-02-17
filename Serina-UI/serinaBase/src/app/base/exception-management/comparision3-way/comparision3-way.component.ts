@@ -1887,29 +1887,29 @@ export class Comparision3WayComponent
     let UnitPrice, Quantity,discount,discPercentage;
     this.lineDisplayData.forEach(tag => {
       if (tag.tagname == 'Quantity') {
-        tag.items.forEach(item => {
-          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
-           Quantity = item.linedetails[0].invline[0].DocumentLineItems.Value;
+        tag?.items?.forEach(item => {
+          if (item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode) {
+           Quantity = item?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value;
           }
         })
       } if (tag.tagname == 'UnitPrice') {
-        tag.items.forEach(item => {
-          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
-            UnitPrice = item.linedetails[0].invline[0].DocumentLineItems.Value;
+        tag?.items?.forEach(item => {
+          if (item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode) {
+            UnitPrice = item?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value;
           }
         })
       } 
       if (tag.tagname == 'Discount') {
-        tag.items.forEach(item => {
-          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
-            discount = item.linedetails[0].invline[0].DocumentLineItems.Value;
+        tag?.items?.forEach(item => {
+          if (item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode) {
+            discount = item?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value;
           }
         })
       } 
       if (tag.tagname == 'DiscPercent') {
-        tag.items.forEach(item => {
-          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
-            discPercentage = item.linedetails[0].invline[0].DocumentLineItems.Value;
+        tag?.items?.forEach(item => {
+          if (item?.linedetails[0]?.invline[0]?.DocumentLineItems?.itemCode == itemCode) {
+            discPercentage = item?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value;
           }
         })
       } 
