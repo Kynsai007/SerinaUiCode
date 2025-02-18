@@ -1608,7 +1608,7 @@ export class Comparision3WayComponent
     //   }
     // else{
     this.SpinnerService.show();
-    this.SharedService.serviceSubmit(`&skip_rule=${bool}`).subscribe((data: any) => {
+    this.SharedService.serviceSubmit(``).subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       this.dataService.serviceinvoiceLoadedData = [];
       setTimeout(() => {
