@@ -1786,7 +1786,7 @@ export class Comparision3WayComponent
       }
     })
     let invoiceTotal = Number(subTotal) + Number(tax);
-    this.onChangeValue('InvoiceTotal',invoiceTotal.toFixed(this.decimal_count),data);
+    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
     setTimeout(()=>{
       this.saveChanges();
     },1000)
