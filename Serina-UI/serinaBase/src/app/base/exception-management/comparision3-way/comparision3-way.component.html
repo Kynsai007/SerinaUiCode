@@ -436,6 +436,14 @@
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
+                            *ngIf="value?.TagLabel == 'InvoiceTotal' && value?.isChanged"
+                            class="calc"
+                            pTooltip="Please click here to auto calculate the Invoice total"
+                            tooltipPosition="top"
+                            (click)="calculateTotal(value)"
+                            ><i class="fa fa-calculator" aria-hidden="true"></i>
+                        </span>
+                      <span
                         *ngIf="value.isError == 1"
                         [pTooltip]="value.ErrorDesc"
                         tooltipPosition="top"
@@ -1045,12 +1053,8 @@
                       inputId="GRN_Date"
                     ></p-calendar>
                   </div>
-                  <div *ngIf="GRN_PO_Bool">
-                    <button class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
-                  </div>
-                </div>
 
-                <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                  <div *ngIf="client_name == 'Cenomi'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
                     <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
@@ -1058,6 +1062,10 @@
                     <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
 
+                  <div *ngIf="GRN_PO_Bool">
+                    <button style="min-width: 30px;" class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
+                  </div>
+                </div>
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
                 <tr class="invert_tr" style="width: 50px">

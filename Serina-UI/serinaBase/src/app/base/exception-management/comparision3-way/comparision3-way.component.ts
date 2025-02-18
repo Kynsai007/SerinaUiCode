@@ -1776,19 +1776,56 @@ export class Comparision3WayComponent
     }
   }
 
+  calculateTotal(data){
+    let subTotal,tax;
+    this.inputData.forEach(el=>{
+    if(el.TagLabel == 'SubTotal'){
+        subTotal = el.Value;
+      } else if(el.TagLabel == 'TotalTax'){
+        tax = el.Value;
+      }
+    })
+    let invoiceTotal = Number(subTotal) + Number(tax);
+    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
+    setTimeout(()=>{
+      this.saveChanges();
+    },1000)
+  }
+
   onChangeValue(key, value, data) {
-    if (key == 'InvoiceTotal' || key == 'SubTotal') {
+    let oldValue;
+    if (['TotalTax','InvoiceTotal', 'SubTotal'].includes(key)) {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
+        oldValue = data.Value;
+        if(['TotalTax', 'SubTotal'].includes(key)){
+          this.inputData.forEach(el=>{
+            if(el.TagLabel == 'InvoiceTotal'){
+              el.isChanged = true;
+            } else if(key == 'SubTotal' && el.TagLabel == 'SubTotal'){
+              el.Value = value;
+            } else if(key == 'TotalTax' && el.TagLabel == 'TotalTax'){
+              el.Value = value;
+            }
+          })
+        } else {
+          this.inputData.forEach(el=>{
+            if(el.TagLabel == 'InvoiceTotal' && key == 'InvoiceTotal'){
+              el.Value = value;
+              el.isChanged = false;
+            }
+          })
+        }
         this.isAmtStr = false;
       }
     }
     let updateValue = {
       documentDataID: data.idDocumentData,
-      OldValue: data.Value || '',
-      NewValue: value,
+      OldValue: oldValue.toString() || '',
+      NewValue: value.toString(),
     };
+
     this.updateInvoiceData.push(updateValue);
   }
   async onChangeLineValue(key, value, data) {
