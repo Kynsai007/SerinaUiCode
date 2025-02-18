@@ -1786,7 +1786,7 @@ export class Comparision3WayComponent
       }
     })
     let invoiceTotal = Number(subTotal) + Number(tax);
-    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
+    this.onChangeValue('InvoiceTotal',invoiceTotal.toFixed(this.decimal_count),data);
     setTimeout(()=>{
       this.saveChanges();
     },1000)
@@ -1962,6 +1962,7 @@ export class Comparision3WayComponent
     } else {
       amount = UnitPrice * Quantity;
     }
+    amount = amount.toFixed(this.decimal_count);
     this.onChangeLineValue('AmountExcTax',amount.toString(),data);
     setTimeout(() => {
       this.saveChanges();
