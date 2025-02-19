@@ -438,6 +438,7 @@
                       <span
                             *ngIf="value?.TagLabel == 'InvoiceTotal' && value?.isChanged"
                             class="calc"
+                            style="top: 0px;"
                             pTooltip="Please click here to auto calculate the Invoice total"
                             tooltipPosition="top"
                             (click)="calculateTotal(value)"

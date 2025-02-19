@@ -1785,7 +1785,17 @@ export class Comparision3WayComponent
         tax = el.Value;
       }
     })
-    let invoiceTotal = Number(subTotal) + Number(tax);
+    let decimalCount = 0;
+    let des_arr = [];
+    if(subTotal.includes('.')){
+      des_arr.push(subTotal.split('.')[1]?.length);
+    }
+    if(tax.includes('.')){
+      des_arr.push(tax.split('.')[1]?.length);
+    }
+    decimalCount = Math.max(...des_arr);
+    let invoiceTotal:any = Number(subTotal) + Number(tax);
+    invoiceTotal = invoiceTotal?.toFixed(decimalCount)?.toString();
     this.onChangeValue('InvoiceTotal',invoiceTotal,data);
     setTimeout(()=>{
       this.saveChanges();
@@ -1798,7 +1808,7 @@ export class Comparision3WayComponent
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
-        oldValue = data.Value;
+        oldValue = data?.Value?.toString();
         if(['TotalTax', 'SubTotal'].includes(key)){
           this.inputData.forEach(el=>{
             if(el.TagLabel == 'InvoiceTotal'){
@@ -1822,8 +1832,8 @@ export class Comparision3WayComponent
     }
     let updateValue = {
       documentDataID: data.idDocumentData,
-      OldValue: oldValue.toString() || '',
-      NewValue: value.toString(),
+      OldValue: oldValue || '',
+      NewValue: value,
     };
 
     this.updateInvoiceData.push(updateValue);
@@ -2966,7 +2976,7 @@ export class Comparision3WayComponent
 
       } else {
         if(!this.GRN_PO_Bool){
-          this.validateInvPOUnitPrice();
+          // this.validateInvPOUnitPrice();
         }
       }
       let emptyBoolean: boolean = false;
