@@ -1360,10 +1360,10 @@ export class Comparision3WayComponent
     })
     let decimalCount = 0;
     let des_arr = [];
-    if(subTotal.includes('.')){
+    if(subTotal?.includes('.')){
       des_arr.push(subTotal.split('.')[1]?.length);
     }
-    if(tax.includes('.')){
+    if(tax?.includes('.')){
       des_arr.push(tax.split('.')[1]?.length);
     }
     decimalCount = Math.max(...des_arr);
@@ -2584,11 +2584,13 @@ export class Comparision3WayComponent
               }
             }
         })
+        console.log(objV)
         let objData = {
           itemCode : objV?.LineNumber?.Value.toString(),
           lineData: {
             'Quantity' : { Value : objV?.GRNQty?.Value },
-            'UnitPrice' : { Value: objV?.UnitPrice?.Value}
+            'UnitPrice' : { Value: objV?.UnitPrice?.Value},
+            'Name' : { Value: objV?.Name?.Value}
           }
         }
         grnWithPOPayload.push(objData)
