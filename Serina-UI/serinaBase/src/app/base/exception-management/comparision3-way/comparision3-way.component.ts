@@ -1890,7 +1890,6 @@ export class Comparision3WayComponent
           tag.items.forEach(item => {
           if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
             item.linedetails[0].invline[0].DocumentLineItems.Value = new_value;
-            item.linedetails[0].invline[0].DocumentLineItems.isChanged = true;
           }
           });
         }
