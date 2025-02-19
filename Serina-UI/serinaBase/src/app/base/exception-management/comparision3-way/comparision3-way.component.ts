@@ -2411,7 +2411,7 @@ export class Comparision3WayComponent
 
       } else {
         if(!this.GRN_PO_Bool){
-          this.validateInvPOUnitPrice();
+          // this.validateInvPOUnitPrice();
         }
       }
       let emptyBoolean: boolean = false;
