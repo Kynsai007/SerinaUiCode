@@ -1357,9 +1357,18 @@ export class Comparision3WayComponent
       } else if(el.TagLabel == 'TotalTax'){
         tax = el.Value;
       }
-    });
+    })
+    let decimalCount = 0;
+    let des_arr = [];
+    if(subTotal.includes('.')){
+      des_arr.push(subTotal.split('.')[1]?.length);
+    }
+    if(tax.includes('.')){
+      des_arr.push(tax.split('.')[1]?.length);
+    }
+    decimalCount = Math.max(...des_arr);
     let invoiceTotal:any = Number(subTotal) + Number(tax);
-    invoiceTotal = invoiceTotal.toString();
+    invoiceTotal = invoiceTotal?.toFixed(decimalCount)?.toString();
     this.onChangeValue('InvoiceTotal',invoiceTotal,data);
     setTimeout(()=>{
       this.saveChanges();
@@ -1372,7 +1381,7 @@ export class Comparision3WayComponent
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
-        oldValue = data.Value;
+        oldValue = data?.Value?.toString();
         if(['TotalTax', 'SubTotal'].includes(key)){
           this.headerData.forEach(el=>{
             if(el.TagLabel == 'InvoiceTotal'){
