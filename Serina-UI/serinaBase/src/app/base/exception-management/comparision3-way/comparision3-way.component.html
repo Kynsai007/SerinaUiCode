@@ -353,6 +353,14 @@
                     <label class="label-head" style="margin-bottom: -5px" (click)="labelHighlight(value?.TagLabel)"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
+                          *ngIf="value?.TagLabel == 'InvoiceTotal' && value?.isChanged"
+                          class="calc"
+                          pTooltip="Please click here to auto calculate the Invoice total"
+                          tooltipPosition="top"
+                          (click)="calculateTotal(value)"
+                          ><i class="fa fa-calculator" aria-hidden="true"></i>
+                      </span>
+                      <span
                         *ngIf="value?.isError == 1"
                         [pTooltip]="value?.ErrorMsg"
                         tooltipPosition="top"
@@ -642,6 +650,13 @@
                                 >
                                 </p-autoComplete>
                               </div>
+                              <span
+                              *ngIf="item?.lines[header]?.isChanged"
+                              class="calc"
+                              pTooltip="Please click here to auto calculate the amount"
+                              tooltipPosition="top"
+                              (click)="calculateAmount(item.ItemCode,item)"
+                              ><i class="fa fa-calculator" aria-hidden="true"></i></span>
                             <span
                               *ngIf="item.lines[header]?.updates"
                               class="prev_value f-11"
@@ -767,7 +782,7 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ po_total?.toFixed(decimal_count) }}</td>
+                  <td class="total_count">{{po_total }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
@@ -815,7 +830,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex" *ngIf="client_name == 'SRG'">
+                <div class="d-flex">
                   <div class="ml-1" *ngIf="client_name == 'SRG'">
                     <label class="f-12">Invoice Description</label>
                     <button class="edit_btn" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
@@ -842,20 +857,30 @@
                       inputId="GRN_Date"
                     ></p-calendar>
                   </div>
-                </div>
 
-                <div *ngIf="client_name != 'SRG'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                  <div *ngIf="client_name == 'Cenomi'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
                     <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
                     </label> -->
                     <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
+
+                  <div *ngIf="GRN_PO_Bool">
+                    <button style="min-width: 30px;" class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
+                  </div>
+                </div>
               </div>
               <table *ngIf="lineDisplayData?.length > 0 " class="mt-2 w-100 ex_table" id="grnTable">
                 
                   <tr >
-                    <th class="lineName" *ngFor="let grn of lineTable">{{grn.header}}</th>
+                    <th class="lineName" *ngFor="let grn of lineTable">
+                      <div *ngIf="grn.header == 'S.No'" class="d-flex">
+                        <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="selectAll" [(ngModel)]="selectALL_grn_lines"  (change)="selectAllLines($event.target.checked)"></div>
+                        <div class="count_line ml-1 f-12">{{grn.header}}</div>
+                      </div>
+                      <div *ngIf="grn.header != 'S.No'">{{grn.header}}</div>
+                    </th>
                   </tr>
                   <tr *ngFor="let item of lineDisplayData; let i = index; trackBy: trackByIndex">
                     <!-- Iterate over headers to match the data field for each row -->
@@ -864,7 +889,10 @@
               
                         <!-- S.No -->
                         <ng-container *ngSwitchCase="'S.No'">
-                          <div class="count_line f-12" style="min-width: 50px">{{ i + 1 }}</div>
+                          <div class="d-flex">
+                            <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="select_line" id="check{{i}}" [(ngModel)]="item.checked"  (change)="selectLine($event.target.checked,index,item)"></div>
+                            <div class="count_line ml-1 f-12">{{ i + 1 }}</div>
+                          </div>
                         </ng-container>
               
                         <!-- GRN - Quantity -->
@@ -919,13 +947,13 @@
                         </ng-container>
               
                         <!-- Actions -->
-                        <ng-container *ngSwitchCase="'Actions'">
+                        <!-- <ng-container *ngSwitchCase="'Actions'">
                           <span class="linevalue invert_thtd">
                             <button class="trash_btn" (click)="deleteGrnLine(item)">
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </span>
-                        </ng-container>
+                        </ng-container> -->
               
                         <!-- Default case for other fields -->
                         <ng-container *ngSwitchDefault>

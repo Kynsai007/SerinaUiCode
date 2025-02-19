@@ -476,7 +476,7 @@ export class Comparision3WayComponent
       { header: 'GRN - Quantity', field: 'GRNQty' },
       { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
       { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
-      { header: 'Actions', field:''}
+      // { header: 'Actions', field:''}
     ];
 
 
@@ -637,7 +637,7 @@ export class Comparision3WayComponent
       }
     } else {
       this.getInvoiceFulldata('');
-      this.getInvTypes();
+      // this.getInvTypes();
       // this.getRulesData();
       // this.readPOLines();
       // this.readErrorTypes();
@@ -877,6 +877,9 @@ export class Comparision3WayComponent
     this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
     this.lineDisplayData = linesData;
     this.grnLineCount = this.lineDisplayData[0]?.linedata;
+    this.lineDisplayData.forEach(el=>{
+      el.checked = false;
+    })
     this.isGRNDataLoaded = true;
   }
 
@@ -967,11 +970,11 @@ export class Comparision3WayComponent
           this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
-
+        this.getInvTypes();
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
-        this.po_total = response.po_total;
+        // this.po_total = response.po_total;
         response?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
@@ -1280,7 +1283,10 @@ export class Comparision3WayComponent
             new Blob([this.byteArray], { type: data.content_type })
           );
           // this.loadImage();
-        } 
+        } else {
+          this.isPdfAvailable = true;
+          this.showInvoice = '';
+        }
         // this.SpinnerService.hide();
       },
       (error) => {
@@ -1343,12 +1349,48 @@ export class Comparision3WayComponent
       }, 50);
     }
   }
+  calculateTotal(data){
+    let subTotal,tax;
+    this.headerData.forEach(el=>{
+    if(el.TagLabel == 'SubTotal'){
+        subTotal = el.Value;
+      } else if(el.TagLabel == 'TotalTax'){
+        tax = el.Value;
+      }
+    });
+    let invoiceTotal:any = Number(subTotal) + Number(tax);
+    invoiceTotal = invoiceTotal.toString();
+    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
+    setTimeout(()=>{
+      this.saveChanges();
+    },1000)
+  }
 
-  onChangeValue(key, value, fieldName) {
-    if (key == 'InvoiceTotal' || key == 'SubTotal') {
+  onChangeValue(key, value, data) {
+    let oldValue;
+    if (['TotalTax','InvoiceTotal', 'SubTotal'].includes(key)) {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
+        oldValue = data.Value;
+        if(['TotalTax', 'SubTotal'].includes(key)){
+          this.headerData.forEach(el=>{
+            if(el.TagLabel == 'InvoiceTotal'){
+              el.isChanged = true;
+            } else if(key == 'SubTotal' && el.TagLabel == 'SubTotal'){
+              el.Value = value;
+            } else if(key == 'TotalTax' && el.TagLabel == 'TotalTax'){
+              el.Value = value;
+            }
+          })
+        } else {
+          this.headerData.forEach(el=>{
+            if(el.TagLabel == 'InvoiceTotal' && key == 'InvoiceTotal'){
+              el.Value = value;
+              el.isChanged = false;
+            }
+          })
+        }
         this.isAmtStr = false;
       }
     }
@@ -1359,13 +1401,64 @@ export class Comparision3WayComponent
     updateValue.header[key] = value;
     this.updateInvoiceData = updateValue;
   }
-  onChangeLineValue(key, value, fieldData) {
+
+  async onChangeLineValue(key, value, fieldData) {
+    const itemCode = fieldData?.ItemCode;
+    let unitPrice;  
+    let amounExcTax;
+    let new_value;
+    this.lineDisplayData?.forEach(tag => {
+      if(itemCode == tag.ItemCode){
+        for(const line in tag.lines){
+            if(key == 'Quantity' && line == 'Quantity'){
+              fieldData.oldValue = tag.lines['Quantity'].Value;
+              tag.lines['Quantity'].Value = value;
+              tag.lines['AmountExcTax'].isChanged = true;   
+            }
+            if(key == 'UnitPrice' && line == 'UnitPrice'){
+              fieldData.oldValue = tag.lines['UnitPrice'].Value;
+              tag.lines['UnitPrice'].Value = value;
+              tag.lines['AmountExcTax'].isChanged = true;   
+            }
+            if(key == 'AmountExcTax' && line == 'AmountExcTax'){
+              fieldData.oldValue = tag.lines['AmountExcTax'].Value;
+              tag.lines['AmountExcTax'].Value = value;
+              tag.lines['AmountExcTax'].isChanged = false;      
+            }
+            amounExcTax = tag.lines['AmountExcTax'].Value;
+            unitPrice = tag.lines['UnitPrice'].Value;
+        }
+      }
+    })
+  if(value?.includes('=')){
+    let count = this.decimal_count;
+    if (key == 'Quantity' && value.includes('=')) {
+      new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
+      this.lineDisplayData.forEach(tag => {
+        if(itemCode == tag.ItemCode){
+          for(const line in tag.lines){
+            if(key == 'Quantity' && line == 'Quantity'){
+              tag.lines['Quantity'].Value = new_value;
+            }
+            if(line == 'AmountExcTax'){
+              tag.lines['AmountExcTax'].isChanged = false;
+            }
+          }
+        }
+      });
+    }
+    fieldData.Value = new_value;
+    value =  new_value;
+  }
+
     if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
         this.isAmtStr = false;
+        this.calculateCost();
       }
+      
     } else if (key == 'Description') {
       if (value == '') {
         this.isEmpty = true;
@@ -1373,6 +1466,7 @@ export class Comparision3WayComponent
         this.isEmpty = false;
       }
     }
+    if(fieldData.oldValue != value){ 
     let updateValue = {
       "line": [
         {
@@ -1384,7 +1478,36 @@ export class Comparision3WayComponent
     updateValue.line[0].itemcode = fieldData?.ItemCode || fieldData?.itemCode?.Value;
     updateValue.line[0].data[key] =  value;
     this.updateInvoiceData = updateValue;
+    }
   }
+  calculateAmount(itemCode,data){
+    let UnitPrice, Quantity,discount,discPercentage;
+    this.lineDisplayData.forEach(tag => {
+      if(tag.ItemCode == itemCode){
+        Quantity = tag?.lines?.Quantity?.Value;
+        UnitPrice = tag?.lines?.UnitPrice?.Value;
+        discount = tag?.lines?.Discount?.Value;
+        discPercentage = tag?.lines?.DiscPercent?.Value;
+      }
+    })
+    let amount;
+    if(discount || discPercentage){
+      amount = UnitPrice * Quantity;
+      if(discount){
+        amount = Quantity *( UnitPrice - discount);
+      } else if(discPercentage){
+        amount = Quantity *( UnitPrice - (UnitPrice * discPercentage / 100));
+      }
+    } else {
+      amount = UnitPrice * Quantity;
+    }
+    amount = amount.toFixed(this.decimal_count);
+    this.onChangeLineValue('AmountExcTax',amount.toString(),data);
+    setTimeout(() => {
+      this.saveChanges();
+    }, 1000);
+  }
+
 
   saveChanges() {
     if (!this.isAmtStr && !this.isEmpty) {
@@ -1691,7 +1814,7 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104,216].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -1728,6 +1851,8 @@ export class Comparision3WayComponent
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
+    } else if(subStatus == 216){
+      this.update("Qty x (UnitPrice - Discount) is not Equal to Amount Exclusive of Tax, please check")
     } else {
       this.getInvoiceFulldata('');
       this.update("Please check the values in invoice.");
@@ -2168,7 +2293,7 @@ export class Comparision3WayComponent
       if (bool) {
         this.SpinnerService.show();
         this.lineDisplayData = this.lineDisplayData.filter(record => {
-          return record?.LineNumber?.Value !== id?.LineNumber?.Value;
+          return !record?.checked;
         });
         this.GRN_line_total = 0;
         this.lineDisplayData.forEach(ele => {
@@ -2178,10 +2303,6 @@ export class Comparision3WayComponent
             }
           })
         })
-        // this.GRNObject = this.GRNObject.filter(val => {
-        //   return val?.idDocumentLineItems != id
-        // })
-        // this.grnLineCount = this.lineDisplayData[0]?.linedata;
         this.SpinnerService.hide();
         this.selectALL_grn_lines = false;
       }
@@ -2862,9 +2983,14 @@ export class Comparision3WayComponent
   // }
 
   getGRNnumbers(po_num) {
+    this.SpinnerService.show();
     this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
       this.grnList = data?.result;
       this.filterGRNlist = this.grnList;
+      this.SpinnerService.hide();
+    }, error => {
+      this.SpinnerService.hide();
+      this.error("Server error");
     })
   }
   ChangeGRNData() {
@@ -3833,7 +3959,7 @@ export class Comparision3WayComponent
     this.exceptionService.getInvTypes().subscribe((data: any) => {
       this.invTypeList = data.data;
       data.data.forEach(el => {
-        if (el.toLowerCase() == this.docType) {
+        if (el?.toLowerCase() == this.docType) {
           this.docType = el;
         } if (this.docType == 'credit') {
           this.docType = 'Invoice'
@@ -3845,13 +3971,15 @@ export class Comparision3WayComponent
           this.docType = 'Credit Note'
         } else if (this.docType == 'retention invoice') {
           this.docType = 'Retention Invoice'
+        } else if (this.docType == 'progressive invoice') {
+          this.docType = 'Progressive Invoice'
         }
         this.d_type = this.docType;
       })
     })
   }
   onSelectInvType(event) {
-    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data: any) => {
+    this.exceptionService.changeInvType(event?.value?.toLowerCase()).subscribe((data: any) => {
       if (data.status == 'success') {
         this.success("Invoice type changed successfully, and sent to batch.");
         this.syncBatch();
@@ -4108,6 +4236,30 @@ export class Comparision3WayComponent
     this.exceptionService.readProjectCatData().subscribe((data:any)=>{
       this.projectCArr = data.result.value;
     },err=>{
+    })
+  }
+
+
+  selectLine(bool,index,item){
+    let selctionIds = [];
+    this.lineDisplayData.forEach(el=>{
+      if(el.checked && !selctionIds.includes(el.ItemCode)){
+        selctionIds.push(el.ItemCode);
+      } else if(!el.checked && selctionIds.includes(el.ItemCode)){
+        selctionIds = selctionIds.filter(id => id !== el.ItemCode);
+      }
+    })
+    if(selctionIds.length == this.lineDisplayData?.length){
+      this.selectALL_grn_lines = true;
+    } else {
+      this.selectALL_grn_lines = false;
+    }
+
+  }
+
+  selectAllLines(bool){
+    this.lineDisplayData.forEach(el=>{
+      el.checked = bool;
     })
   }
   shouldRenderInput(){
