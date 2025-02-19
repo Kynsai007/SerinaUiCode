@@ -1787,10 +1787,10 @@ export class Comparision3WayComponent
     })
     let decimalCount = 0;
     let des_arr = [];
-    if(subTotal.includes('.')){
+    if(subTotal?.includes('.')){
       des_arr.push(subTotal.split('.')[1]?.length);
     }
-    if(tax.includes('.')){
+    if(tax?.includes('.')){
       des_arr.push(tax.split('.')[1]?.length);
     }
     decimalCount = Math.max(...des_arr);
