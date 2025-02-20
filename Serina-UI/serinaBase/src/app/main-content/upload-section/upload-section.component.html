@@ -292,7 +292,6 @@
               [pTooltip]="isCustomerPortal && !vendorName ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
-            <option value="" ></option>
             <option *ngFor="let item of invTypeArr" [value]="item.value">
               {{ item.name }}
             </option>
@@ -322,7 +321,7 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType != 'non po invoice' && selectedOption != 'Service'
+              selectedInvoiceType != 'non po invoice' && !selectedInvoiceType?.includes('non-po') && selectedOption != 'Service'
             "
             class="selectFilter"
             [ngClass]="{
@@ -354,6 +353,74 @@
               </ng-template>
             </p-autoComplete>
           </div>
+
+          
+          <div
+            *ngIf="
+              viewType == 'ideal' && selectedInvoiceType?.includes('non-po')
+            "
+            [ngClass]="{
+              'green-border': selectedInvoiceType,
+              'red-border': !selectedInvoiceType
+            }"
+            class="selectFilter"
+          >
+            <label class="f-12 mb-0">Select Journal Number</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              (onSelect)="selectedJournal($event)"
+              [group]="false"
+              [suggestions]="filteredJournal"
+              (completeMethod)="filterJournalNumber($event)"
+              field="lookupid"
+              [dropdown]="true"
+              name="JournalNumber"
+              tooltipPosition="top"
+            >
+            </p-autoComplete>
+          </div>
+
+          <div
+            *ngIf=" viewType == 'ideal' && selectedInvoiceType?.includes('non-po')"
+            class="selectFilter"
+            [ngClass]="{
+              'green-border': selectedInvoiceType,
+              'red-border': !selectedInvoiceType
+            }"
+          >
+          <label class="f-12 mb-0">Select Receiving Operating Unit</label>
+          <p-autoComplete
+            placeholder="Search or select from dropdown"
+            (onSelect)="selectedOP($event)"
+            [group]="false"
+            [forceSelection]="true"
+            [suggestions]="filteredOP"
+            (completeMethod)="filterOP($event)"
+            field="lookupvalue"
+            [dropdown]="true"
+            name="operatingUnit"
+            required
+            tooltipPosition="top"
+          >
+          </p-autoComplete>
+        </div>
+
+        <div class="selectFilter ideal" 
+        [ngClass]="{
+          'green-border': selectedInvoiceType,
+          'red-border': !selectedInvoiceType
+        }"
+          *ngIf="viewType == 'ideal' && selectedInvoiceType?.includes('non-po')"
+          >
+          <label class="f-12 mb-0">Please add description</label><br>
+          <input type="text" class="form-control accountSelect f-12" 
+            tooltipPosition="top"
+            name="description"
+            (change)="addDescription($event)"
+          >
+        </div>
+
+
           <div
             *ngIf="
               viewType == 'ideal' &&
@@ -538,7 +605,7 @@
         </form>
 
         <!-- Upload Option-->
-        <div class="mt-3" *ngIf="displaySelectPdfBoolean || reuploadBoolean">
+        <div class="mt-3" *ngIf="displaySelectPdfBoolean">
           <div
             *ngIf="isuploadable"
             ng2FileDrop
@@ -847,7 +914,6 @@
               [pTooltip]="!selectedVendor ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
-              <option value="" disabled></option>
               <option *ngFor="let item of invTypeArr" [value]="item.value">
                 {{ item.name }}
               </option>
@@ -893,7 +959,7 @@
           <!-- select PO Number -->
           <div
             class="selectFilter"
-            *ngIf="viewType != 'ideal' && selectedInvoiceType_quick != 'non po invoice'"
+            *ngIf="viewType != 'ideal' && selectedInvoiceType_quick != 'non po' && !selectedInvoiceType?.includes('non-po')" 
             [ngClass]="{
               'green-border': slQckPONum,
               'red-border':  !slQckPONum && selectedInvoiceType_quick

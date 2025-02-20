@@ -317,6 +317,13 @@ export class UploadSectionComponent implements OnInit {
   slQckPONum: any;
   grnLine: boolean = false;
   quickVendor: any[];
+  selectedJournalNumber: any;
+  filteredJournal: any[];
+  filteredOP: any[];
+  selectedOperatingUnit: any;
+  journalList:any;
+  receivingOPList:any;
+  description_non_po: any;
 
   constructor(
     private http: HttpClient,
@@ -403,7 +410,8 @@ export class UploadSectionComponent implements OnInit {
     } else if (this.dataService.configData.client_name == 'Emaar Hospitality') {
       this.invTypeArr = [ 
         { name:'Invoice', value:'invoice'},
-        { name:'Non PO Invoice', value:'non po invoice'},
+        { name:'Non-Po Tax Invoice', value:'non-po Tax Invoice'},
+        { name:'Non-Po Credit Note', value:'non-po Credit Note'},
         { name:'Advance Invoice', value:'advance invoice'},
         { name:'Credit Note', value:'credit note'}
       ];
@@ -456,13 +464,13 @@ export class UploadSectionComponent implements OnInit {
     this.getEntitySummary();
     this.dateRange();
     this.findColumns();
-    if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
-      this.reuploadBoolean = true;
-      this.vendorAccountId = this.dataService.reUploadData.idVendorAccount;
-      this.selectedEntityId = this.dataService.reUploadData.idEntity;
-    } else {
-      this.reuploadBoolean = false;
-    }
+    // if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
+    //   this.reuploadBoolean = true;
+    //   this.vendorAccountId = this.dataService.reUploadData.idVendorAccount;
+    //   this.selectedEntityId = this.dataService.reUploadData.idEntity;
+    // } else {
+    //   this.reuploadBoolean = false;
+    // }
   }
 
   chooseTab(val) {
@@ -563,7 +571,6 @@ export class UploadSectionComponent implements OnInit {
     this.displaySelectPdfBoolean = false;
     this.selectedInvoiceType = null;
     this.selectedSAccount = null;
-    this.displaySelectPdfBoolean = false;
     this.serviceName = null;
     this.getEntitySummary();
     // if (value === 'Service invoice') {
@@ -599,6 +606,9 @@ export class UploadSectionComponent implements OnInit {
     this.sltGRNNum = null;
     this.PO_GRN_Number_line = null;
     this.slQckPONum = null;
+    if(val.includes('non-po')){
+      this.getLableData('JournalName',``);
+    }
     if (type == 'ideal') {
     this.selectedInvoiceType = val ;
       if(val == 'non po invoice'){
@@ -670,7 +680,6 @@ export class UploadSectionComponent implements OnInit {
     this.selectedINVNumber = null;
     this.displaySelectPdfBoolean = false;
     this.selectedSAccount = null;
-    this.displaySelectPdfBoolean = false;
     this.serviceName = null;
     this.sltGRNNum = null;
     this.PO_GRN_Number_line = null;
@@ -937,7 +946,6 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedPO(event) {
-    this.displaySelectPdfBoolean = true;
     this.selectedINVNumber = null;
     this.selectedPPType = null;
     this.selectedPPPercentage = null;
@@ -949,17 +957,20 @@ export class UploadSectionComponent implements OnInit {
         this.vendorAccountId = event.vendorAccountId;
         this.selectedEntityId = event.entityID;
       }
+      this.displaySelectPdfBoolean = true;
+      this.spinnerService.show();
       if(this.selectedInvoiceType.includes('credit note') && this.dataService.configData.client_name == 'SRG'){
         this.getVendorInvoices(event.PODocumentID);
          this.displaySelectPdfBoolean = false;
       }
-      if(this.selectedInvoiceType === 'advance invoice' && ['SRG','Emaar Hospitality'].includes(this.dataService.configData.client_name)){
+      if(this.selectedInvoiceType == 'advance invoice' && ['SRG','Emaar Hospitality'].includes(this.dataService.configData.client_name)){
+        
         this.displaySelectPdfBoolean = false;
       }
       if(this.selectedInvoiceType !== 'credit note'){
         this.displayUploadOpt();
       }
-      
+      this.spinnerService.hide();
       // this.readPOLines(event.PODocumentID);
     } else {
       if (this.selectedInvoiceType_quick == 'invoice') {
@@ -1513,7 +1524,10 @@ export class UploadSectionComponent implements OnInit {
               low_lt: this.lowerLimit,
               inv_number:this.selectedInvNumber,
               Pre_pay_type: this.pre_type,
-              Pre_pay_value: this.pre_type_val
+              Pre_pay_value: this.pre_type_val,
+              JournalName: this.selectedJournalNumber,
+              ReceivingOperatingUnit: this.selectedOperatingUnit,
+              Descritption: this.description_non_po
             };
             this.runEventSource(eventSourceObj);
             let count = 0;
@@ -2173,6 +2187,58 @@ success(msg) {
 }
 error(msg) {
  this.alertService.error_alert(msg);
+}
+getLableData(name,param){
+  this.exceptionService.getLabelData(name,param).subscribe((data:any)=>{
+    if(name == 'JournalName'){
+      this.journalList = data;
+    } else if(name =="ReceivingOperatingUnit"){
+      this.receivingOPList = data;
+    }
+  })
+}
+filterJournalNumber(event) {
+  this.filteredJournal = this.filterNonPo(event,'JournalName','lookupid');
+}
+selectedJournal(value) {
+  this.selectedJournalNumber = value.lookupid;
+  this.getLableData('ReceivingOperatingUnit',`&ent_id=${this.selectedEntityId}`);
+  this.addUploadDiv();
+}
+selectedOP(value) {
+  this.selectedOperatingUnit = value.lookupvalue;
+  this.addUploadDiv();
+}
+filterOP(event) {
+  this.filteredOP = this.filterNonPo(event,'ReceivingOperatingUnit','lookupvalue');
+}
+filterNonPo(event,name,value) {
+  let filtered:any[] = [];
+  let query = event.query || '';
+  let list;
+  if(name == 'JournalName'){
+    list = this.journalList;
+  } else if(name == 'ReceivingOperatingUnit'){
+    list = this.receivingOPList;
+  }
+  if(list?.length > 0){
+    for (let i = 0; i < list?.length; i++) {
+      let account: any = list[i];
+      if (account[value]?.toString()?.toLowerCase()?.includes(query?.toLowerCase())) {
+        filtered.push(account);
+      }
+    }
+  }
+  return filtered;
+}
+addDescription(event){
+  this.description_non_po = event.target.value;
+  this.addUploadDiv();
+}
+addUploadDiv(){
+  if(this.description_non_po && this.selectedOperatingUnit && this.selectedJournalNumber){
+    this.displaySelectPdfBoolean = true;
+  }
 }
   ngOnDestroy() {
     this.mat_dlg.closeAll();
