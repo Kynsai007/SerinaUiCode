@@ -468,8 +468,9 @@ export class Comparision3WayComponent
     const commonTags = [
       { TagName: 'Description', linedata: [] },
       { TagName: 'PO Qty', linedata: [] },
-      { TagName: 'UnitPrice', linedata: [] },
+      { TagName: 'UnitPrice', linedata: [] }, 
       { TagName: 'GRN - Quantity', linedata: [] },
+      { TagName: 'PO Balance Qty', linedata: [] },
       { TagName: 'AmountExcTax', linedata: [] },
       // { TagName: 'Actions', linedata: [] }
     ];
@@ -477,8 +478,7 @@ export class Comparision3WayComponent
     this.GRN_PO_tags = [...commonTags];
 
     if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(4, 0, { TagName: 'PO Balance Qty', linedata: [] });
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Remaining %', linedata: [] });
+      this.GRN_PO_tags.push({ TagName: 'PO Remaining %', linedata: [] });
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
@@ -1026,7 +1026,7 @@ export class Comparision3WayComponent
     this.inputData = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType.includes('non-po') || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -2743,6 +2743,13 @@ export class Comparision3WayComponent
 
     let checking_value;
     let error_msg;
+    let thresholdPecent = this.dataService?.configData?.miscellaneous.overdeliverypct;
+    let threshold;
+    let po_value;
+    if(thresholdPecent){
+      threshold = po_qty_value * thresholdPecent / 100;
+    }
+    console.log('threshold',threshold)
     if(po_balance_qty_value){
       checking_value = po_balance_qty_value;
       error_msg = 'PO Balance Quantity';
@@ -2751,7 +2758,11 @@ export class Comparision3WayComponent
       error_msg = 'PO Quantity';
     }
     this.disable_save_btn = false;
-    if(Number(checking_value) < Number(val)){
+    let finalCheckValue = Number(checking_value);
+    if(thresholdPecent){
+      finalCheckValue = Number(checking_value) + Number(threshold);
+    }
+    if(finalCheckValue < Number(val)){
 
       // this.dataService.added_manpower_data.forEach(el=>{
       //   if(el.idDocumentLineItems == lineItem.idDocumentLineItems){
@@ -4585,7 +4596,7 @@ export class Comparision3WayComponent
           this.docType = el;
         } if (this.docType == 'credit') {
           this.docType = 'Invoice'
-        } else if (this.docType == 'non-po') {
+        } else if (this.docType.includes('non-po')) {
           this.docType = 'Non PO Invoice'
         } else if (this.docType == 'advance invoice') {
           this.docType = 'Advance Invoice'
