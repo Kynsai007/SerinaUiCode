@@ -468,9 +468,9 @@ export class Comparision3WayComponent
     const commonTags = [
       { TagName: 'Description', linedata: [] },
       { TagName: 'PO Qty', linedata: [] },
-      { TagName: 'AmountExcTax', linedata: [] },
-      { TagName: 'GRN - Quantity', linedata: [] },
       { TagName: 'UnitPrice', linedata: [] },
+      { TagName: 'GRN - Quantity', linedata: [] },
+      { TagName: 'AmountExcTax', linedata: [] },
       // { TagName: 'Actions', linedata: [] }
     ];
 
