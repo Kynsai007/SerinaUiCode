@@ -426,6 +426,28 @@ export class Comparision3WayComponent
   configData: any;
   invoiceDate: Date | null = null;
   selectALL_grn_lines: boolean = false;
+  fieldType: any = [
+    { id:1, name:'JournalName', type:'Dropdown' },
+    { id:2, name:'ReceivingOperatingUnit', type:'Dropdown' },
+    { id:3, name:'MainAccount', type:'Dropdown' },
+    { id:4, name:'Description', type:'FreeText' },
+    { id:5, name:'Department', type:'Dropdown' },
+    { id:6, name:'Segments', type:'Dropdown' },
+    { id:7, name:'Product', type:'Dropdown' },
+    { id:8, name:'BSMovements', type:'Dropdown' },
+    { id:9, name:'BSLocation', type:'Dropdown' },
+    { id:10, name:'InterCompany', type:'Dropdown' },
+    { id:11, name:'FixedAssetDepartment', type:'Dropdown' },
+    { id:12, name:'FixedAssetGroup', type:'Dropdown' },
+    { id:13, name:'SalesTaxGroup', type:'Dropdown' },
+    { id:14, name:'ItemSalesTaxGroup', type:'Dropdown' },
+    { id:15, name:'BankAccount', type:'Dropdown' }
+
+  ];
+  old_tag: any;
+  fieldData: any;
+  temp_line_data_non_po: any;
+  updatedNonPOLine: { tag_id: any; tag_name: any; prev_value: any; curr_value: any; };
 
   constructor(
     fb: FormBuilder,
@@ -438,7 +460,7 @@ export class Comparision3WayComponent
     private AlertService: AlertService,
     private SpinnerService: NgxSpinnerService,
     private permissionService: PermissionService,
-    private dataService: DataService,
+    public dataService: DataService,
     private settingService: SettingsService,
     private SharedService: SharedService,
     private mat_dlg: MatDialog,
@@ -583,8 +605,7 @@ export class Comparision3WayComponent
       this.Itype = 'Invoice';
       if (this.editable && !['advance invoice', 'non-po', 'credit note'].includes(this.documentType) || this.mappingForCredit) {
         this.readLineItems();
-        
-      }
+      } 
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
       this.showPdf = false;
@@ -1026,7 +1047,7 @@ export class Comparision3WayComponent
     this.inputData = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType.includes('non-po') || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService?.documentType?.includes('non-po') || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -1164,6 +1185,7 @@ export class Comparision3WayComponent
                 count = count + 9;
                 val.id = count;
               }
+
             });
             this.lineDisplayData = array.sort((a, b) => a.id - b.id);
           } else {
@@ -1231,7 +1253,16 @@ export class Comparision3WayComponent
                   this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
                 })
               }
+              if(this.fieldType.filter(item=>item.name == ele.TagName).length > 0){
+                ele.fieldType = this.fieldType.filter(item=>item.name == ele.TagName)[0].type;
+                if(ele.fieldType == 'Dropdown'){
+                  ele.linedata.forEach(line=>{
+                    line.DocumentLineItems.lookupid = line.DocumentLineItems.Value;
+                  })
+                }
+              }
             });
+            this.temp_line_data_non_po = JSON.parse(JSON.stringify(data.ok.linedata));
           }
         } else {
           vendorData = response?.Vendordata;
@@ -2749,7 +2780,6 @@ export class Comparision3WayComponent
     if(thresholdPecent){
       threshold = po_qty_value * thresholdPecent / 100;
     }
-    console.log('threshold',threshold)
     if(po_balance_qty_value){
       checking_value = po_balance_qty_value;
       error_msg = 'PO Balance Quantity';
@@ -4749,7 +4779,7 @@ export class Comparision3WayComponent
     let arr = [];
     if (tag == 'PurchaseOrder') {
       arr = this.poList;
-    } else {
+    } else if (tag == 'InvoiceNumber') {
       arr = this.invNumbersList;
     }
     let filtered: any[] = [];
@@ -4757,31 +4787,91 @@ export class Comparision3WayComponent
     for (let i = 0; i < arr?.length; i++) {
       let str = arr[i];
       if (
-        str?.toLowerCase()?.indexOf(query?.toLowerCase()) == 0
+        str?.toLowerCase()?.inculdes(query?.toLowerCase())
       ) {
         filtered.push(str);
       }
     }
     this.filteredPreData = filtered;
   }
-  onSelectPrePay(event, value, tagname, index) {
-    let old_value
-    this.temp_line_data.forEach(tag => {
-      if (tag.tagname == tagname) {
-        old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
-      }
-    })
-    let obj = {
-      tag_id: value.idDocumentLineItems,
-      tag_name: tagname,
-      prev_value: old_value,
-      curr_value: event,
+
+  filterDropNon(event,tag){
+    this.SpinnerService.show();
+    let timeout = 10;
+    if(this.old_tag != tag || this.fieldData == undefined){
+      timeout = 500;
+      this.old_tag = tag;
+      let param = `&inv_id=${this.invoiceID}&ent_id=${this.dataService.entityID}&id_vendor=${this.vendorId}`;
+      this.exceptionService.getLabelData(tag,param).subscribe((data:any)=>{
+        this.fieldData = data;
+        this.fieldData.forEach(ele=>{
+          ele.lookupid = `${ele?.lookupid}  -  ${ele?.lookupvalue}`;
+        })
+      })
     }
-    this.exceptionService.savePreData(obj).subscribe((data: any) => {
-      this.success('Changes saved successfully')
-    }, err => {
-      this.error("Server error or Please check the data");
-    })
+    setTimeout(() => {
+      let filtered: any[] = [];
+      let query = event.query;
+      if(this.fieldData?.length > 0){
+        for (let i = 0; i < this.fieldData?.length; i++) {
+          let account: any = this.fieldData[i];
+          if (account?.lookupid?.toString()?.toLowerCase()?.includes(query?.toLowerCase())) {
+            filtered.push(account);
+            this.SpinnerService.hide();
+          }
+        }
+      } else {
+        this.SpinnerService.hide();
+      }
+      
+      this.filteredPreData = filtered;
+    }, timeout);
+  }
+  onSelectPrePay(event, value, tagname, index) {
+    let old_value,tag_id;
+    if(this.documentType == 'non-po credit note' || this.documentType == 'non-po tax invoice'){
+      this.temp_line_data_non_po?.forEach(tag => {
+        if (tag.TagName == tagname) {
+          old_value = tag.linedata[index].DocumentLineItems.Value
+          tag_id = tag.linedata[index].DocumentLineItems.idDocumentLineItems;
+        }
+      })
+    } else {
+      this.temp_line_data.forEach(tag => {
+        if (tag.tagname == tagname) {
+          old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
+        }
+      })
+    }
+    let obj = {
+      tag_id: ['non-po tax invoice','non-po credit note'].includes(this.documentType)? tag_id:value.idDocumentLineItems,
+      tag_name: tagname,
+      prev_value: old_value || '',
+      curr_value: ['non-po tax invoice','non-po credit note'].includes(this.documentType)? event.lookupid:event,
+    }
+    this.updatedNonPOLine = obj
+    this.saveCustomData();
+  }
+
+  onChangeCustomData(tagname, value, itemData) {
+    let obj = {
+      tag_id: itemData.idDocumentLineItems,
+      tag_name: tagname,
+      prev_value: itemData.Value || '',
+      curr_value: value,
+    }
+    this.updatedNonPOLine = obj;
+  }
+
+  saveCustomData() {
+    if(this.updatedNonPOLine){
+      this.exceptionService.savePreData(this.updatedNonPOLine).subscribe((data: any) => {
+        this.success('Changes saved successfully');
+        delete this.updatedNonPOLine;
+      }, err => {
+        this.error("Server error or Please check the data");
+      })
+    }
   }
 
   filterProject(event, tag) {
@@ -4913,6 +5003,22 @@ export class Comparision3WayComponent
     this.grnLineCount.forEach(el=>{
       el.checked = bool;
     })
+  }
+
+  getFieldType(fieldName) {
+   this.exceptionService.getFieldType(fieldName).subscribe((data: any) => {
+     this.fieldType = data.result;
+   })
+  }
+  getLableData(name){
+    let param = `&inv_id=${this.invoiceID}&ent_id=${this.dataService.entityID}&id_vendor=${this.vendorId}`;
+    let fieldData:any;
+    this.exceptionService.getLabelData(name,param).subscribe((data:any)=>{
+      fieldData = data;
+    },err=>{
+      this.error("Server error");
+    })
+    return fieldData;
   }
   ngOnDestroy() {
     let sessionData = {

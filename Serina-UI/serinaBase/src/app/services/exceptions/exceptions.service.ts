@@ -243,6 +243,9 @@ export class ExceptionsService {
   getLabelData(name,param){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getlabeldata/${this.userId}?field_name=${name}${param}`) 
   }
+  getFieldType(fieldName) {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getfieldtype/${this.userId}?field_name=${fieldName}`) 
+  }
 
   convertData(inputData, purchId: string) {
     const output = [];

@@ -1527,7 +1527,7 @@ export class UploadSectionComponent implements OnInit {
               Pre_pay_value: this.pre_type_val,
               JournalName: this.selectedJournalNumber,
               ReceivingOperatingUnit: this.selectedOperatingUnit,
-              Descritption: this.description_non_po
+              Description: this.description_non_po
             };
             this.runEventSource(eventSourceObj);
             let count = 0;

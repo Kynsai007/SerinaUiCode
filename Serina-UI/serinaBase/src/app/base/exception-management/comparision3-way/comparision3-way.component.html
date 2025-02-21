@@ -35,7 +35,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note','non-po tax invoice','non-po credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -1309,12 +1309,14 @@
                           </div>
                         </div>
                         <span
-                        class="d-flex"
+                          class="d-flex"
                           *ngIf="
-                            item.TagName != 'S.No' && item.TagName != 'Actions'
+                            item.TagName != 'S.No' 
+                            && item.TagName != 'Actions' 
                           "
                         >
                           <input
+                            *ngIf="!['non-po tax invoice','non-po credit note'].includes(documentType)"
                             #inputv
                             type="text"
                             [ngClass]="
@@ -1352,39 +1354,94 @@
                                   : ''
                             }"
                             />
-                            <span
-                            *ngIf="line.value?.DocumentUpdates"
-                            class="prev_value"
-                            [title]="
-                            line.value?.DocumentUpdates?.OldValue
-                            "
-                            >prev:
-                            {{
-                              line.value?.DocumentUpdates.OldValue
-                            }}</span
-                          >
-                          <span
-                            *ngIf="
-                            line.value?.isError >= 1 
-                            "
-                            [pTooltip]="
-                            line.value?.ErrorDesc
-                            "
-                            tooltipPosition="top"
-                            ><i
+                            <input
+                              *ngIf="['non-po tax invoice','non-po credit note'].includes(documentType) && (item?.fieldType == 'FreeText' || !item?.fieldType) "
+                              #inputv
+                              type="text"
+                              [ngClass]="
+                                item.TagName == 'Description'
+                                  ? 'w-des'
+                                  : 'w-sm'
+                              "
+                              [value]="line.value.Value"
+                              [title]="line.value.Value"
+                              (change)="
+                                onChangeCustomData(
+                                  item.TagName,
+                                  inputv.value,
+                                  line.value
+                                )"
+                                (blur)="saveCustomData()"
+                              [disabled]="!editable || fin_boolean"
+                              class="form-control f-12 input_disabled"
                               [ngStyle]="{
-                                color:
-                                line.value?.isError >= 1 && !line.value?.ErrorDesc.includes('Low')
-                                    ? '#D81616'
-                                    :line.value?.isError >= 1 && line.value?.ErrorDesc.includes('Low')
-                                    ? '#f7c83e'
+                                width:
+                                  item.TagName == 'Description'
+                                    ? '-webkit-fill-available'
+                                    : '150px',
+                                borderBottom:
+                                line.value.isError >= 1 && !line.value?.ErrorDesc?.includes('Low')
+                                    ? ' 2px solid red'
+                                    : line.value.isError >= 1 && line.value?.ErrorDesc?.includes('Low')
+                                    ? ' 2px solid #f7c83e'
+                                    : line.value?.IsUpdated > 0 && line.value.isError == 0
+                                    ? '2px solid #37dcc7'
                                     : ''
                               }"
-                              class="fa fa-info-circle info_icon"
-                              aria-hidden="true"
-                            ></i
-                          ></span>
+                              />
+                              <span class="nonPo" *ngIf="item?.fieldType == 'Dropdown'">
+                                <p-autoComplete
+                                  [(ngModel)]="line.value"
+                                  (onSelect)="onSelectPrePay($event, line.value,item.TagName,i)"
+                                  placeholder=""
+                                  [suggestions]="filteredPreData"
+                                  (completeMethod)="filterDropNon($event,item.TagName)"
+                                  field="lookupid"
+                                  [dropdown]="true"
+                                  styleClass="f-12 pl-0"
+                                  id="{{item.TagName}}-{{line.value.idDocumentLineItems}}-{{i}}"
+                                  name="{{item.TagName}}-{{line.value.idDocumentLineItems}}-{{i}}"
+                                  [disabled]="!editable || fin_boolean"
+                                  appendTo="body"
+                                >
+                                </p-autoComplete>
+                              </span>
+                            
                         </span>
+                        
+                      </div>
+                      <div *ngIf="line.value?.DocumentUpdates">
+                        <span
+                          *ngIf="line.value?.DocumentUpdates"
+                          class="prev_value"
+                          [title]="
+                          line.value?.DocumentUpdates?.OldValue
+                          "
+                          >prev:
+                          {{
+                            line.value?.DocumentUpdates.OldValue
+                          }}
+                        </span>
+                        <span
+                          *ngIf="
+                          line.value?.isError >= 1 
+                          "
+                          [pTooltip]="
+                          line.value?.ErrorDesc
+                          "
+                          tooltipPosition="top"
+                          ><i
+                            [ngStyle]="{
+                              color:
+                              line.value?.isError >= 1 && !line.value?.ErrorDesc.includes('Low')
+                                  ? '#D81616'
+                                  :line.value?.isError >= 1 && line.value?.ErrorDesc.includes('Low')
+                                  ? '#f7c83e'
+                                  : ''
+                            }"
+                            class="fa fa-info-circle info_icon"
+                            aria-hidden="true"></i>
+                          </span>
                       </div>
                     </div>
                   </td>

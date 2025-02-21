@@ -323,6 +323,7 @@ $theme_color: var(--themeColor);
   }
   .w-des {
     min-width: 400px;
+    padding-left: 0;
   }
   .w-sm {
     width: 85px;
@@ -448,7 +449,7 @@ $theme_color: var(--themeColor);
     .p-autocomplete {
       display: inline-flex;
       position: relative;
-
+      height: 30px;
   }
   .invType .p-autocomplete {
     height: 35px;
@@ -492,6 +493,13 @@ $theme_color: var(--themeColor);
       font-weight: 500;
       border: 0;
       background: transparent;
+    }
+    .nonPo .p-autocomplete {
+      height: 30px;
+    }
+    .nonPo .p-autocomplete-dd .p-autocomplete-input {
+      width: auto;
+      padding-left: 0px;
     }
   
   }
