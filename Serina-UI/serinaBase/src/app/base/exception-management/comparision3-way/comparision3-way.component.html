@@ -37,6 +37,7 @@
         *ngIf="
           portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note','non-po tax invoice','non-po credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
         "
+        type="button"
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
       >
@@ -50,6 +51,7 @@
           (documentType == 'advance invoice' && 
           [29,108].includes(subStatusId)))
         "
+        type="button"
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
       >
@@ -59,6 +61,7 @@
       <button
         *ngIf="(subStatusId == 32 || subStatusId == 40) && isAdmin"
         class="level_3_btn f-12 mr-2"
+        type="button"
         (click)="status_dialog()"
       >
         Change status
@@ -100,6 +103,7 @@
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
       class="primary_btn mr-2 f-12"
       (click)="viewPdf()"
+      type="button"
     >
       {{ btnText }}
     </button>
@@ -566,6 +570,7 @@
                   <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
                   <div class="subButton">
                     <button class="submitButton"
+                    type="button"
                     (click)="saveData('percentage')" [disabled]="isButtonDisabled"
                     >Submit</button>
                   </div>
@@ -578,6 +583,7 @@
                   <!-- <button (click)="saveAmount()">Submit Amount</button> -->
                   <div class="subButton">
                     <button class="submitButton"
+                    type="button"
                     (click)="saveData('amount')" [disabled]="isButtonDisabled"
                     >Submit</button>
                   </div>
@@ -615,6 +621,7 @@
                   && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
                   && !['advance invoice'].includes(documentType)
                 "
+                type="button"
                 class="level_3_btn f-12 m-t-neg ml-2 mr-2"
                 (click)="opengrnDailog()"
               >
@@ -664,6 +671,7 @@
                     *ngIf="editable && !fin_boolean"
                     id="addLine"
                     class="level_3_btn f-12 mr-4"
+                    type="button"
                     (click)="open_dialog('AddLine')"
                   >
                     <i class="fa fa-plus" aria-hidden="true"></i> Add Line
@@ -938,6 +946,7 @@
                           [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non-po')? '1px solid lightgray':'' }">
                             <button
                               class="trash_btn"
+                              type="button"
                               (click)="
                                 delete_confirmation(
                                   data.linedetails[0].invline[0]
@@ -1009,7 +1018,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
+                <div class="d-flex f-12 basic_details_grn text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -1030,7 +1039,7 @@
                 <div class="d-flex">
                   <div class="ml-1" *ngIf="client_name == 'SRG'">
                     <label class="f-12">Invoice Description</label>
-                    <button class="edit_btn" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
+                    <button class="edit_btn" type="button" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
                     <!-- <input
                       type="text"
                       name="inv_description"
@@ -1060,11 +1069,11 @@
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
                     </label> -->
-                    <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
+                    <button class="f-12 primary_btn" type="button" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
 
                   <div *ngIf="GRN_PO_Bool">
-                    <button style="min-width: 30px;" class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
+                    <button style="min-width: 30px;" type="button" class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
                   </div>
                 </div>
               </div>
@@ -1201,6 +1210,7 @@
                     portalName == 'customer' &&
                     (subStatusId == 78 || subStatusId == 77)
                   "
+                  type="button"
                   class="level_3_btn f-12 mr-2"
                   (click)="open_dialog_comp('editApprover')"
                 >
@@ -1239,6 +1249,7 @@
                   <button
                     *ngIf="editable && !fin_boolean"
                     id="addLine"
+                    type="button"
                     class="level_3_btn f-12 mr-4"
                     (click)="open_dialog('AddLine')"
                   >
@@ -1302,6 +1313,7 @@
                           <div class="linevalue invert_thtd">
                             <button
                               class="trash_btn"
+                              type="button"
                               (click)="delete_confirmation(line.value.itemCode, item?.itemcode)"
                             >
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
@@ -1462,7 +1474,7 @@
               </table>
               <div *ngIf="!isDesktop">
                 <div class="example-action-buttons f-12">
-                  <button mat-button class="f-12" (click)="accordion.openAll()">
+                  <button mat-button class="f-12" type="button" (click)="accordion.openAll()">
                     Expand All
                   </button>
                   <button
@@ -1504,6 +1516,7 @@
                               <div class="linevalue">
                                 <button
                                   class="trash_btn"
+                                  type="button"
                                   (click)="
                                     delete_confirmation(line.value.itemCode, item?.itemcode)
                                   "
@@ -1669,12 +1682,13 @@
                     <!-- <button class="btn btnVender bg-btn-cancel mr-3" (click)="removeRow(i)">Remove</button> -->
                   </div>
                   <div class="buttonposition">
-                    <button class="addbtn btn btn-add" (click)="addRow(i)">
+                    <button class="addbtn btn btn-add" type="button" (click)="addRow(i)">
                       <mat-icon class="addicon">add_circle_outline</mat-icon>
                     </button>
                     <button
                       class="addbtn btn bg-btn-cancel"
                       (click)="removeRow(i)"
+                      type="button"
                       [disabled]="rows.length === 1"
                     >
                       <mat-icon class="addicon">delete_sweep</mat-icon>
@@ -1974,6 +1988,7 @@
                 *ngIf="!GRN_PO_Bool"
                 class="img-browse h-35 b-0 ml-2"
                 (click)="uploadSupport(invoiceID)"
+                type="button"
                 [disabled]="!(uploadFileList.length > 0)"
                 [ngClass]="!(uploadFileList.length > 0) ? 'disable_clas' : ''"
               >
@@ -2226,6 +2241,7 @@
             <button
               *ngIf="submitBtn_boolean && editable &&  !isMoreRequired "
               class="level_3_btn f-12 mr-3"
+              type="button"
               (click)="open_dialog('reject')"
             >
               Reject
@@ -2258,6 +2274,7 @@
             <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
+              type="button"
               (click)="
                 approval_selection_boolean && isLCMCompleted
                   ? onSubmitApprovers()
@@ -2277,6 +2294,7 @@
             <button
               *ngIf="fin_boolean && !isMoreRequired"
               class="primary_btn f-12"
+              type="button"
               (click)="batch_id ? bulk_confirm() :open_dialog('approve')"
             >
               Approve
@@ -2875,6 +2893,7 @@
       <div class="d-flex justify-content-end mt-2">
         <button
           class="primary_btn f-12"
+          type="button"
           (click)="CheckItemStatus(ItemCode.value)"
         >
           Check & ADD
@@ -3035,7 +3054,7 @@
     </div>
 
     <footer class="d-flex justify-content-end mt-2">
-      <button class="secondary_btn secondary_act_btn f-12 mr-3" (click)="closeDialog()">Close</button>
+      <button class="secondary_btn secondary_act_btn f-12 mr-3" type="button"  (click)="closeDialog()">Close</button>
       <!-- <button class="primary_action_button f-12" (click)="savePrompt()">Save</button> -->
    </footer>
   </div>

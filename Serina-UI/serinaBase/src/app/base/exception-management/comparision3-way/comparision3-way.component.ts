@@ -1824,10 +1824,12 @@ export class Comparision3WayComponent
     if(tax?.includes('.')){
       des_arr.push(tax.split('.')[1]?.length);
     }
-    decimalCount = Math.max(...des_arr);
     let invoiceTotal:any = Number(subTotal) + Number(tax);
-    invoiceTotal = invoiceTotal?.toFixed(decimalCount)?.toString();
-    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
+    if(des_arr.length > 0){
+      decimalCount = Math.max(...des_arr);
+      invoiceTotal = invoiceTotal?.toFixed(decimalCount);
+    }
+    this.onChangeValue('InvoiceTotal',invoiceTotal?.toString(),data);
     setTimeout(()=>{
       this.saveChanges();
     },1000)
@@ -3637,9 +3639,14 @@ export class Comparision3WayComponent
   // }
 
   getGRNnumbers(po_num) {
+    this.SpinnerService.show();
     this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
       this.grnList = data?.result;
       this.filterGRNlist = this.grnList;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     })
   }
   ChangeGRNData() {
