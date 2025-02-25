@@ -11,24 +11,18 @@ import { TaggingService } from './../../../services/tagging.service';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-// import { fabric } from 'fabric';
 import { DatePipe, Location } from '@angular/common';
-import { FormBuilder, Validators, FormGroup, NgForm } from '@angular/forms';
-import * as $ from 'jquery';
-import { PdfViewerComponent } from 'ng2-pdf-viewer';
+import { FormBuilder,NgForm } from '@angular/forms';
 import { FormCanDeactivate } from '../../can-deactivate/form-can-deactivate';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { catchError, map, take, filter } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CanUploadComponentDeactivate } from '../UnsavedChanges.guard';
@@ -55,19 +49,10 @@ export interface getApproverData {
 export class Comparision3WayComponent
   extends FormCanDeactivate
   implements OnInit, CanUploadComponentDeactivate {
-  // @ViewChild('canvas') canvas;
-  zoomX = 1;
-  // @ViewChild(PdfViewerComponent, { static: false })
-  // private pdfViewer: PdfViewerComponent;
-
-  // @ViewChild('pdfviewer') pdfviewer;
   @ViewChild('form')
   form: NgForm;
   editable: boolean;
   inputData = [];
-
-  mergedArray: any;
-  inputDisplayArray = [];
   vendorData = [];
   lineDisplayData: any;
   Itype: string;
@@ -79,23 +64,21 @@ export class Comparision3WayComponent
   fin_boolean: boolean = false;
   submitBtn_boolean: boolean;
   approveBtn_boolean: boolean;
-  innerHeight: number;
-  InvoiceHeight: number = 560;
-  zoomdata: number = 1;
-  showInvoice: any;
-  page: number = 1;
-  totalPages: number;
-  isLoaded: boolean = false;
+  // innerHeight: number;
+  // InvoiceHeight: number = 560;
+  // zoomdata: number = 1;
+  // showInvoice: any;
+  // page: number = 1;
+  // totalPages: number;
+  // isLoaded: boolean = false;
   invoiceID: any;
   routeIdCapture: Subscription;
-  byteArray: Uint8Array;
-  displayRuleDialog: boolean;
-  displayErrorDialog: boolean;
-  SelectErrorOption;
-  givenErrors = [];
+  // byteArray: Uint8Array;
+  // displayRuleDialog: boolean;
+  // displayErrorDialog: boolean;
+  // givenErrors = [];
   rejectionComments: string = '';
   rejectReason: any;
-
   grnCreateBoolean: boolean = false;
   GRNObject = [];
   GRNObjectDuplicate = [];
@@ -107,15 +90,13 @@ export class Comparision3WayComponent
   selectedPONumber;
   poList = [];
   filteredPO: any[];
-
-  lineCount = [];
   currentTab = 'header';
   lineItems: any;
   vendorAcId: any;
-  mappedData: any;
-  zoomVal: number = 0.8;
+  // mappedData: any;
+  // zoomVal: number = 0.8;
 
-  isImgBoolean: boolean;
+  // isImgBoolean: boolean;
   financeapproveDisplayBoolean: boolean;
   displayrejectDialog: boolean;
   // lineDescription ="Select Line items";
@@ -129,27 +110,19 @@ export class Comparision3WayComponent
   lineTabBoolean: boolean;
   grnLineCount: any;
 
-  rotation = 0;
+  // rotation = 0;
   addrejectcmtBool: boolean;
-  ap_boolean: boolean;
   // poLineData = [];
   isAdmin: boolean;
   GRN_PO_Bool: boolean;
   GRN_PO_Data = [];
   GRN_PO_tags = [];
-  po_grn_list = [];
-  po_grn_line_list = [];
-  filteredPO_GRN = [];
-  GRNData: any;
   PO_GRN_Number_line = [];
-  grnEditData = [];
   summaryColumn = [
     { field: 'PackingSlip', header: 'GRN Number' },
     { field: 'GRNField', header: 'GRN Field' },
 
   ];
-  ColumnLengthVendor: number;
-  validatePOInvUnit = [];
   validateUnitpriceBool: boolean;
   grnList = [];
   selectedGRNList = [];
@@ -163,34 +136,19 @@ export class Comparision3WayComponent
   GRNDialogBool: boolean;
   headerpop: string;
   descrptonBool = false;
-  polineTableData = [
-    { TagName: 'LineNumber', linedata: [] },
-    { TagName: 'ItemId', linedata: [] },
-    { TagName: 'Name', linedata: [] },
-    { TagName: 'ProcurementCategory', linedata: [] },
-    { TagName: 'PurchQty', linedata: [] },
-    { TagName: 'UnitPrice', linedata: [] },
-    { TagName: 'DiscAmount', linedata: [] },
-    { TagName: 'DiscPercent', linedata: [] }
-  ];
-  POlineBool: boolean;
   poDocId: any;
   po_num: any;
   subStatusId: any;
   statusId: number;
   isAmtStr: boolean;
   flipEnabled: boolean;
-  partytype: string;
-  lineTxt1: string;
-  lineTxt2: string;
   docType: any;
   documentType: string;
-  poLinedata = [];
-  soLinedata = [];
   lineTable = [
     { header: 'S.No', field: '' },
     { header: 'Description', field: 'PODescription' },
     { header: 'PO quantity', field: 'PurchQty'},
+    { header: 'UnitPrice', field: 'GRNUnitPrice' },
     { header: 'Inv - Quantity', field: 'Quantity' },
     { header: 'GRN - Quantity', field: 'GRNQuantity' },
     { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
@@ -200,7 +158,6 @@ export class Comparision3WayComponent
   documentViewBool: boolean;
   isDesktop: boolean;
   APIResponse: any;
-  so_id: any;
   isEmpty: boolean;
   filteredPOLine = [];
   isBatchFailed: boolean;
@@ -219,7 +176,6 @@ export class Comparision3WayComponent
   months: string[];
   selectedMonth: string;
   rangeDates: Date;
-  filterDataPO: any;
   searchPOArr: any;
   status_arr: any[];
   status_change_op: any;
@@ -237,15 +193,12 @@ export class Comparision3WayComponent
   po_total: any;
   enable_create_grn: boolean;
   uploadCompleted: boolean = true;
-  activeGRNId: string;
   filterGRNlist: any[];
-  linedata_mobile: any;
   @ViewChild('datePicker') datePicker: Calendar;
   progress: number;
   uploadFileList = [];
   support_doc_list = [];
   approval_selection_boolean: boolean;
-  documentTypeId: number;
   documentInvType: any;
   isLCMInvoice: boolean;
   multiPOBool: boolean;
@@ -339,8 +292,6 @@ export class Comparision3WayComponent
 
   serviceProvidercode: any;
   reqServiceprovider: boolean = false;
-  // companyName: string = '';
-  // driverName: string = '';
   isFormValid: boolean = true;
   dynamicdata = [];
   normalCostAllocation: boolean;
@@ -364,9 +315,7 @@ export class Comparision3WayComponent
     { header: 'Tax amount', field: 'calculatedtax' },
     // { header: 'Sub Ledger', field: 'subledger' },
   ]
-  // editedValues: { [key: string]: any } = {};
-  // editedValues: { [iddynamiccostallocation: string]: { [key: string]: any } } = {};
-  // editedValues: { [idAndKey: string]: any } = {};
+
   editedValues: { [key: string]: any } = {};
 
   editedData: any = {};
@@ -382,10 +331,6 @@ export class Comparision3WayComponent
   amountData: string = '';
   isButtonDisabled: boolean = true;
   resultAmount: any;
-  // prePayBox: boolean = false;
-  // ciTab: boolean = false;
-  // invoiceType: string = '';
-  // disableButton: boolean = false;
   advanceAPIbody: any;
   grnAttachmentArray: any;
   isAprUser: boolean;
@@ -432,9 +377,30 @@ export class Comparision3WayComponent
   flipPOData: any;
   invoiceDate: Date | null = null;
   selectALL_grn_lines: boolean = false;
+  fieldType: any = [
+    { id:1, name:'JournalName', type:'Dropdown' },
+    { id:2, name:'ReceivingOperatingUnit', type:'Dropdown' },
+    { id:3, name:'MainAccount', type:'Dropdown' },
+    { id:4, name:'Description', type:'FreeText' },
+    { id:5, name:'Department', type:'Dropdown' },
+    { id:6, name:'Segments', type:'Dropdown' },
+    { id:7, name:'Product', type:'Dropdown' },
+    { id:8, name:'BSMovements', type:'Dropdown' },
+    { id:9, name:'BSLocation', type:'Dropdown' },
+    { id:10, name:'InterCompany', type:'Dropdown' },
+    { id:11, name:'FixedAssetDepartment', type:'Dropdown' },
+    { id:12, name:'FixedAssetGroup', type:'Dropdown' },
+    { id:13, name:'SalesTaxGroup', type:'Dropdown' },
+    { id:14, name:'ItemSalesTaxGroup', type:'Dropdown' },
+    { id:15, name:'BankAccount', type:'Dropdown' }
+
+  ];
+  old_tag: any;
+  fieldData: any;
+  temp_line_data_non_po: any;
+  updatedNonPOLine: { tag_id: any; tag_name: any; prev_value: any; curr_value: any; };
 
   constructor(
-    fb: FormBuilder,
     public tagService: TaggingService,
     public router: Router,
     private authService: AuthenticationService,
@@ -473,6 +439,7 @@ export class Comparision3WayComponent
       { header: 'S.No', field: '' },
       { header: 'Description', field: 'Name' },
       { header: 'PO quantity', field: 'PurchQty'},
+      { header: 'UnitPrice', field: 'UnitPrice' }, 
       { header: 'GRN - Quantity', field: 'GRNQty' },
       { header: 'AmountExcTax', field: 'GRNAmountExcTax' },
       { header: 'PO balance quantity', field: 'RemainPurchPhysical'},
@@ -486,7 +453,6 @@ export class Comparision3WayComponent
     this.GRN_PO_tags = [...commonTags];
 
     this.rejectReason = this.dataService.rejectReason;
-    this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
     this.ent_code = this.dataService.ent_code;
     this.flipEnabled = true;
@@ -499,8 +465,7 @@ export class Comparision3WayComponent
     this.batch_id = this.dataService?.editableInvoiceData?.batch_id;
     this.activatedRoute.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
-    })
-    // this.sampleLineData = this.exceptionService.lineDataSample;
+    });
     if (this.userDetails.user_type == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
@@ -510,14 +475,10 @@ export class Comparision3WayComponent
     this.initialData();
     this.ERPCostAllocation();
     this.AddPermission();
+    this.getDate();
     if(this.GRN_PO_Bool){
       this.lineTable = commonTags;
     } 
-    else {
-      if(this.Itype == 'Invoice'){
-        // this.readFilePath();
-      } 
-    }
     this.isAdmin = this.dataService.isAdmin;
 
   }
@@ -571,7 +532,6 @@ export class Comparision3WayComponent
     this.isLCMInvoice = this.tagService.LCM_boolean;
     this.documentType = this.dataService.documentType;
     this.documentInvType = this.tagService.documentType;
-    this.documentTypeId = this.dataService.idDocumentType;
     this.userDetails = this.authService.currentUserValue;
     // this.approvalType = this.tagService.approvalType;
     this.financeapproveDisplayBoolean =
@@ -627,29 +587,12 @@ export class Comparision3WayComponent
           this.readGRNInvData();
           this.Itype = 'Invoice';
         }
-        // this.readPOLines();
-        // if (this.grnCreateBoolean) {
-
-        // }
       } else {
         alert('Sorry!, you do not have access');
         this.router.navigate(['customer/invoice/allInvoices']);
       }
     } else {
       this.getInvoiceFulldata('');
-      // this.getInvTypes();
-      // this.getRulesData();
-      // this.readPOLines();
-      // this.readErrorTypes();
-      // this.readMappingData();
-      if (!['advance invoice'].includes(this.documentType) && this.Itype == 'invoice') {
-        // this.getGRNtabData();
-        // if(this.client_name != 'SRG'){
-        //   this.getGrnAttachment();
-        // }
-      }
-
-
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
         this.updateSessionTime();
         this.idleTimer(180, 'Start');
@@ -658,16 +601,12 @@ export class Comparision3WayComponent
         }, 250000);
       }
     }
-    // this.onResize();
-    // this.Itype = this.tagService.type;
-
     this.routeOptions();
     if (this.fin_boolean) {
       this.getRejectionComments();
     }
     this.headerName = this.tagService.headerName;
 
-    // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
   }
   manpowerMetadataFunction() {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun("Please confirm whether you want to add manpower data in GRN?", "confirmation", "Confirmation")
@@ -696,8 +635,6 @@ export class Comparision3WayComponent
       this.btnText = 'View invoice';
       this.currentTab = "LCM";
 
-      // this.selectionTabBoolean = true;
-      // this.supportTabBoolean = true;
     } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
       this.readDepartment();
       this.readCategoryData();
@@ -709,8 +646,6 @@ export class Comparision3WayComponent
       this.isLCMCompleted = true;
 
     } else {
-      // this.showPdf = true;
-      // this.btnText = 'Close';
       this.selectionTabBoolean = false;
     }
   }
@@ -813,7 +748,6 @@ export class Comparision3WayComponent
         this.getGRNtabData();
       }
     } 
-
   }
 
   get_PO_GRN_Lines() {
@@ -861,14 +795,13 @@ export class Comparision3WayComponent
     const timeSheetTag = this.GRN_PO_tags?.find(item => item.TagName === 'Is Timesheets');
     if (timeSheetTag) {
       this.GRN_PO_tags.forEach(item => {
-        if (item.TagName == 'GRN - Quantity') {
+        if (item.TagName == 'GRN - Quantity' || item.TagName == 'AmountExcTax') {
           item.linedata.forEach(el => {
             timeSheetTag.linedata.forEach(item => {
               if (el.LineNumber == item.LineNumber && item.Value == true || item.Value == 'Yes') {
                 el.is_timesheets = true;
               }
             });
-
           });
         }
       });
@@ -885,7 +818,6 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata_po() {
     this.SpinnerService.show();
-    this.inputDisplayArray = [];
     let doc_type = 'po';
     if(this.Itype == 'GRN'){
       doc_type = 'grn'
@@ -903,7 +835,6 @@ export class Comparision3WayComponent
             if(line.LineNumber == grn_line.LineNumber){
               grn_line.PurchQty = line.PurchQty;
               grn_line.RemainPurchPhysical = line.RemainPurchPhysical;
-              
             }
           })
         })
@@ -919,7 +850,6 @@ export class Comparision3WayComponent
         this.SpinnerService.hide();
         this.get_PO_GRN_Lines();
         this.headerDataOrder();
-        // this.po_num = po_num_data[0]?.Value;
         if (data?.ok?.vendordata) {
           this.vendorData = {
             ...data?.ok?.vendordata[0].Vendor,
@@ -940,11 +870,8 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
-    // this.lineDisplayData = [];
-    this.inputDisplayArray = [];
     this.vendorData = [];
     this.inputData = [];
-    // this.lineData = [];
     let bool = false;
 
     if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
@@ -974,7 +901,6 @@ export class Comparision3WayComponent
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
-        // this.po_total = response.po_total;
         response?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
@@ -986,7 +912,6 @@ export class Comparision3WayComponent
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
         this.inputData = response?.headerdata;
-        // this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
 
         if (response?.approverData?.to_approve_by) {
@@ -1007,8 +932,6 @@ export class Comparision3WayComponent
           if (this.vendorName == 'SANAM') {
             this.isFormValid = false;
             this.reqServiceprovider = true;
-            // this.costTabBoolean = false;
-            // this.reqDataValidation();
           }
           else {
             this.reqServiceprovider = false;
@@ -1020,11 +943,7 @@ export class Comparision3WayComponent
           poNum = this.exceptionService.po_num;
         }
         this.po_num = poNum;
-        // this.getPODocId(poNum);
-        // this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
-          // this.getProjectData();
-          // this.getProjectCatData();
           this.getPOs();
           this.getVendorInvoices(this.po_num)
           this.projectCArr = this.dataService.projectCArr;
@@ -1140,25 +1059,26 @@ export class Comparision3WayComponent
         'DueDate': 11,
       };
 
-      Object.keys(this.inputData).forEach(label => {
+      if(this.inputData){
+        Object?.keys(this.inputData)?.forEach(label => {
 
-        const order = orderMap[label];
-        label = label.toString();
-        if (order) {
-          this.inputData[label].order = order;
-          if (label === 'PurchaseOrder' || label === 'PurchId' || label === 'POHeaderId') {
-            this.po_num = this.inputData[label]?.Value;
-          } else if (label === 'InvoiceId' || label === 'bill_number') {
-            this.invoiceNumber = this.inputData[label]?.Value;
-          } else if (label === 'SubTotal') {
-            this.invoice_subTotal = this.inputData[label]?.Value;
-          } else if (label === 'invoiceDate') {
-            this.invoiceDate = this.inputData[label]?.Value;
+          const order = orderMap[label];
+          label = label.toString();
+          if (order) {
+            this.inputData[label].order = order;
+            if (label === 'PurchaseOrder' || label === 'PurchId' || label === 'POHeaderId') {
+              this.po_num = this.inputData[label]?.Value;
+            } else if (label === 'InvoiceId' || label === 'bill_number') {
+              this.invoiceNumber = this.inputData[label]?.Value;
+            } else if (label === 'SubTotal') {
+              this.invoice_subTotal = this.inputData[label]?.Value;
+            } else if (label === 'invoiceDate') {
+              this.invoiceDate = this.inputData[label]?.Value;
+            }
+            this.headerData.push({TagLabel: label, ...this.inputData[label]})
           }
-          this.headerData.push({TagLabel: label, ...this.inputData[label]})
-        }
-      });
-      
+        });
+      }
     } else {
       const orderMap = {
         'company name': 1,
@@ -1202,7 +1122,6 @@ export class Comparision3WayComponent
         this.lineDisplayData = [];
        const lineData = data.ok?.linedata;
         this.grnLineCount = lineData.length;
-        let dummyLineArray = lineData;
         this.lineDisplayData = lineData;
         lineData.forEach(item=>{
           Object.keys(item).forEach(label=>{
@@ -1213,18 +1132,15 @@ export class Comparision3WayComponent
             }
           })
         })
-       
         this.inputData = data?.ok?.headerdata?.headerData;
         
         this.headerDataOrder();
-        // this.po_num = po_num_data[0]?.Value;
         let poNum = this.po_num
         if(!this.po_num){
           poNum = this.exceptionService.po_num;
         }
         this.po_num = poNum;
         this.getPODocId(this.po_num);
-        // this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1253,123 +1169,30 @@ export class Comparision3WayComponent
   hasPoLine(item: any): boolean {
     return Object.values(item.lines).some((line: any) => line.Value?.po_line);
   }
-  readFilePath() {
-    this.showInvoice = '';
-    this.isPdfAvailable = true;
-    // this.SpinnerService.show();
-    this.SharedService.getInvoiceFilePath().subscribe(
-      (data: any) => {
-        this.content_type = data?.result?.content_type;
-        if (data?.result?.filepath && data?.result?.content_type == 'application/pdf') {
-          this.isPdfAvailable = false;
-          this.isImgBoolean = false;
-          this.byteArray = new Uint8Array(
-            atob(data?.result?.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: 'application/pdf' })
-          );
-        } else if (['image/jpg', 'image/png', 'image/jpeg'].includes(data?.result?.content_type?.toLowerCase())) {
-          this.isPdfAvailable = false;
-          this.isImgBoolean = true;
-          this.byteArray = new Uint8Array(
-            atob(data.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: data.content_type })
-          );
-          // this.loadImage();
-        } else {
-          this.isPdfAvailable = true;
-          this.showInvoice = '';
-        }
-        // this.SpinnerService.hide();
-      },
-      (error) => {
-        // this.SpinnerService.hide();
-        this.error("Server error");
-      }
-    );
-  }
 
-  DownloadPDF() {
-    let extension;
-    if (this.content_type == 'application/pdf') {
-      extension = '.pdf';
-    } else if (this.content_type == 'image/jpg') {
-      extension = '.jpg';
-    } else if (this.content_type == 'image/png') {
-      extension = '.png';
-    }
-    fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
-  }
-
-  loadImage() {
-    if (this.isImgBoolean == true) {
-      setTimeout(() => {
-        this.zoomVal = 1;
-        (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-          'scale(' + this.zoomVal + ')';
-
-        const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-        const ctx = canvas.getContext('2d');
-        let image = new Image();
-        image.src = this.showInvoice;
-        image.onload = function () {
-          // Calculate the aspect ratio of the image
-          const imageAspectRatio = image.width / image.height;
-          // Calculate the aspect ratio of the canvas
-          const canvasAspectRatio = canvas.width / canvas.height;
-
-          // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
-          let imageWidth, imageHeight;
-          if (imageAspectRatio > canvasAspectRatio) {
-            // The image is wider than the canvas, so set the width of the image to the width of the canvas
-            // and scale the height accordingly
-            imageWidth = canvas.width;
-            imageHeight = imageWidth / imageAspectRatio;
-          } else {
-            // The image is taller than the canvas, so set the height of the image to the height of the canvas
-            // and scale the width accordingly
-            imageHeight = canvas.height;
-            imageWidth = imageHeight * imageAspectRatio;
-          }
-
-          // Draw the image on the canvas
-          ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
-        };
-
-
-      }, 50);
-    }
-  }
   calculateTotal(data){
     let subTotal,tax;
     this.headerData.forEach(el=>{
     if(el.TagLabel == 'SubTotal'){
-        subTotal = el.Value;
+        subTotal = el.Value.toString();
       } else if(el.TagLabel == 'TotalTax'){
-        tax = el.Value;
+        tax = el.Value.toString();
       }
     })
     let decimalCount = 0;
     let des_arr = [];
     if(subTotal?.includes('.')){
-      des_arr.push(subTotal.split('.')[1]?.length);
+      des_arr.push(subTotal?.split('.')[1]?.length);
     }
     if(tax?.includes('.')){
-      des_arr.push(tax.split('.')[1]?.length);
+      des_arr.push(tax?.split('.')[1]?.length);
     }
-    decimalCount = Math.max(...des_arr);
     let invoiceTotal:any = Number(subTotal) + Number(tax);
-    invoiceTotal = invoiceTotal?.toFixed(decimalCount)?.toString();
-    this.onChangeValue('InvoiceTotal',invoiceTotal,data);
+    if(des_arr.length > 0){
+      decimalCount = Math.max(...des_arr);
+      invoiceTotal = invoiceTotal?.toFixed(decimalCount);
+    }
+    this.onChangeValue('InvoiceTotal',invoiceTotal?.toString(),data);
     setTimeout(()=>{
       this.saveChanges();
     },1000)
@@ -1543,29 +1366,7 @@ export class Comparision3WayComponent
       }
       this.error(err);
       this.isEmpty = false;
-      // this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
-  }
-
-
-  zoomin() {
-    this.zoomVal = this.zoomVal + 0.2;
-    this.zoomX = this.zoomX + 0.05;
-    if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-  }
-
-  zoomout(index) {
-    this.zoomVal = this.zoomVal - 0.2;
-    this.zoomX = this.zoomX - 0.05;
-    if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
 
   proceedToBatch(bool) {
@@ -1781,9 +1582,6 @@ export class Comparision3WayComponent
         }
         if (!(this.batch_count <= 2)) {
           this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
-          // setTimeout(() => {
-          //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
-          // }, 2000);
         }
         this.SpinnerService.hide();
       } else {
@@ -1916,87 +1714,7 @@ export class Comparision3WayComponent
       this._location.back();
     }
   }
-  // @HostListener('window:resize', ['$event'])
-  // onResize() {
-  //   this.innerHeight = window.innerHeight;
-  //   if (this.innerHeight > 550 && this.innerHeight < 649) {
-  //     this.InvoiceHeight = 500;
-  //   } else if (this.innerHeight > 650 && this.innerHeight < 700) {
-  //     this.InvoiceHeight = 560;
-  //   } else if (this.innerHeight > 750) {
-  //     this.InvoiceHeight = 660;
-  //   }
-  // }
-  zoomIn() {
-    this.zoomdata = this.zoomdata + 0.1;
-  }
-  zoomOut() {
-    this.zoomdata = this.zoomdata - 0.1;
-  }
-  afterLoadComplete(pdfData: any) {
-    this.totalPages = pdfData.numPages;
-    this.isLoaded = true;
-  }
-  textLayerRendered(e: CustomEvent) { }
 
-  nextPage() {
-    this.page++;
-  }
-
-  prevPage() {
-    this.page--;
-  }
-  selectedText(): void { }
-
-  // search(stringToSearch: string) {
-  //   this.pdfViewer.pdfFindController.executeCommand('find', {
-  //     caseSensitive: false,
-  //     findPrevious: undefined,
-  //     highlightAll: true,
-  //     phraseSearch: true,
-  //     query: stringToSearch,
-  //   });
-  // }
-  // hightlight(val) {
-  //   var pageno = parseInt('1');
-  //   var pageView = this.pdfViewer.pdfViewer._pages[pageno - 1];
-  //   //datas - array returning from server contains synctex output values
-  //   var left = parseInt('530px');
-  //   var top = parseInt('660px');
-  //   var width = parseInt('50px');
-  //   var height = parseInt('20px');
-  //   //recalculating top value
-  //   top = pageView.viewport.viewBox[3] - top;
-  //   var valueArray = [left, top, left + width, top + height];
-  //   let rect = pageView.viewport.convertToViewportRectangle(valueArray);
-  //   // rect       = PDFJS.disableTextLayer.normalizeRect(rect);
-  //   var x = Math.min(rect[0], rect[2]),
-  //     width = Math.abs(rect[0] - rect[2]);
-  //   var y = Math.min(rect[1], rect[3]),
-  //     height = Math.abs(rect[1] - rect[3]);
-  //   const element = document.createElement('div');
-  //   element.setAttribute('class', 'overlay-div-synctex');
-  //   element.style.left = x + 'px';
-  //   element.style.top = y + 'px';
-  //   element.style.width = width + 'px';
-  //   element.style.height = height + 'px';
-  //   element.style.position = 'absolute';
-  //   element.style.backgroundColor = 'rgba(200,0,0,0.5)';
-  //   $('*[data-page-number="' + pageno + '"]').append(element);
-  //   this.pdfviewer.pdfViewer._scrollIntoView({
-  //     pageDiv: pageView.div,
-  //   });
-  // }
-
-  // onClick(e) {
-  //   const textLayer = document.getElementsByClassName('TextLayer');
-  //   const x =
-  //     window.getSelection().getRangeAt(0).getClientRects()[0].left -
-  //     textLayer[0].getBoundingClientRect().left;
-  //   const y =
-  //     window.getSelection().getRangeAt(0).getClientRects()[0].top -
-  //     textLayer[0].getBoundingClientRect().top;
-  // }
 
   viewPdf() {
     this.showPdf = !this.showPdf;
@@ -2005,12 +1723,6 @@ export class Comparision3WayComponent
     } else {
       this.btnText = 'Close';
     }
-    if (this.isImgBoolean == true) {
-      this.loadImage();
-    }
-  }
-  rotate(angle: number) {
-    this.rotation += angle;
   }
 
   filterPO(event) {
@@ -2042,30 +1754,10 @@ export class Comparision3WayComponent
     });
   }
   filterPOLine(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.lineItems.length; i++) {
-    //   let item = this.lineItems[i];
-    //   if (
-    //     item.Value.toLowerCase().includes(query.toLowerCase())
-    //   ) {
-    //     filtered.push(item);
-    //   }
-    // }
     this.filteredPOLine = this.dataService.uni_filter(this.lineItems,'Value',event);
   }
-  readErrorTypes() {
-    this.exceptionService.readErrorTypes().subscribe((data: any) => {
-      this.givenErrors = data.description;
-    });
-  }
-
   lineMapping(inv_code, po_code) {
     this.updateLine(inv_code,po_code);
-  }
-
-  cancelSelectErrorRule() {
-    this.displayErrorDialog = false;
   }
 
   updateLine(inv_code,po_code) {
@@ -2073,23 +1765,15 @@ export class Comparision3WayComponent
       .updateLineItems(inv_code,po_code,1,this.vendorAcId)
       .subscribe(
         (data: any) => {
-          this.displayErrorDialog = false;
           this.success("Line item updated successfully");
           this.getInvoiceFulldata('');
-          this.readMappingData();
         },
         (error) => {
           this.error("Server error");
-          this.displayErrorDialog = false;
         }
       );
   }
 
-  readMappingData() {
-    this.exceptionService.readMappedData().subscribe((data: any) => {
-      this.mappedData = data?.description;
-    });
-  }
   selectReason(reasn) {
     if (reasn == 'Others') {
       this.addrejectcmtBool = true;
@@ -2097,7 +1781,6 @@ export class Comparision3WayComponent
       this.addrejectcmtBool = false;
     }
   }
-
   rejectKepup(val) {
     this.rejectionComments = val;
   }
@@ -2168,7 +1851,6 @@ export class Comparision3WayComponent
         });
       } else {
         this.userList_approved.push({ firstName: "Vendor", idUser: 0, lastName: "" });
-
       }
       this.SpinnerService.hide();
     })
@@ -2193,14 +1875,7 @@ export class Comparision3WayComponent
     }
     this.disable_save_btn = false;
     if(Number(checking_value) < Number(val)){
-
-      // this.dataService.added_manpower_data.forEach(el=>{
-      //   if(el.idDocumentLineItems == lineItem.idDocumentLineItems){
-      //     el.Value = lineItem.old_value;
-      //   }
-      // })
-      // this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
-      this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+       this.error(`GRN Quantity cannot be greater than ${error_msg}`);
       this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
       this.disable_save_btn = true;
       return;
@@ -2208,7 +1883,6 @@ export class Comparision3WayComponent
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(fieldName, val, linedata);
     } else {
-      // this.onChangeLineValue('Quantity', val, linedata);
       this.updateAmountExcTax(fieldName, val, linedata);
       this.update("Please add comments as well")
     }
@@ -2235,13 +1909,6 @@ export class Comparision3WayComponent
       return;
     }
 
-    // const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
-    //   .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
-    
-    // if (grnQuantityItem) {
-    //   grnQuantityItem.Value = grnQty;
-    //   grnQuantityItem.ErrorMsg = "Quantity changed";
-    // }
     this.GRN_line_total = 0;
     this.lineDisplayData.forEach(ele => {
       Object.keys(ele).forEach((label:any)=> {
@@ -2263,20 +1930,8 @@ export class Comparision3WayComponent
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
       const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(this.decimal_count);
-      // const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
-      //   .linedata.find(data => data[field] === lineItem[field]);
 
-      // if (amountExcTaxItem) {
-      //   amountExcTaxItem.Value = amountExcTax;
-      //   amountExcTaxItem.ErrorMsg = "Quantity changed";
-      // }
       this.GRN_line_total = 0;
-      // this.lineDisplayData.forEach(ele => {
-
-      //   if (ele.TagName == TagName_a) {
-      //     ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
-      //   }
-      // })
       this.lineDisplayData.forEach(item=>{
         Object.keys(item).forEach(label=>{
           if(label === 'GRNAmountExcTax'){
@@ -2381,7 +2036,6 @@ export class Comparision3WayComponent
     if(txt.includes('saved')){
       this.isDraft = true ;
     }
-    // const GRNQtyArr = this.lineDisplayData.find(item=> item.GRNQty === 'GRN - Quantity');
     let label = 'GRNQuantity';
     if(this.GRN_PO_Bool){
       label = 'GRNQty'
@@ -2416,8 +2070,6 @@ export class Comparision3WayComponent
           }
 
         })
-        // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter((val, ind, arr) => ind == arr.findIndex(v => v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
-
       } else {
         if(!this.GRN_PO_Bool){
           // this.validateInvPOUnitPrice();
@@ -2465,11 +2117,7 @@ export class Comparision3WayComponent
               if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
-                  // if(this.invoiceNumber){
-                  //   this.error("Dear user, please add the invoice description.");
-                  // } else {
                     this.error("Dear user, please add the invoice number.");
-                  // }
                 }
             } else {
               this.grnDuplicateCheck(boolean);
@@ -2501,7 +2149,6 @@ export class Comparision3WayComponent
   }
 
   createGRNWithPO(bool,payLoad) {
-    // bool = bool ? 'false' : 'true';
     this.SpinnerService.show();
     let inv_param = '';
     if (this.invoiceNumber) {
@@ -2574,7 +2221,6 @@ export class Comparision3WayComponent
                 arr.push(obj)
               }
             } else {
-
               if (ele == 'GRNQty') {
                 let obj = {
                   line_id: objV?.LineNumber?.Value,
@@ -2583,8 +2229,7 @@ export class Comparision3WayComponent
                 arr.push(obj)
               }
             }
-        })
-        console.log(objV)
+        });
         let objData = {
           itemCode : objV?.LineNumber?.Value.toString(),
           lineData: {
@@ -2593,8 +2238,7 @@ export class Comparision3WayComponent
             'Name' : { Value: objV?.Name?.Value}
           }
         }
-        grnWithPOPayload.push(objData)
-
+        grnWithPOPayload.push(objData);
       })
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
@@ -2646,15 +2290,10 @@ export class Comparision3WayComponent
     }
   }
   CreateGRNAPI(boolean, txt) {
-    // if (this.client_name !== 'SRG' || this.invoiceDescription) {
       if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
         return;
       }
       this.grnAPICall(boolean, txt);
-    // } else {
-    //   this.error('Please add the invoice description');
-    // }
-      
   }
 
   grnAPICall(boolean, txt) {
@@ -2666,35 +2305,14 @@ export class Comparision3WayComponent
       let date = this.invoiceDate.toISOString()
       inv_des += `&grn_date=${date}`;
     }
-    // let arr = [];
     let grnWithInvPayload = [];
     this.lineDisplayData.forEach((objV) => {
-      // Object.keys(objV).forEach(ele=>{
-      //     if (this.router.url.includes("GRN_approvals")) {
-      //       if (ele == 'GRNQuantity') {
-      //         let obj = {
-      //           line_id: objV?.invoice_itemcode?.Value,
-      //           quantity: objV[ele]?.Value,
-      //         }
-      //         arr.push(obj)
-      //       }
-      //     } else {
-
-      //       if (ele == 'GRNQuantity') {
-      //         let obj = {
-      //           line_id: objV?.LineNumber?.Value,
-      //           quantity: objV[ele]?.Value,
-      //         }
-      //         arr.push(obj)
-      //       }
-      //     }
-      // })
-      // console.log(objV)
       let objData = {
         itemCode : objV?.invoice_itemcode?.Value.toString(),
         lineData: {
           'Quantity' : { Value : objV?.GRNQuantity?.Value },
-          'UnitPrice' : { Value: objV?.GRNUnitPrice?.Value}
+          'UnitPrice' : { Value: objV?.GRNUnitPrice?.Value},
+          'GRNDescription' : { Value: objV?.GRNDescription?.Value}
         }
       }
       grnWithInvPayload.push(objData)
@@ -2753,10 +2371,6 @@ export class Comparision3WayComponent
   }
 
   async open_dialog_comp(str) {
-    // let rejObj = {
-    //   sendor: '',
-    //   rejectTxt: this.rejectionComments
-    // }
     let w = '70%';
     let h = '92vh';
     let response;
@@ -2766,8 +2380,6 @@ export class Comparision3WayComponent
       h = '40vh';
     } else if (str == 'flip line') {
       try {
-        
-        // let query = `/${this.invoiceID}`;
         if(!this.flipPOData){
           const data: any = await this.exceptionService.getPOLines('').toPromise();
            this.flipPOData = data.Po_line_details;
@@ -2905,19 +2517,17 @@ export class Comparision3WayComponent
       } else {
         this.error(data.message);
       }
-      // this.success(data.message);
     },err=>{
       this.error("Server error");
       this.SpinnerService.hide();
     })
   }
   create_GRN_PO_tags() {
-    this.lineTable.splice(7, 0, { header: 'Duration in months', field: 'durationMonth' }, { header: 'Monthly quantity', field: 'monthlyQuantity' }, { header: 'Is Timesheets', field: 'isTimesheets' }, { header: 'Number of Shifts', field: 'shifts' })
+    this.lineTable.splice(8, 0, { header: 'Duration in months', field: 'durationMonth' }, { header: 'Monthly quantity', field: 'monthlyQuantity' }, { header: 'Is Timesheets', field: 'isTimesheets' }, { header: 'Number of Shifts', field: 'shifts' })
   }
   open_dialog(str) {
     if (str == 'reject') {
       this.rejectModalHeader = 'ADD Rejection Comments';
-      // this.getApprovedUserList();
     } else if (str == 'approve') {
       this.rejectModalHeader = 'Add Pre-approval Comments';
       if (this.preApproveBoolean == false) {
@@ -2958,8 +2568,6 @@ export class Comparision3WayComponent
   };
 
   CheckItemStatus(item) {
-    // this.exceptionService.checkItemCode(item).subscribe((data: any) => {
-    //   if (data.status == "not exists") {
         let addLineData = {
           "documentID": this.invoiceID,
           "itemCode": item
@@ -2974,25 +2582,7 @@ export class Comparision3WayComponent
 
         });
         this.displayrejectDialog = false;
-      // } else {
-      //   this.error("Item code already exists, Please try with another item code.");
-      // }
-    // }, err => {
-    //   this.error("Server error");
-    //   this.displayrejectDialog = false;
-    // })
   }
-  // getPO_lines(str) {
-  //   this.exceptionService.getPOLines().subscribe((data: any) => {
-  //     this.poLineData = data.Po_line_details;
-  //     this.SpinnerService.hide();
-  //   }, err => {
-  //     this.AlertService.errorObject.detail = "Server error";
-  //     this.messageService.add(this.AlertService.errorObject);
-  //     this.SpinnerService.hide();
-  //   })
-  // }
-
   getGRNnumbers(po_num) {
     this.SpinnerService.show();
     this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
@@ -3100,25 +2690,6 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
     })
   }
-  // readPOLines() {
-  //   this.exceptionService.getPOLines('').subscribe((data: any) => {
-  //     this.poLineData = data.Po_line_details;
-  //   }, err => {
-  //     this.alertFun('Server error');
-  //     this.SpinnerService.hide();
-  //   })
-  // }
-  // refreshPO() {
-  //   this.SpinnerService.show();
-  //   this.SharedService.updatePO(this.poDocId).subscribe((data: any) => {
-  //     this.readPOLines();
-  //     this.SpinnerService.hide();
-  //     this.successAlert('PO data updated.');
-  //   }, err => {
-  //     this.SpinnerService.hide();
-  //     this.alertFun('Server error');
-  //   })
-  // }
   getPO_numbers(idVen) {
     this.SpinnerService.show();
     this.SharedService.getPo_numbers(idVen).subscribe((data: any) => {
@@ -3333,9 +2904,7 @@ export class Comparision3WayComponent
             this.support_doc_list = [];
             event.body?.result?.forEach(ele => {
               this.support_doc_list.push(ele);
-            })
-            //  setTimeout(() => {
-            //  this.getInvoiceFulldata();
+            });
             this.SpinnerService.hide()
           }
         }),
@@ -3461,7 +3030,6 @@ export class Comparision3WayComponent
         }
       })
     });
-
   }
 
   readDepartment() {
@@ -3530,9 +3098,7 @@ export class Comparision3WayComponent
       } else {
         this.error("Server error");
       }
-
-    })
-
+    });
   }
 
   onSelectApprovers(value, index) {
@@ -3576,21 +3142,9 @@ export class Comparision3WayComponent
       })
   }
   filterEntity(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.entityList?.length; i++) {
-    //   let country = this.entityList[i];
-    //   if (
-    //     country.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(country);
-    //   }
-    // }
     this.filteredEnt = this.dataService.uni_filter(this.entityList,'EntityName',event);
   }
-  // onSelectEnt(event){
-  //   this.selectedEntity = event.EntityName;
-  // }
+
   onSelectEntity(event, type) {
     if (type == 'change') {
       this.exceptionService.changeEntity(event.idEntity).subscribe((data: any) => {
@@ -3623,16 +3177,6 @@ export class Comparision3WayComponent
   }
 
   filterPOnumber_LCM(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.POlist_LCM?.length; i++) {
-    //   let country = this.POlist_LCM[i];
-    //   if (
-    //     country.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(country);
-    //   }
-    // }
     this.filteredPO = this.dataService.uni_filter(this.POlist_LCM,'PODocumentID',event);
   }
 
@@ -3658,16 +3202,6 @@ export class Comparision3WayComponent
     })
   }
   filterLCMLine(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.LCMItems?.length; i++) {
-    //   let country = this.LCMItems[i];
-    //   if (
-    //     country.PoLineDescription.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(country);
-    //   }
-    // }
     this.filteredLCMLines = this.dataService.uni_filter(this.LCMItems,'PoLineDescription',event);
   }
   OnSelectLine(event) {
@@ -3683,23 +3217,7 @@ export class Comparision3WayComponent
     // this.AGIVesselNumber = event.values.AGIVesselNumber;
     this.readChargeCode(event.values.dataAreaId, this.ContextRecId, this.ContextTableId)
   }
-  // filterVoyage(event){
-  //   let filtered: any[] = [];
-  //   let query = event.query;
-  //   for (let i = 0; i < this.voyageList.length; i++) {
-  //     let country = this.voyageList[i];
-  //     if (
-  //       country.voyage_number.toLowerCase().indexOf(query.toLowerCase()) == 0
-  //     ) {
-  //       filtered.push(country);
-  //     }
-  //   }
-  //   this.filteredVoyage = filtered;
-  // }
-  // onSelectVoyage(event){
-  //   console.log(event)
-  //   this.selectedVoyage = event.voyage_number;
-  // }
+
   readChargeCode(dataArea, ContextRecId, ContextTableId) {
     this.SpinnerService.show();
     this.SharedService.getChargesCode(dataArea, ContextRecId, ContextTableId).subscribe((data: any) => {
@@ -3711,16 +3229,6 @@ export class Comparision3WayComponent
     })
   }
   filterCost(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.chargeList?.length; i++) {
-    //   let country = this.chargeList[i];
-    //   if (
-    //     country.MarkupCode.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(country);
-    //   }
-    // }
     this.filteredCost = this.dataService.uni_filter(this.chargeList,'MarkupCode',event);
   }
   onSelectCost(event) {
@@ -3768,20 +3276,12 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.SharedService.uploadLCM_xl(file).subscribe((data: any) => {
       if (data?.data) {
-        //         data.data.forEach(ele => {
-        //           this.LCMDataTable.push(ele);
-        //         })
         this.readSavedLCMLineData();
         this.success(data.data);
       } else if (data?.error) {
         let str = data.error.toString();
         this.error(str);
       }
-      // this.LCMDataTable = data;
-      // this.readSavedLCMLineData()
-      // this.AlertService.addObject.detail="File Uploaded"
-      // this.messageService.add(this.AlertService.addObject);
-      // this.successAlert("File Uploaded");
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
@@ -3895,33 +3395,10 @@ export class Comparision3WayComponent
       if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
         totalinvCost += invunitPrice * invquantity;
       }
-      // if(!isNaN(po_discount)){
-      //     totalPoDiscount += po_discount;
-      // }
-      // if(!isNaN(inv_discount)){
-      //     totalInvDiscount += inv_discount;
-      // }
-    })
+    });
       this.po_total = totalpoCost.toFixed(this.decimal_count);
       this.totalInvCost = totalinvCost.toFixed(this.decimal_count);
-    // console.log(unitPriceObject)
-    // if (unitPriceObject && quantityObject) {
-
-    //   const unitPriceData = unitPriceObject?.items;
-    //   const quantityData = quantityObject?.items;
-
-
-    //   for (let i = 0; i < unitPriceData?.length; i++) {
-       
-
-
-    //   }
-    //   this.po_total = totalpoCost;
-    //   this.totalInvCost = totalinvCost.toFixed(2);
-    //   // console.log("Total Cost:", totalpoCost);
-    // } else {
-    //   console.log("UnitPrice or Quantity data not found.");
-    // }
+   
   }
   getRejectionComments() {
     this.exceptionService.rejectCommentsList().subscribe((data: any) => {
@@ -3947,16 +3424,12 @@ export class Comparision3WayComponent
     }
   }
   updateEditedValue(iddynamiccostallocation: any, key: string, value: any) {
-    //   this.editedValues[key] = value;
-    //   this.editedValues[iddynamiccostallocation] = this.editedValues[iddynamiccostallocation] || {};
-    //   this.editedValues[iddynamiccostallocation][key] = value;
     this.editedValues[iddynamiccostallocation + ',' + key] = value;
 
   }
   addRow(index: number) {
     this.isFormValid = false;
     this.rows.push(this.getNewRow());
-    // console.log(this.rows)
   }
   getNewRow() {
     return { driver_name: '', company_name: '' };
@@ -4104,40 +3577,10 @@ export class Comparision3WayComponent
     } else {
       arr = this.invNumbersList;
     }
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < arr?.length; i++) {
-    //   let str = arr[i];
-    //   if (
-    //     str.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(str);
-    //   }
-    // }
     this.filteredPreData = this.dataService.uni_filter(arr,tag,event);
   }
   onSelectPrePay(event, value, tagname, index) {
     this.onChangeValue(tagname,event,value);
-    // setTimeout(() => {
-    //   this.saveChanges();
-    // }, 1000);
-    // let old_value
-    // this.temp_line_data.forEach(tag => {
-    //   if (tag.tagname == tagname) {
-    //     old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
-    //   }
-    // })
-    // let obj = {
-    //   tag_id: value.idDocumentLineItems,
-    //   tag_name: tagname,
-    //   prev_value: old_value,
-    //   curr_value: event,
-    // }
-    // this.exceptionService.savePreData(obj).subscribe((data: any) => {
-    //   this.success('Changes saved successfully')
-    // }, err => {
-    //   this.error("Server error or Please check the data");
-    // })
   }
 
   filterProject(event, tag) {
@@ -4148,16 +3591,6 @@ export class Comparision3WayComponent
     } else {
       arr = this.projectCArr;
     }
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < arr?.length; i++) {
-    //   let str = arr[i];
-    //   if (
-    //     str.toLowerCase().indexOf(query.toLowerCase()) == 0
-    //   ) {
-    //     filtered.push(str);
-    //   }
-    // }
     this.filteredProject = this.dataService.uni_filter(arr,tag,event);
     this.SpinnerService.hide();
   }
@@ -4167,18 +3600,6 @@ export class Comparision3WayComponent
     setTimeout(() => {
       this.saveChanges();
     }, 1000);
-    // let old_val: any = this.temp_header_data.filter(el => value.idDocumentData == el?.DocumentData?.idDocumentData);
-    // let obj = {
-    //   tag_id: value.idDocumentData,
-    //   tag_name: value.TagLabel,
-    //   prev_value: old_val[0]?.DocumentData?.Value,
-    //   curr_value: event,
-    // }
-    // this.exceptionService.saveProjectData(obj).subscribe((data: any) => {
-    //   this.success('Changes saved successfully')
-    // }, err => {
-    //   this.error("Server error or Please check the data");
-    // })
   }
   ap_api_body() {
     return {

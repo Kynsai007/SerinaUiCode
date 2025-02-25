@@ -3,18 +3,27 @@
     <div
       class="d-flex"
       *ngIf="
-        (editPermissionBoolean ||
+        ((editPermissionBoolean ||
           changeApproveBoolean ||
           financeApproveBoolean) &&
-        submitBtn_boolean &&
-        isDesktop && !isServiceData &&
-        currentTab == 'line'  || router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool
+          submitBtn_boolean &&
+          isDesktop &&
+          !isServiceData &&
+          currentTab == 'line') ||
+        (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
       "
     >
-      
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
+          (portalName == 'customer' &&
+            !isServiceData &&
+            !fin_boolean &&
+            editable &&
+            !['advance invoice', 'non-po', 'credit note'].includes(
+              documentType
+            )) ||
+          mappingForCredit ||
+          (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -23,11 +32,13 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && 
-          ((router.url.includes('Upload') && (documentType == 'credit' || documentType == 'progressive invoice')) || 
-          [8,16,17,18,19,21,27,34,205].includes(subStatusId) || 
-          (documentType == 'advance invoice' && 
-          [29,108].includes(subStatusId)))
+          portalName == 'customer' &&
+          ((router.url.includes('Upload') &&
+            (documentType == 'credit' ||
+              documentType == 'progressive invoice')) ||
+            [8, 16, 17, 18, 19, 21, 27, 34, 205].includes(subStatusId) ||
+            (documentType == 'advance invoice' &&
+              [29, 108].includes(subStatusId)))
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -44,7 +55,16 @@
       </button>
     </div>
 
-    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable && !fin_boolean && !headerName.includes('Create')" class="mr-2 invType">
+    <div
+      *ngIf="
+        Itype == 'Invoice' &&
+        statusId != 10 &&
+        editable &&
+        !fin_boolean &&
+        !headerName.includes('Create')
+      "
+      class="mr-2 invType"
+    >
       <p-autoComplete
         [(ngModel)]="entityName"
         (onSelect)="onSelectEntity($event, 'change')"
@@ -73,7 +93,15 @@
       </p-dropdown>
     </div>
     <div class="f-12 mt-2 mr-2" *ngIf="!editable || fin_boolean">
-       <span *ngIf="ent_code || d_type" class="status_btn" style="text-transform: capitalize;"><span *ngIf="ent_code">Entity Code - {{ent_code}} </span> <span *ngIf="d_type"><span *ngIf="ent_code">&</span> Invoice type - {{d_type}}</span></span>
+      <span
+        *ngIf="ent_code || d_type"
+        class="status_btn"
+        style="text-transform: capitalize"
+        ><span *ngIf="ent_code">Entity Code - {{ ent_code }} </span>
+        <span *ngIf="d_type"
+          ><span *ngIf="ent_code">&</span> Invoice type - {{ d_type }}</span
+        ></span
+      >
     </div>
     <button
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
@@ -83,14 +111,13 @@
       {{ btnText }}
     </button>
   </div>
-  
+
   <div
     class="col-md-12 p-0"
     [ngClass]="showPdf && !isPdfAvailable ? 'col-lg-5' : 'col-lg-12'"
   >
     <div class="col-12 dummy_div"></div>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-      
       <li
         class="nav-item mr-2"
         pTooltip="Header details"
@@ -135,7 +162,11 @@
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
+        *ngIf="
+          Itype == 'Invoice' &&
+          ['Emaar Hospitality'].includes(client_name) &&
+            documentType?.toLowerCase() == 'credit note'
+        "
       >
         <a
           class="nav-link"
@@ -154,7 +185,14 @@
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
+        *ngIf="
+          !grnCreateBoolean &&
+          Itype == 'Invoice' &&
+          !(
+            ['Emaar Hospitality'].includes(client_name) &&
+            documentType?.toLowerCase() == 'credit note'
+          )
+        "
         (click)="changeTab('grn')"
       >
         <a
@@ -173,7 +211,10 @@
         class="nav-item ml-2"
         pTooltip="Supporting documents"
         tooltipPosition="top"
-        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('GRN')"
+        *ngIf="
+          (['Invoice', 'GRN'].includes(Itype) && !approval_selection_boolean) ||
+          tagService?.headerName?.includes('GRN')
+        "
         (click)="changeTab('support')"
       >
         <a
@@ -259,7 +300,7 @@
         pTooltip="Dynamic cost allocation"
         tooltipPosition="top"
         (click)="changeTab('dynamic')"
-        *ngIf="isServiceData && dynamicdata.length>0"
+        *ngIf="isServiceData && dynamicdata.length > 0"
       >
         <a
           class="nav-link"
@@ -307,7 +348,7 @@
             role="tabpanel"
             aria-labelledby="header-tab"
           >
-          <!-- <span class="boxopen" *ngIf="documentType == 'advance invoice'" >
+            <!-- <span class="boxopen" *ngIf="documentType == 'advance invoice'" >
             <div class="button-container">
               <button class="advSettingsButton" (click)="openBox()"> Pre Payment </button>
             </div>
@@ -318,13 +359,20 @@
             >
               <div class="d-flex justify-content-between">
                 <div class="f-14">{{ Itype }}/Purchase Details</div>
-                <div class="f-12 status_btn" *ngIf="doc_status" [title]="doc_status" style="background-color: inherit;">
+                <div
+                  class="f-12 status_btn"
+                  *ngIf="doc_status"
+                  [title]="doc_status"
+                  style="background-color: inherit"
+                >
                   {{ doc_status }}
                 </div>
               </div>
+              <div class="f-13" style="color: green" *ngIf="Itype == 'Invoice'">
+                Upload successfully completed in {{ uploadtime }}
+              </div>
               <div class="displayFlex mt-2">
-                <div *ngFor="let value of headerData ">
-                  <!-- [ngStyle]="{ 'width':value?.TagLabel?.includes('Vendor') ? 'calc(100svw - 74svw)':''}" -->
+                <div *ngFor="let value of headerData">
                   <div
                     *ngIf="!value?.TagLabel?.toLowerCase()?.includes('dummy')"
                     class="input_container"
@@ -337,11 +385,14 @@
                       border:
                         value?.isError >= 1 && !value?.ErrorMsg?.includes('Low')
                           ? '1px solid #D81616'
-                          :subStatusId == 110 && value?.TagLabel == 'Current Month VAT'
+                          : subStatusId == 110 &&
+                            value?.TagLabel == 'Current Month VAT'
                           ? '1px solid #D81616'
-                          :value?.TagLabel == 'Customer TRN Number' && value?.Value == ''
+                          : value?.TagLabel == 'Customer TRN Number' &&
+                            value?.Value == ''
                           ? '1px solid #D81616'
-                          :value?.isError >= 1 && value?.ErrorMsg?.includes('Low')
+                          : value?.isError >= 1 &&
+                            value?.ErrorMsg?.includes('Low')
                           ? '1px solid #f7c83e'
                           : value?.isError === 0 && value?.IsUpdated === 0
                           ? '0px solid lightgray'
@@ -350,16 +401,25 @@
                           : ''
                     }"
                   >
-                    <label class="label-head" style="margin-bottom: -5px" (click)="labelHighlight(value?.TagLabel)"
-                      >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
+                    <label
+                      class="label-head"
+                      style="margin-bottom: -5px"
+                      (click)="labelHighlight(value?.TagLabel)"
+                      >{{ value.TagLabel }}
                       <span
-                          *ngIf="value?.TagLabel == 'InvoiceTotal' && value?.isChanged"
-                          class="calc"
-                          style="top: 0px;"
-                          pTooltip="Please click here to auto calculate the Invoice total"
-                          tooltipPosition="top"
-                          (click)="calculateTotal(value)"
-                          ><i class="fa fa-calculator" aria-hidden="true"></i>
+                        *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'"
+                        >(YYYY-MM-DD)</span
+                      >
+                      <span
+                        *ngIf="
+                          value?.TagLabel == 'InvoiceTotal' && value?.isChanged
+                        "
+                        class="calc"
+                        style="top: 0px"
+                        pTooltip="Please click here to auto calculate the Invoice total"
+                        tooltipPosition="top"
+                        (click)="calculateTotal(value)"
+                        ><i class="fa fa-calculator" aria-hidden="true"></i>
                       </span>
                       <span
                         *ngIf="value?.isError == 1"
@@ -370,17 +430,12 @@
                           aria-hidden="true"
                         ></i
                       ></span>
-                      <!-- <span
-                        *ngIf="value.TagLabel.toLowerCase() == 'invoicedate'"
-                        pTooltip="Date format: "
-                        tooltipPosition="top"
-                        ><i
-                          class="fa fa-info-circle info_icon"
-                          aria-hidden="true"
-                        ></i
-                      ></span> -->
                       <span
-                        *ngIf="value?.TagLabel == 'PurchaseOrder' && editable && !router.url.includes('Create_GRN_inv_list')"
+                        *ngIf="
+                          value?.TagLabel == 'PurchaseOrder' &&
+                          editable &&
+                          !router.url.includes('Create_GRN_inv_list')
+                        "
                       >
                         <i
                           class="fa fa-search info_icon pointer po_s_icon"
@@ -391,26 +446,44 @@
                     </label>
                     <input
                       *ngIf="!value?.TagLabel?.includes('Project')"
-                      id="field-{{value?.TagLabel}}"
+                      id="field-{{ value?.TagLabel }}"
                       #inputv
-                      [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
+                      [type]="
+                        value?.TagLabel?.includes('AmountToApply')
+                          ? 'number'
+                          : 'text'
+                      "
                       [value]="value.Value"
                       [title]="value.Value"
-                      [disabled]="!editable || fin_boolean || router.url.includes('Create_GRN_inv_list')"
+                      [disabled]="
+                        !editable ||
+                        fin_boolean ||
+                        router.url.includes('Create_GRN_inv_list')
+                      "
                       (change)="
-                      value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
+                        value?.TagLabel?.includes('AmountToApply')
+                          ? progressiveAmount(
+                              inputv.value,
+                              value.idDocumentData
+                            )
+                          : onChangeValue(value.TagLabel, inputv.value, value)
                       "
                       (blur)="saveChanges()"
                       (click)="labelHighlight(value?.TagLabel)"
                       class="form-control inv_inp_cls"
                     />
-                    <div *ngIf="value?.TagLabel?.includes('Project')" class="project">
+                    <div
+                      *ngIf="value?.TagLabel?.includes('Project')"
+                      class="project"
+                    >
                       <p-autoComplete
                         [(ngModel)]="value.Value"
                         (onSelect)="onSelectProject($event, value)"
                         placeholder=""
                         [suggestions]="filteredProject"
-                        (completeMethod)="filterProject($event,value?.TagLabel,value?.Value)"
+                        (completeMethod)="
+                          filterProject($event, value?.TagLabel, value?.Value)
+                        "
                         field=""
                         [dropdown]="true"
                         [name]="value.TagLabel"
@@ -467,42 +540,75 @@
             </div>
 
             <div *ngIf="isBoxOpen" class="amount-box">
-
               <h6 class="headamtbox">Please Select</h6>
-              <div class="close-icon" (click)="closeBox()"><i class="fa fa-times" aria-hidden="true"></i>
+              <div class="close-icon" (click)="closeBox()">
+                <i class="fa fa-times" aria-hidden="true"></i>
               </div>
 
-                <ul class="tabs">
-                  <span class="percentage" (click)="activeTab = 'percentage'" [class.active]="activeTab === 'percentage'">Percentage</span>
-                  <span class="amount"(click)="activeTab = 'amount'" [class.active]="activeTab === 'amount'">Amount</span>
-                </ul>
+              <ul class="tabs">
+                <span
+                  class="percentage"
+                  (click)="activeTab = 'percentage'"
+                  [class.active]="activeTab === 'percentage'"
+                  >Percentage</span
+                >
+                <span
+                  class="amount"
+                  (click)="activeTab = 'amount'"
+                  [class.active]="activeTab === 'amount'"
+                  >Amount</span
+                >
+              </ul>
               <div class="tabContent">
                 <div *ngIf="activeTab === 'percentage'" class="tabBg">
-                  <label for="percentageInput" class="boxHead">Add Percentage:</label>
-                  <input type="text" name="percent" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
+                  <label for="percentageInput" class="boxHead"
+                    >Add Percentage:</label
+                  >
+                  <input
+                    type="text"
+                    name="percent"
+                    id="percentageInput"
+                    [(ngModel)]="percentageData"
+                    (ngModelChange)="updateButtonState('percentage')"
+                    pattern="[0-9]*"
+                  />
                   <label>Amount: {{ resultAmount }}</label>
                   <!-- <input type="text" [value]="resultAmount" readonly> -->
                   <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
                   <div class="subButton">
-                    <button class="submitButton"
-                    (click)="saveData('percentage')" [disabled]="isButtonDisabled"
-                    >Submit</button>
+                    <button
+                      class="submitButton"
+                      (click)="saveData('percentage')"
+                      [disabled]="isButtonDisabled"
+                    >
+                      Submit
+                    </button>
                   </div>
                 </div>
-              
+
                 <div *ngIf="activeTab === 'amount'" class="tabBg">
                   <label for="amountInput" class="boxHead">Add Amount:</label>
-                  <input type="text" id="amountInput" name="amount" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
-              
+                  <input
+                    type="text"
+                    id="amountInput"
+                    name="amount"
+                    [(ngModel)]="amountData"
+                    (input)="updateButtonState('amount')"
+                    pattern="[0-9]*"
+                  />
+
                   <!-- <button (click)="saveAmount()">Submit Amount</button> -->
                   <div class="subButton">
-                    <button class="submitButton"
-                    (click)="saveData('amount')" [disabled]="isButtonDisabled"
-                    >Submit</button>
+                    <button
+                      class="submitButton"
+                      (click)="saveData('amount')"
+                      [disabled]="isButtonDisabled"
+                    >
+                      Submit
+                    </button>
                   </div>
                 </div>
               </div>
-            
             </div>
           </div>
         </ng-template>
@@ -517,7 +623,6 @@
             role="tabpanel"
             aria-labelledby="line-tab"
           >
-
             <div
               *ngIf="
                 !isDesktop &&
@@ -530,9 +635,12 @@
             >
               <button
                 *ngIf="
-                  portalName == 'customer'
-                  && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
-                  && !['advance invoice'].includes(documentType)
+                  portalName == 'customer' &&
+                  client_name == 'Enova' &&
+                  !isServiceData &&
+                  !fin_boolean &&
+                  editable &&
+                  !['advance invoice'].includes(documentType)
                 "
                 class="level_3_btn f-12 m-t-neg ml-2 mr-2"
                 (click)="opengrnDailog()"
@@ -546,12 +654,19 @@
                   <div class="f-14 mr-3">
                     Invoice Line/Purchase Line Details
                   </div>
-                  <div class="f-12 status_btn" *ngIf="doc_status" style="background-color: inherit;">
+                  <div
+                    class="f-12 status_btn"
+                    *ngIf="doc_status"
+                    style="background-color: inherit"
+                  >
                     {{ doc_status }}
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
+                <div
+                  class="d-flex f-12 basic_details text_color"
+                  *ngIf="!isServiceData"
+                >
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -565,122 +680,182 @@
                     isDesktop ? 'justify-content-end' : 'justify-content-start'
                   "
                 >
-                  <!-- <div class="d-flex mr-3">
-                    <div class="represent_color invoice_color"></div>
-                    <div class="f-12">Invoice</div>
-                  </div> -->
-                    <button
+                  <button
                     *ngIf="editable && !fin_boolean"
                     id="addLine"
                     class="level_3_btn f-12 mr-4"
                     (click)="open_dialog('AddLine')"
                     type="button"
-                    >
+                  >
                     <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-                    </button>
-                  <!-- <div class="d-flex mr-3">
-                    <div
-                      class="represent_color"
-                      style="background-color: red"
-                    ></div>
-                    <div class="f-12">Mis-matched</div>
-                  </div> -->
+                  </button>
                 </div>
               </div>
 
               <table class="w-100 mt-2 ex_table">
                 <thead>
                   <tr>
-                    <th class="f-12 text-center" style="min-width: 50px; background-color: #ebebeb;">S.No</th>
-                    <th *ngFor="let header of lineTableHeaders" class="lineName">{{ header }}</th>
-                    <th class="lineName" style="width: 50px;" *ngIf="editable">Actions</th>
+                    <th
+                      class="f-12 text-center"
+                      style="min-width: 50px; background-color: #ebebeb"
+                    >
+                      S.No
+                    </th>
+                    <th
+                      *ngFor="let header of lineTableHeaders"
+                      class="lineName"
+                    >
+                      {{ header }}
+                    </th>
+                    <th class="lineName" style="width: 50px" *ngIf="editable">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <ng-container *ngFor="let item of lineDisplayData; let i = index">
-                    <tr [ngClass]="pageType == 'mapping' ? 'invoice_color' : ''">
-                      <ng-container  *ngIf="item.lines">
-                        <td class="linevalue p-2 text-center" style="width: 50px;">{{ i + 1 }}</td>
-                        <td *ngFor="let header of lineTableHeaders" >
+                  <ng-container
+                    *ngFor="let item of lineDisplayData; let i = index"
+                  >
+                    <tr
+                      [ngClass]="pageType == 'mapping' ? 'invoice_color' : ''"
+                    >
+                      <ng-container *ngIf="item.lines">
+                        <td
+                          class="linevalue p-2 text-center"
+                          style="width: 50px"
+                        >
+                          {{ i + 1 }}
+                        </td>
+                        <td *ngFor="let header of lineTableHeaders">
                           <div class="d-flex">
                             <input
-                                *ngIf="!['PurchaseOrder','InvoiceNumber'].includes(header)"
-                                #inputv
-                                type="text"
-                                [ngClass]="
-                                header.includes('Description','Name','POLineDescription','GRNLineDescription')
-                                    ? 'w-des'
-                                    : 'w-sm'
+                              *ngIf="
+                                !['PurchaseOrder', 'InvoiceNumber'].includes(
+                                  header
+                                )
+                              "
+                              #inputv
+                              type="text"
+                              [ngClass]="
+                                header.includes(
+                                  'Description',
+                                  'Name',
+                                  'POLineDescription',
+                                  'GRNLineDescription'
+                                )
+                                  ? 'w-des'
+                                  : 'w-sm'
+                              "
+                              [ngStyle]="{
+                                borderBottom:
+                                  item.lines[header]?.isError >= 1 &&
+                                  !item.lines[header]?.ErrorMsg?.includes('Low')
+                                    ? ' 2px solid red'
+                                    : item.lines[header]?.isError >= 1 &&
+                                      item.lines[header]?.ErrorMsg?.includes(
+                                        'Low'
+                                      )
+                                    ? ' 2px solid #f7c83e'
+                                    : item.lines[header]?.updates ||
+                                      item.lines[header]?.isError == 0
+                                    ? '2px solid #37dcc7'
+                                    : ''
+                              }"
+                              [value]="item.lines[header]?.Value"
+                              [title]="item.lines[header]?.Value"
+                              [name]="header"
+                              [disabled]="!editable || fin_boolean"
+                              class="form-control f-12 input_disabled"
+                              (change)="
+                                client_name == 'Enova' &&
+                                documentType == 'advance invoice' &&
+                                header.includes(
+                                  'AdvancePercent',
+                                  'AmountExcTax'
+                                )
+                                  ? onChangeAdvance(
+                                      item.lines[header],
+                                      inputv.value,
+                                      header
+                                    )
+                                  : onChangeLineValue(
+                                      header,
+                                      inputv.value,
+                                      item
+                                    )
+                              "
+                              (blur)="
+                                documentType == 'advance invoice' &&
+                                header.includes(
+                                  'AdvancePercent',
+                                  'AmountExcTax'
+                                )
+                                  ? saveAdChanges()
+                                  : saveChanges()
+                              "
+                            />
+                            <div
+                              *ngIf="
+                                ['PurchaseOrder', 'InvoiceNumber'].includes(
+                                  header
+                                )
+                              "
+                            >
+                              <p-autoComplete
+                                [(ngModel)]="item.lines[header].Value"
+                                (onSelect)="
+                                  onSelectPrePay(
+                                    $event,
+                                    item.lines[header],
+                                    header,
+                                    x
+                                  )
                                 "
-                                [ngStyle]="{
-                                  borderBottom:
-                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg?.includes('Low')
-                                      ? ' 2px solid red'
-                                      : item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg?.includes('Low')
-                                      ? ' 2px solid #f7c83e'
-                                      : item.lines[header]?.updates || item.lines[header]?.isError == 0
-                                      ? '2px solid #37dcc7'
-                                      : ''
-                                }"
-                                [value]="item.lines[header]?.Value"
-                                [title]="item.lines[header]?.Value"
+                                placeholder=""
+                                [suggestions]="filteredPreData"
+                                (completeMethod)="filterPreDrop($event, header)"
+                                field=""
+                                [dropdown]="true"
+                                styleClass="f-12"
                                 [name]="header"
                                 [disabled]="!editable || fin_boolean"
-                                class="form-control f-12 input_disabled"
-                                (change)="
-                                client_name == 'Enova' && documentType == 'advance invoice' && (header.includes('AdvancePercent','AmountExcTax') )?onChangeAdvance(item.lines[header],inputv.value,header): onChangeLineValue(
-                                  header,
-                                  inputv.value,
-                                  item
-                                )
-                                "
-                                (blur)="documentType == 'advance invoice' && (header.includes('AdvancePercent','AmountExcTax'))?saveAdChanges():saveChanges()"
-                              />
-                              <div *ngIf="['PurchaseOrder','InvoiceNumber'].includes(header)">
-                                <p-autoComplete
-                                  [(ngModel)]="item.lines[header].Value"
-                                  (onSelect)="onSelectPrePay($event, item.lines[header],header,x)"
-                                  placeholder=""
-                                  [suggestions]="filteredPreData"
-                                  (completeMethod)="filterPreDrop($event,header)"
-                                  field=""
-                                  [dropdown]="true"
-                                  styleClass="f-12"
-                                  [name]="header"
-                                  [disabled]="!editable || fin_boolean"
-                                >
-                                </p-autoComplete>
-                              </div>
-                              <span
+                              >
+                              </p-autoComplete>
+                            </div>
+                            <span
                               *ngIf="item?.lines[header]?.isChanged"
                               class="calc"
                               pTooltip="Please click here to auto calculate the amount"
                               tooltipPosition="top"
-                              (click)="calculateAmount(item.ItemCode,item)"
-                              ><i class="fa fa-calculator" aria-hidden="true"></i></span>
+                              (click)="calculateAmount(item.ItemCode, item)"
+                              ><i
+                                class="fa fa-calculator"
+                                aria-hidden="true"
+                              ></i
+                            ></span>
                             <span
                               *ngIf="item.lines[header]?.updates"
                               class="prev_value f-11"
-                              [title]="
-                              item.lines[header]?.updates?.val
-                              "
+                              [title]="item.lines[header]?.updates?.val"
                               >prev:
-                              {{  item.lines[header]?.updates?.val }}
+                              {{ item.lines[header]?.updates?.val }}
                             </span>
                             <span
-                              *ngIf="
-                              item.lines[header]?.isError >= 1
-                              "
-                              [pTooltip]="
-                              item.lines[header]?.ErrorMsg
-                              "
+                              *ngIf="item.lines[header]?.isError >= 1"
+                              [pTooltip]="item.lines[header]?.ErrorMsg"
                               tooltipPosition="top"
                               ><i
                                 [ngStyle]="{
                                   color:
-                                  item.lines[header]?.isError >= 1 && !item.lines[header]?.ErrorMsg?.includes('Low')
+                                    item.lines[header]?.isError >= 1 &&
+                                    !item.lines[header]?.ErrorMsg?.includes(
+                                      'Low'
+                                    )
                                       ? '#D81616'
-                                      :item.lines[header]?.isError >= 1 && item.lines[header]?.ErrorMsg?.includes('Low')
+                                      : item.lines[header]?.isError >= 1 &&
+                                        item.lines[header]?.ErrorMsg?.includes(
+                                          'Low'
+                                        )
                                       ? '#f7c83e'
                                       : ''
                                 }"
@@ -694,60 +869,70 @@
                           <button
                             class="trash_btn f-14"
                             type="button"
-                            (click)="
-                              delete_confirmation(item.ItemCode)
-                            "
+                            (click)="delete_confirmation(item.ItemCode)"
                           >
-                            <i
-                              class="fa fa-trash-o"
-                              aria-hidden="true"
-                            ></i>
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
                           </button>
                         </td>
-  
                       </ng-container>
                     </tr>
                     <tr *ngIf="pageType == 'mapping'" class="po_color">
-                      <ng-container  *ngIf="item.lines">
-                        <td class="linevalue p-2 text-center" style="width: 50px;"> <span style="visibility: hidden;">{{i+1}}</span> </td>
-                        <td *ngFor="let header of lineTableHeaders" >
+                      <ng-container *ngIf="item.lines">
+                        <td
+                          class="linevalue p-2 text-center"
+                          style="width: 50px"
+                        >
+                          <span style="visibility: hidden">{{ i + 1 }}</span>
+                        </td>
+                        <td *ngFor="let header of lineTableHeaders">
                           <div class="d-flex">
                             <input
-                                *ngIf="
-                                !(header == 'Description' &&
-                                submitBtn_boolean && !fin_boolean)
+                              *ngIf="
+                                !(
+                                  header == 'Description' &&
+                                  submitBtn_boolean &&
+                                  !fin_boolean
+                                )
                               "
-                                type="text"
-                                [ngClass]="
-                                header.includes('Description','Name','POLineDescription','GRNLineDescription')
-                                    ? 'w-des'
-                                    : 'w-sm'
-                                "
-                                [value]="item.lines[header]?.po_line.Value || 'NA'"
-                                [title]="item.lines[header]?.po_line.Value"
-                                [name]="header"
-                                disabled
-                                class="form-control f-12 input_disabled"
-                              />
-                              <div
+                              type="text"
+                              [ngClass]="
+                                header.includes(
+                                  'Description',
+                                  'Name',
+                                  'POLineDescription',
+                                  'GRNLineDescription'
+                                )
+                                  ? 'w-des'
+                                  : 'w-sm'
+                              "
+                              [value]="
+                                item.lines[header]?.po_line.Value || 'NA'
+                              "
+                              [title]="item.lines[header]?.po_line.Value"
+                              [name]="header"
+                              disabled
+                              class="form-control f-12 input_disabled"
+                            />
+                            <div
                               class="mapping"
                               *ngIf="
                                 header == 'Description' &&
-                                submitBtn_boolean && !fin_boolean
+                                submitBtn_boolean &&
+                                !fin_boolean
                               "
                             >
                               <p-autoComplete
                                 (onSelect)="
-                                  lineMapping(item?.ItemCode,
-                                  $event.itemCode
-                                  )
+                                  lineMapping(item?.ItemCode, $event.itemCode)
                                 "
                                 [(ngModel)]="item.lines[header].po_line"
                                 [suggestions]="filteredPOLine"
                                 (completeMethod)="filterPOLine($event)"
                                 field="Value"
                                 [id]="item.ItemCode"
-                                name="poline{{item.lines[header]?.po_line?.Value}}-{{item?.ItemCode}}"
+                                name="poline{{
+                                  item.lines[header]?.po_line?.Value
+                                }}-{{ item?.ItemCode }}"
                                 styleClass="f-11 input_disabled sel_drp"
                                 [dropdown]="true"
                                 appendTo="body"
@@ -755,35 +940,44 @@
                               </p-autoComplete>
                             </div>
                           </div>
-  
                         </td>
                         <td></td>
                       </ng-container>
                     </tr>
                   </ng-container>
                 </tbody>
-
               </table>
 
               <table *ngIf="Itype == 'Invoice'" class="f-13 total_table">
                 <tr class="mb-1">
                   <td></td>
-                  <td class="total_txt">Invoice Lines Total </td>
+                  <td class="total_txt">Invoice Lines Total</td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count" [pTooltip]="lineTooltip" tooltipPosition="top">{{totalInvCost}}</td>
+                  <td
+                    class="total_count"
+                    [pTooltip]="lineTooltip"
+                    tooltipPosition="top"
+                  >
+                    {{ totalInvCost }}
+                  </td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
-                <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">
+                <tr
+                  *ngIf="
+                    documentType != 'advance invoice' &&
+                    documentType != 'non-po'
+                  "
+                >
                   <td></td>
                   <td class="total_txt">Purchase Total</td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{po_total }}</td>
+                  <td class="total_count">{{ po_total }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
@@ -802,7 +996,7 @@
                   </div>
                   <div
                     class="f-12 status_btn"
-                    style="background-color: inherit;"
+                    style="background-color: inherit"
                     *ngIf="
                       !router.url.includes('Inv_vs_GRN_details') &&
                       !router.url.includes('GRN_approvals')
@@ -812,7 +1006,10 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
+                <div
+                  class="d-flex f-12 basic_details_grn text_color"
+                  *ngIf="!isServiceData"
+                >
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -823,7 +1020,7 @@
                       *ngIf="GRN_PO_Bool"
                       type="text"
                       name="inv_number"
-                      [ngModelOptions]="{standalone: true}"
+                      [ngModelOptions]="{ standalone: true }"
                       class="inv_number f-12 text_color"
                       placeholder="Add invoice number"
                       [(ngModel)]="invoiceNumber"
@@ -834,14 +1031,9 @@
                 <div class="d-flex">
                   <div class="ml-1" *ngIf="client_name == 'SRG'">
                     <label class="f-12">Invoice Description</label>
-                    <button class="edit_btn" (click)="openFilterDialog($event)"> <i class="fa fa-edit"></i></button>
-                    <!-- <input
-                      type="text"
-                      name="inv_description"
-                      class="inv_number f-12 text_color"
-                      placeholder="Add invoice description"
-                      [(ngModel)]="invoiceDescription"
-                    /> -->
+                    <button class="edit_btn" (click)="openFilterDialog($event)">
+                      <i class="fa fa-edit"></i>
+                    </button>
                   </div>
 
                   <div class="ml-3 grn" *ngIf="client_name == 'SRG'">
@@ -859,127 +1051,232 @@
                     ></p-calendar>
                   </div>
 
-                  <div *ngIf="client_name == 'Cenomi'" [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                  <div
+                    *ngIf="client_name == 'Cenomi'"
+                    [ngClass]="
+                      GRN_PO_Bool && client_name == 'Cenomi' ? '' : 'hide'
+                    "
+                  >
                     <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
                     </label> -->
-                    <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
+                    <button
+                      class="f-12 primary_btn"
+                      *ngIf="isManpower"
+                      (click)="open_dialog_comp('manpower')"
+                    >
+                      Timesheet
+                    </button>
                   </div>
 
                   <div *ngIf="GRN_PO_Bool">
-                    <button style="min-width: 30px;" class="f-12 secondary_btn secondary_act_btn" (click)="deleteGrnLine()" [disabled]="selectALL_grn_lines" > <i class="fa fa-trash-o"></i></button>
+                    <button
+                      style="min-width: 30px"
+                      class="f-12 secondary_btn secondary_act_btn"
+                      (click)="deleteGrnLine()"
+                      [disabled]="selectALL_grn_lines"
+                    >
+                      <i class="fa fa-trash-o"></i>
+                    </button>
                   </div>
                 </div>
               </div>
-              <table *ngIf="lineDisplayData?.length > 0 " class="mt-2 w-100 ex_table" id="grnTable">
-                
-                  <tr >
-                    <th class="lineName" *ngFor="let grn of lineTable">
-                      <div *ngIf="grn.header == 'S.No'" class="d-flex">
-                        <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="selectAll" [(ngModel)]="selectALL_grn_lines"  (change)="selectAllLines($event.target.checked)"></div>
-                        <div class="count_line ml-1 f-12">{{grn.header}}</div>
+              <table
+                *ngIf="lineDisplayData?.length > 0"
+                class="mt-2 w-100 ex_table"
+                id="grnTable"
+              >
+                <tr>
+                  <ng-container *ngFor="let grn of lineTable">
+                    <th
+                      class="lineName"
+                      style="min-width: 50px"
+                      *ngIf="grn.header == 'S.No'"
+                    >
+                      <div class="d-flex">
+                        <div *ngIf="GRN_PO_Bool">
+                          <input
+                            type="checkbox"
+                            name="selectAll"
+                            [(ngModel)]="selectALL_grn_lines"
+                            (change)="selectAllLines($event.target.checked)"
+                          />
+                        </div>
+                        <div class="count_line ml-1 f-12">{{ grn.header }}</div>
                       </div>
-                      <div *ngIf="grn.header != 'S.No'">{{grn.header}}</div>
                     </th>
-                  </tr>
-                  <tr *ngFor="let item of lineDisplayData; let i = index; trackBy: trackByIndex">
-                    <!-- Iterate over headers to match the data field for each row -->
-                    <td *ngFor="let header of lineTable">
-                      <ng-container [ngSwitch]="header.header">
-              
-                        <!-- S.No -->
-                        <ng-container *ngSwitchCase="'S.No'">
-                          <div class="d-flex">
-                            <div *ngIf="GRN_PO_Bool"><input type="checkbox" name="select_line" id="check{{i}}" [(ngModel)]="item.checked"  (change)="selectLine($event.target.checked,index,item)"></div>
-                            <div class="count_line ml-1 f-12">{{ i + 1 }}</div>
+                    <th class="lineName" *ngIf="grn.header != 'S.No'">
+                      <div *ngIf="grn.header != 'S.No'">{{ grn.header }}</div>
+                    </th>
+                  </ng-container>
+                </tr>
+                <tr
+                  *ngFor="
+                    let item of lineDisplayData;
+                    let i = index;
+                    trackBy: trackByIndex
+                  "
+                >
+                  <!-- Iterate over headers to match the data field for each row -->
+                  <td *ngFor="let header of lineTable">
+                    <ng-container [ngSwitch]="header.header">
+                      <!-- S.No -->
+                      <ng-container *ngSwitchCase="'S.No'">
+                        <div class="d-flex">
+                          <div *ngIf="GRN_PO_Bool">
+                            <input
+                              type="checkbox"
+                              name="select_line"
+                              id="check{{ i }}"
+                              [(ngModel)]="item.checked"
+                              (change)="
+                                selectLine($event.target.checked, index, item)
+                              "
+                            />
                           </div>
-                        </ng-container>
-              
-                        <!-- GRN - Quantity -->
-                        <ng-container *ngSwitchCase="'GRN - Quantity'">
-                          <div>
-                            <input #inputval type="text" style="border: 0.2px solid #358dc0" 
-                                   [name]="item[header.field]?.Value" 
-                                   [value]="item[header.field].Value" 
-                                   (change)="onChangeGrn(header.field, inputval.value,item)" 
-                                   [readonly]="item['isTimesheets']?.Value"
-                                   class="form-control inputHeight w-sm" 
-                                   [title]="item[header.field]?.Value">
-                          </div>
-                        </ng-container>
+                          <div class="count_line ml-1 f-12">{{ i + 1 }}</div>
+                        </div>
+                      </ng-container>
 
-                        <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="shouldRenderInput()">
-                          <ng-container *ngSwitchCase="true">
-                            <div>
-                              <input #inputval type="text" style="border: 0.2px solid #358dc0" 
-                                   [name]="item[header.field]?.Value" 
-                                   [value]="item[header.field]?.Value"
-                                   (change)="onChangeGrnAmount(item, inputval.value)"
-                                   [readonly]="item['isTimesheets']?.Value"
-                                   class="form-control inputHeight w-sm" 
-                                   [title]="item[header.field]?.Value">
-                            </div>  
-                          </ng-container>
-                          <ng-container *ngSwitchDefault>
-                            <div>
-                              <input type="text" 
-                                     [ngClass]="{'w-des': header.header === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                     [ngStyle]="{'border': item[header.field]?.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                                     [value]="item[header.field]?.Value ? item[header.field]?.Value : 'NA'" 
-                                     [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
-                                     class="form-control inputHeight" 
-                                     [name]="item[header.field]?.Value"
-                                     disabled 
-                                     [ngModelOptions]="{standalone: true}">
-                            </div>
-                          </ng-container>
-                         
-                        </ng-container>
-              
-                        <!-- Comments -->
-                        <ng-container *ngSwitchCase="'Comments'">
+                      <!-- GRN - Quantity -->
+                      <ng-container *ngSwitchCase="'GRN - Quantity'">
+                        <div>
+                          <input
+                            #inputval
+                            type="text"
+                            style="border: 0.2px solid #358dc0"
+                            [name]="item[header.field]?.Value"
+                            [value]="item[header.field].Value"
+                            (change)="
+                              onChangeGrn(header.field, inputval.value, item)
+                            "
+                            [readonly]="item['isTimesheets']?.Value"
+                            class="form-control inputHeight w-sm"
+                            [title]="item[header.field]?.Value"
+                          />
+                        </div>
+                      </ng-container>
+
+                      <ng-container
+                        *ngSwitchCase="'AmountExcTax'"
+                        [ngSwitch]="shouldRenderInput()"
+                      >
+                        <ng-container *ngSwitchCase="true">
                           <div>
-                            <input #inputComment type="text" style="width: 150px; border: 0.2px solid #358dc0"
-                                   class="form-control inputHeight" 
-                                   [title]="item[header.field]?.ErrorMsg ? item[header.field]?.ErrorMsg : ''" 
-                                   [ngModelOptions]="{standalone: true}">
+                            <input
+                              #inputval
+                              type="text"
+                              style="border: 0.2px solid #358dc0"
+                              [name]="item[header.field]?.Value"
+                              [value]="item[header.field]?.Value"
+                              (change)="onChangeGrnAmount(item, inputval.value)"
+                              [readonly]="item['isTimesheets']?.Value"
+                              class="form-control inputHeight w-sm"
+                              [title]="item[header.field]?.Value"
+                            />
                           </div>
                         </ng-container>
-              
-                        <!-- Actions -->
-                        <!-- <ng-container *ngSwitchCase="'Actions'">
+                        <ng-container *ngSwitchDefault>
+                          <div>
+                            <input
+                              type="text"
+                              [ngClass]="{
+                                'w-des': header.header === 'Description',
+                                'w-sm': item.TagName !== 'Description'
+                              }"
+                              [ngStyle]="{
+                                border:
+                                  item[header.field]?.is_mapped === 1
+                                    ? '2px solid #f2be42'
+                                    : ''
+                              }"
+                              [value]="
+                                item[header.field]?.Value
+                                  ? item[header.field]?.Value
+                                  : 'NA'
+                              "
+                              [title]="
+                                item[header.field]?.Value
+                                  ? item[header.field]?.Value
+                                  : ''
+                              "
+                              class="form-control inputHeight"
+                              [name]="item[header.field]?.Value"
+                              disabled
+                              [ngModelOptions]="{ standalone: true }"
+                            />
+                          </div>
+                        </ng-container>
+                      </ng-container>
+
+                      <!-- Comments -->
+                      <ng-container *ngSwitchCase="'Comments'">
+                        <div>
+                          <input
+                            #inputComment
+                            type="text"
+                            style="width: 150px; border: 0.2px solid #358dc0"
+                            class="form-control inputHeight"
+                            [title]="
+                              item[header.field]?.ErrorMsg
+                                ? item[header.field]?.ErrorMsg
+                                : ''
+                            "
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                        </div>
+                      </ng-container>
+
+                      <!-- Actions -->
+                      <!-- <ng-container *ngSwitchCase="'Actions'">
                           <span class="linevalue invert_thtd">
                             <button class="trash_btn" (click)="deleteGrnLine(item)">
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </span>
                         </ng-container> -->
-              
-                        <!-- Default case for other fields -->
-                        <ng-container *ngSwitchDefault>
-                          <div>
-                            <input type="text" 
-                                   [ngClass]="{'w-des': header.header === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [ngStyle]="{'border': item[header.field]?.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                                   [value]="item[header.field]?.Value ? item[header.field]?.Value : 'NA'" 
-                                   [title]="item[header.field]?.Value ? item[header.field]?.Value : ''"
-                                   class="form-control inputHeight" 
-                                   [name]="item[header.field]?.Value"
-                                   disabled
-                                   [ngModelOptions]="{standalone: true}">
-                          </div>
-                        </ng-container>
-              
-                      </ng-container>
-                    </td>
-                  </tr>
-              </table>
 
+                      <!-- Default case for other fields -->
+                      <ng-container *ngSwitchDefault>
+                        <div>
+                          <input
+                            type="text"
+                            [ngClass]="{
+                              'w-des': header.header === 'Description',
+                              'w-sm': item.TagName !== 'Description'
+                            }"
+                            [ngStyle]="{
+                              border:
+                                item[header.field]?.is_mapped === 1
+                                  ? '2px solid #f2be42'
+                                  : ''
+                            }"
+                            [value]="
+                              item[header.field]?.Value
+                                ? item[header.field]?.Value
+                                : 'NA'
+                            "
+                            [title]="
+                              item[header.field]?.Value
+                                ? item[header.field]?.Value
+                                : ''
+                            "
+                            class="form-control inputHeight"
+                            [name]="item[header.field]?.Value"
+                            disabled
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </td>
+                </tr>
+              </table>
             </div>
             <table
               class="total"
-              style="bottom: 0px;"
+              style="bottom: 0px"
               *ngIf="
                 router.url.includes('Inv_vs_GRN_details') ||
                 router.url.includes('GRN_approvals')
@@ -1006,7 +1303,7 @@
                 <td class="w-st hide">Total</td>
               </tr>
             </table>
-           </div>
+          </div>
         </ng-template>
 
         <!-- Cost -->
@@ -1036,23 +1333,16 @@
                       type="text"
                       class="form-control mb-1 inputHeight"
                       [(ngModel)]="row.driver_name"
-                      name="driver_name_{{i}}"
+                      name="driver_name_{{ i }}"
                       (input)="reqDataValidation()"
                     />
                   </div>
                   <div style="position: relative; margin-left: 20px">
                     <label class="label-head">Company Name</label>
-                    <!-- <input
-                    id="c_name"
-                    type="text"
-                    class="form-control mb-1 inputHeight"
-                    [(ngModel)]="companyName"
-                    (input)="reqDataValidation()"
-                  /> -->
                     <select
                       class="form-control mb-1 inputHeight"
                       [(ngModel)]="row.company_name"
-                      name="company_name_{{i}}"
+                      name="company_name_{{ i }}"
                       required
                       (change)="reqDataValidation()"
                     >
@@ -1112,26 +1402,26 @@
             </div>
 
             <div *ngIf="!reqServiceprovider">
-                <div *ngFor="let a of costAllocation; let i = index">
-                  <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
-                  <div class="displayFlex">
-                    <div *ngFor="let b of allocationFileds">
-                      <div style="position: relative" class="input_container">
-                        <label class="label-head" style="margin-bottom: -5px"
-                          >{{ b.header }}
-                        </label>
-                        <input
-                          #inputv
-                          type="text"
-                          [value]="a[b.field]"
-                          [title]="a[b.field]"
-                          disabled
-                          class="form-control inv_inp_cls"
-                        />
-                      </div>
+              <div *ngFor="let a of costAllocation; let i = index">
+                <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
+                <div class="displayFlex">
+                  <div *ngFor="let b of allocationFileds">
+                    <div style="position: relative" class="input_container">
+                      <label class="label-head" style="margin-bottom: -5px"
+                        >{{ b.header }}
+                      </label>
+                      <input
+                        #inputv
+                        type="text"
+                        [value]="a[b.field]"
+                        [title]="a[b.field]"
+                        disabled
+                        class="form-control inv_inp_cls"
+                      />
                     </div>
                   </div>
                 </div>
+              </div>
               <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
             </div>
           </div>
@@ -1146,45 +1436,69 @@
             role="tabpanel"
             aria-labelledby="dynamic-tab"
           >
-            <div class="f-12 d-flex justify-content-end" [ngStyle]="{color: subStatusId == 110 ? 'red':''}">
-              <span *ngIf="subStatusId == 110"  class="mr-2"
+            <div
+              class="f-12 d-flex justify-content-end"
+              [ngStyle]="{ color: subStatusId == 110 ? 'red' : '' }"
+            >
+              <span
+                *ngIf="subStatusId == 110"
+                class="mr-2"
                 pTooltip="Please compare the current month VAT in the header data"
-                tooltipPosition="top">
+                tooltipPosition="top"
+              >
                 <i class="fa fa-info-circle"></i>
               </span>
-              Total Calculated Tax - {{totalTaxDynamic?.toFixed(decimal_count)}}
+              Total Calculated Tax -
+              {{ totalTaxDynamic?.toFixed(decimal_count) }}
             </div>
             <div>
-
               <table class="dynamic">
                 <tr>
                   <th class="f-12 lineName s_count">S.No</th>
-                  <th *ngFor="let item of dynamicAllocationFileds" class="f-12 lineName"> {{ item.header }} </th>
+                  <th
+                    *ngFor="let item of dynamicAllocationFileds"
+                    class="f-12 lineName"
+                  >
+                    {{ item.header }}
+                  </th>
                 </tr>
-                <tr class="invert_tr" *ngFor="let dynamic of dynamicdata; let i = index">
+                <tr
+                  class="invert_tr"
+                  *ngFor="let dynamic of dynamicdata; let i = index"
+                >
                   <!-- <div style="position: relative" class="input_container" [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}"> -->
-                    <td class="s_count f-12 linevalue invert_th_td">{{ i + 1 }}</td>
-                    <td class="linevalue invert_th_td"  *ngFor="let item of dynamicAllocationFileds">
-                      <input
-                        type="text"
-                        [value]="dynamic[item.field]"
-                        [title]="dynamic[item.field]"
-                        (input)="
-                          updateEditedValue(
-                            dynamic.iddynamiccostallocation,
-                            item.field,
-                            $event.target.value
-                          )
-                        "
-                        class="form-control inv_inp_cls"
-                        [readonly]="
-                          item.field === 'iddynamiccostallocation' ||
-                          item.field === 'documentID' || !editable
-                        "
-                        [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}"
-                      />
-                    </td>
-                  <!-- </div> -->
+                  <td class="s_count f-12 linevalue invert_th_td">
+                    {{ i + 1 }}
+                  </td>
+                  <td
+                    class="linevalue invert_th_td"
+                    *ngFor="let item of dynamicAllocationFileds"
+                  >
+                    <input
+                      type="text"
+                      [value]="dynamic[item.field]"
+                      [title]="dynamic[item.field]"
+                      (input)="
+                        updateEditedValue(
+                          dynamic.iddynamiccostallocation,
+                          item.field,
+                          $event.target.value
+                        )
+                      "
+                      class="form-control inv_inp_cls"
+                      [readonly]="
+                        item.field === 'iddynamiccostallocation' ||
+                        item.field === 'documentID' ||
+                        !editable
+                      "
+                      [ngStyle]="{
+                        border:
+                          subStatusId == 110 && item.header == 'Tax amount'
+                            ? '1px solid red'
+                            : ''
+                      }"
+                    />
+                  </td>
                 </tr>
               </table>
             </div>
@@ -1215,7 +1529,10 @@
             role="tabpanel"
             aria-labelledby="grn-tab"
           >
-            <mapped-grn [GRNTabData]="GRNTabData" [grnTabDatalength]="grnTabDatalength"></mapped-grn>
+            <mapped-grn
+              [GRNTabData]="GRNTabData"
+              [grnTabDatalength]="grnTabDatalength"
+            ></mapped-grn>
           </div>
         </ng-template>
 
@@ -1231,14 +1548,13 @@
           >
             <div
               *ngIf="
-                supportTabBoolean &&
-                support_doc_list?.length > 0 || grnAttachmentArray &&
-                !approval_selection_boolean
+                (supportTabBoolean && support_doc_list?.length > 0) ||
+                (grnAttachmentArray && !approval_selection_boolean)
               "
             >
               <table class="table" *ngIf="support_doc_list?.length > 0">
                 <tr class="f-12 lineName">
-                  <th style="width: 100px;">S.No</th>
+                  <th style="width: 100px">S.No</th>
                   <th>Name</th>
                   <th></th>
                 </tr>
@@ -1253,7 +1569,7 @@
                   >
                     {{ file }}
                   </td>
-                  <td style="width: 100px;">
+                  <td style="width: 100px">
                     <i
                       class="fa fa-download pointer mr-2"
                       aria-hidden="true"
@@ -1268,25 +1584,30 @@
                   </td>
                 </tr>
               </table>
-              <h6 class="f-14" *ngIf="grnAttachmentArray"> GRN Attachment</h6>
+              <h6 class="f-14" *ngIf="grnAttachmentArray">GRN Attachment</h6>
               <ng-container *ngIf="grnAttachmentArray">
                 <ng-container *ngFor="let attachment of grnAttachmentArray">
-                  <div class="f-12" *ngIf="attachment && attachment[0]">GRN number: {{ attachment[0]?.grnNumber }}</div>
+                  <div class="f-12" *ngIf="attachment && attachment[0]">
+                    GRN number: {{ attachment[0]?.grnNumber }}
+                  </div>
                   <table class="table" *ngIf="attachment && attachment[0]">
                     <tr class="f-12 lineName">
-                      <th style="width: 100px;">S.No</th>
+                      <th style="width: 100px">S.No</th>
                       <th>Name</th>
                       <th></th>
                     </tr>
-                    <tr class="f-12" *ngFor="let grn of attachment; let i=index">
-                      <td>{{i+1}}</td>
+                    <tr
+                      class="f-12"
+                      *ngFor="let grn of attachment; let i = index"
+                    >
+                      <td>{{ i + 1 }}</td>
                       <td
                         class="break_word pointer f-12"
                         (click)="grnAttachmentDoc(grn.base64, 'view')"
                       >
-                        GRN attachment file {{i+1}}
+                        GRN attachment file {{ i + 1 }}
                       </td>
-                      <td style="width: 100px;">
+                      <td style="width: 100px">
                         <i
                           class="fa fa-download pointer"
                           aria-hidden="true"
@@ -1298,7 +1619,6 @@
                 </ng-container>
               </ng-container>
 
-
               <p class="f-11">
                 *SERINA is not reading the supporting document
                 <strong>(.pdf only)</strong>
@@ -1308,20 +1628,28 @@
             <div
               *ngIf="
                 supportTabBoolean &&
-                !(support_doc_list?.length > 0) && grnAttachmentString == undefined &&
+                !(support_doc_list?.length > 0) &&
+                grnAttachmentString == undefined &&
                 !approval_selection_boolean
               "
             >
               <div class="no_doc_div f-14">
                 <div>
-                No Supporting Document available, <span *ngIf="!(editable || fin_boolean)"> please upload it in exception screen if you have any.</span><span *ngIf="editable || fin_boolean"> please upload if you have any.</span> <br>
+                  No Supporting Document available,
+                  <span *ngIf="!(editable || fin_boolean)">
+                    please upload it in exception screen if you have any.</span
+                  ><span *ngIf="editable || fin_boolean">
+                    please upload if you have any.</span
+                  >
+                  <br />
                 </div>
-                <div *ngIf="GRN_PO_Bool"> Please note once you create the GRN then only supporting documents will be stored.</div>
-
+                <div *ngIf="GRN_PO_Bool">
+                  Please note once you create the GRN then only supporting
+                  documents will be stored.
+                </div>
               </div>
-
             </div>
-            <div class="file_table" *ngIf="uploadFileList.length > 0 ">
+            <div class="file_table" *ngIf="uploadFileList.length > 0">
               <table class="table">
                 <tr class="f-12">
                   <th>S.No</th>
@@ -1345,7 +1673,13 @@
                 </tr>
               </table>
             </div>
-            <div *ngIf="supportTabBoolean && !approval_selection_boolean && (editable || fin_boolean)">
+            <div
+              *ngIf="
+                supportTabBoolean &&
+                !approval_selection_boolean &&
+                (editable || fin_boolean)
+              "
+            >
               <label
                 for="img"
                 class="img-browse"
@@ -1408,10 +1742,6 @@
                 }}</span>
               </span>
               <span class="circles"></span>
-              <!-- <span class="material-icons circles" [class.active]="((orderStatus == item.dochistorystatus) && (i == statusData.length-1))">
-                            check_circle
-                        </span> -->
-
               <div class="circle-desc">
                 <div class="row">
                   <div class="col-sm-6">
@@ -1577,7 +1907,9 @@
                 <div class="f-11" style="color: #e56767">
                   Note: Please upload supporting documents if you have any
                   <br />
-                  *SERINA is not reading the supporting document<strong> (.pdf only)</strong>. Please check and review it manually.
+                  *SERINA is not reading the supporting document<strong>
+                    (.pdf only)</strong
+                  >. Please check and review it manually.
                 </div>
               </div>
             </div>
@@ -1620,7 +1952,7 @@
         <div class="btnFooter">
           <div class="m_r_80" *ngIf="!grnCreateBoolean">
             <button
-              *ngIf="submitBtn_boolean && editable &&  !isMoreRequired "
+              *ngIf="submitBtn_boolean && editable && !isMoreRequired"
               class="level_3_btn f-12 mr-3"
               type="button"
               (click)="open_dialog('reject')"
@@ -1635,23 +1967,6 @@
               Back
             </button>
 
-            <!-- <button
-            *ngIf="submitBtn_boolean 
-            && editable 
-            && !fin_boolean 
-            && isServiceData 
-            && ![29,32,80]?.includes(subStatusId)
-            && !router.url.includes('uploadtime')"
-            class="primary_btn f-12 mr-3"
-            (click)="
-              approval_selection_boolean && isLCMCompleted
-                ? onSubmitApprovers()
-                : proceedToBatch('true')
-            "
-          >
-            Skip
-          </button> -->
-
             <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
@@ -1662,10 +1977,15 @@
                   : proceedToBatch('false')
               "
             >
-              {{subStatusId == 206 ? 'Approve' : 'Next'}}
+              {{ subStatusId == 206 ? "Approve" : "Next" }}
             </button>
             <button
-              *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired && !isServiceData"
+              *ngIf="
+                fin_boolean &&
+                client_name == 'Enova' &&
+                !isMoreRequired &&
+                !isServiceData
+              "
               type="button"
               class="primary_btn f-12 mr-3"
               (click)="open_dialog('more')"
@@ -1676,12 +1996,12 @@
               *ngIf="fin_boolean && !isMoreRequired"
               class="primary_btn f-12"
               type="button"
-              (click)="batch_id ? bulk_confirm() :open_dialog('approve')"
+              (click)="batch_id ? bulk_confirm() : open_dialog('approve')"
             >
               Approve
             </button>
             <button
-              *ngIf="fin_boolean &&  client_name == 'Enova' && isMoreRequired"
+              *ngIf="fin_boolean && client_name == 'Enova' && isMoreRequired"
               type="button"
               class="primary_btn f-12 mr-3"
               (click)="open_dialog('more')"
@@ -1710,7 +2030,7 @@
               *ngIf="client_name == 'Cenomi'"
               class="primary_btn f-12 mr-3"
               type="submit"
-              [disabled]="!enable_create_grn || disable_save_btn "
+              [disabled]="!enable_create_grn || disable_save_btn"
               [pTooltip]="disable_save_btn ? grnTooltip : null"
               tooltipPosition="top"
               (click)="
@@ -1724,9 +2044,17 @@
             <button
               class="primary_btn f-12 mr-3"
               type="submit"
-              [pTooltip]="disable_save_btn ? grnTooltip : saveDisabled ? 'Please fill all the dates data in the timesheet' : null"
+              [pTooltip]="
+                disable_save_btn
+                  ? grnTooltip
+                  : saveDisabled
+                  ? 'Please fill all the dates data in the timesheet'
+                  : null
+              "
               tooltipPosition="top"
-              [disabled]="!enable_create_grn || disable_save_btn || saveDisabled"
+              [disabled]="
+                !enable_create_grn || disable_save_btn || saveDisabled
+              "
               (click)="
                 router.url.includes('GRN_approvals')
                   ? Approve_grn()
@@ -1752,7 +2080,7 @@
     </div>
   </div>
   <div
-    *ngIf="showPdf && !['PO','GRN'].includes(Itype)"
+    *ngIf="showPdf && !['PO', 'GRN'].includes(Itype)"
     class="col-lg-7 col-12 maxPage ShowInvoiceTypeSize doc_mobile"
     [ngStyle]="{
       display: documentViewBool || (isDesktop && showPdf) ? 'block' : 'none'
@@ -1781,14 +2109,17 @@
         (PdfBtnClick)="viewPdf()"
       ></app-pdfview>
     </div>
-    <!-- <img [src]="imageUrl" style="width: 100%;height: 80vh;"><br/> -->
   </div>
 </div>
 
 <div *ngIf="serverError" class="f-12 text-center pt-5">
-  <div><img src="/assets/Serina Assets/new_theme/Group 1599.svg" alt="error"></div>
-  An unexpected error occurred. Please try again later. <br>
-  <button class="f-12 primary_btn mt-2" (click)="backToInvoice()">Return to Invoice list</button>
+  <div>
+    <img src="/assets/Serina Assets/new_theme/Group 1599.svg" alt="error" />
+  </div>
+  An unexpected error occurred. Please try again later. <br />
+  <button class="f-12 primary_btn mt-2" (click)="backToInvoice()">
+    Return to Invoice list
+  </button>
 </div>
 <!-- Add label-->
 <p-dialog
@@ -1833,7 +2164,7 @@
   <div
     class="row"
     *ngIf="headerpop == 'Confirm PO number' || headerpop == 'Select GRN'"
-    style="min-height: 40vh;max-height: 60vh;"
+    style="min-height: 40vh; max-height: 60vh"
   >
     <div class="col-md-4">
       <input
@@ -1847,9 +2178,7 @@
           *ngFor="let poitem of poNumbersList; let i = index"
           [id]="i"
           (click)="selectedPO(i, $event.target.value)"
-          [ngClass]="
-            activePOId == poitem?.PODocumentID ? 'activePO' : ''
-          "
+          [ngClass]="activePOId == poitem?.PODocumentID ? 'activePO' : ''"
         >
           {{ poitem.PODocumentID }}
         </li>
@@ -1906,21 +2235,6 @@
             inputId="range"
           ></p-calendar>
         </div>
-
-        <!-- <p-calendar
-          [(ngModel)]="selectDate"
-          view="month"
-          dateFormat="mm/yy"
-          [showIcon]="true"
-          [yearNavigator]="true"
-          [minDate]="minDate"
-          [maxDate]="maxDate"
-          [yearRange]="displayYear"
-          placeholder="Select dates to filter.."
-          [readonlyInput]="false"
-          (onSelect)="applyDatefilter(selectDate)"
-          inputId="monthpicker"
-        ></p-calendar> -->
       </div>
       <h6
         class="f-14 mt-1 d-flex justify-content-between"
@@ -1934,34 +2248,40 @@
           PO Date: {{ poDate[0]?.DocumentData?.Value | date : "medium" }}
         </div>
       </h6>
-      <div class= "POSelectionDiv">
+      <div class="POSelectionDiv">
         <table
-        class="table f-12"
-        *ngIf="
-          PO_GRN_Number_line?.length > 0 && headerpop == 'Confirm PO number'
-        "
-      >
-        <tr>
-          <th style="width: 60px">S.No</th>
-          <th>Description</th>
-          <th>Quantity</th>
-          <th>UnitPrice</th>
-          <th>Net Total</th>
-        </tr>
-        <tr *ngFor="let item of PO_GRN_Number_line; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.Name }}</td>
-          <td>{{ item.PurchQty }}</td>
-          <td>{{ item.UnitPrice }}</td>
-          <td>{{ (item.PurchQty * item.UnitPrice)?.toFixed(decimal_count) }}</td>
-        </tr>
-      </table>
+          class="table f-12"
+          *ngIf="
+            PO_GRN_Number_line?.length > 0 && headerpop == 'Confirm PO number'
+          "
+        >
+          <tr>
+            <th style="width: 60px">S.No</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>UnitPrice</th>
+            <th>Net Total</th>
+          </tr>
+          <tr *ngFor="let item of PO_GRN_Number_line; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.Name }}</td>
+            <td>{{ item.PurchQty }}</td>
+            <td>{{ item.UnitPrice }}</td>
+            <td>
+              {{ (item.PurchQty * item.UnitPrice)?.toFixed(decimal_count) }}
+            </td>
+          </tr>
+        </table>
       </div>
       <ng-container *ngIf="headerpop == 'Select GRN'">
         <div *ngFor="let grnLine of selectedGRNLines">
           <div class="f-13">GRN : {{ grnLine?.grnNumber }}</div>
           <div class="maxHDiv">
-            <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
+            <table
+              class="table f-12"
+              style="border: 1px solid lightgray"
+              *ngIf="grnLine?.linesData?.length > 0"
+            >
               <tr>
                 <th style="width: 60px">S.No</th>
                 <th>Description</th>
@@ -1990,26 +2310,6 @@
     </div>
   </div>
 
-  <!-- <div
-    *ngIf="headerpop == 'Select GRN'"
-    class="text-center"
-    style="min-height: 150px"
-  >
-    <p-multiSelect
-      [options]="grnList"
-      placeholder="GRN Number"
-      filter="false"
-      inputStyleClass="form-control mr-2"
-      optionLabel="docheaderID"
-      [maxSelectedLabels]="3"
-      [selectedItemsLabel]="'{0} items selected'"
-      name="PO_GRN_Number"
-      [(ngModel)]="selectedGRNList"
-      required
-    >
-    </p-multiSelect>
-  </div> -->
-
   <div
     *ngIf="headerpop == 'GRN Creation Status'"
     class="f-13"
@@ -2020,7 +2320,9 @@
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-end">
       <button
-        *ngIf="headerpop == 'Batch Progress' && (!isAprUser || subStatusId != 71)"
+        *ngIf="
+          headerpop == 'Batch Progress' && (!isAprUser || subStatusId != 71)
+        "
         type="button"
         class="primary_btn f-12 mt-2"
         (click)="
@@ -2029,16 +2331,13 @@
       >
         <span>{{ isBatchFailed && batch_count <= 2 ? "Re-try" : "Next" }}</span>
       </button>
-      <!-- <button
-        *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71"
-        type="button"
-        class="secondary_btn f-12 mt-2 mr-2"
-        (click)="open_dialog('reject')"
-      >
-        Reject
-      </button> -->
       <button
-        *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71 && !isServiceData"
+        *ngIf="
+          headerpop == 'Batch Progress' &&
+          isAprUser &&
+          subStatusId == 71 &&
+          !isServiceData
+        "
         type="button"
         class="primary_btn f-12 mt-2 mr-2"
         (click)="open_dialog('more')"
@@ -2192,9 +2491,6 @@
       "
     >
       <label class="label-head mt-2 mb-0">Comments</label> <br />
-      <!-- <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
-      >Desc: Add the Names of the Signatory is mandatory</small
-    > -->
 
       <textarea
         required
@@ -2214,13 +2510,6 @@
       class="d-flex justify-content-end"
       *ngIf="rejectModalHeader == 'ADD Rejection Comments'"
     >
-      <!-- <button
-        type="button"
-        class="btn btnVender bg-btn-cancel"
-        (click)="displayrejectDialog = false"
-      >
-        Cancel
-      </button> -->
       <button
         type="button"
         class="f-12 primary_btn"
@@ -2265,9 +2554,9 @@
         class="primary_btn f-12"
         [disabled]="commentsBool"
         [ngStyle]="{ cursor: commentsBool ? 'not-allowed' : 'pointer' }"
-        (click)="isMoreRequired? proceedMoreInfo() : moreInfoFun() "
+        (click)="isMoreRequired ? proceedMoreInfo() : moreInfoFun()"
       >
-        {{ !isMoreRequired? 'More info required':'Proceed' }}
+        {{ !isMoreRequired ? "More info required" : "Proceed" }}
       </button>
       <button
         *ngIf="isLCMSubmitBoolean && !preApproveBoolean"
@@ -2322,14 +2611,30 @@
   </div>
 </dialog> -->
 
-<dialog #tagDialog class="dialog"> 
+<dialog #tagDialog class="dialog">
   <div>
-    <label for="tag_name" class="f-13 mb-1">Add your description here</label><br>
-    <textarea class="form-control f-12" [(ngModel)]="invoiceDescription" Name="invoiceDescription" id="invoiceDescription" rows="5" style="height: 100px;" (input)="updateCharacterCount($event)"></textarea>
+    <label for="tag_name" class="f-13 mb-1">Add your description here</label
+    ><br />
+    <textarea
+      class="form-control f-12"
+      [(ngModel)]="invoiceDescription"
+      Name="invoiceDescription"
+      id="invoiceDescription"
+      rows="5"
+      style="height: 100px"
+      (input)="updateCharacterCount($event)"
+    ></textarea>
 
     <div class="mt-3">
       <div class="progress">
-        <div class="progress-bar" role="progressbar" [style.width.%]="(invoiceDescription?.length / 250) * 100" [attr.aria-valuenow]="invoiceDescription?.length" aria-valuemin="0" aria-valuemax="250"></div>
+        <div
+          class="progress-bar"
+          role="progressbar"
+          [style.width.%]="(invoiceDescription?.length / 250) * 100"
+          [attr.aria-valuenow]="invoiceDescription?.length"
+          aria-valuemin="0"
+          aria-valuemax="250"
+        ></div>
       </div>
       <div class="d-flex justify-content-between f-10 mt-1">
         <div>Allow only 250 characters</div>
@@ -2338,10 +2643,14 @@
     </div>
 
     <footer class="d-flex justify-content-end mt-2">
-      <button class="secondary_btn secondary_act_btn f-12 mr-3" (click)="closeDialog()">Close</button>
+      <button
+        class="secondary_btn secondary_act_btn f-12 mr-3"
+        (click)="closeDialog()"
+      >
+        Close
+      </button>
       <!-- <button class="primary_action_button f-12" (click)="savePrompt()">Save</button> -->
-   </footer>
+    </footer>
   </div>
-
 </dialog>
 <p-toast></p-toast>

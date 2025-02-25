@@ -226,6 +226,10 @@ $theme_color: var(--themeColor);
   font-size: larger;
 }
 .basic_details {
+  position: relative;
+  top: 10px;
+}
+.basic_details_grn {
   position: absolute;
   top: 10px;
   left: 50%;
