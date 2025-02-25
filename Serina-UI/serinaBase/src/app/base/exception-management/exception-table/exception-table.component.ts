@@ -629,7 +629,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ds.grnWithPOBoolean = true;
     this.tagService.editable = true;
     this.ds.isEditGRN = true;
-    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(e.PODocumentID,e.idDocument).subscribe((data: any) => {
       this.ds.po_lines = data?.result
     })
     this.ExceptionsService.getManpowerMetaData(e.PODocumentID).subscribe((data:any)=>{
@@ -664,7 +664,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   getPOLines(e) {
     this.SpinnerService.show();
-    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(e.PODocumentID,e.idDocument).subscribe((data: any) => {
       this.SpinnerService.hide();
       this.ds.GRN_PO_Data = [];
       this.ds.grnWithPOBoolean = true;
