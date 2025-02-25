@@ -233,6 +233,17 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/ticket_creation/${inv_id}`) 
   }
 
+  getLabelData(name,param){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getlabeldata/${this.userId}?field_name=${name}${param}`) 
+  }
+  getFieldType(fieldName) {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getfieldtype/${this.userId}?field_name=${fieldName}`) 
+  }
+
+  deleteDraftGRN(idDocument) {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/deleteDraftGRN/${this.userId}/${idDocument}`,'')
+  }
+
   convertData(inputData, purchId: string) {
     const output = [];
     

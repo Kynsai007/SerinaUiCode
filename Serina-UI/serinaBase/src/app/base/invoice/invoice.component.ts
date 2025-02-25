@@ -1371,8 +1371,10 @@ isMobile:boolean;
       this.ds.poLoadedData = [];
       this.getDisplayPOData(this.APIParams);
       this.refreshBool = false;
+    } else if(type == 'GRN'){
+      this.ds.GRNLoadedData = [];
+      this.getDisplayGRNdata(this.APIParams);
     }
-
   }
 
   pushColumnsField(element) {

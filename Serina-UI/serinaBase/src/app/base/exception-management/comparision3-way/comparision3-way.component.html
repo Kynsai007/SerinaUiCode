@@ -458,7 +458,7 @@
                       [disabled]="
                         !editable ||
                         fin_boolean ||
-                        router.url.includes('Create_GRN_inv_list')
+                        router.url.includes('Create_GRN_inv_list') || grnCreateBoolean
                       "
                       (change)="
                         value?.TagLabel?.includes('AmountToApply')
@@ -488,7 +488,7 @@
                         [dropdown]="true"
                         [name]="value.TagLabel"
                         styleClass="project"
-                        [disabled]="!editable || fin_boolean"
+                        [disabled]="!editable || fin_boolean || grnCreateBoolean"
                       >
                       </p-autoComplete>
                     </div>

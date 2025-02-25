@@ -314,6 +314,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
 
   viewInvoice(e) {
+    this.ExceptionsService.po_num = e?.PODocumentID;
     if (this.router.url.includes('ExceptionManagement')) {
       this.router.navigate([
         `/${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
@@ -332,12 +333,13 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ExceptionsService.invoiceID = e.idDocument;
   }
   viewInvoiceDetails(e) {
+    this.ExceptionsService.po_num = e?.PODocumentID;
     this.tagService.submitBtnBoolean = false;
     this.tagService.editable = false;
     this.ds.subStatusId = e.documentsubstatusID;
     this.ds.ent_code = e.EntityCode;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
-    this.ds.invoiceNumber = e.JournalNumber;
+    this.ds.invoiceNumber = e?.JournalNumber;
     let route: string;
     if (this.router.url.includes('PO')) {
       route = 'PODetails';
@@ -639,6 +641,28 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
      })
   }
 
+  deletePopUp(e) {
+    const mat_dlg_ref = this.confirmFun('Are you sure you want to delete this Draft GRN?', 'confirmation', 'Confirmation');
+    mat_dlg_ref.afterClosed().subscribe((res) => {
+      if (res) {
+        this.deleteDraftGRN(e);
+      }
+    });
+  }
+
+  deleteDraftGRN(e) {
+    this.SpinnerService.show();
+    this.ExceptionsService.deleteDraftGRN(e.idDocument).subscribe((data: any) => {
+      this.SpinnerService.hide();
+      this.alertService.success_alert(data.Message);
+      this.systemCheckEmit.emit("GRN");
+      window.location.reload();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
+    });
+  }
+
   getPOLines(e) {
     this.SpinnerService.show();
     this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
@@ -809,12 +833,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   triggerBatch(event: Event, id) {
     event.stopPropagation();
-    const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
-      width: '400px',
-      height: '300px',
-      hasBackdrop: false,
-      data: { body: 'Are you sure you want to re-trigger the batch for the Invoice?', type: 'confirmation', heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
-    })
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to re-trigger the batch for the Invoice?', 'confirmation', 'Confirmation')
 
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
@@ -1043,6 +1062,15 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     },err=>{
       this.SpinnerService.hide();
       this.error("Server error")
+    })
+  }
+
+  confirmFun(body, type, head) {
+    return this.md.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
 
