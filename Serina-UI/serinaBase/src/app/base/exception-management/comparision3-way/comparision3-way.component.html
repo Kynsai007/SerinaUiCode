@@ -401,7 +401,7 @@
           </span> -->
             <div
               class="header_container"
-              [ngClass]="!editable ? 'disable_div' : ''"
+              [ngClass]="!editable || grnCreateBoolean ? 'disable_div' : ''"
             >
               <div class="d-flex justify-content-between">
                 <div class="f-14">{{ Itype }}/Purchase Details</div>
@@ -482,7 +482,7 @@
                       [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
                       [value]="value.Value"
                       [title]="value.Value"
-                      [disabled]="!editable || fin_boolean || value?.TagLabel?.includes('Cost Account')"
+                      [disabled]="!editable || fin_boolean || value?.TagLabel?.includes('Cost Account') || grnCreateBoolean"
                       (change)="
                       value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
                       "
@@ -500,7 +500,7 @@
                         [dropdown]="true"
                         [name]="value.TagLabel"
                         styleClass="project"
-                        [disabled]="!editable || fin_boolean"
+                        [disabled]="!editable || fin_boolean || grnCreateBoolean"
                       >
                       </p-autoComplete>
                     </div>

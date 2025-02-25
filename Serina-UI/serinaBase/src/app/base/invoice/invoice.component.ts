@@ -586,6 +586,9 @@ isMobile:boolean;
         this.showPaginatorGRNTable = true;
       }
       this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     });
   }
 
@@ -1388,8 +1391,10 @@ isMobile:boolean;
       this.ds.poLoadedData = [];
       this.getDisplayPOData(this.APIParams);
       this.refreshBool = false;
+    } else if(type == 'GRN'){
+      this.ds.GRNLoadedData = [];
+      this.getDisplayGRNdata(this.APIParams);
     }
-
   }
 
   pushColumnsField(element) {
