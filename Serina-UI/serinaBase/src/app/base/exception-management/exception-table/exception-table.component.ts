@@ -655,8 +655,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ExceptionsService.deleteDraftGRN(e.idDocument).subscribe((data: any) => {
       this.SpinnerService.hide();
       this.alertService.success_alert(data.Message);
-      this.systemCheckEmit.emit("GRN");
-      window.location.reload();
+      this.systemCheckEmit.emit(`GRN-${e.idDocument}`);
     },err=>{
       this.SpinnerService.hide();
       this.error("Server error");
