@@ -1371,12 +1371,14 @@ isMobile:boolean;
       this.ds.poLoadedData = [];
       this.getDisplayPOData(this.APIParams);
       this.refreshBool = false;
-    } else if(type == 'GRN'){
-      this.ds.GRNLoadedData = [];
-      this.getDisplayGRNdata(this.APIParams);
+    } else if(type?.includes('GRN')){
+      let idDocument = type?.split('-')[1];
+      this.deleteGRN(idDocument);
     }
   }
-
+  deleteGRN(idDocument){
+    this.GRNDispalyData = this.ds.GRNLoadedData.filter(val=>val.idDocument != idDocument);
+  }
   pushColumnsField(element) {
     const arrayOfColumnId = [];
     element.forEach((e) => {
