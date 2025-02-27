@@ -1866,6 +1866,12 @@ export class Comparision3WayComponent
 
     let checking_value;
     let error_msg;
+    let thresholdPecent = this.dataService?.configData?.miscellaneous.overdeliverypct;
+    let threshold;
+    let po_value;
+    if(thresholdPecent){
+      threshold = po_qty_value * thresholdPecent / 100;
+    }
     if(po_balance_qty_value){
       checking_value = po_balance_qty_value;
       error_msg = 'PO Balance Quantity';
@@ -1874,7 +1880,11 @@ export class Comparision3WayComponent
       error_msg = 'PO Quantity';
     }
     this.disable_save_btn = false;
-    if(Number(checking_value) < Number(val)){
+    let finalCheckValue = Number(checking_value);
+    if(thresholdPecent){
+      finalCheckValue = Number(checking_value) + Number(threshold);
+    }
+    if(finalCheckValue < Number(val)){
        this.error(`GRN Quantity cannot be greater than ${error_msg}`);
       this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
       this.disable_save_btn = true;
@@ -2744,7 +2754,7 @@ export class Comparision3WayComponent
 
   readPOLines(po_num) {
     this.SpinnerService.show();
-    this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
+    this.SharedService.getPO_Lines(po_num,this.invoiceID).subscribe((data: any) => {
       this.SpinnerService.hide();
       this.PO_GRN_Number_line = data?.result;
       return data?.result;

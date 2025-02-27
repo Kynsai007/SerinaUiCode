@@ -322,15 +322,15 @@ export class CreateGRNComponent implements OnInit {
     
     this.checkPOData(id)
   }
-  readPOLines(po_num) {
+  readPOLines(po_num,doc_id) {
     this.ngxSpinner.show();
-    this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(po_num,doc_id).subscribe((data: any) => {
       this.ngxSpinner.hide();
       this.poLineData = data?.result;
       this.PO_GRN_Number_line = this.poLineData;
       this.permissionService.enable_create_grn = true;
       // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
-      if(this.poLineData?.length <= 0){
+      if(this.poLineData?.length <= 0 || data == null){
         this.error("Oops, sorry no lines are available")
       }
 
@@ -364,7 +364,7 @@ export class CreateGRNComponent implements OnInit {
       }
     })
   }
-  checkGRNPO(val){
+  checkGRNPO(val,doc_id){
     this.sharedService.checkGRN_PO_duplicates(val).subscribe((data:any)=>{
       if(data.result.length > 0){
         const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
@@ -375,50 +375,49 @@ export class CreateGRNComponent implements OnInit {
 
           drf.afterClosed().subscribe(bool=>{
             if(bool){
-              this.readPOLines(val);
+              this.readPOLines(val,doc_id);
             } else {
               this.error("Please select other PO to create GRN");
             }
           })
        
       } else {
-        this.readPOLines(val);
+        this.readPOLines(val,doc_id);
       }
     })
   }
   checkPOData(e){
-    // this.ngxSpinner.show();
-    this.checkGRNPO(e.PODocumentID);
-    // this.sharedService.updatePO(e.idDocument).subscribe((data: any) => {
-    //   let confirmText:string;
-    //   let icon;
-    //   let header:string;
-    //   if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
-    //     this.checkGRNPO(e.PODocumentID);
-    //   } else if(data.po_status?.toLowerCase() != 'open') {
-    //     icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
-    //     header = 'Closed';
-    //     confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
-    //   } else if(data.po_confirmation_status?.toLowerCase() != 'confirmed') {
-    //     header = 'Amended';
-    //     icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
-    //     confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
-    //   }
-    //   if(confirmText){
-    //     const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
-    //       width : '400px',
-    //       height: '300px',
-    //       hasBackdrop: false,
-    //       data : { body: confirmText, type: 'normal',icon:icon, heading: header}})
-    //       // this.PO_GRNForm?.controls['PONumber'].reset();
-    //       this.resetForm()
-    //   }
+    this.ngxSpinner.show();
+    this.sharedService.updatePO(e.idDocument).subscribe((data: any) => {
+      let confirmText:string;
+      let icon;
+      let header:string;
+      if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
+        this.checkGRNPO(e.PODocumentID, e.idDocument);
+      } else if(data.po_status?.toLowerCase() != 'open') {
+        icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
+        header = 'Closed';
+        confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
+      } else if(data.po_confirmation_status?.toLowerCase() != 'confirmed') {
+        header = 'Amended';
+        icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
+        confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
+      }
+      if(confirmText){
+        const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
+          width : '400px',
+          height: '300px',
+          hasBackdrop: false,
+          data : { body: confirmText, type: 'normal',icon:icon, heading: header}})
+          // this.PO_GRNForm?.controls['PONumber'].reset();
+          this.resetForm()
+      }
       
-    //   this.ngxSpinner.hide();
-    // }, err => {
-    //   this.ngxSpinner.hide();
-    //   this.error("Server error");
-    // })
+      this.ngxSpinner.hide();
+    }, err => {
+      this.ngxSpinner.hide();
+      this.error("Server error");
+    })
   }
   resetForm(){
     // this.PO_GRNForm?.controls['PONumber'].reset();

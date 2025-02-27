@@ -356,7 +356,10 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/document/updateStatus/${this.userId}/${this.invoiceID}`,data);
   }
   updatePO(id){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/POUpdate/${id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(3));
+  }
+  checkPOStatus(id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPOStatus/${id}`).pipe(retry(3));
   }
   get_poDoc_id(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPOid/${this.userId}/${id}`).pipe(retry(3));
@@ -374,8 +377,8 @@ export class SharedService {
   getPo_numbers(idVen){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
   }
-  getPO_Lines(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/getPOLines/${this.userId}/${po_num}`).pipe(retry(3))
+  getPO_Lines(po_num,doc_id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}?documentid=${doc_id}`).pipe(retry(3))
   }
   getPO_details(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/po/getPO_details/${this.userId}/${po_num}`).pipe(retry(3))

@@ -918,3 +918,7 @@ textarea {
 .r-490 {
   right: 495px !important;
 }
+.maxHDiv {
+  max-height: calc(80vh - 184px);
+  overflow: auto;
+}
