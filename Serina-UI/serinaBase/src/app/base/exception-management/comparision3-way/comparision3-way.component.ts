@@ -275,7 +275,7 @@ export class Comparision3WayComponent
   uploadExcelValue: any;
   MarkupTransRecId: any;
   commentslabelBool = true;
-  allocateTotal: number;
+  allocateTotal: any;
   balanceAmount: any;
   invoiceTotal: any;
   inv_line_total: number;
@@ -769,9 +769,11 @@ export class Comparision3WayComponent
       const unitPrice = typeof ele?.UnitPrice === 'string' ? parseFloat(ele.UnitPrice.replace(/,/g, '')) : ele?.UnitPrice;
       let amount;
       if(this.dataService.isEditGRN){
-        amount = (unitPrice * ele.GRNQty).toFixed(this.decimal_count);
+        amount = (unitPrice * ele.GRNQty);
+        amount = this.decimalRoundOff(amount);
       } else {
-        amount = (unitPrice * ele.PurchQty).toFixed(this.decimal_count);
+        amount = (unitPrice * ele.PurchQty);
+        amount = this.decimalRoundOff(amount);
       }
       this.GRN_line_total += Number(amount);
       if(this.client_name === 'Cenomi' && !this.dataService.isEditGRN){  
@@ -783,10 +785,11 @@ export class Comparision3WayComponent
       if(this.client_name === 'Cenomi' && this.GRN_PO_Bool){
         const POQty = ele?.PurchQty ? parseFloat(ele.PurchQty.replace(/,/g, '')) : 0;
         const POBalanceQty = ele?.RemainPurchPhysical ? parseFloat(ele.RemainPurchPhysical.replace(/,/g, '')) : 0;
-        let percentage = '0.00';
+        let percentage:any = '0.00';
         if (POQty !== 0) {
           // const PORemaining =  (POQty - POBalanceQty) * 100;
-          percentage = ((POBalanceQty / POQty) * 100).toFixed(this.decimal_count);
+          percentage = (POBalanceQty / POQty) * 100;
+          percentage = this.decimalRoundOff(percentage);
         }
         linesData[i]['percentage_po'] = {Value: percentage}
       }
@@ -1190,7 +1193,8 @@ export class Comparision3WayComponent
     let invoiceTotal:any = Number(subTotal) + Number(tax);
     if(des_arr.length > 0){
       decimalCount = Math.max(...des_arr);
-      invoiceTotal = invoiceTotal?.toFixed(decimalCount);
+      invoiceTotal = invoiceTotal;
+      invoiceTotal = this.decimalRoundOff(invoiceTotal);
     }
     this.onChangeValue('InvoiceTotal',invoiceTotal?.toString(),data);
     setTimeout(()=>{
@@ -1265,7 +1269,8 @@ export class Comparision3WayComponent
   if(value?.includes('=')){
     let count = this.decimal_count;
     if (key == 'Quantity' && value.includes('=')) {
-      new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
+      new_value = (Number(amounExcTax) / Number(unitPrice));
+      new_value = this.decimalRoundOff(new_value);
       this.lineDisplayData.forEach(tag => {
         if(itemCode == tag.ItemCode){
           for(const line in tag.lines){
@@ -1333,7 +1338,7 @@ export class Comparision3WayComponent
     } else {
       amount = UnitPrice * Quantity;
     }
-    amount = amount.toFixed(this.decimal_count);
+    amount = this.decimalRoundOff(amount);
     this.onChangeLineValue('AmountExcTax',amount.toString(),data);
     setTimeout(() => {
       this.saveChanges();
@@ -1900,7 +1905,8 @@ export class Comparision3WayComponent
   onChangeGrnAmount(lineItem, val) {
     // const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
     // .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
-    const grnQty = (Number(val) / Number(lineItem?.UnitPrice?.Value)).toFixed(this.decimal_count);
+    let grnQty:any = (Number(val) / Number(lineItem?.UnitPrice?.Value));
+    grnQty = this.decimalRoundOff(grnQty);
     const po_balance_qty_value = lineItem?.RemainPurchPhysical?.Value;
 
     let checking_value;
@@ -1939,7 +1945,8 @@ export class Comparision3WayComponent
   updateAmountExcTax(fieldName, newQuantity: number, linedata) {
     if (fieldName) {
       const unitPrice = linedata.GRNUnitPrice || linedata.UnitPrice;
-      const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(this.decimal_count);
+      let amountExcTax:any = (Number(unitPrice.Value) * newQuantity);
+      amountExcTax = this.decimalRoundOff(amountExcTax);
 
       this.GRN_line_total = 0;
       this.lineDisplayData.forEach(item=>{
@@ -2504,7 +2511,7 @@ export class Comparision3WayComponent
           if (ele.durationMonth && ele.isTimesheets) {
               monthlyQuantity = ele.PurchQty / ele.durationMonth;
             }
-          ele.monthlyQuantity = monthlyQuantity.toFixed(this.decimal_count)
+          ele.monthlyQuantity = this.decimalRoundOff(monthlyQuantity);
           if(ele.isTimesheets){
             this.isManpower = true;
           }
@@ -3319,13 +3326,17 @@ export class Comparision3WayComponent
       const sum = this.LCMDataTable.reduce((accumulator, object) => {
         return accumulator + Number(object.Allocate);
       }, 0);
-      this.allocateTotal = sum.toFixed(this.decimal_count);
+      this.allocateTotal = this.decimalRoundOff(sum);
       let bal: any = Number(this.invoiceTotal) - this.allocateTotal;
-      this.balanceAmount = parseFloat(bal).toFixed(this.decimal_count);
+      this.balanceAmount = parseFloat(bal);
+      this.balanceAmount = this.decimalRoundOff(this.balanceAmount);
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
     })
+  }
+  decimalRoundOff(num: any) {
+    return Number(num).toLocaleString(undefined, { minimumFractionDigits: this.decimal_count, maximumFractionDigits: this.decimal_count });
   }
   SaveLCM(obj) {
     this.SpinnerService.show();
@@ -3406,8 +3417,8 @@ export class Comparision3WayComponent
         totalinvCost += invunitPrice * invquantity;
       }
     });
-      this.po_total = totalpoCost.toFixed(this.decimal_count);
-      this.totalInvCost = totalinvCost.toFixed(this.decimal_count);
+      this.po_total = this.decimalRoundOff(totalpoCost);
+      this.totalInvCost = this.decimalRoundOff(totalinvCost);
    
   }
   getRejectionComments() {

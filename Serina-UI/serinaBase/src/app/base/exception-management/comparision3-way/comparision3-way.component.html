@@ -61,7 +61,7 @@
         statusId != 10 &&
         editable &&
         !fin_boolean &&
-        !headerName.includes('Create')
+        !headerName?.includes('Create')
       "
       class="mr-2 invType"
     >
@@ -1292,7 +1292,7 @@
                   [ngClass]="GRN_PO_Bool ? 'text-center' : ''"
                   [ngStyle]="{ paddingLeft: GRN_PO_Bool ? '40px' : '' }"
                 >
-                  {{ GRN_line_total?.toFixed(decimal_count) }}
+                  {{ decimalRoundOff(GRN_line_total) }}
                 </td>
                 <td
                   class="w-st hide"
@@ -1449,7 +1449,7 @@
                 <i class="fa fa-info-circle"></i>
               </span>
               Total Calculated Tax -
-              {{ totalTaxDynamic?.toFixed(decimal_count) }}
+              {{ decimalRoundOff(totalTaxDynamic) }}
             </div>
             <div>
               <table class="dynamic">
@@ -2268,7 +2268,7 @@
             <td>{{ item.PurchQty }}</td>
             <td>{{ item.UnitPrice }}</td>
             <td>
-              {{ (item.PurchQty * item.UnitPrice)?.toFixed(decimal_count) }}
+              {{ decimalRoundOff(item.PurchQty * item.UnitPrice) }}
             </td>
           </tr>
         </table>
@@ -2305,7 +2305,7 @@
             class="d-flex justify-content-between total_grn f-12"
           >
             <div>Total</div>
-            <div>{{ selected_GRN_total?.toFixed(decimal_count) }}</div>
+            <div>{{ decimalRoundOff(selected_GRN_total) }}</div>
           </div>
         </div>
       </ng-container>
