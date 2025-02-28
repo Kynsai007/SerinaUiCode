@@ -387,38 +387,37 @@ export class CreateGRNComponent implements OnInit {
     })
   }
   checkPOData(e){
-    // this.ngxSpinner.show();
-    this.checkGRNPO(e.PODocumentID,e.idDocument);
-    // this.sharedService.updatePO(e.idDocument).subscribe((data: any) => {
-    //   let confirmText:string;
-    //   let icon;
-    //   let header:string;
-    //   if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
-    //     this.checkGRNPO(e.PODocumentID);
-    //   } else if(data.po_status?.toLowerCase() != 'open') {
-    //     icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
-    //     header = 'Closed';
-    //     confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
-    //   } else if(data.po_confirmation_status?.toLowerCase() != 'confirmed') {
-    //     header = 'Amended';
-    //     icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
-    //     confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
-    //   }
-    //   if(confirmText){
-    //     const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
-    //       width : '400px',
-    //       height: '300px',
-    //       hasBackdrop: false,
-    //       data : { body: confirmText, type: 'normal',icon:icon, heading: header}})
-    //       // this.PO_GRNForm?.controls['PONumber'].reset();
-    //       this.resetForm()
-    //   }
+    this.ngxSpinner.show();
+    this.sharedService.updatePO(e.idDocument).subscribe((data: any) => {
+      let confirmText:string;
+      let icon;
+      let header:string;
+      if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
+        this.checkGRNPO(e.PODocumentID,e.idDocument);
+      } else if(data.po_status?.toLowerCase() != 'open') {
+        icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
+        header = 'Closed';
+        confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
+      } else if(data.po_confirmation_status?.toLowerCase() != 'confirmed') {
+        header = 'Amended';
+        icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
+        confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
+      }
+      if(confirmText){
+        const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
+          width : '400px',
+          height: '300px',
+          hasBackdrop: false,
+          data : { body: confirmText, type: 'normal',icon:icon, heading: header}})
+          // this.PO_GRNForm?.controls['PONumber'].reset();
+          this.resetForm()
+      }
       
-    //   this.ngxSpinner.hide();
-    // }, err => {
-    //   this.ngxSpinner.hide();
-    //   this.error("Server error");
-    // })
+      this.ngxSpinner.hide();
+    }, err => {
+      this.ngxSpinner.hide();
+      this.error("Server error");
+    })
   }
   resetForm(){
     // this.PO_GRNForm?.controls['PONumber'].reset();

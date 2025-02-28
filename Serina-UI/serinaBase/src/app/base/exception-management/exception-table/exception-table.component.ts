@@ -703,68 +703,68 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   updatePO(e) {
     this.invoiceID = e.idDocument;
-    if (this.router.url.includes('GRN_approvals')) {
-      this.router.navigate([
-        `${this.portalName}/GRN_approvals/approval_id/${e.idDocument}`,
-      ]);
-    } else {
-      this.router.navigate([
-        `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
-      ]);
-    }
-    // this.SpinnerService.show();
-    // this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {
-    //   let bool: boolean;
-    //   let icon;
-    //   let header: string;
-    //   this.sharedService.updatePO(data.result).subscribe((data: any) => {
-    //     if (data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed') {
-    //       this.permissionService.enable_create_grn = true;
-    //       if (this.router.url.includes('GRN_approvals')) {
-    //         this.router.navigate([
-    //           `${this.portalName}/GRN_approvals/approval_id/${e.idDocument}`,
-    //         ]);
-    //       } else {
-    //         this.router.navigate([
-    //           `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
-    //         ]);
-    //       }
-    //     } else if (data.po_status?.toLowerCase() != 'open') {
-    //       bool = true;
-    //       icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
-    //       header = 'Closed';
-    //       this.confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
-    //     } else if (data.po_status?.toLowerCase() != 'confirmed') {
-    //       bool = true;
-    //       header = 'Amended';
-    //       icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
+    // if (this.router.url.includes('GRN_approvals')) {
+    //   this.router.navigate([
+    //     `${this.portalName}/GRN_approvals/approval_id/${e.idDocument}`,
+    //   ]);
+    // } else {
+    //   this.router.navigate([
+    //     `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+    //   ]);
+    // }
+    this.SpinnerService.show();
+    this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {
+      let bool: boolean;
+      let icon;
+      let header: string;
+      this.sharedService.updatePO(data.result).subscribe((data: any) => {
+        if (data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed') {
+          this.permissionService.enable_create_grn = true;
+          if (this.router.url.includes('GRN_approvals')) {
+            this.router.navigate([
+              `${this.portalName}/GRN_approvals/approval_id/${e.idDocument}`,
+            ]);
+          } else {
+            this.router.navigate([
+              `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+            ]);
+          }
+        } else if (data.po_status?.toLowerCase() != 'open') {
+          bool = true;
+          icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
+          header = 'Closed';
+          this.confirmText = `PO(${e.PODocumentID}) is closed. \n Please check if entered PO value is correct, if still issue persist, please contact support.`;
+        } else if (data.po_status?.toLowerCase() != 'confirmed') {
+          bool = true;
+          header = 'Amended';
+          icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
 
-    //       this.confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
-    //     }
+          this.confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
+        }
 
-    //     if (bool) {
-    //       const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
-    //         width: '400px',
-    //         height: '300px',
-    //         hasBackdrop: false,
-    //         data: { body: this.confirmText, type: 'poStatus', icon: icon, heading: header }
-    //       })
-    //       drf.afterClosed().subscribe((bool) => {
-    //         if (bool) {
-    //           this.view_GRn();
-    //         }
-    //       })
-    //     }
+        if (bool) {
+          const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
+            width: '400px',
+            height: '300px',
+            hasBackdrop: false,
+            data: { body: this.confirmText, type: 'poStatus', icon: icon, heading: header }
+          })
+          drf.afterClosed().subscribe((bool) => {
+            if (bool) {
+              this.view_GRn();
+            }
+          })
+        }
 
-    //     this.SpinnerService.hide();
-    //   }, err => {
-    //     this.SpinnerService.hide();
-    //     this.error("Server error");
-    //   })
-    // }, err => {
-    //   this.error("Server error");
-    //   this.SpinnerService.hide();
-    // })
+        this.SpinnerService.hide();
+      }, err => {
+        this.SpinnerService.hide();
+        this.error("Server error");
+      })
+    }, err => {
+      this.error("Server error");
+      this.SpinnerService.hide();
+    })
   }
   view_GRn() {
     this.permissionService.enable_create_grn = false;
