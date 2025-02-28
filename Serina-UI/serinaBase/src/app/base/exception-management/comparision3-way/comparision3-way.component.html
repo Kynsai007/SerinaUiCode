@@ -1022,8 +1022,8 @@
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
-                  <div class="pipe mr-2">|</div>
-                  <div>
+                  <div *ngIf="client_name != 'Cenomi'" class="pipe mr-2">|</div>
+                  <div *ngIf="client_name != 'Cenomi'">
                     <span *ngIf="!GRN_PO_Bool">{{ invoiceNumber }}</span>
                     <input
                       *ngIf="GRN_PO_Bool"
