@@ -338,9 +338,11 @@ $theme_color: var(--themeColor);
   }
   .w-des {
     min-width: 400px;
+    padding-left: 0px;
   }
   .w-sm {
     width: 85px;
+    padding-left: 0px;
   }
   
   .lineName {

@@ -520,6 +520,7 @@ isMobile:boolean;
       }
     ), err => {
       this.SpinnerService.hide();
+      this.error("Server error");
     };
   }
 
@@ -581,6 +582,9 @@ isMobile:boolean;
         this.showPaginatorGRNTable = true;
       }
       this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     });
   }
 
@@ -639,6 +643,9 @@ isMobile:boolean;
         this.showPaginatorArchived = true;
       }
       this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     });
   }
 
@@ -689,6 +696,9 @@ isMobile:boolean;
         this.showPaginatorRejected = true;
       }
       this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     });
   }
 

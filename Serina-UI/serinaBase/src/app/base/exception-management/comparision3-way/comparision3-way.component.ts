@@ -1868,10 +1868,15 @@ export class Comparision3WayComponent
     // const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_qty_value = linedata?.PurchQty?.Value;
     const po_balance_qty_value = linedata?.RemainPurchPhysical?.Value;
-
+    let thresholdPecent;
+    if(this.dataService?.configData?.miscellaneous?.overdeliverypct){
+      thresholdPecent = this.dataService?.configData?.miscellaneous?.overdeliverypct;
+    } else{
+      thresholdPecent = linedata?.OverDeliveryPct?.Value;
+    }
+    console.log(thresholdPecent)
     let checking_value;
     let error_msg;
-    let thresholdPecent = this.dataService?.configData?.miscellaneous.overdeliverypct;
     let threshold;
     let po_value;
     if(thresholdPecent){
@@ -3336,7 +3341,11 @@ export class Comparision3WayComponent
     })
   }
   decimalRoundOff(num: any) {
-    return Number(num).toLocaleString(undefined, { minimumFractionDigits: this.decimal_count, maximumFractionDigits: this.decimal_count });
+    return Number(num).toLocaleString(undefined,
+       { minimumFractionDigits: this.decimal_count, 
+          maximumFractionDigits: this.decimal_count,
+          useGrouping: false 
+        });
   }
   SaveLCM(obj) {
     this.SpinnerService.show();

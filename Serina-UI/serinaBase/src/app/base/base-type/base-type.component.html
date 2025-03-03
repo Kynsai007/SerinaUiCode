@@ -270,6 +270,7 @@
               >Service Bulk upload/ Batch trigger</a
             >
             <a
+              *ngIf="settingsPageAccess"
               [routerLink]="'settings'"
               routerLinkActive="active_sub_cls"
               (click)="onMenuChange('Settings')"

@@ -1,4 +1,4 @@
-<div *ngIf="!serverError" class="row invoice-body">
+<div *ngIf="!serverError" class="row invoice-body" [ngClass]="headerpop == 'Batch Progress' && progressDailogBool ? 'p_events_none' : 'p_events_all'">
   <div class="viewPdf d-flex">
     <div
       class="d-flex"
@@ -742,7 +742,7 @@
                                   'Name',
                                   'POLineDescription',
                                   'GRNLineDescription'
-                                )
+                                ) || header =='Name'
                                   ? 'w-des'
                                   : 'w-sm'
                               "

@@ -265,6 +265,7 @@ export class RolesComponent implements OnInit {
   invoicePermissions: Permission[] = [];
   show_document_status: boolean;
   totalVendors: any[];
+  originalEntitys: selectedValue[];
 
   constructor(
     private dataService: DataService,
@@ -667,15 +668,6 @@ export class RolesComponent implements OnInit {
   }
 
   filterEntity(event) {
-    // let filtered: any[] = [];
-    // let query = event.query;
-    // for (let i = 0; i < this.entityList.length; i++) {
-    //   let country = this.entityList[i];
-    //   if (country.EntityName.toLowerCase().includes(query.toLowerCase())) {
-    //     filtered.push(country);
-    //   }
-    // }
-    
     this.filteredEntities = this.dataService.uni_filter(this.entityList,'EntityName',event);
   }
   filterEntityBody(event) {
@@ -810,8 +802,20 @@ export class RolesComponent implements OnInit {
           }
 
       });
+    } else {
+      let listOfEntity = [...this.originalEntitys];
+      this.updateUsersEntityInfo = [];
+      listOfEntity?.forEach((obj1:any)=>{
+            this.updateUsersEntityInfo.push({ 
+              idUserAccess: obj1.idUserAccess, 
+              EntityID: obj1.EntityID,
+              DepartmentID : null,
+              categoryID :null,
+              subRole : this.appied_permission_def_id
+            });
+      });
+      this.selectedEntitys = [];
     }
-    console.log(this.updateUsersEntityInfo)
   }
 
   readDeparment(){
@@ -1077,7 +1081,7 @@ export class RolesComponent implements OnInit {
   }
 
   editUser(value) {
-    this.toGetEntity();
+    // this.toGetEntity();
     this.readServiceData();
     this.header_Ac = "Edit user";
     delete this.skip_approval_boolean;
@@ -1172,10 +1176,11 @@ export class RolesComponent implements OnInit {
               DepartmentID: element?.idDepartment,
               subRole:element?.idUserAccess
             });
+            this.originalEntitys = JSON.parse(JSON.stringify(this.selectedEntitys));
             if(!this.financeApproveDisplayBoolean){
                 this.entitySelection_user = this.entityList.filter(ele=>{
                   return  entityData?.some(id => id.idEntity == ele.idEntity)
-                })
+                });
             }
             // }
           });
@@ -1199,7 +1204,7 @@ export class RolesComponent implements OnInit {
     this.updateUsersEntityInfo = [];
     this.userNotBoolean = false;
     this.userBoolean = false;
-    this.toGetEntity();
+    // this.toGetEntity();
   }
   UpdateUser() {
     const dept_ids = this.getDept_ids();
@@ -1298,7 +1303,7 @@ export class RolesComponent implements OnInit {
   }
 
   createCustomerUserPage() {
-    this.toGetEntity();
+    // this.toGetEntity();
     this.readServiceData();
     // this.headerEdituserboolean = false;
     this.header_Ac = "Add new user";
@@ -1474,49 +1479,18 @@ export class RolesComponent implements OnInit {
       });
   }
   filterVendor(event,name) {
-    // this.SpinnerService.show();
     let query = event.query.toLowerCase();
-    // if(name == ''){
-    // console.log(query,name,this.vendorList)
-      // if (query != '') {
         this.sharedService
           .getVendorUniqueData(`?offset=1&limit=100&ven_name=${query}`)
           .subscribe((data: any) => {
             this.filteredVendors = data;
           });
-      // } else {
-      //   if(name == ''){
-      //     this.filteredVendors = this.vendorList;
-      //   } else {
-      //     this.filteredVendors = this.vendorMatchList;
-      //   }
-      // }
-      // this.SpinnerService.hide();
-    // } else {
-    //   if (query != '') {
-    //         this.readVendorMatch(this.tempVendorName,`&ven_name_search=${query}&offset=0&limit=0`);
-    //         this.filteredVendors = this.vendorMatchList;
-    //   } else {
-
-    //     console.log(this.vendorMatchList)
-    //     this.filteredVendors = this.vendorMatchList;
-    //   }
-    // }
   }
 
   selectVendor(value,type) {
-    // const accontData = this.vendorList.filter((element => {
-    //   return value === element.VendorName;
-    // }));
       this.vendorCode = value.VendorCode;
       this.checkOnboardStatus(value.VendorCode);
       this.readEntityForVendorOnboard(value.VendorCode, null);
-
-    // this.entityForVendorCreation = accontData[0].entity_ids;
-    //
-    // console.log(accontData,this.entityForVendorCreation)
-
-    // this.idVendor = accontData[0].idVendor;
   }
   checkOnboardStatus(value){
     this.sharedService.check_onboardStatus(value).subscribe((data:any)=>{
