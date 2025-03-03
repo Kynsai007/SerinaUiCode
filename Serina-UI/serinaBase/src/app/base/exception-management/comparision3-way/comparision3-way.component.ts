@@ -1615,25 +1615,33 @@ export class Comparision3WayComponent
       sub_status = this.batchData[this.batchData.length - 1].sub_status;
       last_status = this.batchData[this.batchData.length - 1].status;
     }
+    last_status = this.batchData[this.batchData.length - 1].status;
     this.ap_enabled_exc = last_status;
-
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
-    if (this.portalName == 'vendorPortal') {
-      if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
-        this.processAlert(sub_status);
+    if(!(this.router.url.includes('Create_GRN_inv_list') || this.router.url.includes('GRN_approvals'))){
+      if (this.portalName == 'vendorPortal') {
+        if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
+          this.processAlert(sub_status);
+        } else {
+          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        }
       } else {
-        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104,216].includes(sub_status)) {
+          this.processAlert(sub_status);
+        } else if (sub_status == 34) {
+          this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
+        } else if (sub_status == 7 || sub_status == 23 || sub_status == 10 || sub_status == 35 || sub_status == 23) {
+          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+        } else {
+          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        }
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104,216].includes(sub_status)) {
-        this.processAlert(sub_status);
-      } else if (sub_status == 34) {
-        this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
-      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10 || sub_status == 35 || sub_status == 23) {
-        this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+      if(last_status == 0){
+        this.error("Please choose a differnt GRN, Invoice total and GRN total are not matching");
       } else {
-        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        this._location.back();
       }
     }
     this.progressDailogBool = false;
@@ -1871,10 +1879,9 @@ export class Comparision3WayComponent
     let thresholdPecent;
     if(this.dataService?.configData?.miscellaneous?.overdeliverypct){
       thresholdPecent = this.dataService?.configData?.miscellaneous?.overdeliverypct;
-    } else{
+    } else {
       thresholdPecent = linedata?.OverDeliveryPct?.Value;
     }
-    console.log(thresholdPecent)
     let checking_value;
     let error_msg;
     let threshold;
@@ -2135,7 +2142,7 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if(this.configData?.miscellaneous?.grn_match_with_invoice_no){
+            if(this.configData?.miscellaneous?.mandatory_ref_number){
               if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
@@ -2705,8 +2712,15 @@ export class Comparision3WayComponent
         total_arr.push(el.linesData)
       })
       this.selected_GRN_total = total_arr.reduce((acc, arr) => {
-        return acc + arr.reduce((subAcc, obj) => subAcc + parseFloat(obj.AmountExcTax), 0);
+        return acc + arr.reduce((subAcc, obj) => {
+          if (obj.AmountExcTax) {
+            return subAcc + parseFloat(obj.AmountExcTax);
+          } else {
+            return subAcc + (parseFloat(obj.UnitPrice) * parseFloat(obj.Quantity));
+          }
+        }, 0);
       }, 0);
+      console.log(this.selected_GRN_total)
     }, err => {
       this.error("Server error");
       this.SpinnerService.hide();
