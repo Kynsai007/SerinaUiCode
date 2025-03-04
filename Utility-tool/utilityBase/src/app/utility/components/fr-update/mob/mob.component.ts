@@ -58,6 +58,9 @@ export class MobComponent implements OnInit, OnChanges {
 
   inputUploadFolder;
   invalidModelBoolean: boolean;
+  vendorName: any;
+  fileNames: { name: string; icon: string }[] = [];
+  uploadProgress: number = 100;
 
   constructor(private fb: FormBuilder,
     private mobservice:MobmainService,
@@ -70,6 +73,7 @@ export class MobComponent implements OnInit, OnChanges {
   }
   
   ngOnInit(): void {
+    this.vendorName = this.sharedService.vendorDetails.VendorName;
     this.mobservice.getModelData().subscribe(data => {
       this.modelData = data;
     });
@@ -159,6 +163,28 @@ export class MobComponent implements OnInit, OnChanges {
 
 
   uploadFolderEvent(event) {
+    const files: FileList = event.target.files;
+    this.fileNames = []; // Clear previous selections
+
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const fileName = files[i].name;
+            const fileExtension = fileName.split('.').pop()?.toLowerCase(); 
+
+            let iconPath = "assets/default_icon.svg"; 
+            if (fileExtension === "jpg" || fileExtension === "jpeg") {
+                iconPath = "assets/jpg.png";
+            } else if (fileExtension === "png") {
+                iconPath = "assets/png.png";
+            } else if (fileExtension === "pdf") {
+                iconPath = "assets/pdf.svg";
+            } else if (fileExtension === "txt") {
+                iconPath = "assets/txt.svg";
+            }
+
+            this.fileNames.push({ name: fileName, icon: iconPath });
+        }
+    }
     this.folderPaths = event.target.files;
     this.uploadFolderPath();
   }

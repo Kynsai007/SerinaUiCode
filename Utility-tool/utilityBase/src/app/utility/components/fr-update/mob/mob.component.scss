@@ -42,7 +42,7 @@
         border: 2px dashed #bdc3c7;
         border-radius: 5px;
         margin: 10px 0;
-        margin-left: 20%;
+        // margin-left: 20%;
         text-align: center;
         overflow: hidden;
         height: 60vh;
@@ -56,8 +56,8 @@
         color: #74b9ff;
       }
       .img-browse {
-        background-color: #f2be42;
-        color: #272727;
+        background-color: rgb(15, 18, 63);
+        color:rgb(255, 255, 255);
         padding: 0.4rem;
         border-radius: 0.3rem;
         font-size: 13px;
@@ -82,10 +82,11 @@
         background-color: #273c75;
     }
     .btnbg1{
-        margin-top: -0.2rem;
-        background-color: #f2be42;
-        color: #272727; 
+      margin-top: -0.2rem;
+      background-color: rgb(15, 18, 63);
+      color: rgb(255, 255, 255); 
     }
+    
     .btncancel{
         background-color: #ffffff;
         color: #273c75;
@@ -109,7 +110,157 @@
     justify-content: space-between;
 }
 .max_height_div{
-    max-height: clamp(40vh,40vh,60vh);
+    max-height: 40vh;
     overflow: auto;
     margin-bottom: 20px;
 }
+.head-part {
+  border-bottom: 2px solid #E9EAF2;
+  padding-bottom: 20px; 
+}
+
+.hd-part {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; 
+}
+
+.form-head {
+  font-size: 17; 
+  line-height: 1.3;
+  color: #0F123F;
+}
+
+.ven-nam {
+  padding-top: 10px;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #0F123F;
+}
+
+.main-cntnt {
+  display: flex;
+  gap: 60px; 
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.new-out {
+  border: 2px dashed #3543C0;
+  border-radius: 5px;
+  text-align: center;
+  overflow: hidden;
+  height: 52vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: clamp(280px, 90%, 552px);
+  margin: 10px 0;
+}
+
+.pdf-list-view {
+  flex: 1;
+  min-width: clamp(250px, 40%, 300px); 
+  max-width: 50%;
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.upld-file-list {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FFFFFF;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  flex-wrap: wrap; 
+}
+
+.upld-file-list img {
+  width: clamp(25px, 2vw, 30px); 
+  height: 25px;
+}
+
+.upld-file-list .tick {
+  width: clamp(15px, 1.5vw, 20px);
+  height: 15px;
+}
+
+.file-pb {
+  display: flex;
+  flex: 1; 
+  flex-direction: column;
+  justify-content: center;
+  width: 70%;
+}
+
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #000000;
+}
+
+.progress-bar {
+  height: 7px;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+  width: 100%;
+}
+
+.file-name {
+  text-align: left;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80%;
+}
+
+.progress-percentage {
+  text-align: right;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .main-cntnt {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .file-upload,
+  .pdf-list-view {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .upld-file-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .file-pb {
+    width: 100%;
+  }
+
+  .progress-text {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-name,
+  .progress-percentage {
+    width: 100%;
+    text-align: left;
+  }
+}
+

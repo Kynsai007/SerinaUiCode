@@ -107,7 +107,13 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     { name: 'Azure Form Recognizer 2.1', version:'v2.1'},
     { name: 'Azure Form Recognizer 3.0', version:'2022-08-31'},
     { name: 'Azure Form Recognizer 3.1', version:'2023-07-31'},
-  ]
+  ];
+  activeTab: string = 'Updatefr';
+  isViewTagInfo: boolean;
+  isConfScr: boolean = false;
+  isModalOpen: boolean = false;
+  tags: string[] = ['Header Tag', 'Line Item Tag'];
+  activeIndex: number   = 0;
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -937,4 +943,45 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   removeLineOptTag(index,tag) {
     this.LineOptTags.splice(index,1);
   }
+  openModal(value) {
+    if(value==='addTmpt'){
+      this.isModalOpen = true; // Open the modal
+      this.isViewTagInfo = false;
+      this.isConfScr = false;
+    }
+    else if(value==='vewTagInfo'){
+      this.isModalOpen = false;
+      this.isViewTagInfo = true;
+      this.isConfScr = false;
+    }
+    else if(value==='vewCfdScr'){
+      this.isModalOpen = false;
+      this.isViewTagInfo = false;
+      this.isConfScr = true;
+    }
+  }
+
+  goToTrainingSamples(){
+    if (this.enableTabsBoolean) {
+      this.activeTab = 'mob'; // Set the active tab to "Training Samples"
+    }
+  }
+  closeModal() {
+    this.isModalOpen = false; // Close the modal
+    this.isViewTagInfo=false;
+    this.isConfScr = false;
+    document.body.classList.remove('modal-open'); // Bootstrap-specific
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => backdrop.remove());
+    this.removealert();
+  }
+  setActive(index: number, tag): void {
+    this.activeIndex = index;
+  }
+  sortedHeaderArray(): any[] {
+    return this.headerArray.slice().sort((a, b) => a.localeCompare(b));
+  }
+  sortedHeaderTags(): any[] {
+    return this.headerTags.slice().sort((a, b) => a.Name.localeCompare(b.Name));
+}
 }

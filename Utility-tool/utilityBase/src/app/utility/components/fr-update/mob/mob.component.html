@@ -1,49 +1,68 @@
 <div class="container p-2">
-
-        
-    <div ng2FileDrop [uploader]="uploader" [ngClass]="{'file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)" class="file-upload dashed-border">
-        <div style="margin: 30px;">
-        <img src="assets/upload_doc_ic.svg" *ngIf="!status1Boolean">
-        <img src="assets/upload_doc_sucess_ic.svg" *ngIf="status1Boolean">
-        <div style="margin-top: 4%;"></div>
-        <div class="f-13" style="color: rgb(0 167 0);">
-            {{msg}}
+    <div class="head-part">
+        <div class="hd-part">
+            <span class="form-head">Training Samples</span>
+            <span class="ven-nam"> {{vendorName}}</span>
         </div>
-        <div class="f-13" style="color: rgb(0 167 0);">
-            {{msg1}}
+    </div>
+    <div class="main-cntnt">
+        <div ng2FileDrop [uploader]="uploader" [ngClass]="{'file-over': hasBaseDropZoneOver, 'new-out': status1Boolean}"  (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)" class="file-upload dashed-border">
+            <div style="margin: 30px;">
+            <img src="assets/upload_doc_ic.svg" *ngIf="!status1Boolean">
+            <img src="assets/Group 100.svg" *ngIf="status1Boolean">
+            <div style="margin-top: 4%;"></div>
+            <div class="f-13" style="color: rgb(0 167 0);">
+                {{msg}}
+            </div>
+            <div class="f-13" style="color: rgb(0 167 0);">
+                {{msg1}}
+            </div>
+            <div class="underdropIcon" *ngIf="!status1Boolean">Drag and drop Training Folder</div>
+            <small class="f-12" *ngIf="!status1Boolean">Folder must contain atleast 5 documents of type jpg,png,pdf or html</small>
+            <div style="margin-top: 4%;"></div>
+            <div class="fileText" *ngIf="!status1Boolean">Or</div>
+            <label for="img" [ngClass]="{'img-browse':!status1Boolean,'img-disabled':status1Boolean}">
+                <span *ngIf="uploading" class="spinner-border spinner-border-sm btnbg1"></span> Browse Folder
+            </label>
+            <button *ngIf="!status2Boolean && !reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!folderPathBoolean" (click)="upload_Blob()">
+                <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
+               Start Upload
+            </button>
+            <button *ngIf="reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!status1Boolean" (click)="reupload_Blob('Append')">
+                <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
+                Append Uploads
+            </button>
+            <button *ngIf="reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!status1Boolean" (click)="reupload_Blob('Fresh')">
+                <span *ngIf="isuploadable1" class="spinner-border spinner-border-sm"></span>
+                Fresh Upload
+            </button>
+            <button *ngIf="status2Boolean" [disabled]="!status1Boolean" class="btn btnbg1 f-13 ml-2" (click)="activate_reupload()">
+                <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
+                Activate Re-upload
+            </button>
+            
+            <input ng2FileSelect webkitdirectory mozdirectory (change)="uploadFolderEvent($event)" [uploader]="uploader"
+                #fileInput type="file" id="img" name="img" hidden />
+            </div>
+            
+            <!-- <div *ngIf="errorBoolean" class="f-13" style="color: rgb(192, 5, 5);">
+                Error occured please re-upload files.
+            </div> -->
+            
         </div>
-        <div class="underdropIcon" *ngIf="!status1Boolean">Drag and drop Training Folder</div>
-        <small class="f-12" *ngIf="!status1Boolean">Folder must contain atleast 5 documents of type jpg,png,pdf or html</small>
-        <div style="margin-top: 4%;"></div>
-        <div class="fileText" *ngIf="!status1Boolean">Or</div>
-        <label for="img" [ngClass]="{'img-browse':!status1Boolean,'img-disabled':status1Boolean}">
-            <span *ngIf="uploading" class="spinner-border spinner-border-sm"></span> Browse Folder
-        </label>
-        <button *ngIf="!status2Boolean && !reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!folderPathBoolean" (click)="upload_Blob()">
-            <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
-           Start Upload
-        </button>
-        <button *ngIf="reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!status1Boolean" (click)="reupload_Blob('Append')">
-            <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
-            Append Uploads
-        </button>
-        <button *ngIf="reuploadBoolean" class="btn btnbg1 f-13 ml-2" [disabled]="!status1Boolean" (click)="reupload_Blob('Fresh')">
-            <span *ngIf="isuploadable1" class="spinner-border spinner-border-sm"></span>
-            Fresh Upload
-        </button>
-        <button *ngIf="status2Boolean" [disabled]="!status1Boolean" class="btn btnbg1 f-13 ml-2" (click)="activate_reupload()">
-            <span *ngIf="isuploadable" class="spinner-border spinner-border-sm"></span>
-            Activate Re-upload
-        </button>
-        
-        <input ng2FileSelect webkitdirectory mozdirectory (change)="uploadFolderEvent($event)" [uploader]="uploader"
-            #fileInput type="file" id="img" name="img" hidden />
+        <div *ngIf="status1Boolean" class="pdf-list-view">
+                <div *ngFor="let file of fileNames" class="upld-file-list">
+                    <img [src]="file.icon" alt="File Icon" >
+                    <div class="file-pb">
+                        <div class="progress-text">
+                            <span class="file-name">{{ file.name }}</span>
+                            <span class="progress-percentage">{{ uploadProgress }}%</span>
+                        </div>
+                        <div class="progress-bar"></div>
+                    </div>
+                    <img src="assets/Group 97.svg" class="tick">
+                </div>
         </div>
-        
-        <!-- <div *ngIf="errorBoolean" class="f-13" style="color: rgb(192, 5, 5);">
-            Error occured please re-upload files.
-        </div> -->
-        
     </div>
     
 
