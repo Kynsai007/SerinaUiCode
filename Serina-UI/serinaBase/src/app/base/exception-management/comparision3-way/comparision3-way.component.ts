@@ -958,6 +958,7 @@ export class Comparision3WayComponent
           val.old_value = val.Value;
         }
       });
+
     }, 100);
     this.grnLineCount = this.lineDisplayData[0]?.linedata;
     this.grnLineCount.forEach(el=>{
@@ -1300,9 +1301,9 @@ export class Comparision3WayComponent
         if (vendorData) {
           this.isServiceData = false;
           this.vendorData = {
-            ...vendorData[0].Vendor,
-            ...vendorData[0].VendorAccount,
-            ...vendorData[0].VendorUser,
+            ...vendorData[0]?.Vendor,
+            ...vendorData[0]?.VendorAccount,
+            ...vendorData[0]?.VendorUser,
           };
           this.vendorAcId = this.vendorData['idVendorAccount'];
           this.vendorName = this.vendorData['VendorName'];
@@ -4642,7 +4643,7 @@ export class Comparision3WayComponent
           this.docType = el;
         } if (this.docType == 'credit') {
           this.docType = 'Invoice'
-        } else if (this.docType.includes('non-po')) {
+        } else if (this.docType?.includes('non-po')) {
           this.docType = 'Non PO Invoice'
         } else if (this.docType == 'advance invoice') {
           this.docType = 'Advance Invoice'
