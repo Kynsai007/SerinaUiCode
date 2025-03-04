@@ -350,6 +350,9 @@ isMobile:boolean;
       { dbColumnname: 'totalAmount', columnName: 'Amount' },
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
+    if(this.ds.configData.client_name == 'Aster'){
+      this.rejectedColumns.push({ dbColumnname: 'Account', columnName: 'Service Account' });
+    }
 
     this.GRNColumns = [
       { dbColumnname: 'EntityName', columnName: 'Entity Name' },
@@ -672,6 +675,7 @@ isMobile:boolean;
           ...element.Document,
           ...element.Entity,
           ...element.EntityBody,
+          ...element.DocumentHistoryLogs,
           ...element.ServiceProvider,
           ...element.ServiceAccount
         };

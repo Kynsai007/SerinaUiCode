@@ -100,7 +100,7 @@
        <span *ngIf="ent_code || d_type" class="status_btn" style="text-transform: capitalize;"><span *ngIf="ent_code">Entity Code - {{ent_code}} </span> <span *ngIf="d_type"><span *ngIf="ent_code">&</span> Invoice type - {{d_type}}</span></span>
     </div>
     <button
-      *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
+      *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header' &&( Itype == 'Invoice' || Itype == 'Service')"
       class="primary_btn mr-2 f-12"
       (click)="viewPdf()"
       type="button"
@@ -1089,7 +1089,7 @@
                 </tr>
                 <ng-container *ngFor="let item of lineDisplayData; let i = index">
                   <tr class="invert_tr" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}" 
-                      *ngIf="(GRN_PO_Bool || !item.TagName.includes('UnitPrice')) && item.TagName !== 'Inv - AmountExcTax'">
+                      *ngIf="(GRN_PO_Bool || !item?.TagName?.includes('UnitPrice')) && item?.TagName !== 'Inv - AmountExcTax'">
                     <td class="lineName invert_th_td" [ngClass]="{'m-l-neg': item.TagName === 'Actions'}">
                       <ng-container *ngIf="item.TagName !== 'GRN - AmountExcTax'; else amountExcTax">
                         <div class="d-flex justify-content-between">

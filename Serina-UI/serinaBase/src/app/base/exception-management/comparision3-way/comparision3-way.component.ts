@@ -441,7 +441,8 @@ export class Comparision3WayComponent
     { id:12, name:'FixedAssetGroup', type:'Dropdown' },
     { id:13, name:'SalesTaxGroup', type:'Dropdown' },
     { id:14, name:'ItemSalesTaxGroup', type:'Dropdown' },
-    { id:15, name:'BankAccount', type:'Dropdown' }
+    { id:15, name:'BankAccount', type:'Dropdown' },
+    { id:16, name:'OffsetCompany', type:'Dropdown' }
 
   ];
   old_tag: any;
@@ -3006,14 +3007,22 @@ export class Comparision3WayComponent
       if (this.GRN_PO_Bool || this.router.url.includes("GRN_approvals")) {
         this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
         this.GRNObjectDuplicate.forEach((val, i) => {
-          if (val.is_mapped == 'Price' && grnQ[val?.idDocumentLineItems] != 0) {
-            let obj = {
-              Value: grnQ[val?.idDocumentLineItems] * val?.Value, ErrorDesc: '', idDocumentLineItems: val?.idDocumentLineItems, is_mapped: '', tagName: 'AmountExcTax'
+          if (val.is_mapped == 'Price') {
+            const quantity = this.GRNObjectDuplicate.find(item => item.idDocumentLineItems === val.idDocumentLineItems && item.tagName === 'Quantity')?.Value;
+            if (quantity) {
+              const amountExcTax = quantity * val.Value;
+              let obj = {
+                Value: amountExcTax.toFixed(this.decimal_count), 
+                ErrorDesc: '', 
+                idDocumentLineItems: val.idDocumentLineItems, 
+                is_mapped: '', 
+                tagName: 'AmountExcTax',
+                LineNumber: val.lineNumber,
+              };
+              this.GRNObjectDuplicate.push(obj);
             }
-            this.GRNObjectDuplicate.splice(this.GRNObjectDuplicate.length + 1, 0, obj)
           }
-
-        })
+        });
         // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter((val, ind, arr) => ind == arr.findIndex(v => v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
 
       } else {
