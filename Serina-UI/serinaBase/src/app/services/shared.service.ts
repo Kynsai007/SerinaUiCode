@@ -210,13 +210,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/getVendorOnboardStatus/${this.userId}?ven_code=${ven_code}`).pipe(retry(3));
   }
   activate_vendor_signup(id) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newUserActivation/${this.userId}?au_id=${id}`, '').pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newUserActivation/${this.userId}?au_id=${id}`, '');
   }
   activate_deactivate(id) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/changeUserAccountStatus/${this.userId}?deactivate_uid=${id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/changeUserAccountStatus/${this.userId}?deactivate_uid=${id}`);
   }
   checkPriority(bool, data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/validateHierarchyPriority/${this.userId}?validation_type=${bool}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/validateHierarchyPriority/${this.userId}?validation_type=${bool}`, data);
   }
 
 
@@ -494,7 +494,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`).pipe(retry(3));
   }
   syncBatchTrigger(query){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/runbatch/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'').pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/runbatch/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'');
   }
   getGRNTabData(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/grn/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(3));
@@ -665,7 +665,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Notification/get_template_datas/${tempnameid}`).pipe(retry(3));
   }
   createNewEmailTemplate(data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/create_template`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/create_template`, data);
   }
   editEmailTemplate(data,tempgropid,tempnameid){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Notification/update_template/${tempgropid}/${tempnameid}`, data);
