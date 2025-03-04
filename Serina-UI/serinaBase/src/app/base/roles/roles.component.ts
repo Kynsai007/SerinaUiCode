@@ -265,7 +265,7 @@ export class RolesComponent implements OnInit {
   invoicePermissions: Permission[] = [];
   show_document_status: boolean;
   totalVendors: any[];
-  originalEntitys: selectedValue[];
+  originalEntitys: selectedValue[] = [];
 
   constructor(
     private dataService: DataService,
@@ -805,15 +805,17 @@ export class RolesComponent implements OnInit {
     } else {
       let listOfEntity = [...this.originalEntitys];
       this.updateUsersEntityInfo = [];
-      listOfEntity?.forEach((obj1:any)=>{
-            this.updateUsersEntityInfo.push({ 
-              idUserAccess: obj1.idUserAccess, 
-              EntityID: obj1.EntityID,
-              DepartmentID : null,
-              categoryID :null,
-              subRole : this.appied_permission_def_id
-            });
-      });
+      if(listOfEntity.length>0){
+        listOfEntity?.forEach((obj1:any)=>{
+          this.updateUsersEntityInfo.push({ 
+            idUserAccess: obj1.idUserAccess, 
+            EntityID: obj1.EntityID,
+            DepartmentID : null,
+            categoryID :null,
+            subRole : this.appied_permission_def_id
+          });
+        });
+      }
       this.selectedEntitys = [];
     }
   }
