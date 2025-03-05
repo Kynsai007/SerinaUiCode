@@ -2980,15 +2980,18 @@ export class Comparision3WayComponent
   }
 
   deleteSupport(file){
-    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation');
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this file?', 'confirmation', 'Confirmation');
     drf.afterClosed().subscribe((bool:boolean)=>{
       if(bool){
-        this.support_doc_list = [];
         this.SpinnerService.show();
         this.SharedService.deleteSupport(file).subscribe((data:any)=>{
           if(data.status == 'success'){
+           this.support_doc_list = [];
             this.support_doc_list = data.files;
             this.success("Deleted successfully.");
+            this.SpinnerService.hide();
+          } else {
+            this.error("Failed to delete file.");
             this.SpinnerService.hide();
           }
         },err=>{
