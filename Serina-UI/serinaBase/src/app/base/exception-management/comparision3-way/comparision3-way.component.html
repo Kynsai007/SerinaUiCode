@@ -989,7 +989,7 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ po_total?.toFixed(decimal_count) }}</td>
+                  <td class="total_count">{{ po_total }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
@@ -1180,7 +1180,7 @@
                   [ngClass]="GRN_PO_Bool ? 'text-center' : ''"
                   [ngStyle]="{ paddingLeft: GRN_PO_Bool ? '40px' : '' }"
                 >
-                  {{ GRN_line_total?.toFixed(decimal_count) }}
+                  {{ decimalRoundOff(GRN_line_total) }}
                 </td>
                 <td
                   class="w-st hide"
@@ -1770,7 +1770,7 @@
                 tooltipPosition="top">
                 <i class="fa fa-info-circle"></i>
               </span>
-              Total Calculated Tax - {{totalTaxDynamic?.toFixed(decimal_count)}}
+              Total Calculated Tax - {{ decimalRoundOff(totalTaxDynamic) }}
             </div>
             <div>
 
@@ -2623,7 +2623,7 @@
           <td>{{ item.Name }}</td>
           <td>{{ item.PurchQty }}</td>
           <td>{{ item.UnitPrice }}</td>
-          <td>{{ (item.PurchQty * item.UnitPrice)?.toFixed(decimal_count) }}</td>
+          <td>{{ decimalRoundOff(item.PurchQty * item.UnitPrice) }}</td>
         </tr>
       </table>
       </div>
@@ -2654,7 +2654,7 @@
           class="d-flex justify-content-between total_grn f-12"
         >
           <div>Total</div>
-          <div>{{ selected_GRN_total?.toFixed(decimal_count) }}</div>
+          <div>{{ decimalRoundOff(selected_GRN_total) }}</div>
         </div>
       </ng-container>
     </div>

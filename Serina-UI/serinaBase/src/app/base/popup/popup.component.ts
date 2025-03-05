@@ -64,11 +64,17 @@ export class PopupComponent implements OnInit {
   createdDates = [];
   disabledSaveMetadata: boolean = true;
 
-  resizing: boolean = false;
-  startX: number;
-  startY: number;
-  startWidth: number;
-  startHeight: number;
+  isDragging = false;
+  isResizing = false;
+  isResizingEnabled = false;
+  resizeDirection: string = '';
+  startX!: number;
+  startY!: number;
+  startWidth!: number;
+  startHeight!: number;
+  edgeThreshold = 10; // Pixels from the edge to trigger resize
+  decimal_count: number;
+  dragRootElement = '.cdk-overlay-pane';
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -93,6 +99,10 @@ export class PopupComponent implements OnInit {
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
     this.isEditGRN = this.ds?.isEditGRN;
+    this.decimal_count = this.ds.configData?.miscellaneous?.No_of_Decimals;
+    if(!this.decimal_count){
+      this.decimal_count = 2;
+     }
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -205,14 +215,14 @@ export class PopupComponent implements OnInit {
       if (boolean) {
         this.selectedPOLines.push(data);
         let lineTotal = this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
         let lineTotal= this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) - Number(this.decimalRoundOff(lineTotal));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     }
@@ -230,7 +240,7 @@ export class PopupComponent implements OnInit {
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
         let lineTotal = this.calculateAmount(val);
         // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
         // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
       const allData = [...this.POLineData]
@@ -257,7 +267,7 @@ export class PopupComponent implements OnInit {
         el[el_flied] = qty;
       }
       let lineTotal = this.calculateAmount(el);
-      this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+      this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
       // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
     // this.linesTotal = 0;
@@ -755,7 +765,7 @@ export class PopupComponent implements OnInit {
             if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
 
               const calculatedGRNQuantity = totalValue / (numberOfDays);
-              line.Value = calculatedGRNQuantity.toFixed(2); 
+              line.Value = this.decimalRoundOff(calculatedGRNQuantity);
             } else {
               line.Value = "0"; // Default to 0 if something is missing
             }
@@ -775,44 +785,22 @@ export class PopupComponent implements OnInit {
       data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
-  enableResize(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation(); // Prevent drag from triggering
-
-    this.resizing = true;
-    this.startX = event.clientX;
-    this.startY = event.clientY;
-
-    const dialogElement = this.el.nativeElement.closest('.cdk-overlay-pane');
-    this.startWidth = dialogElement.offsetWidth;
-    this.startHeight = dialogElement.offsetHeight;
-
-    this.renderer.setStyle(document.body, 'cursor', 'nwse-resize');
-
-    // Listen to mousemove and mouseup events globally
-    document.addEventListener('mousemove', this.resizeDialog);
-    document.addEventListener('mouseup', this.stopResize);
+  toggleResize() {
+    this.isResizingEnabled = !this.isResizingEnabled;
   }
-
-  resizeDialog = (event: MouseEvent) => {
-    if (!this.resizing) return;
-
-    const dialogElement = this.el.nativeElement.closest('.cdk-overlay-pane');
-
-    const newWidth = this.startWidth + (event.clientX - this.startX);
-    const newHeight = this.startHeight + (event.clientY - this.startY);
-
-    this.renderer.setStyle(dialogElement, 'width', `${newWidth}px`);
-    this.renderer.setStyle(dialogElement, 'height', `${newHeight}px`);
-  };
-
-  stopResize = () => {
-    this.resizing = false;
-    this.renderer.setStyle(document.body, 'cursor', 'default');
-
-    // Remove event listeners to prevent memory leaks
-    document.removeEventListener('mousemove', this.resizeDialog);
-    document.removeEventListener('mouseup', this.stopResize);
-  };
+  decimalRoundOff(num: any) {
+    return Number(num).toLocaleString(undefined,
+       { minimumFractionDigits: this.decimal_count, 
+          maximumFractionDigits: this.decimal_count,
+          useGrouping: false 
+        });
+  }
+  addDrag() {
+    this.dragRootElement = '.cdk-overlay-pane';
+  }
+  removeDrag() {
+    this.dragRootElement ='';
+  }
+ 
 }
 
